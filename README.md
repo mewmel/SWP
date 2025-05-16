@@ -3,11 +3,11 @@
 Phần mềm quản lý và theo dõi điều trị hiếm muộn
 -------------------------------------------------------
 ##primary actors:
-Guest
-Customer
-Doctor
-Manager
-Admin
+Guest,
+Customer,
+Doctor,
+Manager,
+Admin,
 -------------------------------------------------------
 Phần mềm quản lý và theo dõi quá trình điều trị hiếm muộn của 01 cơ sở y tế.
 - Trang chủ giới thiệu cơ sở y tế, các dịch vụ điều trị hiếm muộn, blog chia sẻ kinh nghiệm, ...
