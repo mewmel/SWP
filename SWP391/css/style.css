@@ -145,5 +145,53 @@ body {
     .email-subscribe input[type="email"] {
       width: 100%;
     }
+    .services {
+  margin: 40px 0;
+  text-align: center;
+}
+.services-title {
+  color: #4caf50;
+  margin-bottom: 24px;
+  font-size: 2rem;
+  font-weight: bold;
+}
+.services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+.service-item {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  width: 260px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.service-item img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.service-label {
+  margin-top: 12px;
+  padding: 8px 0;
+  width: 100%;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+.service-label.green {
+  background: #4caf50;
+  color: #fff;
+}
+.service-label.orange {
+  background: #ff9800;
+  color: #fff;
+}
   }
     
