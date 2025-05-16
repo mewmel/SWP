@@ -1,14 +1,14 @@
 # SWP
  Infertility Treatment Management and Monitoring System
 Phần mềm quản lý và theo dõi điều trị hiếm muộn
-
+-------------------------------------------------------
 ##primary actors:
 Guest
 Customer
 Doctor
 Manager
 Admin
-
+-------------------------------------------------------
 Phần mềm quản lý và theo dõi quá trình điều trị hiếm muộn của 01 cơ sở y tế.
 - Trang chủ giới thiệu cơ sở y tế, các dịch vụ điều trị hiếm muộn, blog chia sẻ kinh nghiệm, ...
 - Chức năng cho phép người dùng đăng ký các dịch vụ điều trị hiếm muộn như IUI (thụ tinh trong tử cung), IVF (thụ tinh trong ống nghiệm), ... Người dùng có thể chỉ định bác sĩ điều trị hiếm muộn.
