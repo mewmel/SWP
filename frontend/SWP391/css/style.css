@@ -182,7 +182,6 @@ body {
     padding: 0 20px;
   }
   
-<<<<<<< Updated upstream
   .services-title {
     color: #4caf50;
     margin-bottom: 30px;
@@ -197,6 +196,14 @@ body {
     gap: 30px;
     max-width: 900px;
     margin: 0 auto;
+
+  }
+
+  .service-item p {
+    
+    padding: 0 20px;
+    margin: 0 0 10px;
+    color: #666;
   }
   
   .service-item {
@@ -221,6 +228,15 @@ body {
     height: 50px;
     object-fit: cover;
     border-radius: 12px;
+  }
+  .service-label .p {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: justify;
+    max-width: 1000px;
+    margin: 0 auto;
+    margin-bottom: 20px;
   }
   
   .service-label {
@@ -876,8 +892,7 @@ body {
     }
   }
     
-=======
-}
+
 .service-item .service-label {
   background: #4caf50;
   color: #fff;
@@ -1014,7 +1029,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 2px;
 }
->>>>>>> Stashed changes
+
     
   
     
