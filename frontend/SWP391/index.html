@@ -41,10 +41,36 @@
 
       <a href="#">Hành trình thiện nguyện</a>
       <a href="#">Liên hệ</a>
-      <a href="#">Đăng nhập</a>
+      <a href="#" id="login-link">Đăng nhập</a>
     </nav>
     
   </header>
+
+  <!-- Login Modal Popup -->
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <form>
+        <h3>Đăng nhập</h3>
+        <div class="form-group">
+          <label for="username">Tên đăng nhập</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="login-btn">Đăng nhập</button>
+          <a href="#" class="forgot-password">Quên mật khẩu?</a>
+        </div>
+        <div class="register-link">
+          <span>Chưa có tài khoản?</span>
+          <a href="#">Đăng ký</a>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <main class="content">
     <section class="main-banner">
@@ -144,5 +170,39 @@
       <p>Trang được bảo vệ bởi reCAPTCHA và tuân theo Chính sách bảo mật & Điều khoản dịch vụ của Google</p>
     </div>
   </footer>  
+  
+  <script>
+    // Modal functionality
+    const modal = document.getElementById("login-modal");
+    const loginLink = document.getElementById("login-link");
+    const closeButton = document.getElementsByClassName("close-button")[0];
+    
+    // When the user clicks on the login link, open the modal
+    loginLink.onclick = function(event) {
+      event.preventDefault();
+      modal.style.display = "flex";
+      modal.classList.remove('closing');
+    }
+    
+    // Function to close modal with animation
+    function closeModal() {
+      modal.classList.add('closing');
+      setTimeout(() => {
+        modal.style.display = "none";
+      }, 300); // Match this with the animation duration
+    }
+    
+    // When the user clicks on the close button, close the modal
+    closeButton.onclick = function() {
+      closeModal();
+    }
+    
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        closeModal();
+      }
+    }
+  </script>
 </body>
 </html>
