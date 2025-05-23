@@ -4,12 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bệnh viện Hạnh Phúc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header>
     <div class="logo">
-  <span class="logo-icon">✚</span>
+  <span class="logo-icon">🏥</span>
   <span class="logo-text">Bệnh viện Hạnh Phúc</span>
 </div>
     <nav class="navbar">
@@ -19,10 +22,10 @@
         <a href="#">Giới thiệu</a>
         <div class="dropdown-content">
           <a href="ve-benh-vien.html">Về bệnh viện</a>
-          <a href="#">Đội ngũ bác sĩ</a>
-          <a href="#">Cơ sở vật chất</a>
-          <a href="#">Bảng giá dịch vụ</a>
-          <a href="#">IVF- Thụ tinh ống nghiệm</a>
+          <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+          <a href="co-so-vat-chat.html">Cơ sở vật chất</a>
+          <a href="bang-gia-dich-vu.html">Bảng giá dịch vụ</a>
+          <a href="ivf-thu-tinh-ong-nghiem.html">IVF- Thụ tinh ống nghiệm</a>
         </div>
         </div>
 
@@ -78,59 +81,145 @@
 
   <main class="content">
     <section class="main-banner">
-      <img src="img/banner.jpg" alt="Tuần lễ vàng 2025">
+      <div class="banner-image-container">
+        <img src="img/banner.jpg" alt="Tuần lễ vàng 2025" class="banner-image">
+      </div>
+      <div class="banner-overlay"></div>
+      <div class="banner-content">
+        <div class="banner-logo">
+          <span class="logo-icon">🏥</span>
+        </div>
+        <h1>Bệnh viện <span>Hạnh Phúc</span></h1>
+        <p>Ươm mầm hạnh phúc - Chăm sóc sức khỏe sinh sản toàn diện</p>
+        <a href="dat-lich.html" class="banner-button">Đặt lịch ngay</a>
+      </div>
     </section>
 
-    <aside class="sidebar">
-      <h2>Tin nổi bật</h2>
-      <div class="news-item">
-        <img src="img/news1.jpg" alt="">
-        <p><strong>Tuần lễ vàng 2025 – Ươm mầm hạnh phúc</strong><br>
-        Từ 12/05 - 25/05/2025</p>
-      </div>
-      <div class="news-item">
-        <img src="img/news2.jpg" alt="">
-        <p><strong>Xét duyệt 10 ca IVF miễn phí</strong></p>
-      </div>
-    </aside>
-     
-
-  </main>
-   <!-- Thêm phần dịch vụ tại đây -->
-  <section class="services">
-    <h2 class="services-title">DỊCH VỤ</h2>
-    <div class="services-grid">
-      <div class="service-item">
-        <img src="img/service1.jpg" alt="Hỗ trợ sinh sản (IUI/IVF)">
-        <div class="service-label ">Hỗ trợ sinh sản (IUI/ IVF)</div>
-        <p>IUI - Bơm tinh trùng vào buồng tử cung</p>
-        <p>IVF - Thụ tinh ống nghiệm</p>
-      </div>
-      <div class="service-item">
-        <img src="img/service3.jpg" alt="Trung tâm Y học Giới tính">
-        <div class="service-label ">Trung tâm Y học Giới tính</div>
-        <p>Khám và điều trị các vấn đề về giới tính</p>
-        <p>Khám và điều trị các bệnh lây truyền qua đường tình dục</p>
-      </div>
-      <div class="service-item">
-        <img src="img/service4.jpg" alt="Chăm sóc và Quản lý thai kỳ">
-        <div class="service-label ">Chăm sóc và Quản lý thai kỳ</div>
-      </div>
-      <div class="service-item">
-        <img src="img/service5.jpg" alt="Sản phụ khoa">
-        <div class="service-label ">Sản phụ khoa</div>
-      </div>
-      <div class="service-item">
-        <img src="img/service6.jpg" alt="Sức khỏe tiền hôn nhân">
-        <div class="service-label ">Sức khỏe tiền hôn nhân</div>
-      </div>
-      <div class="service-item">
-        <img src="img/service7.jpg" alt="Nam Khoa">
-        <div class="service-label ">Nam Khoa</div>
-      </div>
+    <div class="content-row">
+      <section class="featured-news">
+        <h2>Tin nổi bật</h2>
+        <div class="news-scroll">
+          <div class="news-item">
+            <img src="img/news1.jpg" alt="">
+            <p><strong>Tuần lễ vàng 2025 – Ươm mầm hạnh phúc</strong><br>
+            Từ 12/05 - 25/05/2025</p>
+          </div>
+          <div class="news-item">
+            <img src="img/news2.jpg" alt="">
+            <p><strong>Xét duyệt 10 ca IVF miễn phí</strong></p>
+          </div>
+          <div class="news-item">
+            <img src="img/news4.jpg" alt="">
+            <p><strong>Dấu hiệu nhận biết tình trạng hiếm muộn</strong></p>
+          </div>
+          <div class="news-item">
+            <img src="img/news3.jpg" alt="">
+            <p><strong>Tại sao nên khám tiền hôn nhân</strong></p>
+          </div>
+          <div class="news-item">
+            <img src="img/news5.jpg" alt="">
+            <p><strong>Phân biệt phương pháp IUI và IVF</strong></p>
+          </div>
+        </div>
+      </section>
     </div>
-  </section>
-<!-- ...existing code... -->
+  </main>
+
+ 
+  <!-- 
+<section class="services">
+  <h2 class="services-title">DỊCH VỤ</h2>
+  <div class="services-grid">
+    <div class="service-item">
+      <img src="img/service1.jpg" alt="Hỗ trợ sinh sản (IUI/IVF)">
+      <div class="service-label ">Hỗ trợ sinh sản (IUI/ IVF)</div>
+    </div>
+    <div class="service-item">
+      <img src="img/service3.jpg" alt="Trung tâm Y học Giới tính">
+      <div class="service-label ">Trung tâm Y học Giới tính</div>
+    </div>
+    <div class="service-item">
+      <img src="img/service4.jpg" alt="Chăm sóc và Quản lý thai kỳ">
+      <div class="service-label ">Chăm sóc và Quản lý thai kỳ</div>
+    </div>
+    <div class="service-item">
+      <img src="img/service5.jpg" alt="Sản phụ khoa">
+      <div class="service-label ">Sản phụ khoa</div>
+    </div>
+    <div class="service-item">
+      <img src="img/service6.jpg" alt="Sức khỏe tiền hôn nhân">
+      <div class="service-label ">Sức khỏe tiền hôn nhân</div>
+    </div>
+    <div class="service-item">
+      <img src="img/service7.jpg" alt="Nam Khoa">
+      <div class="service-label ">Nam Khoa</div>
+    </div>
+  </div>
+</section>
+-->
+
+
+  
+
+
+
+  <!-- Services Section -->
+    <section class="services-section">
+      <div class="container">
+        <h2>Dịch vụ của chúng tôi</h2>
+        <div class="services-grid">
+          <div class="service-card">
+            <img src="img/service1.jpg" alt="Hỗ trợ sinh sản">
+            <h3>Hỗ trợ sinh sản</h3>
+            <p>IUI - Bơm tinh trùng vào buồng tử cung</p>
+            <p>IVF - Thụ tinh ống nghiệm</p>
+            <a href="#" class="learn-more">Tìm hiểu thêm</a>
+          </div>
+          <div class="service-card">
+            <img src="img/service7.jpg" alt="Nam khoa">
+            <h3>Nam khoa</h3>
+            <p>Điều trị các bệnh lý nam khoa</p>
+            <p>Tư vấn sức khỏe sinh sản nam giới</p>
+            <a href="#" class="learn-more">Tìm hiểu thêm</a>
+          </div>
+          <div class="service-card">
+            <img src="img/service3.jpg" alt="Y học Giới tính">
+            <h3>Trung tâm Y học Giới tính</h3>
+            <p>Điều trị các vấn đề về giới tính</p>
+            <p>Tư vấn tâm lý chuyên sâu</p>
+            <a href="#" class="learn-more">Tìm hiểu thêm</a>
+          </div>
+          <div class="service-card">
+            <img src="img/service4.jpg" alt="Quản lý thai kỳ">
+            <h3>Chăm sóc và Quản lý thai kỳ</h3>
+            <p>Theo dõi sức khỏe mẹ và bé</p>
+            <p>Tư vấn dinh dưỡng thai kỳ</p>
+            <a href="#" class="learn-more">Tìm hiểu thêm</a>
+          </div>
+          <div class="service-card">
+            <img src="img/service6.jpg" alt="Sức khỏe tiền hôn nhân">
+            <h3>Sức khỏe tiền hôn nhân</h3>
+            <p>Tư vấn sức khỏe sinh sản trước hôn nhân</p>
+            <p>Khám sức khỏe tổng quát</p>
+            <a href="#" class="learn-more">Tìm hiểu thêm</a>
+          </div>
+          <div class="service-card">
+            <img src="img/service5.jpg" alt="Sản phụ khoa">
+            <h3>Sản phụ khoa</h3>
+            <p>Khám và điều trị các bệnh lý phụ khoa</p>
+            <p>Tư vấn sức khỏe sinh sản nữ giới</p>
+            <p>Khám sức khỏe định kỳ</p>
+            <a href="#" class="learn-more">Tìm hiểu thêm</a>
+          </div>
+        </div>
+      </div>
+    </section> 
+
+
+
+
+
+  
 
   <footer class="footer">
     <div class="footer-columns">
@@ -173,7 +262,7 @@
       <p>Trang được bảo vệ bởi reCAPTCHA và tuân theo Chính sách bảo mật & Điều khoản dịch vụ của Google</p>
     </div>
   </footer>  
-  
+    
   <script>
     // Modal functionality
     const modal = document.getElementById("login-modal");
