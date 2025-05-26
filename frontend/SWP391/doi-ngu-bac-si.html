@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đội ngũ bác sĩ - Bệnh viện Hạnh Phúc</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
@@ -39,32 +41,69 @@
         </nav>
     </header>
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <form>
-                <h3>Đăng nhập</h3>
-                <div class="form-group">
-                    <label for="username">Tên đăng nhập</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Mật khẩu</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="login-btn">Đăng nhập</button>
-                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
-                </div>
-                <div class="register-link">
-                    <span>Chưa có tài khoản?</span>
-                    <a href="#">Đăng ký</a>
-                </div>
-            </form>
+    <!-- Login Modal Popup -->
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <form>
+        <h3>Đăng nhập</h3>
+        <div class="form-group">
+          <label for="username">Tên đăng nhập</label>
+          <input type="text" id="username" name="username" required>
         </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="login-btn">Đăng nhập</button>
+          <a href="#" class="forgot-password">Quên mật khẩu?</a>
+        </div>
+        <div class="register-link">
+          <span>Chưa có tài khoản?</span>
+          <a href="#" id="register-link">Đăng ký</a>
+        </div>
+      </form>
     </div>
+  </div>
 
+  <!-- Registration Modal Popup -->
+  <div id="register-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <form>
+        <h3>Đăng ký tài khoản</h3>
+        
+        <div class="form-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" name="reg-email" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-phone">Số điện thoại</label>
+          <input type="tel" id="reg-phone" name="reg-phone" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-username">Tên đăng nhập</label>
+          <input type="text" id="reg-username" name="reg-username" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Mật khẩu</label>
+          <input type="password" id="reg-password" name="reg-password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">Xác nhận mật khẩu</label>
+          <input type="password" id="confirm-password" name="confirm-password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="login-btn">Đăng ký</button>
+        </div>
+        <div class="register-link">
+          <span>Đã có tài khoản?</span>
+          <a href="#" id="back-to-login">Đăng nhập</a>
+        </div>
+      </form>
+    </div>
+  </div>
     <!-- Breadcrumb -->
     <nav class="breadcrumb">
         <a href="index.html">Trang chủ</a> &gt; <span>Đội ngũ bác sĩ</span>
@@ -266,32 +305,72 @@
     <script>
         // Modal functionality
         const modal = document.getElementById("login-modal");
+        const registerModal = document.getElementById("register-modal");
         const loginLink = document.getElementById("login-link");
+        const registerLink = document.getElementById("register-link");
+        const backToLoginLink = document.getElementById("back-to-login");
         const closeButton = document.getElementsByClassName("close-button")[0];
-
-        loginLink.onclick = function (event) {
-            event.preventDefault();
-            modal.style.display = "flex";
-            modal.classList.remove('closing');
+        const closeButtonRegister = document.getElementsByClassName("close-button")[1];
+        
+        // When the user clicks on the login link, open the modal
+        loginLink.onclick = function(event) {
+          event.preventDefault();
+          modal.style.display = "flex";
+          modal.classList.remove('closing');
         }
-
+    
+        // When the user clicks on the register link, open register modal
+        registerLink.onclick = function(event) {
+          event.preventDefault();
+          modal.style.display = "none";
+          registerModal.style.display = "flex";
+          registerModal.classList.remove('closing');
+        }
+    
+        // When the user clicks on back to login link, open login modal
+        backToLoginLink.onclick = function(event) {
+          event.preventDefault();
+          registerModal.style.display = "none";
+          modal.style.display = "flex";
+          modal.classList.remove('closing');
+        }
+        
+        // Function to close modal with animation
         function closeModal() {
-            modal.classList.add('closing');
-            setTimeout(() => {
-                modal.style.display = "none";
-            }, 300);
+          modal.classList.add('closing');
+          setTimeout(() => {
+            modal.style.display = "none";
+          }, 300); // Match this with the animation duration
         }
-
-        closeButton.onclick = function () {
+    
+        // Function to close register modal with animation
+        function closeRegisterModal() {
+          registerModal.classList.add('closing');
+          setTimeout(() => {
+            registerModal.style.display = "none";
+          }, 300);
+        }
+        
+        // When the user clicks on the close button, close the modal
+        closeButton.onclick = function() {
+          closeModal();
+        }
+    
+        // When the user clicks on the close button for register modal
+        closeButtonRegister.onclick = function() {
+          closeRegisterModal();
+        }
+        
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+          if (event.target == modal) {
             closeModal();
+          }
+          if (event.target == registerModal) {
+            closeRegisterModal();
+          }
         }
-
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-    </script>
+      </script>
 </body>
 
 </html>

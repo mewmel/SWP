@@ -15,7 +15,7 @@
   <span class="logo-icon">
     <!-- <img src="img/logo1.jpg" alt="Logo" class="logo-image"> -->
   </span>
-  <span class="logo-text"> Trung tâm hỗ trợ sinh sản Hạnh Phúc</span>
+  <span class="logo-text">🏥  Trung tâm hỗ trợ sinh sản Hạnh Phúc</span>
 </div>
     <nav class="navbar">
       <a href="index.html">Trang chủ</a>
@@ -64,7 +64,45 @@
         </div>
         <div class="register-link">
           <span>Chưa có tài khoản?</span>
-          <a href="#">Đăng ký</a>
+          <a href="#" id="register-link">Đăng ký</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Registration Modal Popup -->
+  <div id="register-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <form>
+        <h3>Đăng ký tài khoản</h3>
+        
+        <div class="form-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" name="reg-email" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-phone">Số điện thoại</label>
+          <input type="tel" id="reg-phone" name="reg-phone" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-username">Tên đăng nhập</label>
+          <input type="text" id="reg-username" name="reg-username" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Mật khẩu</label>
+          <input type="password" id="reg-password" name="reg-password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">Xác nhận mật khẩu</label>
+          <input type="password" id="confirm-password" name="confirm-password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="login-btn">Đăng ký</button>
+        </div>
+        <div class="register-link">
+          <span>Đã có tài khoản?</span>
+          <a href="#" id="back-to-login">Đăng nhập</a>
         </div>
       </form>
     </div>
@@ -257,12 +295,32 @@
   <script>
     // Modal functionality
     const modal = document.getElementById("login-modal");
+    const registerModal = document.getElementById("register-modal");
     const loginLink = document.getElementById("login-link");
+    const registerLink = document.getElementById("register-link");
+    const backToLoginLink = document.getElementById("back-to-login");
     const closeButton = document.getElementsByClassName("close-button")[0];
+    const closeButtonRegister = document.getElementsByClassName("close-button")[1];
     
     // When the user clicks on the login link, open the modal
     loginLink.onclick = function(event) {
       event.preventDefault();
+      modal.style.display = "flex";
+      modal.classList.remove('closing');
+    }
+
+    // When the user clicks on the register link, open register modal
+    registerLink.onclick = function(event) {
+      event.preventDefault();
+      modal.style.display = "none";
+      registerModal.style.display = "flex";
+      registerModal.classList.remove('closing');
+    }
+
+    // When the user clicks on back to login link, open login modal
+    backToLoginLink.onclick = function(event) {
+      event.preventDefault();
+      registerModal.style.display = "none";
       modal.style.display = "flex";
       modal.classList.remove('closing');
     }
@@ -274,16 +332,32 @@
         modal.style.display = "none";
       }, 300); // Match this with the animation duration
     }
+
+    // Function to close register modal with animation
+    function closeRegisterModal() {
+      registerModal.classList.add('closing');
+      setTimeout(() => {
+        registerModal.style.display = "none";
+      }, 300);
+    }
     
     // When the user clicks on the close button, close the modal
     closeButton.onclick = function() {
       closeModal();
+    }
+
+    // When the user clicks on the close button for register modal
+    closeButtonRegister.onclick = function() {
+      closeRegisterModal();
     }
     
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
       if (event.target == modal) {
         closeModal();
+      }
+      if (event.target == registerModal) {
+        closeRegisterModal();
       }
     }
   </script>
