@@ -3284,11 +3284,30 @@ main.container h2::after {
   border-radius: 4px;
 }
 
-    
-  
-    
+/* IUI grid styling */
+.facilities-iui-grid {
+  display: grid;
+  flex-direction: column;
+  gap: 30px;
+}
+.facilities-iui-row {
+  display: flex;
+  gap: 30px;
+}
+.facility-card {
+  flex: 1 1 0;
+}
+@media (max-width: 800px) {
+  .facilities-iui-row {
+    flex-direction: column;
+  }
+}
 
-
-
-
+.facility-iui-image {
+  height: 400px;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  overflow: hidden;
+}
 
