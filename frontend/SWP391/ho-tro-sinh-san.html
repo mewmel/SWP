@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hỗ trợ sinh sản - Trung tâm hỗ trợ sinh sản Hạnh Phúc</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span class="logo-icon">🏥</span>
+      <span class="logo-text">Trung tâm hỗ trợ sinh sản Hạnh Phúc</span>
+    </div>
+    <nav class="navbar">
+      <a href="index.html">Trang chủ</a>
+
+      <div class="dropdown">
+        <a href="ve-benh-vien.html">Giới thiệu</a>
+        <div class="dropdown-content">
+          <a href="ve-benh-vien.html">Về trung tâm</a>
+          <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+          <a href="co-so-vat-chat.html">Cơ sở vật chất</a>
+          <a href="bang-gia-dich-vu.html">Bảng giá dịch vụ</a>
+        </div>
+      </div>
+
+      
+
+      <a href="#footer-contact">Liên hệ</a>
+      <a href="#" id="login-link">Đăng nhập</a>
+    </nav>
+  </header>
+ <!-- Login Modal Popup -->
+ <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <form>
+        <h3>Đăng nhập</h3>
+        <div class="form-group">
+          <label for="username">Tên đăng nhập</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="login-btn">Đăng nhập</button>
+          <a href="#" class="forgot-password">Quên mật khẩu?</a>
+        </div>
+        <div class="register-link">
+          <span>Chưa có tài khoản?</span>
+          <a href="#" id="register-link">Đăng ký</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Registration Modal Popup -->
+  <div id="register-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <form>
+        <h3>Đăng ký tài khoản</h3>
+        
+        <div class="form-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" name="reg-email" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-phone">Số điện thoại</label>
+          <input type="tel" id="reg-phone" name="reg-phone" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-username">Tên đăng nhập</label>
+          <input type="text" id="reg-username" name="reg-username" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Mật khẩu</label>
+          <input type="password" id="reg-password" name="reg-password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">Xác nhận mật khẩu</label>
+          <input type="password" id="confirm-password" name="confirm-password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="login-btn">Đăng ký</button>
+        </div>
+        <div class="register-link">
+          <span>Đã có tài khoản?</span>
+          <a href="#" id="back-to-login">Đăng nhập</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="breadcrumb">
+    <a href="index.html">Trang chủ</a> &gt; <a href="#">Dịch vụ</a> &gt; <span>Hỗ trợ sinh sản</span>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="facilities-hero">
+    <div class="container">
+      <h1 class="text-shadow-pop">Hỗ trợ sinh sản</h1>
+      <p>Giải pháp hiện đại cho các cặp vợ chồng hiếm muộn</p>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- Introduction Section -->
+    <section>
+      <h2>Các phương pháp hỗ trợ sinh sản</h2>
+      <p>Trung tâm hỗ trợ sinh sản Hạnh Phúc cung cấp các phương pháp hỗ trợ sinh sản hiện đại, an toàn và hiệu quả. Dưới đây là thông tin về hai phương pháp chính:</p>
+
+      <div style="text-align: center; margin: 30px 0;">
+        <img src="img/banner-ho-tro-sinh-san.jpg" alt="Hỗ trợ sinh sản" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+      </div>
+    </section>
+
+    <!-- Methods Overview -->
+    <section>
+      <div class="facilities-iui-grid">
+        <div class="facilities-iui-row">
+          <div class="facility-card">
+            <div class="facility-iui-image" style="background-image: url('img/iui-method.jpg');"></div>
+            <div class="facility-content">
+              <h3 class="facility-title">IUI - Bơm tinh trùng vào buồng tử cung</h3>
+              <p>IUI (Intrauterine Insemination) là phương pháp hỗ trợ sinh sản đơn giản, ít xâm lấn và chi phí thấp hơn so với IVF.</p>
+              <ul class="feature-list">
+                <li>Phù hợp với các trường hợp hiếm muộn nhẹ</li>
+                <li>Thời gian điều trị ngắn</li>
+                <li>Chi phí hợp lý</li>
+                <li>Tỷ lệ thành công: 15-20% mỗi chu kỳ</li>
+              </ul>
+              <a href="iui-bom-tinh-trung.html" class="learn-more">Tìm hiểu chi tiết</a>
+            </div>
+          </div>
+
+          <div class="facility-card">
+            <div class="facility-iui-image" style="background-image: url('img/ivf-method.jpg');"></div>
+            <div class="facility-content">
+              <h3 class="facility-title">IVF - Thụ tinh ống nghiệm</h3>
+              <p>IVF (In Vitro Fertilization) là phương pháp hỗ trợ sinh sản tiên tiến nhất hiện nay, được áp dụng cho các trường hợp hiếm muộn phức tạp.</p>
+              <ul class="feature-list">
+                <li>Phù hợp với các trường hợp hiếm muộn nặng</li>
+                <li>Được kiểm soát chặt chẽ trong phòng thí nghiệm</li>
+                <li>Có thể kết hợp với các kỹ thuật hỗ trợ khác</li>
+                <li>Tỷ lệ thành công: 40-50% mỗi chu kỳ</li>
+              </ul>
+              <a href="ivf-thu-tinh-ong-nghiem.html" class="learn-more">Tìm hiểu chi tiết</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number">5000+</span>
+            <span class="stat-label">Ca điều trị thành công</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">98%</span>
+            <span class="stat-label">Khách hàng hài lòng</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">15+</span>
+            <span class="stat-label">Năm kinh nghiệm</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Bác sĩ chuyên môn cao</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2>Sẵn sàng cho hành trình làm cha mẹ của bạn?</h2>
+      <p>Đội ngũ bác sĩ giàu kinh nghiệm của chúng tôi luôn sẵn sàng đồng hành cùng bạn trên con đường có em bé. Hãy đặt lịch tư vấn miễn phí ngay hôm nay!</p>
+      <a href="dat-lich.html" class="banner-button">Đặt lịch tư vấn</a>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div class="footer" id="footer-contact">
+    <div class="footer-columns">
+      <div class="footer-col">
+        <h4>Về chúng tôi</h4>
+        <p>Trung tâm Y tế chuyên sâu về IVF và hỗ trợ sinh sản hàng đầu Việt Nam, với đội ngũ bác sĩ giàu kinh nghiệm và công nghệ hiện đại.</p>
+        <a href="about.html" class="detail-button">Tìm hiểu thêm</a>
+      </div>
+      <div class="footer-col">
+        <h4>Liên hệ</h4>
+        <p>287 Lê Văn Việt, P. Long Bình, Q.9, Thủ Đức</p>
+        <p>Email: info@ivfcenter.vn</p>
+        <p>Hotline: 1900 1234</p>
+      </div>
+      <div class="footer-col">
+        <h4>Dịch vụ</h4>
+        <p><a href="ivf-thu-tinh-ong-nghiem.html">IVF - Thụ tinh ống nghiệm</a></p>
+        <p><a href="iui-bom-tinh-trung.html">IUI - Bơm tinh trùng</a></p>
+        <p><a href="#">Tư vấn di truyền</a></p>
+        <p><a href="#">Khám hiếm muộn</a></p>
+      </div>
+      <div class="footer-col">
+        <h4>Theo dõi chúng tôi</h4>
+        <div class="social-icons">
+          <a href="#"><img src="img/facebook.png" alt="Facebook"></a>
+          <a href="#"><img src="img/instagram.png" alt="Instagram"></a>
+          <a href="#"><img src="img/youtube.png" alt="YouTube"></a>
+        </div>
+        <div class="email-subscribe">
+          <input type="email" placeholder="Email của bạn">
+          <button>Đăng ký</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; Trung tâm hỗ trợ sinh sản Hạnh Phúc. Tất cả các quyền được bảo lưu.</p>
+    </div>
+  </div>
+
+  <script>
+    // Modal functionality
+    const modal = document.getElementById("login-modal");
+    const registerModal = document.getElementById("register-modal");
+    const loginLink = document.getElementById("login-link");
+    const registerLink = document.getElementById("register-link");
+    const backToLoginLink = document.getElementById("back-to-login");
+    const closeButton = document.getElementsByClassName("close-button")[0];
+    const closeButtonRegister = document.getElementsByClassName("close-button")[1];
+    
+    // When the user clicks on the login link, open the modal
+    loginLink.onclick = function(event) {
+      event.preventDefault();
+      modal.style.display = "flex";
+      modal.classList.remove('closing');
+    }
+
+    // When the user clicks on the register link, open register modal
+    registerLink.onclick = function(event) {
+      event.preventDefault();
+      modal.style.display = "none";
+      registerModal.style.display = "flex";
+      registerModal.classList.remove('closing');
+    }
+
+    // When the user clicks on back to login link, open login modal
+    backToLoginLink.onclick = function(event) {
+      event.preventDefault();
+      registerModal.style.display = "none";
+      modal.style.display = "flex";
+      modal.classList.remove('closing');
+    }
+    
+    // Function to close modal with animation
+    function closeModal() {
+      modal.classList.add('closing');
+      setTimeout(() => {
+        modal.style.display = "none";
+      }, 300); // Match this with the animation duration
+    }
+
+    // Function to close register modal with animation
+    function closeRegisterModal() {
+      registerModal.classList.add('closing');
+      setTimeout(() => {
+        registerModal.style.display = "none";
+      }, 300);
+    }
+    
+    // When the user clicks on the close button, close the modal
+    closeButton.onclick = function() {
+      closeModal();
+    }
+
+    // When the user clicks on the close button for register modal
+    closeButtonRegister.onclick = function() {
+      closeRegisterModal();
+    }
+    
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        closeModal();
+      }
+      if (event.target == registerModal) {
+        closeRegisterModal();
+      }
+    }
+  </script>
+</body>
+</html> 
