@@ -485,70 +485,15 @@ body {
   }
   
    
-  /* .services {
-    margin: 50px auto;
-    text-align: center;
-    max-width: 1200px;
-    padding: 0 20px;
-  }
 
-  .services-title {
-    color: #4caf50;
-    margin-bottom: 30px;
-    font-size: 2rem;
-    font-weight: bold;
-  } */
-  
    .services-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 30px;
-    max-width: 900px;
     margin: 0 auto;
 
   } 
-
-  /* .service-item p {
-    
-    padding: 0 20px;
-    margin: 0 0 10px;
-    color: #666;
-  } */
-  
-  /* .service-item {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    width: 260px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
-  } */
-  
-  /* .service-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 24px rgba(255,152,0,0.25);
-  } */
-  
-  /* .service-item img {
-    width: 50%;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 12px;
-  } */
-  /* .service-label .p {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: justify;
-    max-width: 1000px;
-    margin: 0 auto;
-    margin-bottom: 20px;
-  }
-  
   .service-label {
     background: #4caf50;
     color: #fff;
