@@ -13,13 +13,13 @@
     <header>
         <div class="logo">
             <span class="logo-icon">🏥</span>
-            <span class="logo-text">Trung tâm hỗ trợ sinh sản Hạnh Phúc</span>
+            <span class="logo-text">Trung tâm hỗ trợ điều trị Hiếm Muộn</span>
         </div>
         <nav class="navbar">
             <a href="index.html">Trang chủ</a>
     
             <div class="dropdown">
-                <a href="#">Giới thiệu</a>
+                <a href="ve-benh-vien.html">Giới thiệu</a>
                 <div class="dropdown-content">
                     <a href="ve-benh-vien.html">Về trung tâm</a>
                     <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
@@ -28,44 +28,75 @@
                 </div>
             </div>
     
-            <div class="dropdown">
-                <a href="#">Hỗ trợ sinh sản</a>
-                <div class="dropdown-content">
-                    <a href="iui-bom-tinh-trung.html">IUI - Bơm tinh trùng vào buồng tử cung</a>
-                    <a href="ivf-thu-tinh-ong-nghiem.html">IVF - Thụ tinh ống nghiệm</a>
-                </div>
-            </div>
+            
             <a href="#footer-contact">Liên hệ</a>
             <a href="#" id="login-link">Đăng nhập</a>
         </nav>
     </header>
 
     <!-- Login Modal Popup -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <form>
-                <h3>Đăng nhập</h3>
-                <div class="form-group">
-                    <label for="username">Tên đăng nhập</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Mật khẩu</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="login-btn">Đăng nhập</button>
-                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
-                </div>
-                <div class="register-link">
-                    <span>Chưa có tài khoản?</span>
-                    <a href="#">Đăng ký</a>
-                </div>
-            </form>
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <form>
+        <h3>Đăng nhập</h3>
+        <div class="form-group">
+          <label for="username">Tên đăng nhập</label>
+          <input type="text" id="username" name="username" required>
         </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="login-btn">Đăng nhập</button>
+          <a href="#" class="forgot-password">Quên mật khẩu?</a>
+        </div>
+        <div class="register-link">
+          <span>Chưa có tài khoản?</span>
+          <a href="#" id="register-link">Đăng ký</a>
+        </div>
+      </form>
     </div>
+  </div>
 
+  <!-- Registration Modal Popup -->
+  <div id="register-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <form>
+        <h3>Đăng ký tài khoản</h3>
+        
+        <div class="form-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" name="reg-email" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-phone">Số điện thoại</label>
+          <input type="tel" id="reg-phone" name="reg-phone" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-username">Tên đăng nhập</label>
+          <input type="text" id="reg-username" name="reg-username" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Mật khẩu</label>
+          <input type="password" id="reg-password" name="reg-password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">Xác nhận mật khẩu</label>
+          <input type="password" id="confirm-password" name="confirm-password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="login-btn">Đăng ký</button>
+        </div>
+        <div class="register-link">
+          <span>Đã có tài khoản?</span>
+          <a href="#" id="back-to-login">Đăng nhập</a>
+        </div>
+      </form>
+    </div>
+  </div>
     <!-- Breadcrumb -->
     <nav class="breadcrumb">
         <a href="index.html">Trang chủ</a> &gt; <span>Bảng giá dịch vụ</span>
@@ -370,12 +401,32 @@
     <script>
         // Modal functionality
         const modal = document.getElementById("login-modal");
+        const registerModal = document.getElementById("register-modal");
         const loginLink = document.getElementById("login-link");
+        const registerLink = document.getElementById("register-link");
+        const backToLoginLink = document.getElementById("back-to-login");
         const closeButton = document.getElementsByClassName("close-button")[0];
+        const closeButtonRegister = document.getElementsByClassName("close-button")[1];
         
         // When the user clicks on the login link, open the modal
         loginLink.onclick = function(event) {
           event.preventDefault();
+          modal.style.display = "flex";
+          modal.classList.remove('closing');
+        }
+    
+        // When the user clicks on the register link, open register modal
+        registerLink.onclick = function(event) {
+          event.preventDefault();
+          modal.style.display = "none";
+          registerModal.style.display = "flex";
+          registerModal.classList.remove('closing');
+        }
+    
+        // When the user clicks on back to login link, open login modal
+        backToLoginLink.onclick = function(event) {
+          event.preventDefault();
+          registerModal.style.display = "none";
           modal.style.display = "flex";
           modal.classList.remove('closing');
         }
@@ -387,10 +438,23 @@
             modal.style.display = "none";
           }, 300); // Match this with the animation duration
         }
+    
+        // Function to close register modal with animation
+        function closeRegisterModal() {
+          registerModal.classList.add('closing');
+          setTimeout(() => {
+            registerModal.style.display = "none";
+          }, 300);
+        }
         
         // When the user clicks on the close button, close the modal
         closeButton.onclick = function() {
           closeModal();
+        }
+    
+        // When the user clicks on the close button for register modal
+        closeButtonRegister.onclick = function() {
+          closeRegisterModal();
         }
         
         // When the user clicks anywhere outside of the modal, close it
@@ -398,28 +462,10 @@
           if (event.target == modal) {
             closeModal();
           }
+          if (event.target == registerModal) {
+            closeRegisterModal();
+          }
         }
-
-        // Tab functionality
-        const tabs = document.querySelectorAll('.price-tab');
-        const sections = document.querySelectorAll('.price-section');
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs
-                tabs.forEach(t => t.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                tab.classList.add('active');
-                
-                // Hide all sections
-                sections.forEach(section => section.classList.remove('active'));
-                
-                // Show the section corresponding to the clicked tab
-                const targetId = tab.getAttribute('data-target');
-                document.getElementById(targetId).classList.add('active');
-            });
-        });
-    </script>
+      </script>
 </body>
 </html>
