@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trung tâm hỗ trợ điều trị Hiếm Muộn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="static/css/user.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <span class="logo-text"> Trung tâm hỗ trợ điều trị Hiếm Muộn</span>
+        </div>
+        <nav class="navbar">
+
+        </nav>
+        <button class="menu-toggle" id="menuToggle" aria-label="Mở menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+    
+
+    <section class="user-info">
+        <div class="user-avatar">
+            <img src="static/img/user-avatar.png" alt="Ảnh đại diện người dùng">
+        </div>
+        <div class="user-details">
+            <h2>Xin chào, Nguyễn Văn A!</h2>
+            <p>Chào mừng bạn đến với Trung tâm hỗ trợ điều trị Hiếm Muộn. Dưới đây là thông tin tổng quan về tài khoản
+                của bạn.</p>
+            <ul>
+                <li>Email: nguyenvana@email.com</li>
+                <li>Số điện thoại: 0901 234 567</li>
+                <li>Ngày tham gia: 01/01/2024</li>
+            </ul>
+        </div>
+    </section>
+
+
+
+    <aside class="sidebar" id="sidebar">
+        <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+        <a href="#">Thông tin bệnh nhân</a>
+        <a href="#">Tin nổi bật</a>
+        <a href="#">Bệnh án</a>
+        <a href="#">Lịch hẹn</a>
+        <a href="#">Kết quả xét nghiệm</a>
+        <a href="#">Cài đặt</a>
+        <a href="index.html">Đăng xuất</a>
+    </aside>
+
+    <footer class="footer" id="footer-contact">
+        <div class="footer-columns">
+
+            <!-- Cột 1 -->
+            <div class="footer-col">
+                <h4>Trung tâm hỗ trợ sinh sản Hạnh Phúc</h4>
+                <p>🌟 Tuần lễ vàng 2025 – Ươm mầm hạnh phúc</p>
+                <a href="#" class="detail-button">👉 XEM CHI TIẾT</a>
+            </div>
+
+            <!-- Cột 2 -->
+            <div class="footer-col">
+                <h4>Liên hệ</h4>
+                <p>📍 287 Lê Văn Việt, P. Long Bình, Q.9, Thủ Đức</p>
+                <p>📞 Tổng đài: 024.3634.3636</p>
+                <p>📱 Hotline: 090.222.1268</p>
+                <p>🕒 Thứ 2 - Thứ 7: 7h30 - 17h00<br>Chủ Nhật: 7h30 - 12h00</p>
+            </div>
+
+            <!-- Cột 3 -->
+            <div class="footer-col">
+                <h4>Đăng ký nhận tin</h4>
+                <div class="email-subscribe">
+                    <input type="email" placeholder="Nhập email của bạn">
+                    <button>Đăng ký</button>
+                </div>
+                <h4>Theo dõi chúng tôi</h4>
+                <div class="social-icons">
+                    <img src="static/icon-zalo.png" alt="Zalo">
+                    <img src="static/icon-facebook.png" alt="Facebook">
+                    <img src="static/icon-youtube.png" alt="YouTube">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© Bản quyền thuộc về Trung tâm hỗ trợ sinh sản Hạnh Phúc</p>
+            <p>Trang được bảo vệ bởi reCAPTCHA và tuân theo Chính sách bảo mật & Điều khoản dịch vụ của Google</p>
+        </div>
+    </footer>
+
+
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.add('active');
+        });
+
+        closeSidebar.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+
+        // Đóng sidebar khi click ra ngoài
+        window.addEventListener('click', function (e) {
+            if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== menuToggle) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+    <!-- ...existing code... -->
+</body>
+
+</html>
