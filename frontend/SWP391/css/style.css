@@ -1158,14 +1158,14 @@ body {
   }
   
   /* CTA Section */
-  .cta-section {
+  /* .cta-section {
     padding: 80px 0;
     background: linear-gradient(rgba(0, 95, 20, 0.9), rgba(0, 95, 20, 0.9)), url('img/cta-bg.jpg');
     background-size: cover;
     background-position: center;
     color: white;
     text-align: center;
-  }
+  } */
   
   .cta-section h2 {
     font-size: 2rem;
@@ -1437,14 +1437,14 @@ body {
 }
 
 /* CTA Section */
-.cta-section {
+/* .cta-section {
     padding: 80px 0;
     background: linear-gradient(rgba(0, 95, 20, 0.9), rgba(0, 95, 20, 0.9)), url('img/cta-bg.jpg');
     background-size: cover;
     background-position: center;
     text-align: center;
     color: white;
-}
+} */
 
 .cta-section h2 {
     font-size: 2.2rem;
@@ -1811,14 +1811,14 @@ body {
 }
 
 /* CTA Section */
-.cta-section {
+/* .cta-section {
     padding: 80px 0;
     background: linear-gradient(rgba(0, 95, 20, 0.9), rgba(0, 95, 20, 0.9)), url('img/cta-bg.jpg');
     background-size: cover;
     background-position: center;
     text-align: center;
     color: white;
-}
+} */
 
 .cta-section h2 {
     font-size: 2.2rem;
