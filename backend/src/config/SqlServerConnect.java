@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 public class SqlServerConnect {
 
-
     public static void connectToSqlServer() {
         String url = "jdbc:sqlserver://localhost:1433;databaseName=Healthcare_ServiceVer4";
         String user = "sa";
