@@ -15,17 +15,17 @@ public class LoginController {
     public LoginController(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
-
     @PostMapping("/login")
-    public String login(@RequestParam String username,
+    public String login(@RequestParam String username, // username là email
                         @RequestParam String password,
                         HttpSession session) {
         Customer customer = customerRepository.findByCusEmailAndCusPassword(username, password).orElse(null);
         if (customer != null) {
             session.setAttribute("loggedInCustomer", customer);
-            return "redirect:/user-dashboard";  // hoặc tên view phù hợp
+
+            return "redirect:/user-dashboard.html";// hoặc tên view phù hợp
         } else {
-            return "redirect:/index";  // trả về lại trang login nếu thất bại
+            return "redirect:/index.html";// trả về lại trang login nếu thất bại
         }
     }
 }

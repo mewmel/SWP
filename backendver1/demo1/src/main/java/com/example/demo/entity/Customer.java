@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 
 @Setter
@@ -14,21 +13,31 @@ import java.time.LocalDate;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cusId")
     private Long cusId;
 
+    @Column(name = "cusfullName")
     private String cusFullName;
-    private Boolean cusGender;
+
+    @Column(name = "cusGender")
+    private String cusGender;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "cusDate")
     private LocalDate cusDate;
 
-    private String cusEmail;
+    @Column(name = "cusEmail")
+    private String cusEmail; // <--- PHẢI LÀ camelCase
+
+    @Column(name = "cusPhone")
     private String cusPhone;
-    private String cusPassword;
+
+    @Column(name = "cusPassword")
+    private String cusPassword; // <--- PHẢI LÀ camelCase
+
+    @Column(name = "cusAddress")
     private String cusAddress;
-    private Boolean cusStatus;
 
-    // Getters và Setters
-
+    @Column(name = "cusStatus")
+    private boolean cusStatus;
 }
-
