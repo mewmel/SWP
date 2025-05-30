@@ -14,28 +14,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private final CustomerService customerService;
-
-    public AuthController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest dto) {
-        Customer customer = customerService.login(dto.getEmail(), dto.getPassword());
-        if (customer == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai tài khoản hoặc mật khẩu");
-        }
-        return ResponseEntity.ok(customer);
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest dto){
-        try {
-            Customer created = customerService.register(dto);
-            return ResponseEntity.ok(created);
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-        }
-    }
+//    private final CustomerService customerService;
+//
+//    public AuthController(CustomerService customerService) {
+//        this.customerService = customerService;
+//    }
+//
+//    @PostMapping("/login1")
+//    public ResponseEntity<?> login(@RequestBody LoginRequest dto) {
+//        Customer customer = customerService.login(dto.getEmail(), dto.getPassword());
+//        if (customer == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai tài khoản hoặc mật khẩu");
+//        }
+//        return ResponseEntity.ok(customer);
+//    }
+//
+//    @PostMapping("/register1")
+//    public ResponseEntity<?> register(@RequestBody RegisterRequest dto){
+//        try {
+//            Customer created = customerService.register(dto);
+//            return ResponseEntity.ok(created);
+//        } catch (RuntimeException ex) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+//        }
+//    }
 }

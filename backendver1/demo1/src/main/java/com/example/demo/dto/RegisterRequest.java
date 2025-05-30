@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Getter
 public class RegisterRequest {
     private String fullName;
-    private Boolean gender;
+    private String  gender;
     private LocalDate dob;
     private String email;
     private String phone;
