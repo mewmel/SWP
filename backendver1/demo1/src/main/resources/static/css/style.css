@@ -3692,3 +3692,69 @@ main.container h2::after {
   }
 }
 Hyper Icon
+.menu-toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  height: 40px;
+  padding: 0 22px;
+  margin-right: 20px;
+  background: #00753a;
+  border: none;
+  color: #fff;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.menu-toggle span {
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+.menu-toggle:hover {
+  background: #005f14;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 300px;
+  background: #005f14;
+  color: #fff;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  padding-top: 40px;
+}
+.sidebar.active {
+  transform: translateX(0);
+}
+.sidebar a {
+  color: #fff;
+  padding: 18px 28px;
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  transition: background 0.2s;
+}
+.sidebar a:hover {
+  background: rgba(255,255,255,0.08);
+}
+.close-sidebar {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 2100;
+  padding: 0;
+  line-height: 1;
+}
