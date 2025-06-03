@@ -1397,4 +1397,191 @@ footer::before {
     .author-info p {
         font-size: 0.85rem;
     }
+}
+
+/* About FertilityCare Section - Flex 2 cột text trái, hình phải */
+.about-fertilitycare-flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.about-fertilitycare-left {
+  flex: 1 1 50%;
+  max-width: 50%;
+  min-width: 300px;
+  padding-right: 32px;
+  box-sizing: border-box;
+}
+
+.about-fertilitycare-right {
+  flex: 1 1 50%;
+  max-width: 50%;
+  min-width: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 32px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 991px) {
+  .about-fertilitycare-flex {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .about-fertilitycare-left,
+  .about-fertilitycare-right {
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
+  }
+}
+
+/* Xóa các rule flex cũ liên quan col-lg-6 */
+.about-fertilitycare-section .col-lg-6.mb-4,
+.about-fertilitycare-section .col-lg-6.text-center,
+.about-fertilitycare-section .col-lg-6.mb-4.mb-lg-0 {
+  flex: unset !important;
+  max-width: unset !important;
+  min-width: unset !important;
+  padding: unset !important;
+  display: unset !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+  box-sizing: unset !important;
+}
+
+/* About FertilityCare Section (Custom) - Đẹp, hiện đại, đồng bộ */
+.about-fertilitycare-section {
+  background: var(--background);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin: var(--spacing-xl) 0;
+  padding: var(--spacing-xl) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-fertilitycare-section .container {
+  max-width: 1100px;
+}
+
+.about-fertilitycare-section .section-title {
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+  letter-spacing: -1px;
+}
+
+.about-fertilitycare-section .lead {
+  font-size: 1.15rem;
+  color: var(--light-text);
+  margin-bottom: var(--spacing-lg);
+}
+
+.about-fertilitycare-section h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.about-fertilitycare-section p {
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.about-fertilitycare-section .row.text-center {
+  margin-top: var(--spacing-lg);
+}
+
+.about-fertilitycare-section .display-5 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  line-height: 1.1;
+}
+
+.about-fertilitycare-section .col-4 .display-5 {
+  color: var(--accent-color);
+}
+
+.about-fertilitycare-section .col-4:nth-child(2) .display-5 {
+  color: var(--primary-color);
+}
+
+.about-fertilitycare-section .small {
+  color: var(--light-text);
+  font-size: 1rem;
+}
+
+.about-fertilitycare-section img {
+  max-width: 100%;
+  max-height: 350px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  object-fit: cover;
+  margin-top: var(--spacing-lg);
+}
+
+@media (max-width: 991px) {
+  .about-fertilitycare-section {
+    padding: var(--spacing-lg) 0;
+  }
+  .about-fertilitycare-section .section-title {
+    font-size: 1.7rem;
+  }
+  .about-fertilitycare-section .display-5 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .about-fertilitycare-section {
+    padding: var(--spacing-md) 0;
+    margin: var(--spacing-lg) 0;
+  }
+  .about-fertilitycare-section .section-title {
+    font-size: 1.2rem;
+  }
+  .about-fertilitycare-section .display-5 {
+    font-size: 1.1rem;
+  }
+  .about-fertilitycare-section img {
+    max-height: 200px;
+  }
+}
+
+.about-fertilitycare-header {
+  text-align: center;
+  margin-bottom: 48px;
+  margin-top: 0;
+}
+.about-fertilitycare-header h2 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #5a5fd4;
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
+}
+.about-fertilitycare-header p {
+  font-size: 1.25rem;
+  color: #6c757d;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+@media (max-width: 767px) {
+  .about-fertilitycare-header {
+    margin-bottom: 24px;
+  }
+  .about-fertilitycare-header h2 {
+    font-size: 1.5rem;
+  }
+  .about-fertilitycare-header p {
+    font-size: 1rem;
+  }
 } 
