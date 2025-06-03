@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
 
+import java.io.UnsupportedEncodingException;
+
 @Controller
 public class LoginController {
 
@@ -16,16 +18,16 @@ public class LoginController {
         this.customerRepository = customerRepository;
     }
     @PostMapping("/login")
-    public String login(@RequestParam String username, // username là email
+    public String login(@RequestParam String username,
                         @RequestParam String password,
-                        HttpSession session) {
+                        HttpSession session) throws UnsupportedEncodingException {
         Customer customer = customerRepository.findByCusEmailAndCusPassword(username, password).orElse(null);
         if (customer != null) {
             session.setAttribute("loggedInCustomer", customer);
-
-            return "redirect:/user-dashboard.html";// hoặc tên view phù hợp
+            // Chuyển hướng về index.html kèm tên user
+            return "redirect:/index.html?userName=" + java.net.URLEncoder.encode(customer.getCusFullName(), "UTF-8");
         } else {
-            return "redirect:/index.html";// trả về lại trang login nếu thất bại
+            return "redirect:/index.html?error=true";
         }
     }
 }

@@ -9,7 +9,68 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
+<script>
+  function getQueryParam(name) {
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  var userName = getQueryParam('userName');
+  if (userName) {
+    sessionStorage.setItem('userName', userName);
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else {
+    userName = sessionStorage.getItem('userName');
+  }
+
+  window.onload = function() {
+    // 1. Hiển thị thông báo lỗi đăng nhập nếu có error=true
+    if (window.location.search.includes("error=true")) {
+      document.getElementById("login-modal").style.display = "flex";
+      document.getElementById("login-error").style.display = "block";
+    }
+
+    // 2. Xử lý sidebar và login/logout
+    var loginLink = document.getElementById("login-link");
+    var sidebar = document.getElementById("sidebar");
+    var closeSidebar = document.getElementById("closeSidebar");
+    var logoutLink = document.getElementById("logout-link");
+
+    if (loginLink && userName) {
+      loginLink.textContent = userName;
+      loginLink.href = "#";
+      loginLink.onclick = function(e) {
+        e.preventDefault();
+        sidebar.classList.add('active');
+      };
+    }
+
+    if (closeSidebar) {
+      closeSidebar.onclick = function() {
+        sidebar.classList.remove('active');
+      };
+    }
+
+    if (logoutLink) {
+      logoutLink.onclick = function(e) {
+        e.preventDefault();
+        sessionStorage.removeItem('userName');
+        window.location.href = "index.html";
+      }
+    }
+  };
+</script>
 <body>
+<aside class="sidebar" id="sidebar">
+  <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+  <a href="#">Thông tin bệnh nhân</a>
+  <a href="#">Tin nổi bật</a>
+  <a href="#">Bệnh án</a>
+  <a href="#">Lịch hẹn</a>
+  <a href="#">Kết quả xét nghiệm</a>
+  <a href="#">Cài đặt</a>
+  <a href="index.html" id="logout-link">Đăng xuất</a>
+</aside>
   <header>
     <div class="logo">
   <span class="logo-text"> Trung tâm hỗ trợ điều trị Hiếm Muộn</span>
@@ -46,6 +107,8 @@
           <label for="password">Mật khẩu</label>
           <input type="password" id="password" name="password" required>
         </div>
+        <!-- Đặt ở chỗ bạn muốn hiện thông báo lỗi -->
+        <div id="login-error" style="color: red; display: none; text-align: center">Tên đăng nhập hoặc mật khẩu không đúng!</div>
         <div class="form-actions">
           <button type="submit" class="login-btn">Đăng nhập</button>
           <a href="#" class="forgot-password">Quên mật khẩu?</a>
