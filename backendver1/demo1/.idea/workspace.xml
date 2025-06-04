@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="38f89907-cce1-41f5-87a3-ae4558ebe8e9" name="Changes" comment="update Ver3">
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/Application.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/Customer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/SqlServerConnect.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/backend.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/demo.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/backend-1.0.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/SqlServerConnect.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/backend.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/demo.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/backend-1.0.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/backend.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/demo.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/target/backend-1.0.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/classes/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/classes/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/src/config/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/Demo1Application.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/Service/CustomerService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controller/HomeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controller/LoginController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/dto/LoginRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/dto/RegisterRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/entity/Customer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/repository/CustomerRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/bang-gia-dich-vu.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/co-so-vat-chat.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/user.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dat-lich.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/doi-ngu-bac-si.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/ho-tro-sinh-san.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/images/user-banner.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/banner.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/benhvien1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/doctor1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/doctor2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/doctor3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/facility1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/facility2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/facility3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/facility4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/facility5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/facility6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/iui-banner.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/iui-step1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/iui-step2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/iui-step3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/iui-step4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/ivf-banner.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/ivf-step1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/ivf-step2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/ivf-step3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/ivf-step4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/ivf-step5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/ivf-step6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/logo.jpg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/logo1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/men-health.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/news1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/news2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/news3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/news4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/news5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/service1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/service2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/service4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/service6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/user-banner.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/img/women-health.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/iui-bom-tinh-trung.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/ivf-thu-tinh-ong-nghiem.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/suc-khoe-tien-hon-nhan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/tam-soat-hiem-muon-o-nam-gioi.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/theo-doi-qua-trinh-dieu-tri.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/user-dashboard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/ve-trung-tam.html" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Hung-TV&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/mewmel/SWP.git&quot;,
+    &quot;accountId&quot;: &quot;88c68a09-7196-4a94-b23f-d931d1604cb4&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/example/demo/entity/Customer.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2xkvi56vvV9DKY3Vg7LLeeHRILI" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JUnit.All in demo1 (1).executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.All in demo1 (2).executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.All in demo1 (3).executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.All in demo1.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.bang-gia-dich-vu.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.index.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.theo-doi-qua-trinh-dieu-tri.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.user-dashboard.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.ve-trung-tam.html.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.demo1 [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.demo1 [install].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.Demo1Application.executor&quot;: &quot;Run&quot;,
+    &quot;database.data.extractors.current.export.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;hung&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/tatvi/IdeaProjects/SWP/backendver1/demo1/src/main/resources&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlserver&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\tatvi\IdeaProjects\SWP\backendver1\demo1\src\main\resources" />
+      <recent name="C:\Users\tatvi\IdeaProjects\SWP\backendver1\demo1\src\main\resources\static" />
+      <recent name="C:\Users\tatvi\IdeaProjects\SWP\backendver1\demo1\src\main\resources\templates" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\tatvi\IdeaProjects\SWP\backendver1\demo1\src\main\resources\static" />
+      <recent name="C:\Users\tatvi\IdeaProjects\SWP\backendver1\demo1\src\main\resources\templates" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.Demo1Application">
+    <configuration name="All in demo1 (2)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="demo1" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in demo1 (3)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="demo1" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="index.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/demo1/static/index.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="user-dashboard.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/demo1/static/user-dashboard.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="ve-trung-tam.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/demo1/static/ve-trung-tam.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="Demo1Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="demo1" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.demo.Demo1Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.user-dashboard.html" />
+        <item itemvalue="JavaScript Debug.ve-trung-tam.html" />
+        <item itemvalue="JUnit.All in demo1 (3)" />
+        <item itemvalue="JavaScript Debug.index.html" />
+        <item itemvalue="JUnit.All in demo1 (2)" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="38f89907-cce1-41f5-87a3-ae4558ebe8e9" name="Changes" comment="" />
+      <created>1748495010165</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1748495010165</updated>
+      <workItem from="1748495011202" duration="21378000" />
+      <workItem from="1748685636607" duration="2226000" />
+      <workItem from="1748841901303" duration="22978000" />
+      <workItem from="1749000433340" duration="4472000" />
+    </task>
+    <task id="LOCAL-00001" summary="Merge pull request from mewmel/hung&#10;&#10;edit_service2">
+      <option name="closed" value="true" />
+      <created>1748503387704</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1748503387704</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Merge pull request from mewmel/hung&#10;&#10;edit_service2">
+      <option name="closed" value="true" />
+      <created>1748503475544</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1748503475544</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Merge remote-tracking branch 'origin/hung' into hung&#10;&#10;# Conflicts:&#10;#&#9;backend/src/config/SqlServerConnect.java&#10;#&#9;backend/src/config/pom.xml">
+      <option name="closed" value="true" />
+      <created>1748503541927</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1748503541927</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Merge remote-tracking branch 'origin/hung' into hung&#10;&#10;# Conflicts:&#10;#&#9;backend/src/config/SqlServerConnect.java&#10;#&#9;backend/src/config/pom.xml">
+      <option name="closed" value="true" />
+      <created>1748587325269</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1748587325269</updated>
+    </task>
+    <task id="LOCAL-00005" summary="update login">
+      <option name="closed" value="true" />
+      <created>1748768949222</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1748768949222</updated>
+    </task>
+    <task id="LOCAL-00006" summary="update Ver3">
+      <option name="closed" value="true" />
+      <created>1748917143880</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1748917143880</updated>
+    </task>
+    <task id="LOCAL-00007" summary="update Ver3">
+      <option name="closed" value="true" />
+      <created>1749012777238</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1749012777238</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="false" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Merge pull request from mewmel/hung&#10;&#10;edit_service2" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/hung' into hung&#10;&#10;# Conflicts:&#10;#&#9;backend/src/config/SqlServerConnect.java&#10;#&#9;backend/src/config/pom.xml" />
+    <MESSAGE value="update login" />
+    <MESSAGE value="update Ver3" />
+    <option name="LAST_COMMIT_MESSAGE" value="update Ver3" />
+    <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
+  </component>
+</project>
