@@ -69,6 +69,7 @@ nav a.active {
     color: white;
     padding: var(--spacing-xl);
     border-radius: var(--border-radius-lg);
+    margin-top: 60px;
     margin-bottom: var(--spacing-xl);
     text-align: center;
 }
