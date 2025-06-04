@@ -20,12 +20,12 @@
     &quot;assignee&quot;: &quot;mewmel&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/mewmel/SWP.git",
-    "accountId": "88c68a09-7196-4a94-b23f-d931d1604cb4"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/mewmel/SWP.git&quot;,
+    &quot;accountId&quot;: &quot;88c68a09-7196-4a94-b23f-d931d1604cb4&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 1
@@ -40,9 +40,10 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "V-Hung",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/Users/tatvi/IdeaProjects",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -79,6 +80,7 @@
       <workItem from="1749018358475" duration="141000" />
       <workItem from="1749018503918" duration="231000" />
       <workItem from="1749020350460" duration="386000" />
+      <workItem from="1749025202784" duration="89000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
