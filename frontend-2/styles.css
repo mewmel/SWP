@@ -281,6 +281,7 @@ tr:nth-child(even) {
     text-align: center;
     position: relative;
     overflow: hidden;
+    
 }
 
 .cta::before {
@@ -816,11 +817,11 @@ footer::before {
 }
 
 .auth-modal-right {
-    flex: 1;
-    padding: var(--spacing-xl);
-    position: relative;
-    overflow-y: auto;
-    background: white;
+        flex: 1;
+        padding: var(--spacing-xl);
+        position: relative;
+        overflow-y: auto;
+        background: white;
 }
 
 .close-modal {
@@ -850,22 +851,27 @@ footer::before {
 /* Auth Tabs */
 .auth-tabs {
     display: flex;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-xl);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
     border-bottom: 2px solid var(--border-color);
     padding-bottom: var(--spacing-sm);
+    width: 100%;
+    max-width: 400px;
 }
 
 .auth-tab {
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
     background: none;
     border: none;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--light-text);
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .auth-tab::after {
@@ -1111,8 +1117,8 @@ footer::before {
     }
 
     .auth-tab {
-        padding: var(--spacing-sm);
         font-size: 1rem;
+        padding: var(--spacing-sm) var(--spacing-sm);
     }
 
     .remember-forgot {
@@ -1126,6 +1132,10 @@ footer::before {
         height: 45px;
         font-size: 1.2rem;
     }
+
+    .auth-tabs {
+        max-width: 100%;
+    }
 }
 
 /* Features Section */
@@ -1134,6 +1144,7 @@ footer::before {
     background: linear-gradient(135deg, var(--light-background) 0%, white 100%);
     position: relative;
     overflow: hidden;
+    box-shadow: var(--shadow-md);
 }
 
 .features::before {
@@ -1250,10 +1261,13 @@ footer::before {
 
 /* Testimonials Section */
 .testimonials {
+    background: var(--background);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    margin: var(--spacing-xl) 0;
     padding: var(--spacing-xl) 0;
     position: relative;
     overflow: hidden;
-   color: var(--text-color);
 }
 
 .testimonials::before {
