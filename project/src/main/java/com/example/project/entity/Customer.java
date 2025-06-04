@@ -39,5 +39,5 @@ public class Customer {
     private String cusAddress;
 
     @Column(name = "cusStatus")
-    private boolean cusStatus;
+    private String cusStatus;
 }

@@ -19,8 +19,7 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         Optional<Customer> customer = customerService.login(request);
         if (customer.isPresent()) {
-            // You may want to return a DTO instead of the entity for security
-            return ResponseEntity.ok(customer.get());
+            return ResponseEntity.ok(customer.get()); // status 200
         } else {
             return ResponseEntity.status(401).body("Invalid email or password, or account is inactive.");
         }
