@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FertilityEHR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Dashboard specific styles */
+        .dashboard-user-area {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .notification-icon {
+            position: relative;
+            background: var(--light-background);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-icon:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+        }
+
+        /* Override for active dashboard link */
+        nav a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .dashboard-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: var(--spacing-xl);
+        }
+
+        .dashboard-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        /* Overview Cards */
+        .overview-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-md);
+        }
+
+        .overview-card {
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .overview-card h3 {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            margin-bottom: var(--spacing-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .overview-card .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .overview-card .subtitle {
+            font-size: 0.85rem;
+            color: var(--light-text);
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-xl);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .timeline-header h2 {
+            color: var(--text-color);
+            font-size: 1.5rem;
+        }
+
+        .progress-bar {
+            background: var(--light-background);
+            border-radius: 10px;
+            height: 20px;
+            margin-bottom: var(--spacing-lg);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: var(--gradient-primary);
+            height: 100%;
+            width: 40%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .timeline-week {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .timeline-day {
+            background: var(--light-background);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            text-align: center;
+            position: relative;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .timeline-day.today {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .timeline-day.has-event {
+            border: 2px solid var(--secondary-color);
+        }
+
+        .day-number {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .day-events {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: var(--spacing-sm);
+        }
+
+        .event-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .event-injection {
+            background: #e74c3c;
+        }
+
+        .event-test {
+            background: #f39c12;
+        }
+
+        .event-appointment {
+            background: #27ae60;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-xl);
+        }
+
+        .quick-actions h3 {
+            color: var(--text-color);
+            margin-bottom: var(--spacing-lg);
+            font-size: 1.3rem;
+        }
+
+        .action-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--border-radius-md);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-item:hover {
+            background: var(--light-background);
+            transform: translateX(5px);
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Sidebar */
+        .dashboard-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-lg);
+        }
+
+        .sidebar-card h3 {
+            color: var(--text-color);
+            margin-bottom: var(--spacing-md);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .treatment-info,
+        .medication-info {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .medication-item {
+            background: var(--light-background);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .medication-name {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .medication-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--light-text);
+        }
+
+        /* Notifications */
+        .notifications-card {
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--border-radius-md);
+            background: var(--light-background);
+        }
+
+        .notification-time {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.8rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-xl);
+            height: 300px;
+        }
+
+        .chart-container h3 {
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-main {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+
+            .overview-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-user-area {
+                gap: var(--spacing-sm);
+            }
+
+            .overview-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-week {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .dashboard-main {
+                padding: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="https://www.meditab.com/img/logo.png" alt="Logo Meditab">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="#" class="active">Dashboard</a></li>
+                    <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
+                    <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
+                    <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons dashboard-user-area">
+                <button class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="User" class="user-avatar">
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Dashboard Main Content -->
+    <main class="dashboard-main">
+        <!-- Main Content Area -->
+        <div class="dashboard-content">
+            <!-- Overview Cards -->
+            <section class="overview-cards">
+                <div class="overview-card">
+                    <h3>Chu kỳ hiện tại</h3>
+                    <div class="value">IVF</div>
+                    <div class="subtitle">Giai đoạn 2</div>
+                </div>
+                <div class="overview-card">
+                    <h3>Ngày tiếp theo</h3>
+                    <div class="value">25/06</div>
+                    <div class="subtitle">Xét nghiệm</div>
+                </div>
+                <div class="overview-card">
+                    <h3>Thuốc cần tiêm</h3>
+                    <div class="value">2</div>
+                    <div class="subtitle">Hôm nay</div>
+                </div>
+                <div class="overview-card">
+                    <h3>Kết quả gần nhất</h3>
+                    <div class="value">Tốt</div>
+                    <div class="subtitle">E2: 245 pg/ml</div>
+                </div>
+            </section>
+
+            <!-- Timeline Section -->
+            <section class="timeline-section">
+                <div class="timeline-header">
+                    <h2>Timeline điều trị</h2>
+                    <span style="color: var(--light-text);">Tuần 3 - Tháng 6/2024</span>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-fill">
+                        <span class="progress-text">Giai đoạn 2/5 - Kích thích buồng trứng</span>
+                    </div>
+                </div>
+
+                <!-- Week Timeline -->
+                <div class="timeline-week">
+                    <div class="timeline-day">
+                        <div class="day-number">22</div>
+                        <div class="day-events">
+                            <div class="event-dot event-injection"></div>
+                        </div>
+                        <small>T2</small>
+                    </div>
+                    <div class="timeline-day">
+                        <div class="day-number">23</div>
+                        <div class="day-events">
+                            <div class="event-dot event-injection"></div>
+                        </div>
+                        <small>T3</small>
+                    </div>
+                    <div class="timeline-day today">
+                        <div class="day-number">24</div>
+                        <div class="day-events">
+                            <div class="event-dot event-injection"></div>
+                            <div class="event-dot event-test"></div>
+                        </div>
+                        <small>T4</small>
+                    </div>
+                    <div class="timeline-day has-event">
+                        <div class="day-number">25</div>
+                        <div class="day-events">
+                            <div class="event-dot event-test"></div>
+                        </div>
+                        <small>T5</small>
+                    </div>
+                    <div class="timeline-day">
+                        <div class="day-number">26</div>
+                        <div class="day-events">
+                            <div class="event-dot event-injection"></div>
+                        </div>
+                        <small>T6</small>
+                    </div>
+                    <div class="timeline-day has-event">
+                        <div class="day-number">27</div>
+                        <div class="day-events">
+                            <div class="event-dot event-appointment"></div>
+                        </div>
+                        <small>T7</small>
+                    </div>
+                    <div class="timeline-day">
+                        <div class="day-number">28</div>
+                        <div class="day-events">
+                            <div class="event-dot event-appointment"></div>
+                        </div>
+                        <small>CN</small>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div style="display: flex; gap: var(--spacing-lg); font-size: 0.85rem; color: var(--light-text);">
+                    <span><span class="event-dot event-injection" style="display: inline-block; margin-right: 5px;"></span>Tiêm thuốc</span>
+                    <span><span class="event-dot event-test" style="display: inline-block; margin-right: 5px;"></span>Xét nghiệm</span>
+                    <span><span class="event-dot event-appointment" style="display: inline-block; margin-right: 5px;"></span>Khám bác sĩ</span>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <h3>Hành động nhanh</h3>
+                <ul class="action-list">
+                    <li class="action-item">
+                        <div class="action-icon">🔔</div>
+                        <span>Đặt nhắc nhở tiêm thuốc</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">📅</div>
+                        <span>Xem lịch điều trị đầy đủ</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">📊</div>
+                        <span>Xem kết quả xét nghiệm</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">💬</div>
+                        <span>Nhắn tin với bác sĩ</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">📝</div>
+                        <span>Ghi nhật ký triệu chứng</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Chart Section -->
+            <section class="chart-container">
+                <h3>Biểu đồ nhiệt độ cơ thể</h3>
+                <canvas id="temperatureChart"></canvas>
+            </section>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <!-- Treatment Info -->
+            <div class="sidebar-card">
+                <h3><i class="fas fa-heart"></i> Thông tin điều trị</h3>
+                <div class="treatment-info">
+                    <div class="info-row">
+                        <span class="info-label">Phương pháp:</span>
+                        <span class="info-value">IVF</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Bác sĩ phụ trách:</span>
+                        <span class="info-value">BS. Nguyễn Thị Hương</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Ngày bắt đầu:</span>
+                        <span class="info-value">15/06/2024</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Chu kỳ thứ:</span>
+                        <span class="info-value">2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medication Info -->
+            <div class="sidebar-card">
+                <h3><i class="fas fa-pills"></i> Thuốc đang sử dụng</h3>
+                <div class="medication-info">
+                    <div class="medication-item">
+                        <div class="medication-name">Gonal-F</div>
+                        <div class="medication-details">
+                            <span>150 IU</span>
+                            <span>19:00</span>
+                            <span>Còn 5 liều</span>
+                        </div>
+                    </div>
+                    <div class="medication-item">
+                        <div class="medication-name">Cetrotide</div>
+                        <div class="medication-details">
+                            <span>0.25mg</span>
+                            <span>20:00</span>
+                            <span>Còn 3 liều</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="sidebar-card notifications-card">
+                <h3><i class="fas fa-bell"></i> Thông báo hôm nay</h3>
+                <div class="notification-item">
+                    <div class="notification-time">19:00</div>
+                    <span>Tiêm thuốc Gonal-F</span>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-time">Ngày mai</div>
+                    <span>Xét nghiệm máu E2</span>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-time">28/06</div>
+                    <span>Khám siêu âm kiểm tra</span>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="sidebar-card">
+                <h3><i class="fas fa-link"></i> Tính năng đặc biệt</h3>
+                <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                        📝 Nhật ký cá nhân
+                    </a>
+                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                        💬 Chat với bác sĩ
+                    </a>
+                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                        📚 Tài liệu tham khảo
+                    </a>
+                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                        👥 Cộng đồng
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        // Temperature Chart
+        const ctx = document.getElementById('temperatureChart').getContext('2d');
+        const temperatureChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['20/6', '21/6', '22/6', '23/6', '24/6', '25/6', '26/6'],
+                datasets: [{
+                    label: 'Nhiệt độ cơ thể (°C)',
+                    data: [36.4, 36.3, 36.5, 36.7, 36.8, 36.6, 36.9],
+                    borderColor: 'rgb(74, 144, 226)',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 36,
+                        max: 37.5
+                    }
+                }
+            }
+        });
+
+        // Interactive features
+        document.querySelectorAll('.action-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const action = this.textContent.trim();
+                alert(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`);
+            });
+        });
+
+        // Notification click
+        document.querySelector('.notification-icon').addEventListener('click', function() {
+            alert('Bạn có 3 thông báo mới:\n1. Tiêm thuốc lúc 19:00\n2. Xét nghiệm ngày mai\n3. Khám bác sĩ 28/06');
+        });
+
+        // Progress animation
+        setTimeout(() => {
+            document.querySelector('.progress-fill').style.width = '40%';
+        }, 500);
+
+        // Add hover effects to timeline days
+        document.querySelectorAll('.timeline-day').forEach(day => {
+            day.addEventListener('mouseenter', function() {
+                if (this.classList.contains('has-event')) {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.transition = 'transform 0.2s ease';
+                }
+            });
+            
+            day.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html> 

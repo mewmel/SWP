@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ cá nhân - FertilityEHR</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/ho-so-ca-nhan.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="https://www.meditab.com/img/logo.png" alt="Logo Meditab">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
+                    <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
+                    <li><a href="#" class="active">Hồ sơ cá nhân</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons dashboard-user-area">
+                <button class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="User" class="user-avatar">
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="page-main">
+        <div class="page-header">
+            <h1>Hồ sơ cá nhân</h1>
+            <p>Quản lý thông tin cá nhân và lịch sử điều trị</p>
+        </div>
+
+        <div class="profile-tabs">
+            <button class="tab-btn active" data-tab="personal">
+                <i class="fas fa-user"></i> Thông tin cá nhân
+            </button>
+            <button class="tab-btn" data-tab="medical">
+                <i class="fas fa-medical"></i> Lịch sử y tế
+            </button>
+            <button class="tab-btn" data-tab="settings">
+                <i class="fas fa-cog"></i> Cài đặt
+            </button>
+        </div>
+
+        <!-- Personal Information Tab -->
+        <div class="tab-content active" id="personal">
+            <div class="profile-grid">
+                <div class="profile-card">
+                    <div class="profile-avatar-section">
+                        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Profile" class="profile-avatar">
+                        <div class="avatar-upload">
+                            <i class="fas fa-camera"></i>
+                            <p>Thay đổi ảnh đại diện</p>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <span class="info-label">Mã bệnh nhân</span>
+                            <span class="info-value">BN-2024-001</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ngày đăng ký</span>
+                            <span class="info-value">15/03/2024</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Bác sĩ phụ trách</span>
+                            <span class="info-value">BS. Nguyễn Thị Hương</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Chu kỳ điều trị</span>
+                            <span class="info-value">Chu kỳ 1 - IVF</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-card">
+                    <h3>Chỉnh sửa thông tin</h3>
+                    <form class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Họ và tên</label>
+                            <input type="text" class="form-input" value="Nguyễn Thị Mai">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-input" value="1990-05-15">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="tel" class="form-input" value="0987654321">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" value="mai.nguyen@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CCCD/CMND</label>
+                            <input type="text" class="form-input" value="123456789">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nghề nghiệp</label>
+                            <input type="text" class="form-input" value="Kế toán">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">Địa chỉ</label>
+                            <input type="text" class="form-input" value="123 Đường ABC, Quận 1, TP.HCM">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">Thông tin liên hệ khẩn cấp</label>
+                            <textarea class="form-input form-textarea" placeholder="Tên, số điện thoại và mối quan hệ của người liên hệ khẩn cấp">Nguyễn Văn Nam - 0912345678 - Chồng</textarea>
+                        </div>
+                    </form>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Hủy bỏ</button>
+                        <button class="btn btn-primary">Lưu thay đổi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical History Tab -->
+        <div class="tab-content" id="medical">
+            <div class="medical-history">
+                <div class="history-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <i class="fas fa-heartbeat"></i>
+                            Lịch sử điều trị hiếm muộn
+                        </h3>
+                        <button class="add-btn">
+                            <i class="fas fa-plus"></i>
+                            Thêm mới
+                        </button>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">15/03/2024</div>
+                            <div class="timeline-title">Bắt đầu chu kỳ IVF đầu tiên</div>
+                            <div class="timeline-content">
+                                Khám ban đầu, xét nghiệm hormone AMH, FSH, LH. Bắt đầu giao thức kích thích buồng trứng với Gonal-F.
+                                Bác sĩ: BS. Nguyễn Thị Hương
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">10/01/2024</div>
+                            <div class="timeline-title">Khám tư vấn lần đầu</div>
+                            <div class="timeline-content">
+                                Khám phụ khoa tổng quát, siêu âm, xét nghiệm máu cơ bản. Chẩn đoán: vô sinh nguyên phát.
+                                Tư vấn phương pháp điều trị IVF.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="history-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <i class="fas fa-pills"></i>
+                            Tiền sử bệnh tật
+                        </h3>
+                        <button class="add-btn">
+                            <i class="fas fa-plus"></i>
+                            Thêm mới
+                        </button>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">2020</div>
+                            <div class="timeline-title">Phẫu thuật nang buồng trứng</div>
+                            <div class="timeline-content">
+                                Phẫu thuật nội soi cắt nang buồng trứng bên phải. Kết quả mô bệnh học: nang bì dermoid.
+                                Bệnh viện: Bệnh viện Từ Dũ
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2018</div>
+                            <div class="timeline-title">Viêm phần phụ</div>
+                            <div class="timeline-content">
+                                Điều trị viêm phần phụ mạn tính với kháng sinh và chống viêm. Theo dõi 6 tháng.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="history-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <i class="fas fa-allergies"></i>
+                            Dị ứng và thuốc đang dùng
+                        </h3>
+                        <button class="add-btn">
+                            <i class="fas fa-plus"></i>
+                            Thêm mới
+                        </button>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Dị ứng thuốc</label>
+                            <textarea class="form-input form-textarea" readonly>Penicillin - phát ban, ngứa</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Thuốc đang sử dụng</label>
+                            <textarea class="form-input form-textarea" readonly>- Gonal-F 150 IU (tiêm tối)
+- Cetrotide 0.25mg (tiêm sáng)
+- Acid folic 5mg (uống hàng ngày)</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-content" id="settings">
+            <div class="settings-grid">
+                <div class="setting-section">
+                    <h3>Thông báo</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-title">Nhắc nhở uống thuốc</div>
+                            <div class="setting-description">Nhận thông báo nhắc nhở thời gian uống thuốc</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-title">Thông báo lịch hẹn</div>
+                            <div class="setting-description">Nhận thông báo trước 24h về lịch hẹn khám</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-title">Kết quả xét nghiệm</div>
+                            <div class="setting-description">Thông báo khi có kết quả xét nghiệm mới</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-section">
+                    <h3>Bảo mật</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-title">Xác thực 2 lớp</div>
+                            <div class="setting-description">Bảo vệ tài khoản bằng mã OTP</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-title">Đăng nhập bằng vân tay</div>
+                            <div class="setting-description">Sử dụng vân tay để đăng nhập nhanh</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Đổi mật khẩu</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="password" class="form-input" placeholder="Mật khẩu hiện tại" style="flex: 1;">
+                            <button class="btn btn-secondary">Đổi mật khẩu</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-section">
+                    <h3>Quyền riêng tư</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-title">Chia sẻ dữ liệu nghiên cứu</div>
+                            <div class="setting-description">Cho phép sử dụng dữ liệu cho nghiên cứu y khoa</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-title">Nhận email marketing</div>
+                            <div class="setting-description">Nhận thông tin khuyến mãi và tin tức y tế</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-section">
+                    <h3>Xuất dữ liệu</h3>
+                    <p style="color: var(--light-text); margin-bottom: var(--spacing-lg);">
+                        Tải xuống toàn bộ dữ liệu cá nhân và lịch sử điều trị của bạn
+                    </p>
+                    <div class="btn-group" style="justify-content: flex-start;">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Xuất dữ liệu
+                        </button>
+                        <button class="btn" style="background: #e74c3c; color: white;">
+                            <i class="fas fa-trash"></i>
+                            Xóa tài khoản
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Tab functionality
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.dataset.tab;
+                
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                this.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Avatar upload
+        document.querySelector('.avatar-upload').addEventListener('click', function() {
+            alert('Chọn ảnh mới từ thiết bị của bạn');
+        });
+
+        // Save changes
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            alert('Thông tin đã được lưu thành công!');
+        });
+
+        // Add medical history
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('Mở form thêm thông tin mới');
+            });
+        });
+
+        // Change password
+        document.querySelector('.btn-secondary').addEventListener('click', function() {
+            if (this.textContent.includes('Đổi mật khẩu')) {
+                alert('Mở form đổi mật khẩu');
+            }
+        });
+
+        // Export data
+        document.querySelector('.btn-secondary').addEventListener('click', function() {
+            if (this.textContent.includes('Xuất dữ liệu')) {
+                alert('Đang chuẩn bị file xuất dữ liệu...');
+            }
+        });
+
+        // Delete account
+        document.querySelector('.btn').addEventListener('click', function() {
+            if (this.textContent.includes('Xóa tài khoản')) {
+                if (confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.')) {
+                    alert('Yêu cầu xóa tài khoản đã được gửi đến quản trị viên');
+                }
+            }
+        });
+
+        // Notification click
+        document.querySelector('.notification-icon').addEventListener('click', function() {
+            alert('Bạn có 3 thông báo mới:\n1. Cập nhật thông tin cá nhân thành công\n2. Lịch khám ngày mai\n3. Nhắc nhở uống thuốc');
+        });
+    </script>
+</body>
+</html> 
