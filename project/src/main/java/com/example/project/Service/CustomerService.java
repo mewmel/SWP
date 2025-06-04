@@ -17,7 +17,8 @@ public class CustomerService {
         Optional<Customer> customerOpt = customerRepository.findByCusEmail(request.getCusEmail());
         if (customerOpt.isPresent()) {
             Customer customer = customerOpt.get();
-            if (customer.getCusPassword().equals(request.getCusPassword()) && customer.isCusStatus()) {
+            // Chỉ kiểm tra mật khẩu
+            if (customer.getCusPassword().equals(request.getCusPassword())) {
                 return Optional.of(customer);
             }
         }
