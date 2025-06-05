@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -35,314 +37,307 @@
                 <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
                 <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
             </div>
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </header>
+        </section>
 
-    <section class="booking-hero">
-        <div class="booking-container">
-            <h1>Đặt lịch khám</h1>
-            <p>Đặt lịch hẹn với các chuyên gia hàng đầu trong lĩnh vực hiếm muộn</p>
-        </div>
-    </section>
+        <section class="booking-main">
+            <div class="container">
+                <div class="booking-layout">
+                    <!-- Form đặt lịch bên trái -->
+                    <div class="booking-form-container">
+                        <div class="form-header">
+                            <h2>Thông tin đặt lịch</h2>
+                            <p>Vui lòng điền đầy đủ thông tin</p>
+                        </div>
 
-    <section class="booking-main">
-        <div class="container">
-            <div class="booking-layout">
-                <!-- Form đặt lịch bên trái -->
-                <div class="booking-form-container">
-                    <div class="form-header">
-                        <h2>Thông tin đặt lịch</h2>
-                        <p>Vui lòng điền đầy đủ thông tin</p>
-                    </div>
+                        <form class="booking-form" id="bookingForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="fullName">Họ và tên <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input type="text" id="fullName" class="form-input" required
+                                            placeholder="Nhập họ tên">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </div>
 
-                    <form class="booking-form" id="bookingForm">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="fullName">Họ và tên <span class="required">*</span></label>
-                                <div class="input-wrapper">
-                                    <input type="text" id="fullName" class="form-input" required placeholder="Nhập họ tên">
-                                    <i class="fas fa-user"></i>
+                                <div class="form-group">
+                                    <label for="phone">Số điện thoại <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input type="tel" id="phone" class="form-input" required placeholder="Nhập SĐT">
+                                        <i class="fas fa-phone"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <div class="input-wrapper">
+                                        <input type="email" id="email" class="form-input" placeholder="Nhập email">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="dob">Ngày sinh</label>
+                                    <div class="input-wrapper calendar-input">
+                                        <input type="date" id="dob" class="form-input">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="doctor">Bác sĩ <span class="required">*</span></label>
+                                    <select id="doctor" class="form-select" required>
+                                        <option value="">Chọn bác sĩ</option>
+                                        <option value="dr-nguyen">BS. Nguyễn Thị Hương - IVF</option>
+                                        <option value="dr-tran">BS. Trần Văn Minh - Nam học</option>
+                                        <option value="dr-le">BS. Lê Thị Hà - Phụ khoa</option>
+                                        <option value="dr-pham">BS. Phạm Văn An - Nội tiết</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="appointmentDate">Ngày khám <span class="required">*</span></label>
+                                    <div class="input-wrapper calendar-input">
+                                        <input type="date" id="appointmentDate" class="form-input" required>
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="phone">Số điện thoại <span class="required">*</span></label>
-                                <div class="input-wrapper">
-                                    <input type="tel" id="phone" class="form-input" required placeholder="Nhập SĐT">
-                                    <i class="fas fa-phone"></i>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <div class="input-wrapper">
-                                    <input type="email" id="email" class="form-input" placeholder="Nhập email">
-                                    <i class="fas fa-envelope"></i>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="dob">Ngày sinh</label>
-                                <div class="input-wrapper calendar-input">
-                                    <input type="date" id="dob" class="form-input">
-                                    <i class="fas fa-calendar-alt"></i>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="doctor">Bác sĩ <span class="required">*</span></label>
-                                <select id="doctor" class="form-select" required>
-                                    <option value="">Chọn bác sĩ</option>
-                                    <option value="dr-nguyen">BS. Nguyễn Thị Hương - IVF</option>
-                                    <option value="dr-tran">BS. Trần Văn Minh - Nam học</option>
-                                    <option value="dr-le">BS. Lê Thị Hà - Phụ khoa</option>
-                                    <option value="dr-pham">BS. Phạm Văn An - Nội tiết</option>
+                            <div class="form-group form-group-full">
+                                <label for="service">Loại dịch vụ <span class="required">*</span></label>
+                                <select id="service" class="form-select" required>
+                                    <option value="">Chọn dịch vụ</option>
+                                    <option value="consultation">Tư vấn ban đầu</option>
+                                    <option value="follow-up">Tái khám</option>
+                                    <option value="ivf">Thụ tinh trong ống nghiệm (IVF)</option>
+                                    <option value="iui">Thụ tinh nhân tạo (IUI)</option>
+                                    <option value="fertility-test">Xét nghiệm sinh sản</option>
+                                    <option value="ultrasound">Siêu âm theo dõi</option>
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label for="appointmentDate">Ngày khám <span class="required">*</span></label>
-                                <div class="input-wrapper calendar-input">
-                                    <input type="date" id="appointmentDate" class="form-input" required>
-                                    <i class="fas fa-calendar-alt"></i>
+                            <div class="form-group form-group-full">
+                                <label for="timeSlot">Khung giờ <span class="required">*</span></label>
+                                <div class="time-slots">
+                                    <div class="time-slot" data-time="08:00">08:00-09:00</div>
+                                    <div class="time-slot" data-time="09:00">09:00-10:00</div>
+                                    <div class="time-slot" data-time="10:00">10:00-11:00</div>
+                                    <div class="time-slot" data-time="11:00">11:00-12:00</div>
+                                    <div class="time-slot" data-time="14:00">14:00-15:00</div>
+                                    <div class="time-slot" data-time="15:00">15:00-16:00</div>
+                                    <div class="time-slot" data-time="16:00">16:00-17:00</div>
+                                    <div class="time-slot disabled" data-time="17:00">17:00-18:00</div>
                                 </div>
+                                <input type="hidden" id="selectedTime" name="selectedTime" required>
                             </div>
-                        </div>
 
-                        <div class="form-group form-group-full">
-                            <label for="service">Loại dịch vụ <span class="required">*</span></label>
-                            <select id="service" class="form-select" required>
-                                <option value="">Chọn dịch vụ</option>
-                                <option value="consultation">Tư vấn ban đầu</option>
-                                <option value="follow-up">Tái khám</option>
-                                <option value="ivf">Thụ tinh trong ống nghiệm (IVF)</option>
-                                <option value="iui">Thụ tinh nhân tạo (IUI)</option>
-                                <option value="fertility-test">Xét nghiệm sinh sản</option>
-                                <option value="ultrasound">Siêu âm theo dõi</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group form-group-full">
-                            <label for="timeSlot">Khung giờ <span class="required">*</span></label>
-                            <div class="time-slots">
-                                <div class="time-slot" data-time="08:00">08:00-09:00</div>
-                                <div class="time-slot" data-time="09:00">09:00-10:00</div>
-                                <div class="time-slot" data-time="10:00">10:00-11:00</div>
-                                <div class="time-slot" data-time="11:00">11:00-12:00</div>
-                                <div class="time-slot" data-time="14:00">14:00-15:00</div>
-                                <div class="time-slot" data-time="15:00">15:00-16:00</div>
-                                <div class="time-slot" data-time="16:00">16:00-17:00</div>
-                                <div class="time-slot disabled" data-time="17:00">17:00-18:00</div>
+                            <div class="form-group form-group-full">
+                                <label for="symptoms">Triệu chứng/Ghi chú</label>
+                                <textarea id="symptoms" class="form-textarea"
+                                    placeholder="Mô tả triệu chứng hoặc ghi chú..."></textarea>
                             </div>
-                            <input type="hidden" id="selectedTime" name="selectedTime" required>
+
+                            <button type="submit" class="submit-btn">
+                                <span>Đặt lịch ngay</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Social sidebar fixed bên phải -->
+                    <div class="social-sidebar">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+
+                    <!-- Thông tin bên phải -->
+                    <div class="booking-info">
+                        <div class="info-section">
+                            <h3><i class="fas fa-clock"></i> Giờ làm việc</h3>
+                            <ul>
+                                <li>Thứ 2 - Thứ 6: 8:00 - 17:00</li>
+                                <li>Thứ 7: 8:00 - 12:00</li>
+                                <li>Chủ nhật: 8:00 - 12:00</li>
+                            </ul>
                         </div>
 
-                        <div class="form-group form-group-full">
-                            <label for="symptoms">Triệu chứng/Ghi chú</label>
-                            <textarea id="symptoms" class="form-textarea" placeholder="Mô tả triệu chứng hoặc ghi chú..."></textarea>
+                        <div class="info-section">
+                            <h3><i class="fas fa-user-md"></i> Dịch vụ</h3>
+                            <ul>
+                                <li>Tư vấn hiếm muộn</li>
+                                <li>Thụ tinh IVF/IUI</li>
+                                <li>Xét nghiệm sinh sản</li>
+                                <li>Siêu âm chuyên khoa</li>
+                                <li>Điều trị nội tiết</li>
+                            </ul>
                         </div>
 
-                        <button type="submit" class="submit-btn">
-                            <span>Đặt lịch ngay</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </form>
-                </div>
+                        <div class="info-section">
+                            <h3><i class="fas fa-shield-alt"></i> Cam kết</h3>
+                            <ul>
+                                <li>Bảo mật thông tin 100%</li>
+                                <li>Đội ngũ bác sĩ chuyên nghiệp</li>
+                                <li>Thiết bị hiện đại</li>
+                                <li>Hỗ trợ 24/7</li>
+                            </ul>
+                        </div>
 
-                <!-- Thông tin bên phải -->
-                <div class="booking-info">
-                    <div class="info-section">
-                        <h3><i class="fas fa-clock"></i> Giờ làm việc</h3>
-                        <ul>
-                            <li>Thứ 2 - Thứ 6: 8:00 - 17:00</li>
-                            <li>Thứ 7: 8:00 - 12:00</li>
-                            <li>Chủ nhật: 8:00 - 12:00</li>
-                        </ul>
-                    </div>
-
-                    <div class="info-section">
-                        <h3><i class="fas fa-user-md"></i> Dịch vụ</h3>
-                        <ul>
-                            <li>Tư vấn hiếm muộn</li>
-                            <li>Thụ tinh IVF/IUI</li>
-                            <li>Xét nghiệm sinh sản</li>
-                            <li>Siêu âm chuyên khoa</li>
-                            <li>Điều trị nội tiết</li>
-                        </ul>
-                    </div>
-
-                    <div class="info-section">
-                        <h3><i class="fas fa-shield-alt"></i> Cam kết</h3>
-                        <ul>
-                            <li>Bảo mật thông tin 100%</li>
-                            <li>Đội ngũ bác sĩ chuyên nghiệp</li>
-                            <li>Thiết bị hiện đại</li>
-                            <li>Hỗ trợ 24/7</li>
-                        </ul>
-                    </div>
-
-                    <div class="contact-info">
-                        <h3><i class="fas fa-phone"></i> Liên hệ khẩn cấp</h3>
-                        <p>Hotline: <span class="phone">1900 1234</span></p>
-                        <p>Email: datlich@fertilityehr.com</p>
-                        <p>Địa chỉ: 123 Đường Y Học, Hà Nội</p>
+                        <div class="contact-info">
+                            <h3><i class="fas fa-phone"></i> Liên hệ khẩn cấp</h3>
+                            <p>Hotline: <span class="phone">1900 1234</span></p>
+                            <p>Email: datlich@fertilityehr.com</p>
+                            <p>Địa chỉ: 123 Đường Y Học, Hà Nội</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer>
-        <div class="container">
-            <div class="footer-columns">
-                <div class="footer-column">
-                    <h3>Sản phẩm</h3>
-                    <ul>
-                        <li><a href="#">FertilityEHR</a></li>
-                        <li><a href="#">IMS</a></li>
-                        <li><a href="#">Cổng thông tin bệnh nhân</a></li>
-                        <li><a href="#">Khám từ xa</a></li>
-                    </ul>
+        <footer>
+            <div class="container">
+                <div class="footer-columns">
+                    <div class="footer-column">
+                        <h3>Sản phẩm</h3>
+                        <ul>
+                            <li><a href="#">FertilityEHR</a></li>
+                            <li><a href="#">IMS</a></li>
+                            <li><a href="#">Cổng thông tin bệnh nhân</a></li>
+                            <li><a href="#">Khám từ xa</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Chuyên khoa</h3>
+                        <ul>
+                            <li><a href="kham-hiem-muon.html">Hiếm muộn/Tiền hôn nhân</a></li>
+                            <li><a href="phuong-phap-sinh-san.html">Phương pháp IVF</a></li>
+                            <li><a href="phuong-phap-sinh-san.html">Phương pháp IUI</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Thời gian hoạt động</h3>
+                        <p>Thứ 2 - Thứ 6: 8:00 - 17:00</p>
+                        <p>Thứ 7 - Chủ nhật: 8:00 - 12:00</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Liên hệ</h3>
+                        <p>123 Đường Lê Văn Việt<br>Tầng 5<br>Hồ Chí Minh, Việt Nam</p>
+                        <p>Điện thoại: (028) 5555-1234</p>
+                        <p>Email: info@meditab.com</p>
+                    </div>
                 </div>
-                <div class="footer-column">
-                    <h3>Chuyên khoa</h3>
-                    <ul>
-                        <li><a href="#">Hiếm muộn</a></li>
-                        <li><a href="#">Chăm sóc ban đầu</a></li>
-                        <li><a href="#">Tim mạch</a></li>
-                        <li><a href="#">Tất cả chuyên khoa</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Tài nguyên</h3>
-                    <ul>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Hội thảo trực tuyến</a></li>
-                        <li><a href="#">Nghiên cứu điển hình</a></li>
-                        <li><a href="#">Hỗ trợ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Liên hệ</h3>
-                    <p>123 Đường Y Học<br>Tầng 5<br>Hà Nội, Việt Nam</p>
-                    <p>Điện thoại: (024) 5555-1234</p>
-                    <p>Email: info@meditab.com</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
+                <!-- <div class="footer-bottom">
                 <p>&copy; 2023 Meditab Software Inc. Bản quyền đã được bảo hộ.</p>
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
                     <a href="#"><i class="fab fa-linkedin-in"></i></a>
                     <a href="#"><i class="fab fa-youtube"></i></a>
-                </div>
+                </div> -->
             </div>
-        </div>
-    </footer>
+            </div>
+        </footer>
 
-    <script>
-        // Define working hours for each day
-        const workingHours = {
-            1: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', ], // Monday
-            2: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', ], // Tuesday
-            3: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', ], // Wednesday
-            4: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', ], // Thursday
-            5: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', ], // Friday
-            6: ['08:00', '09:00', '10:00', '11:00'], // Saturday (8:00-12:00)
-            0: ['08:00', '09:00', '10:00', '11:00'] // Sunday (8:00-11:30)
-        };
+        <script>
+            // Define working hours for each day
+            const workingHours = {
+                1: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Monday
+                2: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Tuesday
+                3: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Wednesday
+                4: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Thursday
+                5: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Friday
+                6: ['08:00', '09:00', '10:00', '11:00'], // Saturday (8:00-12:00)
+                0: ['08:00', '09:00', '10:00', '11:00'] // Sunday (8:00-11:30)
+            };
 
-        // Function to update time slots based on selected date
-        function updateTimeSlots(selectedDate) {
-            const timeSlotsContainer = document.querySelector('.time-slots');
-            const date = new Date(selectedDate);
-            const dayOfWeek = date.getDay();
-            
-            // Clear existing time slots
-            timeSlotsContainer.innerHTML = '';
-            
-            // Get available hours for the selected day
-            const availableHours = workingHours[dayOfWeek] || [];
-            
-            if (availableHours.length === 0) {
-                timeSlotsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #6c757d; padding: 20px;">Ngày này phòng khám không làm việc</p>';
-                return;
-            }
-            
-            // Create time slots
-            availableHours.forEach(hour => {
-                const endHour = parseInt(hour.split(':')[0]) + 1;
-                const endTime = endHour.toString().padStart(2, '0') + ':00';
-                
-                const timeSlot = document.createElement('div');
-                timeSlot.className = 'time-slot';
-                timeSlot.setAttribute('data-time', hour);
-                timeSlot.textContent = `${hour}-${endTime}`;
-                
-                // Add click event listener
-                timeSlot.addEventListener('click', function() {
-                    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-                    this.classList.add('selected');
-                    document.getElementById('selectedTime').value = this.dataset.time;
-                });
-                
-                timeSlotsContainer.appendChild(timeSlot);
-            });
-            
-            // Reset selected time
-            document.getElementById('selectedTime').value = '';
-        }
-
-        // Function to get day name in Vietnamese
-        function getDayName(dayOfWeek) {
-            const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-            return days[dayOfWeek];
-        }
-
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('appointmentDate').setAttribute('min', today);
-        document.getElementById('dob').setAttribute('max', today);
-
-        // Initialize with today's date if no date is selected
-        document.addEventListener('DOMContentLoaded', function() {
-            const appointmentDateInput = document.getElementById('appointmentDate');
-            
-            // Set default to today
-            appointmentDateInput.value = today;
-            updateTimeSlots(today);
-        });
-
-        // Update time slots when date changes
-        document.getElementById('appointmentDate').addEventListener('change', function() {
-            const selectedDate = this.value;
-            if (selectedDate) {
-                updateTimeSlots(selectedDate);
-                
-                // Show working hours info
+            // Function to update time slots based on selected date
+            function updateTimeSlots(selectedDate) {
+                const timeSlotsContainer = document.querySelector('.time-slots');
                 const date = new Date(selectedDate);
                 const dayOfWeek = date.getDay();
-                const dayName = getDayName(dayOfWeek);
-                
-                let workingInfo = '';
-                if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Monday to Friday
-                    workingInfo = `${dayName}: 8:00 - 17:00`;
-                } else if (dayOfWeek === 6) { // Saturday
-                    workingInfo = `${dayName}: 8:00 - 12:00`;
-                } else if (dayOfWeek === 0) { // Sunday
-                    workingInfo = `${dayName}: 8:00 - 12:00`;
+
+                // Clear existing time slots
+                timeSlotsContainer.innerHTML = '';
+
+                // Get available hours for the selected day
+                const availableHours = workingHours[dayOfWeek] || [];
+
+                if (availableHours.length === 0) {
+                    timeSlotsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #6c757d; padding: 20px;">Ngày này phòng khám không làm việc</p>';
+                    return;
                 }
-                
-                // Update or create working hours display
-                let workingHoursDisplay = document.querySelector('.working-hours-display');
-                if (!workingHoursDisplay) {
-                    workingHoursDisplay = document.createElement('div');
-                    workingHoursDisplay.className = 'working-hours-display';
-                    workingHoursDisplay.style.cssText = `
+
+                // Create time slots
+                availableHours.forEach(hour => {
+                    const endHour = parseInt(hour.split(':')[0]) + 1;
+                    const endTime = endHour.toString().padStart(2, '0') + ':00';
+
+                    const timeSlot = document.createElement('div');
+                    timeSlot.className = 'time-slot';
+                    timeSlot.setAttribute('data-time', hour);
+                    timeSlot.textContent = `${hour}-${endTime}`;
+
+                    // Add click event listener
+                    timeSlot.addEventListener('click', function () {
+                        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                        this.classList.add('selected');
+                        document.getElementById('selectedTime').value = this.dataset.time;
+                    });
+
+                    timeSlotsContainer.appendChild(timeSlot);
+                });
+
+                // Reset selected time
+                document.getElementById('selectedTime').value = '';
+            }
+
+            // Function to get day name in Vietnamese
+            function getDayName(dayOfWeek) {
+                const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+                return days[dayOfWeek];
+            }
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').setAttribute('min', today);
+            document.getElementById('dob').setAttribute('max', today);
+
+            // Initialize with today's date if no date is selected
+            document.addEventListener('DOMContentLoaded', function () {
+                const appointmentDateInput = document.getElementById('appointmentDate');
+
+                // Set default to today
+                appointmentDateInput.value = today;
+                updateTimeSlots(today);
+            });
+
+            // Update time slots when date changes
+            document.getElementById('appointmentDate').addEventListener('change', function () {
+                const selectedDate = this.value;
+                if (selectedDate) {
+                    updateTimeSlots(selectedDate);
+
+                    // Show working hours info
+                    const date = new Date(selectedDate);
+                    const dayOfWeek = date.getDay();
+                    const dayName = getDayName(dayOfWeek);
+
+                    let workingInfo = '';
+                    if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Monday to Friday
+                        workingInfo = `${dayName}: 8:00 - 17:00`;
+                    } else if (dayOfWeek === 6) { // Saturday
+                        workingInfo = `${dayName}: 8:00 - 12:00`;
+                    } else if (dayOfWeek === 0) { // Sunday
+                        workingInfo = `${dayName}: 8:00 - 12:00`;
+                    }
+
+                    // Update or create working hours display
+                    let workingHoursDisplay = document.querySelector('.working-hours-display');
+                    if (!workingHoursDisplay) {
+                        workingHoursDisplay = document.createElement('div');
+                        workingHoursDisplay.className = 'working-hours-display';
+                        workingHoursDisplay.style.cssText = `
                         background: #e3f2fd;
                         border: 1px solid #2196f3;
                         border-radius: 8px;
@@ -352,40 +347,41 @@
                         color: #1976d2;
                         text-align: center;
                     `;
-                    document.querySelector('.time-slots').parentNode.appendChild(workingHoursDisplay);
+                        document.querySelector('.time-slots').parentNode.appendChild(workingHoursDisplay);
+                    }
+                    workingHoursDisplay.textContent = `Giờ làm việc ${workingInfo}`;
                 }
-                workingHoursDisplay.textContent = `Giờ làm việc ${workingInfo}`;
-            }
-        });
+            });
 
-        // Form submission
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!document.getElementById('selectedTime').value) {
-                alert('Vui lòng chọn khung giờ khám!');
-                return;
-            }
-            
-            alert('Đặt lịch thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
-            
-            // Reset form and update time slots for today
-            this.reset();
-            document.getElementById('appointmentDate').value = today;
-            updateTimeSlots(today);
-            document.getElementById('selectedTime').value = '';
-            
-            // Remove working hours display
-            const workingHoursDisplay = document.querySelector('.working-hours-display');
-            if (workingHoursDisplay) {
-                workingHoursDisplay.remove();
-            }
-        });
+            // Form submission
+            document.getElementById('bookingForm').addEventListener('submit', function (e) {
+                e.preventDefault();
 
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            document.querySelector('nav').classList.toggle('active');
-        });
-    </script>
-</body>
-</html> 
+                if (!document.getElementById('selectedTime').value) {
+                    alert('Vui lòng chọn khung giờ khám!');
+                    return;
+                }
+
+                alert('Đặt lịch thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
+
+                // Reset form and update time slots for today
+                this.reset();
+                document.getElementById('appointmentDate').value = today;
+                updateTimeSlots(today);
+                document.getElementById('selectedTime').value = '';
+
+                // Remove working hours display
+                const workingHoursDisplay = document.querySelector('.working-hours-display');
+                if (workingHoursDisplay) {
+                    workingHoursDisplay.remove();
+                }
+            });
+
+            // Mobile menu toggle
+            document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
+                document.querySelector('nav').classList.toggle('active');
+            });
+        </script>
+    </body>
+
+    </html>
