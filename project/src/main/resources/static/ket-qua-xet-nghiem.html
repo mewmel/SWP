@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả xét nghiệm - FertilityEHR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/ket-qua-xet-nghiem.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="img/logo.png" alt="Logo Meditab">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
+                    <li><a href="#" class="active">Kết quả xét nghiệm</a></li>
+                    <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons dashboard-user-area">
+                <button class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="User" class="user-avatar">
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="page-main">
+        <div class="page-header">
+            <h1>Kết quả xét nghiệm</h1>
+            <p>Theo dõi và quản lý kết quả xét nghiệm của bạn</p>
+        </div>
+
+        <div class="results-filters">
+            <div class="filter-group">
+                <select class="filter-select">
+                    <option>Tất cả xét nghiệm</option>
+                    <option>Xét nghiệm máu</option>
+                    <option>Siêu âm</option>
+                    <option>Xét nghiệm hormone</option>
+                </select>
+                <select class="filter-select">
+                    <option>30 ngày gần đây</option>
+                    <option>3 tháng gần đây</option>
+                    <option>6 tháng gần đây</option>
+                    <option>1 năm gần đây</option>
+                </select>
+            </div>
+            <button class="download-btn">
+                <i class="fas fa-download"></i>
+                Tải báo cáo
+            </button>
+        </div>
+
+        <div class="test-summary">
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-vial"></i>
+                </div>
+                <div class="summary-value">24</div>
+                <div class="summary-label">Tổng xét nghiệm</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon" style="background: #27ae60;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="summary-value">21</div>
+                <div class="summary-label">Kết quả bình thường</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon" style="background: #e74c3c;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="summary-value">2</div>
+                <div class="summary-label">Cần chú ý</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon" style="background: #f39c12;">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="summary-value">1</div>
+                <div class="summary-label">Đang chờ kết quả</div>
+            </div>
+        </div>
+
+        <!-- Social sidebar fixed bên phải -->
+<div class="social-sidebar">
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+    <a href="#"><i class="fab fa-instagram"></i></a>
+    <a href="#"><i class="fas fa-envelope"></i></a>
+</div>
+
+        <div class="main-content">
+            <div class="results-list">
+                <div class="results-header">
+                    <h3><i class="fas fa-list"></i> Kết quả xét nghiệm gần đây</h3>
+                </div>
+                
+                <div class="test-item">
+                    <div class="test-header">
+                        <div class="test-info">
+                            <h4>Xét nghiệm hormone E2 (Estradiol)</h4>
+                            <div class="test-date">24/06/2024 - 08:30</div>
+                        </div>
+                        <div class="test-status status-normal">Bình thường</div>
+                    </div>
+                    <div class="test-values">
+                        <div class="value-item">
+                            <div class="value-number">245</div>
+                            <div class="value-label">E2</div>
+                            <div class="value-range">200-400 pg/ml</div>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">12.3</div>
+                            <div class="value-label">LH</div>
+                            <div class="value-range">5-25 mIU/ml</div>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">8.7</div>
+                            <div class="value-label">FSH</div>
+                            <div class="value-range">3-20 mIU/ml</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-header">
+                        <div class="test-info">
+                            <h4>Siêu âm kiểm tra nang trứng</h4>
+                            <div class="test-date">22/06/2024 - 14:00</div>
+                        </div>
+                        <div class="test-status status-normal">Bình thường</div>
+                    </div>
+                    <div class="test-values">
+                        <div class="value-item">
+                            <div class="value-number">8</div>
+                            <div class="value-label">Số nang trứng</div>
+                            <div class="value-range">Buồng trứng phải</div>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">6</div>
+                            <div class="value-label">Số nang trứng</div>
+                            <div class="value-range">Buồng trứng trái</div>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">15mm</div>
+                            <div class="value-label">Nang lớn nhất</div>
+                            <div class="value-range">Kích thước</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-header">
+                        <div class="test-info">
+                            <h4>Xét nghiệm máu tổng quát</h4>
+                            <div class="test-date">20/06/2024 - 07:45</div>
+                        </div>
+                        <div class="test-status status-abnormal">Cần chú ý</div>
+                    </div>
+                    <div class="test-values">
+                        <div class="value-item">
+                            <div class="value-number">10.2</div>
+                            <div class="value-label">Hemoglobin</div>
+                            <div class="value-range">12-16 g/dl</div>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">380</div>
+                            <div class="value-label">Tiểu cầu</div>
+                            <div class="value-range">150-450 K/μl</div>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">6.8</div>
+                            <div class="value-label">Bạch cầu</div>
+                            <div class="value-range">4-11 K/μl</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-header">
+                        <div class="test-info">
+                            <h4>Xét nghiệm đường huyết</h4>
+                            <div class="test-date">18/06/2024 - 09:15</div>
+                        </div>
+                        <div class="test-status status-normal">Bình thường</div>
+                    </div>
+                    <div class="test-values">
+                        <div class="value-item">
+                            <div class="value-number">92</div>
+                            <div class="value-label">Glucose</div>
+                            <div class="value-range">70-110 mg/dl</div>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">5.4</div>
+                            <div class="value-label">HbA1c</div>
+                            <div class="value-range">4-6%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-header">
+                        <div class="test-info">
+                            <h4>Xét nghiệm hormone AMH</h4>
+                            <div class="test-date">25/06/2024 - 10:00</div>
+                        </div>
+                        <div class="test-status status-pending">Đang chờ</div>
+                    </div>
+                    <div class="test-values">
+                        <div class="value-item">
+                            <div class="value-number">---</div>
+                            <div class="value-label">AMH</div>
+                            <div class="value-range">Đang xử lý</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="trend-chart">
+                    <div class="chart-header">
+                        <h3>Biểu đồ hormone E2</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="hormoneChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="upcoming-tests">
+                    <h3><i class="fas fa-calendar-alt"></i> Xét nghiệm sắp tới</h3>
+                    <div class="upcoming-item">
+                        <div class="upcoming-date">
+                            <div class="day">28</div>
+                            <div class="month">T6</div>
+                        </div>
+                        <div class="upcoming-details">
+                            <div class="upcoming-title">Siêu âm theo dõi</div>
+                            <div class="upcoming-time">09:30 - Phòng siêu âm</div>
+                        </div>
+                    </div>
+                    <div class="upcoming-item">
+                        <div class="upcoming-date">
+                            <div class="day">30</div>
+                            <div class="month">CN</div>
+                        </div>
+                        <div class="upcoming-details">
+                            <div class="upcoming-title">Xét nghiệm máu</div>
+                            <div class="upcoming-time">08:00 - Phòng xét nghiệm</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notes-section">
+                    <h3><i class="fas fa-sticky-note"></i> Ghi chú bác sĩ</h3>
+                    <div class="doctor-note">
+                        <div class="note-header">Kết quả E2 tốt</div>
+                        <div class="note-content">Mức độ hormone E2 phù hợp với giai đoạn kích thích buồng trứng. Tiếp tục theo dõi và điều chỉnh liều thuốc.</div>
+                        <div class="note-author">- BS. Nguyễn Thị Hương</div>
+                    </div>
+                    <div class="doctor-note">
+                        <div class="note-header">Hemoglobin thấp</div>
+                        <div class="note-content">Cần bổ sung sắt và theo dõi chế độ ăn uống. Tái khám sau 2 tuần.</div>
+                        <div class="note-author">- BS. Trần Văn Nam</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Hormone chart
+        const ctx = document.getElementById('hormoneChart').getContext('2d');
+        const hormoneChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['14/06', '16/06', '18/06', '20/06', '22/06', '24/06'],
+                datasets: [{
+                    label: 'E2 (pg/ml)',
+                    data: [180, 210, 235, 260, 248, 245],
+                    borderColor: 'rgb(74, 144, 226)',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 150,
+                        max: 300
+                    }
+                }
+            }
+        });
+
+        // Filter functionality
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', function() {
+                console.log('Filter changed:', this.value);
+                // Add filter logic here
+            });
+        });
+
+        // Download button
+        document.querySelector('.download-btn').addEventListener('click', function() {
+            alert('Đang tải báo cáo...');
+        });
+
+        // Test item clicks
+        document.querySelectorAll('.test-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const testName = this.querySelector('h4').textContent;
+                alert(`Xem chi tiết: ${testName}`);
+            });
+        });
+
+        // Notification click
+        document.querySelector('.notification-icon').addEventListener('click', function() {
+            alert('Bạn có 3 thông báo mới:\n1. Kết quả xét nghiệm AMH đã có\n2. Lịch siêu âm ngày mai\n3. Nhắc nhở uống thuốc');
+        });
+    </script>
+</body>
+</html> 
