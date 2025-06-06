@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FertilityEHR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- Sidebar giống trang index -->
+<aside class="sidebar" id="sidebar" style="display:none;">
+    <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+    <div class="sidebar-user">
+        <i class="fas fa-user-circle"></i>
+        <span class="sidebar-username"></span>
+    </div>
+    <a href="ho-so-ca-nhan.html" class="sidebar-account"><i class="fas fa-user"></i> Hồ sơ cá nhân</a>
+    <a href="#">Tin nổi bật</a>
+    <a href="#">Bệnh án</a>
+    <a href="#">Lịch hẹn</a>
+    <a href="#">Kết quả xét nghiệm</a>
+    <a href="#">Cài đặt</a>
+    <div class="sidebar-divider"></div>
+    <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+</aside>
+
+<!-- Dashboard Header -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <img src="img/logo.png" alt="Logo Meditab">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="#" class="active">Dashboard</a></li>
+                <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
+                <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
+                <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
+                <li><a href="#">Liên hệ</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons dashboard-user-area">
+            <button class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </button>
+            <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="User" class="user-avatar">
+            <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân" style="margin-left: 12px;">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</header>
+
+<!-- Dashboard Main Content -->
+<main class="dashboard-main">
+    <!-- Main Content Area -->
+    <div class="dashboard-content">
+        <!-- Overview Cards -->
+        <section class="overview-cards">
+            <div class="overview-card">
+                <h3>Chu kỳ hiện tại</h3>
+                <div class="value">IVF</div>
+                <div class="subtitle">Giai đoạn 2</div>
+            </div>
+            <div class="overview-card">
+                <h3>Ngày tiếp theo</h3>
+                <div class="value">25/06</div>
+                <div class="subtitle">Xét nghiệm</div>
+            </div>
+            <div class="overview-card">
+                <h3>Thuốc cần tiêm</h3>
+                <div class="value">2</div>
+                <div class="subtitle">Hôm nay</div>
+            </div>
+            <div class="overview-card">
+                <h3>Kết quả gần nhất</h3>
+                <div class="value">Tốt</div>
+                <div class="subtitle">E2: 245 pg/ml</div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section class="timeline-section">
+            <div class="timeline-header">
+                <h2>Timeline điều trị</h2>
+                <span style="color: var(--light-text);">Tuần 3 - Tháng 6/2024</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-fill">
+                    <span class="progress-text">Giai đoạn 2/5 - Kích thích buồng trứng</span>
+                </div>
+            </div>
+
+            <!-- Week Timeline -->
+            <div class="timeline-week">
+                <div class="timeline-day">
+                    <div class="day-number">22</div>
+                    <div class="day-events">
+                        <div class="event-dot event-injection"></div>
+                    </div>
+                    <small>T2</small>
+                </div>
+                <div class="timeline-day">
+                    <div class="day-number">23</div>
+                    <div class="day-events">
+                        <div class="event-dot event-injection"></div>
+                    </div>
+                    <small>T3</small>
+                </div>
+                <div class="timeline-day today">
+                    <div class="day-number">24</div>
+                    <div class="day-events">
+                        <div class="event-dot event-injection"></div>
+                        <div class="event-dot event-test"></div>
+                    </div>
+                    <small>T4</small>
+                </div>
+                <div class="timeline-day has-event">
+                    <div class="day-number">25</div>
+                    <div class="day-events">
+                        <div class="event-dot event-test"></div>
+                    </div>
+                    <small>T5</small>
+                </div>
+                <div class="timeline-day">
+                    <div class="day-number">26</div>
+                    <div class="day-events">
+                        <div class="event-dot event-injection"></div>
+                    </div>
+                    <small>T6</small>
+                </div>
+                <div class="timeline-day has-event">
+                    <div class="day-number">27</div>
+                    <div class="day-events">
+                        <div class="event-dot event-appointment"></div>
+                    </div>
+                    <small>T7</small>
+                </div>
+                <div class="timeline-day">
+                    <div class="day-number">28</div>
+                    <div class="day-events">
+                        <div class="event-dot event-appointment"></div>
+                    </div>
+                    <small>CN</small>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div style="display: flex; gap: var(--spacing-lg); font-size: 0.85rem; color: var(--light-text);">
+                <span><span class="event-dot event-injection" style="display: inline-block; margin-right: 5px;"></span>Tiêm thuốc</span>
+                <span><span class="event-dot event-test" style="display: inline-block; margin-right: 5px;"></span>Xét nghiệm</span>
+                <span><span class="event-dot event-appointment" style="display: inline-block; margin-right: 5px;"></span>Khám bác sĩ</span>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <h3>Hành động nhanh</h3>
+            <ul class="action-list">
+                <li class="action-item">
+                    <div class="action-icon">🔔</div>
+                    <span>Đặt nhắc nhở tiêm thuốc</span>
+                </li>
+                <li class="action-item">
+                    <div class="action-icon">📅</div>
+                    <span>Xem lịch điều trị đầy đủ</span>
+                </li>
+                <li class="action-item">
+                    <div class="action-icon">📊</div>
+                    <span>Xem kết quả xét nghiệm</span>
+                </li>
+                <li class="action-item">
+                    <div class="action-icon">💬</div>
+                    <span>Nhắn tin với bác sĩ</span>
+                </li>
+                <li class="action-item">
+                    <div class="action-icon">📝</div>
+                    <span>Ghi nhật ký triệu chứng</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Chart Section -->
+        <section class="chart-container">
+            <h3>Biểu đồ nhiệt độ cơ thể</h3>
+            <canvas id="temperatureChart"></canvas>
+        </section>
+    </div>
+
+    <!-- Sidebar Dashboard -->
+    <aside class="dashboard-sidebar">
+        <!-- Treatment Info -->
+        <div class="sidebar-card">
+            <h3><i class="fas fa-heart"></i> Thông tin điều trị</h3>
+            <div class="treatment-info">
+                <div class="info-row">
+                    <span class="info-label">Phương pháp:</span>
+                    <span class="info-value">IVF</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Bác sĩ phụ trách:</span>
+                    <span class="info-value">BS. Nguyễn Thị Hương</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Ngày bắt đầu:</span>
+                    <span class="info-value">15/06/2024</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Chu kỳ thứ:</span>
+                    <span class="info-value">2</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medication Info -->
+        <div class="sidebar-card">
+            <h3><i class="fas fa-pills"></i> Thuốc đang sử dụng</h3>
+            <div class="medication-info">
+                <div class="medication-item">
+                    <div class="medication-name">Gonal-F</div>
+                    <div class="medication-details">
+                        <span>150 IU</span>
+                        <span>19:00</span>
+                        <span>Còn 5 liều</span>
+                    </div>
+                </div>
+                <div class="medication-item">
+                    <div class="medication-name">Cetrotide</div>
+                    <div class="medication-details">
+                        <span>0.25mg</span>
+                        <span>20:00</span>
+                        <span>Còn 3 liều</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social sidebar fixed bên phải -->
+        <div class="social-sidebar">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+        </div>
+
+        <!-- Notifications -->
+        <div class="sidebar-card notifications-card">
+            <h3><i class="fas fa-bell"></i> Thông báo hôm nay</h3>
+            <div class="notification-item">
+                <div class="notification-time">19:00</div>
+                <span>Tiêm thuốc Gonal-F</span>
+            </div>
+            <div class="notification-item">
+                <div class="notification-time">Ngày mai</div>
+                <span>Xét nghiệm máu E2</span>
+            </div>
+            <div class="notification-item">
+                <div class="notification-time">28/06</div>
+                <span>Khám siêu âm kiểm tra</span>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="sidebar-card">
+            <h3><i class="fas fa-link"></i> Tính năng đặc biệt</h3>
+            <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                    📝 Nhật ký cá nhân
+                </a>
+                <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                    💬 Chat với bác sĩ
+                </a>
+                <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                    📚 Tài liệu tham khảo
+                </a>
+                <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                    👥 Cộng đồng
+                </a>
+            </div>
+        </div>
+    </aside>
+</main>
+
+<script>
+    // Sidebar open/close logic
+    const sidebar = document.getElementById('sidebar');
+    const openSidebarBtn = document.getElementById('openSidebar');
+    const closeSidebarBtn = document.getElementById('closeSidebar');
+    function closeSidebar() {
+        if (sidebar) {
+            sidebar.classList.remove('active');
+            setTimeout(() => {
+                sidebar.style.display = 'none';
+            }, 300);
+        }
+    }
+    if(openSidebarBtn && sidebar) {
+        openSidebarBtn.addEventListener('click', function(e) {
+            // set tên vào sidebar mỗi lần mở
+            const userNameTxt = document.querySelector('.user-avatar').alt || "User";
+            document.querySelector('.sidebar-username').textContent = userNameTxt;
+            sidebar.style.display = 'flex';
+            setTimeout(() => {
+                sidebar.classList.add('active');
+            }, 10);
+        });
+    }
+    if(closeSidebarBtn && sidebar) {
+        closeSidebarBtn.addEventListener('click', function() {
+            closeSidebar();
+        });
+    }
+    document.addEventListener('mousedown', function(e) {
+        if (
+            sidebar &&
+            sidebar.classList.contains('active') &&
+            !sidebar.contains(e.target) &&
+            !e.target.closest('#openSidebar')
+        ) {
+            closeSidebar();
+        }
+    });
+    // Đăng xuất từ sidebar
+    const sidebarLogout = document.querySelector('.sidebar-logout');
+    if(sidebarLogout) {
+        sidebarLogout.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Đăng xuất thành công!');
+            closeSidebar();
+        });
+    }
+    // Chuyển sang trang hồ sơ cá nhân
+    const sidebarAccount = document.querySelector('.sidebar-account');
+    if(sidebarAccount) {
+        sidebarAccount.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = "ho-so-ca-nhan.html";
+        });
+    }
+
+    // Temperature Chart
+    const ctx = document.getElementById('temperatureChart').getContext('2d');
+    const temperatureChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['20/6', '21/6', '22/6', '23/6', '24/6', '25/6', '26/6'],
+            datasets: [{
+                label: 'Nhiệt độ cơ thể (°C)',
+                data: [36.4, 36.3, 36.5, 36.7, 36.8, 36.6, 36.9],
+                borderColor: 'rgb(74, 144, 226)',
+                backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                tension: 0.1,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    min: 36,
+                    max: 37.5
+                }
+            }
+        }
+    });
+
+    // Interactive features
+    document.querySelectorAll('.action-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const action = this.textContent.trim();
+            alert(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`);
+        });
+    });
+
+    // Notification click
+    document.querySelector('.notification-icon').addEventListener('click', function() {
+        alert('Bạn có 3 thông báo mới:\n1. Tiêm thuốc lúc 19:00\n2. Xét nghiệm ngày mai\n3. Khám bác sĩ 28/06');
+    });
+
+    // Progress animation
+    setTimeout(() => {
+        document.querySelector('.progress-fill').style.width = '40%';
+    }, 500);
+
+    // Add hover effects to timeline days
+    document.querySelectorAll('.timeline-day').forEach(day => {
+        day.addEventListener('mouseenter', function() {
+            if (this.classList.contains('has-event')) {
+                this.style.transform = 'scale(1.05)';
+                this.style.transition = 'transform 0.2s ease';
+            }
+        });
+
+        day.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lấy tên người dùng từ localStorage (nếu đã đăng nhập)
+        var fullName = localStorage.getItem('userFullName');
+        var sidebarUsername = document.querySelector('.sidebar-username');
+        if (sidebarUsername) {
+            sidebarUsername.textContent = fullName || "User";
+        }
+        // Nếu bạn có avatar/user-menu ở header, có thể set tương tự:
+        var userAvatar = document.querySelector('.user-avatar');
+        if(userAvatar && fullName) {
+            userAvatar.alt = fullName;
+        }
+    });
+</script>
+</body>
+</html>
