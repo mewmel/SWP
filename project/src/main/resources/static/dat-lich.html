@@ -8,7 +8,393 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/dat-lich.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .booking-hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 100px 0 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.1)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .booking-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .booking-hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 700;
+        }
+
+        .booking-hero p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            opacity: 0.9;
+        }
+
+        .booking-main {
+            padding: var(--spacing-xl) 0;
+            background: var(--light-background);
+        }
+
+        .booking-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-xl);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .booking-form-container {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-strong);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .form-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 700;
+        }
+
+        .form-header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .booking-form {
+            padding: var(--spacing-lg);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: var(--spacing-sm);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light-text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) calc(var(--spacing-sm) * 2 + 1rem);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: var(--light-background);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            outline: none;
+            background: white;
+        }
+
+        .form-input:focus+i {
+            color: var(--primary-color);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            font-size: 0.9rem;
+            background: var(--light-background);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            outline: none;
+            background: white;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+
+        .time-slot {
+            padding: var(--spacing-sm);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .time-slot:hover {
+            border-color: var(--primary-color);
+            background: rgba(74, 144, 226, 0.05);
+        }
+
+        .time-slot.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .time-slot.disabled {
+            background: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 80px;
+            background: var(--light-background);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            outline: none;
+            background: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .submit-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .submit-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        .booking-info {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .info-section {
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .info-section h3 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .info-section h3 i {
+            font-size: 1.3rem;
+        }
+
+        .info-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-section ul li {
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .info-section ul li:last-child {
+            border-bottom: none;
+        }
+
+        .info-section ul li::before {
+            content: "✓";
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-right: var(--spacing-sm);
+        }
+
+        .contact-info {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+        }
+
+        .contact-info h3 {
+            margin-bottom: var(--spacing-md);
+            font-size: 1.2rem;
+        }
+
+        .contact-info p {
+            margin-bottom: var(--spacing-sm);
+            opacity: 0.9;
+        }
+
+        .contact-info .phone {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: var(--spacing-md);
+        }
+
+        @media (max-width: 1024px) {
+            .booking-layout {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .booking-hero {
+                padding: 80px 0 40px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+
+            .booking-form {
+                padding: var(--spacing-md);
+            }
+
+            .time-slots {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .submit-btn {
+                font-size: 1rem;
+                padding: var(--spacing-sm);
+            }
+        }
+
+        .calendar-input {
+            position: relative;
+        }
+
+        .calendar-input input[type="date"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .calendar-input input[type="date"]::-webkit-calendar-picker-indicator {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>') no-repeat;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
+
+<body>
+    <!DOCTYPE html>
+    <html lang="vi">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FertilityEHR bởi Meditab</title>
+        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+
     <body>
         <header>
             <div class="container">
@@ -18,12 +404,12 @@
                 <nav>
                     <ul>
                         <li><a href="index.html">Trang chủ</a></li>
-                        <li><a href="#doctor">Đội ngũ bác sĩ</a></li>
                         <li class="dropdown">
                             <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
                             <ul class="dropdown-menu">
                                 <li><a href="kham-hiem-muon.html">Khám hiếm muộn/ tiền hôn nhân</a></li>
                                 <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
+
                             </ul>
                         </li>
                         <li><a href="#footer">Liên hệ</a></li>
@@ -34,140 +420,12 @@
                     <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
                     <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
                 </div>
-                <div class="user-menu" style="display:none;">
-                    <span class="user-name"></span>
-                    <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
                 <button class="mobile-menu-btn">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
         </header>
 
-        <!-- SIDEBAR MENU CÁ NHÂN -->
-        <aside class="sidebar" id="sidebar" style="display:none;">
-            <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
-            <div class="sidebar-user">
-                <i class="fas fa-user-circle"></i>
-                <span class="sidebar-username"></span>
-            </div>
-            <a href="#" class="sidebar-account"><i class="fas fa-user"></i> Trang người dùng</a>
-            <a href="#">Tin nổi bật</a>
-            <a href="#">Bệnh án</a>
-            <a href="#">Lịch hẹn</a>
-            <a href="#">Kết quả xét nghiệm</a>
-            <a href="#">Cài đặt</a>
-            <div class="sidebar-divider"></div>
-            <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-        </aside>
-
-        <!-- Auth Modal -->
-        <div class="auth-modal" id="authModal">
-            <div class="auth-modal-content">
-                <div class="auth-modal-left">
-                    <div class="auth-modal-image">
-                        <img src="img/hero-image.png" alt="Medical">
-                    </div>
-                    <div class="auth-modal-overlay">
-                        <h2>Chào mừng bạn đến với FertilityEHR</h2>
-                        <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
-                    </div>
-                </div>
-                <div class="auth-modal-right">
-                    <span class="close-modal">&times;</span>
-                    <div class="auth-tabs">
-                        <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-                        <button class="auth-tab" data-tab="register">Đăng ký</button>
-                    </div>
-                    <form id="loginForm" class="auth-form active">
-                        <div class="form-group">
-                            <label for="loginEmail">Email</label>
-                            <div class="input-group">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="loginPassword">Mật khẩu</label>
-                            <div class="input-group">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu">
-                                <i class="fas fa-eye toggle-password"></i>
-                            </div>
-                        </div>
-                        <div class="form-group remember-forgot">
-                            <label class="checkbox-container">
-                                <input type="checkbox" id="rememberMe">
-                                <span class="checkmark"></span>
-                                Ghi nhớ đăng nhập
-                            </label>
-                            <a href="#" class="forgot-password">Quên mật khẩu?</a>
-                        </div>
-                        <button type="submit" class="btn-primary">
-                            <span>Đăng nhập</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                        <div class="social-login">
-                            <p>Hoặc đăng nhập với</p>
-                            <div class="social-buttons">
-                                <button type="button" class="social-btn google">
-                                    <i class="fab fa-google"></i>
-                                </button>
-                                <button type="button" class="social-btn facebook">
-                                    <i class="fab fa-facebook-f"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                    <form id="registerForm" class="auth-form">
-                        <div class="form-group">
-                            <label for="registerName">Họ và tên</label>
-                            <div class="input-group">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="registerName" required placeholder="Nhập họ tên của bạn">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="registerEmail">Email</label>
-                            <div class="input-group">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="registerPassword">Mật khẩu</label>
-                            <div class="input-group">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="registerPassword" required placeholder="Tạo mật khẩu">
-                                <i class="fas fa-eye toggle-password"></i>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword">Xác nhận mật khẩu</label>
-                            <div class="input-group">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="confirmPassword" required placeholder="Xác nhận mật khẩu">
-                                <i class="fas fa-eye toggle-password"></i>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="checkbox-container">
-                                <input type="checkbox" id="agreeTerms" required>
-                                <span class="checkmark"></span>
-                                Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
-                            </label>
-                        </div>
-                        <button type="submit" class="btn-primary">
-                            <span>Đăng ký</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
         <section class="booking-hero">
             <div class="booking-container">
                 <h1>Đặt lịch khám</h1>
@@ -518,7 +776,6 @@
                 document.querySelector('nav').classList.toggle('active');
             });
         </script>
-        <script src="script.js"></script>
     </body>
 
     </html>
