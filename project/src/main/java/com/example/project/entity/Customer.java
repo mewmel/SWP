@@ -27,13 +27,13 @@ public class Customer {
     private LocalDate cusDate;
 
     @Column(name = "cusEmail")
-    private String cusEmail; // <--- PHẢI LÀ camelCase
+    private String cusEmail;
 
     @Column(name = "cusPhone")
     private String cusPhone;
 
     @Column(name = "cusPassword")
-    private String cusPassword; // <--- PHẢI LÀ camelCase
+    private String cusPassword;
 
     @Column(name = "cusAddress")
     private String cusAddress;

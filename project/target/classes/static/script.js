@@ -92,27 +92,54 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ========= ĐĂNG KÝ DEMO =========
+    // ========= ĐĂNG KÝ GỌI API BACKEND =========
     document.getElementById('registerForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const submitBtn = this.querySelector('button[type="submit"]');
+        const agreeTerms = document.getElementById('agreeTerms');
+
+        // Kiểm tra đã tích vào ô điều khoản chưa
+        if (!agreeTerms.checked) {
+            showNotification('Bạn phải đồng ý với điều khoản sử dụng trước khi đăng ký!', 'error');
+            return;
+        }
+
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
         submitBtn.disabled = true;
-        setTimeout(() => {
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            if (password !== confirmPassword) {
-                showNotification('Mật khẩu không khớp!', 'error');
+
+        const cusFullName = document.getElementById('registerName').value;
+        const cusEmail = document.getElementById('registerEmail').value;
+        const cusPassword = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cusFullName, cusEmail, cusPassword, confirmPassword })
+        })
+            .then(async response => {
+                const text = await response.text();
+                if (!response.ok) throw new Error(text || 'Đăng ký thất bại!');
+                return text;
+            })
+            .then(msg => {
+                showNotification('Đăng ký thành công!', 'success');
                 submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
                 submitBtn.disabled = false;
-                return;
-            }
-            showNotification('Đăng ký thành công!', 'success');
-            submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
-            submitBtn.disabled = false;
-            const closeModal = document.querySelector('.close-modal');
-            if (closeModal) closeModal.click();
-        }, 1500);
+                const closeModal = document.querySelector('.close-modal');
+                if (closeModal) closeModal.click();
+            })
+            .catch(err => {
+                // Kiểm tra thông báo lỗi trả về từ backend
+                let message = err.message || 'Đăng ký thất bại!';
+                if (message.includes('Email đã tồn tại') || message.includes('Email đã được đăng ký') || message.includes('email')) {
+                    showNotification(message, 'error');
+                } else {
+                    showNotification(message, 'error');
+                }
+                submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+                submitBtn.disabled = false;
+            });
     });
 
     // ========== UI & HIỆU ỨNG KHÁC ==========
