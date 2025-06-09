@@ -10,5 +10,6 @@ public class HomeController {
     public String home() {
         return "forward:/index.html"; // Trả về file index.html trong static/
     }
+
 }
 
