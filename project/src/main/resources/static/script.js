@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 showNotification('Đăng nhập thành công!', 'success');
                 const closeModal = document.querySelector('.close-modal');
                 if (closeModal) closeModal.click();
+
+                // Chuyển hướng đến trang dashboard
+                window.location.href = "dashboard.html";
+                
             })
             .catch((err) => {
                 showNotification(
