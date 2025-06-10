@@ -41,8 +41,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                // Lưu tên vào localStorage
+                // Lưu tên và email vào localStorage
                 localStorage.setItem('userFullName', data.cusFullName || data.cusEmail || 'Người dùng');
+                localStorage.setItem('userEmail', data.cusEmail || '');
                 // Hiển thị giao diện đã đăng nhập
                 if (authButtons) authButtons.style.display = 'none';
                 if (userMenu) userMenu.style.display = 'flex';
@@ -72,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         logoutBtn.addEventListener('click', function(e) {
             e.preventDefault();
             localStorage.removeItem('userFullName');
+            localStorage.removeItem('userEmail');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
             closeSidebar();
@@ -84,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebarLogout.addEventListener('click', function(e) {
             e.preventDefault();
             localStorage.removeItem('userFullName');
+            localStorage.removeItem('userEmail');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
             closeSidebar();
@@ -130,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (closeModal) closeModal.click();
             })
             .catch(err => {
-                // Kiểm tra thông báo lỗi trả về từ backend
                 let message = err.message || 'Đăng ký thất bại!';
                 if (message.includes('Email đã tồn tại') || message.includes('Email đã được đăng ký') || message.includes('email')) {
                     showNotification(message, 'error');

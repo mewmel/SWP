@@ -8,8 +8,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "forward:/index.html"; // Trả về file index.html trong static/
+        return "forward:/index.html";
     }
-
 }
 
