@@ -29,7 +29,6 @@ public class CustomerService {
         return Optional.empty();
     }
 
-    // HÀM ĐĂNG KÝ ĐÃ CHỈNH SỬA
     public String register(RegisterRequest req) {
         if (req.getCusFullName() == null || req.getCusFullName().isEmpty()
                 || req.getCusEmail() == null || req.getCusEmail().isEmpty()
@@ -42,7 +41,7 @@ public class CustomerService {
         }
         if (customerRepository.findByCusEmail(req.getCusEmail()).isPresent()) {
             // Trả về mã đặc biệt để controller xử lý status 409
-            return "email_exists";
+            return "Email đã tồn tại";
         }
 
         Customer customer = new Customer();
