@@ -1,31 +1,16 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - FertilityEHR</title>
+    <title>Bác sĩ Dashboard - FertilityEHR</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/bac-si-dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
-
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>FertilityEHR</h1>
-                <h2>Hệ thống điều trị và theo dõi chuyên biệt cho phòng khám hiếm muộn</h2>
-                <p>Tối ưu hóa hoạt động của phòng khám hiếm muộn với hệ thống quản lý bệnh án điện tử toàn diện được
-                    thiết kế đặc biệt cho y học sinh sản.</p>
-                <!-- </div>
-        <div class="hero-image">
-            <img src="img/hero-image.png" alt="Giao diện FertilityEHR">
-        </div> -->
-            </div>
-    </section>
     <!-- Dashboard Header -->
     <header>
         <div class="container">
@@ -34,17 +19,326 @@
             </div>
             <nav>
                 <ul>
-                    <!-- <li><a href="index.html">Trang chủ</a></li> -->
-                    <li><a href="#" class="active">Trang chủ</a></li>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="#" class="active">Bác sĩ Dashboard</a></li>
                     <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
                     <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
-                    <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
-                    <li><a href="#">Liên hệ</a></li>
+                    <li><a href="ho-so-ca-nhan.html">Hồ sơ</a></li>
                     <li>
-                        <button class="notification-icon">
-                            <i class="fas fa-bell"></i>
-                            <span class="notification-badge">9</span>
-                        </button>
+                        <div class="auth-buttons dashboard-user-area">
+                            <div class="notification-wrapper" style="position: relative;">
+                                <button class="notification-icon" id="doctorNotificationBtn">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge">5</span>
+                                </button>
+            
+                                <!-- Doctor Notification Dropdown -->
+                                <div class="notification-dropdown" id="doctorNotificationDropdown">
+                                    <div class="notification-dropdown-header">
+                                        <h3>Thông báo</h3>
+                                        <button class="notification-settings-btn">
+                                            <i class="fas fa-cog"></i>
+                                        </button>
+                                    </div>
+            
+                                    <div class="notification-dropdown-body">
+                                        <div class="notification-dropdown-item unread">
+                                            <div class="notification-avatar">
+                                                <i class="fas fa-user-injured"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <div class="notification-title">Bệnh nhân cần chú ý</div>
+                                                <div class="notification-description">BN Nguyễn Thị Mai - Chu kỳ IVF giai đoạn quan trọng</div>
+                                                <div class="notification-time">10 phút trước</div>
+                                            </div>
+                                        </div>
+            
+                                        <div class="notification-dropdown-item unread">
+                                            <div class="notification-avatar">
+                                                <i class="fas fa-calendar-plus"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <div class="notification-title">Lịch hẹn mới</div>
+                                                <div class="notification-description">BN Trần Văn An đặt lịch khám 28/06 lúc 10:00</div>
+                                                <div class="notification-time">30 phút trước</div>
+                                            </div>
+                                        </div>
+            
+                                        <div class="notification-dropdown-item">
+                                            <div class="notification-avatar">
+                                                <i class="fas fa-flask"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <div class="notification-title">Kết quả xét nghiệm</div>
+                                                <div class="notification-description">5 kết quả xét nghiệm mới cần xem xét</div>
+                                                <div class="notification-time">1 giờ trước</div>
+                                            </div>
+                                        </div>
+            
+                                        <div class="notification-dropdown-item">
+                                            <div class="notification-avatar">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <div class="notification-title">Cảnh báo</div>
+                                                <div class="notification-description">BN Phạm Thị Hoa chưa tiêm thuốc theo lịch</div>
+                                                <div class="notification-time">2 giờ trước</div>
+                                            </div>
+                                        </div>
+                                    </div>
+            
+                                    <div class="notification-dropdown-footer">
+                                        <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
+                                    </div>
+                                </div>
+                            </div>
                     </li>
                 </ul>
             </nav>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+    <!-- Dashboard Main Content -->
+    <main class="dashboard-main">
+        <!-- Main Content Area -->
+        <div class="dashboard-content">
+            <!-- Doctor Overview Cards -->
+            <section class="overview-cards">
+                <div class="overview-card">
+                    <h3>Bệnh nhân hôm nay</h3>
+                    <div class="value">12</div>
+                    <div class="subtitle">Lịch hẹn</div>
+                </div>
+                <div class="overview-card">
+                    <h3>Tổng bệnh nhân</h3>
+                    <div class="value">145</div>
+                    <div class="subtitle">Đang điều trị</div>
+                </div>
+                <div class="overview-card">
+                    <h3>Chu kỳ thành công</h3>
+                    <div class="value">78%</div>
+                    <div class="subtitle">Tháng này</div>
+                </div>
+                <div class="overview-card">
+                    <h3>Cần xem xét</h3>
+                    <div class="value">5</div>
+                    <div class="subtitle">Kết quả XN</div>
+                </div>
+            </section>
+
+            <!-- Today's Schedule -->
+            <section class="timeline-section">
+                <div class="timeline-header">
+                    <h2>Lịch trình hôm nay</h2>
+                    <span style="color: var(--light-text);">Thứ 4 - 24/06/2024</span>
+                </div>
+
+                <!-- Daily Schedule -->
+                <div class="doctor-schedule">
+                    <div class="schedule-item">
+                        <div class="schedule-time">08:00</div>
+                        <div class="schedule-content">
+                            <div class="patient-info">
+                                <strong>BN: Nguyễn Thị Mai</strong>
+                                <span class="appointment-type">Khám định kỳ - IVF Chu kỳ 1</span>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn-small btn-primary">Xem hồ sơ</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <div class="schedule-time">09:30</div>
+                        <div class="schedule-content">
+                            <div class="patient-info">
+                                <strong>BN: Trần Văn An</strong>
+                                <span class="appointment-type">Tư vấn lần đầu</span>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn-small btn-primary">Xem hồ sơ</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="schedule-item current">
+                        <div class="schedule-time">10:00</div>
+                        <div class="schedule-content">
+                            <div class="patient-info">
+                                <strong>BN: Phạm Thị Hoa</strong>
+                                <span class="appointment-type">Theo dõi kích thích - IVF</span>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn-small btn-secondary">Đang khám</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <div class="schedule-time">11:30</div>
+                        <div class="schedule-content">
+                            <div class="patient-info">
+                                <strong>BN: Lê Thị Lan</strong>
+                                <span class="appointment-type">Chuyển phôi - IVF Chu kỳ 2</span>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn-small btn-primary">Xem hồ sơ</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Patient Management -->
+            <section class="quick-actions">
+                <h3>Quản lý bệnh nhân</h3>
+                <div class="patient-quick-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-users text-primary"></i>
+                        <div>
+                            <div class="stat-number">24</div>
+                            <div class="stat-label">Bệnh nhân mới tuần này</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-heart text-success"></i>
+                        <div>
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">Chu kỳ thành công tháng này</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-exclamation-circle text-warning"></i>
+                        <div>
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Cần theo dõi đặc biệt</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <ul class="action-list">
+                    <li class="action-item">
+                        <div class="action-icon">👥</div>
+                        <span>Xem danh sách bệnh nhân</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">📅</div>
+                        <span>Quản lý lịch hẹn</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">📊</div>
+                        <span>Báo cáo thống kê</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">💬</div>
+                        <span>Tin nhắn với bệnh nhân</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">📋</div>
+                        <span>Tạo đơn thuốc</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Chart Section -->
+            <section class="chart-container">
+                <h3>Thống kê chu kỳ điều trị</h3>
+                <canvas id="treatmentChart"></canvas>
+            </section>
+        </div>
+
+        <!-- Doctor Sidebar -->
+        <aside class="dashboard-sidebar">
+            <!-- Doctor Info -->
+            <div class="sidebar-card">
+                <h3><i class="fas fa-user-md"></i> Thông tin bác sĩ</h3>
+                <div class="treatment-info">
+                    <div class="info-row">
+                        <span class="info-label">Bác sĩ:</span>
+                        <span class="info-value">BS. Nguyễn Thị Hương</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Chuyên khoa:</span>
+                        <span class="info-value">Hiếm muộn</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Kinh nghiệm:</span>
+                        <span class="info-value">15 năm</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Bệnh nhân:</span>
+                        <span class="info-value">145 người</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Urgent Patients -->
+            <div class="sidebar-card">
+                <h3><i class="fas fa-exclamation-triangle text-warning"></i> Cần chú ý</h3>
+                <div class="medication-info">
+                    <div class="medication-item">
+                        <div class="medication-name">BN: Mai Thị Hoa</div>
+                        <div class="medication-details">
+                            <span>Phản ứng thuốc bất thường</span>
+                            <span class="text-warning">Ưu tiên cao</span>
+                        </div>
+                    </div>
+                    <div class="medication-item">
+                        <div class="medication-name">BN: Trần Văn Nam</div>
+                        <div class="medication-details">
+                            <span>Chỉ số E2 cao bất thường</span>
+                            <span class="text-info">Cần theo dõi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social sidebar -->
+            <div class="social-sidebar">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fas fa-envelope"></i></a>
+            </div>
+
+            <!-- Today's Appointments -->
+            <div class="sidebar-card notifications-card">
+                <h3><i class="fas fa-calendar-check"></i> Lịch hẹn hôm nay</h3>
+                <div class="notification-item">
+                    <div class="notification-time">11:30</div>
+                    <span>Chuyển phôi - BN Lê Thị Lan</span>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-time">14:00</div>
+                    <span>Tư vấn - BN Nguyễn Thị Thu</span>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-time">15:30</div>
+                    <span>Theo dõi - BN Phạm Văn Đức</span>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="sidebar-card">
+                <h3><i class="fas fa-bolt"></i> Thao tác nhanh</h3>
+                <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                        📝 Tạo đơn thuốc
+                    </a>
+                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                        📋 Ghi chú bệnh án
+                    </a>
+                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                        📊 Xem báo cáo
+                    </a>
+                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
+                        💬 Tin nhắn khẩn
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Doctor-specific styles -->
+    <script src="js/doctor-dashboard.js"></script>
+</body>
+</html>
