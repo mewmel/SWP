@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const userMenu = document.querySelector('.user-menu');
     const userNameSpan = document.querySelector('.user-name');
     const sidebarUsername = document.querySelector('.sidebar-username');
+    const notificationWrapper = document.querySelector('.notification-wrapper');
+    
     // Hiển thị đúng trạng thái đăng nhập khi load lại trang
     const fullName = localStorage.getItem('userFullName');
     if (fullName) {
@@ -11,9 +13,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (userMenu) userMenu.style.display = 'flex';
         if (userNameSpan) userNameSpan.textContent = fullName;
         if (sidebarUsername) sidebarUsername.textContent = fullName;
+        if (notificationWrapper) notificationWrapper.style.display = 'block';
     } else {
         if (authButtons) authButtons.style.display = 'flex';
         if (userMenu) userMenu.style.display = 'none';
+        if (notificationWrapper) notificationWrapper.style.display = 'none';
+    }
+    
+    // Kiểm tra và hiển thị thông báo đăng xuất
+    const logoutMessage = localStorage.getItem('logoutMessage');
+    if (logoutMessage) {
+        // Thêm delay nhỏ để trang load xong trước khi hiển thị thông báo
+        setTimeout(() => {
+            showNotification(logoutMessage, 'success');
+            localStorage.removeItem('logoutMessage'); // Xóa thông báo sau khi hiển thị
+        }, 100);
     }
 
     // ========== ĐĂNG NHẬP ==========
@@ -49,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (userMenu) userMenu.style.display = 'flex';
                 if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
                 if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+                if (notificationWrapper) notificationWrapper.style.display = 'block';
                 showNotification('Đăng nhập thành công!', 'success');
                 const closeModal = document.querySelector('.close-modal');
                 if (closeModal) closeModal.click();
@@ -78,11 +93,21 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             localStorage.removeItem('userFullName');
             localStorage.removeItem('userEmail');
+            // Lưu thông báo đăng xuất để hiển thị trên trang index
+            localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
+            if (notificationWrapper) notificationWrapper.style.display = 'none';
             closeSidebar();
-            showNotification('Đã đăng xuất!', 'success');
             clearLoginForm();
+            // Chuyển trang ngay lập tức nếu không ở trang index
+            if (window.location.pathname !== '/index.html' && !window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
+                window.location.href = "index.html";
+            } else {
+                // Nếu đã ở trang index, hiển thị thông báo ngay
+                showNotification('Đã đăng xuất!', 'success');
+                localStorage.removeItem('logoutMessage');
+            }
         });
     }
     const sidebarLogout = document.querySelector('.sidebar-logout');
@@ -91,30 +116,18 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             localStorage.removeItem('userFullName');
             localStorage.removeItem('userEmail');
+            // Lưu thông báo đăng xuất để hiển thị trên trang index
+            localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
+            if (notificationWrapper) notificationWrapper.style.display = 'none';
             closeSidebar();
             clearLoginForm();
-            showNotification('Đã đăng xuất!', 'success');
-            // Chờ 1 giây rồi mới chuyển trang
-            setTimeout(function() {
-                window.location.href = "index.html";
-            }, 800);
-
+            // Chuyển trang ngay lập tức
+            window.location.href = "index.html";
         });
     }
-    //============ Hiện biểu tượng thông báo khi đã đăng nhập=====
-    document.addEventListener('DOMContentLoaded', function() {
-        const notificationArea = document.querySelector('.notification-wrapper');
-        const userFullName = localStorage.getItem('userFullName');
-        if (notificationArea) {
-            if (userFullName) {
-                notificationArea.style.display = 'block';
-            } else {
-                notificationArea.style.display = 'none';
-            }
-        }
-    });
+
 
     // ========= ĐĂNG KÝ GỌI API BACKEND =========
     document.getElementById('registerForm').addEventListener('submit', function(e) {
