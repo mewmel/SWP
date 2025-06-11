@@ -419,6 +419,49 @@
     </div>
 </footer>
 
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const openSidebarBtn = document.getElementById('openSidebar');
+        const closeSidebarBtn = document.getElementById('closeSidebar');
+    
+        // Mở sidebar
+        if (openSidebarBtn && sidebar) {
+            openSidebarBtn.addEventListener('click', function () {
+                sidebar.style.display = 'block'; // Hiển thị sidebar
+                setTimeout(() => {
+                    sidebar.classList.add('active'); // Thêm class để animation
+                }, 10);
+            });
+        }
+    
+        // Đóng sidebar
+        if (closeSidebarBtn && sidebar) {
+            closeSidebarBtn.addEventListener('click', function () {
+                sidebar.classList.remove('active'); // Xóa class animation
+                setTimeout(() => {
+                    sidebar.style.display = 'none'; // Ẩn sidebar
+                }, 300); // Thời gian trùng với animation
+            });
+        }
+    
+        // Đóng sidebar khi click ra ngoài
+        document.addEventListener('mousedown', function (e) {
+            if (
+                sidebar &&
+                sidebar.classList.contains('active') &&
+                !sidebar.contains(e.target) &&
+                !e.target.closest('#openSidebar')
+            ) {
+                sidebar.classList.remove('active');
+                setTimeout(() => {
+                    sidebar.style.display = 'none';
+                }, 300);
+            }
+        });
+    });
+</script>
+
 <script src="script.js"></script>
 </body>
 </html>
