@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khám hiếm muộn & Tiền hôn nhân - FertilityEHR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+<header>
+    <div class="container">
+        <div class="logo">
+            <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html#doctor">Đội ngũ bác sĩ</a></li>
+                <li class="dropdown">
+                    <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="kham-hiem-muon.html">Khám hiếm muộn/ tiền hôn nhân</a></li>
+                        <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
+                    </ul>
+                </li>
+                <li><a href="#footer">Liên hệ</a></li>
+                <li><a href="dat-lich.html">Đặt lịch khám</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
+            <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
+        </div>
+        <div class="user-menu" style="display:none;">
+                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+                <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</header>
+
+<!-- SIDEBAR MENU CÁ NHÂN -->
+<aside class="sidebar" id="sidebar" style="display:none;">
+    <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+    <div class="sidebar-user">
+        <i class="fas fa-user-circle"></i>
+        <span class="sidebar-username"></span>
+    </div>
+    <a href="#" class="sidebar-account"><i class="fas fa-user"></i> Trang người dùng</a>
+    <a href="#">Tin nổi bật</a>
+    <a href="#">Bệnh án</a>
+    <a href="#">Lịch hẹn</a>
+    <a href="#">Kết quả xét nghiệm</a>
+    <a href="#">Cài đặt</a>
+    <div class="sidebar-divider"></div>
+    <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+</aside>
+
+<!-- Auth Modal -->
+<div class="auth-modal" id="authModal">
+    <div class="auth-modal-content">
+        <div class="auth-modal-left">
+            <div class="auth-modal-image">
+                <img src="img/login-illustration.png" alt="Medical">
+            </div>
+            <div class="auth-modal-overlay">
+                <h2>Chào mừng bạn đến với FertilityEHR</h2>
+                <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
+            </div>
+        </div>
+        <div class="auth-modal-right">
+            <span class="close-modal">&times;</span>
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" data-tab="login">Đăng nhập</button>
+                <button type="button" class="auth-tab" data-tab="register">Đăng ký</button>
+            </div>
+
+            <form id="loginForm" class="auth-form active" autocomplete="off">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu">
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group remember-forgot">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        Ghi nhớ đăng nhập
+                    </label>
+                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <span>Đăng nhập</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div class="social-login">
+                    <p>Hoặc đăng nhập với</p>
+                    <div class="social-buttons">
+                        <button type="button" class="social-btn google">
+                            <i class="fab fa-google"></i>
+                        </button>
+                        <button type="button" class="social-btn facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <form id="registerForm" class="auth-form" autocomplete="off">
+                <div class="form-group">
+                    <label for="registerName">Họ và tên</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="registerName" required placeholder="Nhập họ tên của bạn">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mật khẩu</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="registerPassword" required placeholder="Tạo mật khẩu">
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmPassword" required placeholder="Xác nhận mật khẩu">
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="agreeTerms" >
+                        <span class="checkmark"></span>
+                        Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <span>Đăng ký</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Khám hiếm muộn<br>Tiền hôn nhân</h1>
+            <h2>Hệ thống điều trị và theo dõi chuyên biệt cho phòng khám hiếm muộn</h2>
+            <p>Giải pháp hiện đại cho các cặp vợ chồng hiếm muộn</p>
+        </div>
+    </div>
+</section>
+<div class="intro-flex" style="display: flex; gap: 40px; align-items: flex-start; margin: 32px 150px; margin-top: 100px;">
+    <div class="intro-content" style="flex: 2;">
+        <h3 style="color: var(--primary-color); margin-bottom: 16px; font-size: 2rem;"><i class="fas fa-heartbeat"></i>
+            Lợi ích khi khám hiếm muộn & tiền hôn nhân</h3>
+        <ul style="list-style: none; padding: 0; color: var(--text-color); font-size: 1rem;">
+            <li style="margin-bottom: 12px; font-size: 1.2rem; font-weight: 500;"><i class="fas fa-check-circle"
+                                                                                     style="color: var(--primary-color); margin-right: 8px;"></i> Phát hiện sớm các yếu tố nguy cơ ảnh
+                hưởng đến khả năng sinh sản</li>
+            <li style="margin-bottom: 12px; font-size: 1.2rem; font-weight: 500;"><i class="fas fa-check-circle"
+                                                                                     style="color: var(--primary-color); margin-right: 8px;"></i> Tư vấn sức khỏe sinh sản, kế hoạch hóa
+                gia đình</li>
+            <li style="margin-bottom: 12px; font-size: 1.2rem; font-weight: 500;"><i class="fas fa-check-circle"
+                                                                                     style="color: var(--primary-color); margin-right: 8px;"></i> Đánh giá tổng quát sức khỏe sinh sản
+                nam và nữ</li>
+            <li style="margin-bottom: 12px; font-size: 1.2rem; font-weight: 500;"><i class="fas fa-check-circle"
+                                                                                     style="color: var(--primary-color); margin-right: 8px;"></i> Hỗ trợ tâm lý, giải đáp thắc mắc về
+                sinh sản và hiếm muộn</li>
+            <li style="margin-bottom: 12px; font-size: 1.2rem; font-weight: 500;"><i class="fas fa-check-circle"
+                                                                                     style="color: var(--primary-color); margin-right: 8px;"></i> Đưa ra phác đồ điều trị phù hợp nếu
+                phát hiện bất thường</li>
+        </ul>
+        <h3 style="color: var(--primary-color); margin: 24px 0 16px; font-size: 2rem;"><i class="fas fa-user-md"></i>
+            Đối tượng nên khám</h3>
+        <ul style="list-style: none; padding: 0; color: var(--text-color); font-size: 1rem;">
+            <li style="margin-bottom: 12px;font-size: 1.2rem; font-weight: 500;"><i class="fas fa-check-circle"
+                                                                                    style="color: var(--primary-color); margin-right: 8px;"></i> Các cặp đôi chuẩn bị kết hôn</li>
+            <li style="margin-bottom: 12px;font-size: 1.2rem; font-weight: 500;"><i class="fas fa-check-circle"
+                                                                                    style="color: var(--primary-color); margin-right: 8px;"></i> Vợ chồng chưa có con sau 1 năm chung
+                sống</li>
+            <li style="margin-bottom: 12px;font-size: 1.2rem; font-weight: 500;"><i class="fas fa-check-circle"
+                                                                                    style="color: var(--primary-color); margin-right: 8px;"></i> Người có tiền sử bệnh lý về sinh sản
+            </li>
+            <li style="margin-bottom: 12px;font-size: 1.2rem; font-weight: 500;"><i class="fas fa-check-circle"
+                                                                                    style="color: var(--primary-color); margin-right: 8px;"></i> Người muốn kiểm tra sức khỏe sinh sản
+                tổng quát</li>
+        </ul>
+        <h3 style="color: var(--primary-color); margin: 24px 0 16px; font-size: 2rem;"><i
+                class="fas fa-stethoscope"></i> Quy trình khám</h3>
+        <ol style="color: var(--text-color); font-size: 1.2rem; padding-left: 20px; font-weight: 500;">
+            <li>Khám lâm sàng và tư vấn với bác sĩ chuyên khoa</li>
+            <li>Làm các xét nghiệm cần thiết (máu, nội tiết, tinh dịch đồ, siêu âm...)</li>
+            <li>Đánh giá kết quả và tư vấn hướng điều trị (nếu có)</li>
+        </ol>
+    </div>
+    <div class="img-kham-benh" style="display: flex; align-items: center; justify-content: center; margin-top: 90px; margin-right: 130px;">
+        <img src="img/kham-benh.png" alt="FertilityCare Illustration"
+             class="img-fluid rounded-4 shadow"
+             style="max-height:500px; max-width:100%; width:100%; object-fit:cover; border-radius: var(--border-radius-md);">
+    </div>
+</div>
+
+<section class="cta" id="cta">
+    <div class="container">
+        <h2>Sẵn sàng hành trình làm cha mẹ cùng chúng tôi chứ ?</h2>
+        <p>Tham gia cùng hàng trăm phòng khám hiếm muộn đang tin tưởng FertilityEHR</p>
+        <div class="cta-buttons">
+            <a href="dat-lich.html" class="btn-secondary">Đặt lịch khám ngay</a>
+        </div>
+    </div>
+    <!-- Social sidebar fixed bên phải -->
+    <div class="social-sidebar">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fas fa-envelope"></i></a>
+    </div>
+</section>
+
+<footer id="footer">
+    <div class="container">
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h3>Sản phẩm</h3>
+                <ul>
+                    <li><a href="#">FertilityEHR</a></li>
+                    <li><a href="#">IMS</a></li>
+                    <li><a href="#">Cổng thông tin bệnh nhân</a></li>
+                    <li><a href="#">Khám từ xa</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Chuyên khoa</h3>
+                <ul>
+                    <li><a href="kham-hiem-muon.html">Hiếm muộn/Tiền hôn nhân</a></li>
+                    <li><a href="phuong-phap-sinh-san.html">Phương pháp IVF</a></li>
+                    <li><a href="phuong-phap-sinh-san.html">Phương pháp IUI</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Liên hệ</h3>
+                <p>123 Đường Lê Văn Việt<br>Tầng 5<br>Hồ Chí Minh, Việt Nam</p>
+                <p>Điện thoại: (028) 5555-1234</p>
+                <p>Email: info@meditab.com</p>
+            </div>
+            <div class="footer-column">
+                <h3>Thời gian hoạt động</h3>
+                <p>Thứ 2 - Thứ 6: 8:00 - 17:00</p>
+                <p>Thứ 7 - Chủ nhật: 8:00 - 12:00</p>
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="script.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
+            document.querySelector('nav').classList.toggle('active');
+        });
+
+    </script>
+</body>
+
+</html>
