@@ -96,8 +96,25 @@ document.addEventListener('DOMContentLoaded', function() {
             closeSidebar();
             clearLoginForm();
             showNotification('Đã đăng xuất!', 'success');
+            // Chờ 1 giây rồi mới chuyển trang
+            setTimeout(function() {
+                window.location.href = "index.html";
+            }, 800);
+
         });
     }
+    //============ Hiện biểu tượng thông báo khi đã đăng nhập=====
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationArea = document.querySelector('.notification-wrapper');
+        const userFullName = localStorage.getItem('userFullName');
+        if (notificationArea) {
+            if (userFullName) {
+                notificationArea.style.display = 'block';
+            } else {
+                notificationArea.style.display = 'none';
+            }
+        }
+    });
 
     // ========= ĐĂNG KÝ GỌI API BACKEND =========
     document.getElementById('registerForm').addEventListener('submit', function(e) {
