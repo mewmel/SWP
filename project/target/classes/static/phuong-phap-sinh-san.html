@@ -15,7 +15,7 @@
         </div>
         <nav>
             <ul>
-                <li><a href="index.html#doctor">Đội ngũ bác sĩ</a></li>
+                <li><a href="index.html">Đội ngũ bác sĩ</a></li>
                 <li class="dropdown">
                     <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
@@ -32,139 +32,135 @@
             <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
         </div>
         <div class="user-menu" style="display:none;">
-                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-                <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
-                    <i class="fas fa-bars"></i>
-                </button>
+            <span class="user-name"></span>
+            <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+    
+    <!-- SIDEBAR MENU CÁ NHÂN -->
+    <aside class="sidebar" id="sidebar" style="display:none;">
+        <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+        <div class="sidebar-user">
+            <i class="fas fa-user-circle"></i>
+            <span class="sidebar-username"></span>
+        </div>
+        <a href="#" class="sidebar-account"><i class="fas fa-user"></i> Trang người dùng</a>
+        <a href="#">Tin nổi bật</a>
+        <a href="#">Bệnh án</a>
+        <a href="#">Lịch hẹn</a>
+        <a href="#">Kết quả xét nghiệm</a>
+        <a href="#">Cài đặt</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+    </aside>
+    
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-left">
+                <div class="auth-modal-image">
+                    <img src="img/hero-image.png" alt="Medical">
+                </div>
+                <div class="auth-modal-overlay">
+                    <h2>Chào mừng bạn đến với FertilityEHR</h2>
+                    <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
+                </div>
             </div>
-        <button class="mobile-menu-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-</header>
-
-<!-- SIDEBAR MENU CÁ NHÂN (thêm ngay sau header) -->
-<aside class="sidebar" id="sidebar" style="display:none;">
-    <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
-    <div class="sidebar-user">
-        <i class="fas fa-user-circle"></i>
-        <span class="sidebar-username"></span>
-    </div>
-    <a href="#" class="sidebar-account"><i class="fas fa-user"></i> Trang người dùng</a>
-    <a href="#">Tin nổi bật</a>
-    <a href="#">Bệnh án</a>
-    <a href="#">Lịch hẹn</a>
-    <a href="#">Kết quả xét nghiệm</a>
-    <a href="#">Cài đặt</a>
-    <div class="sidebar-divider"></div>
-    <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-</aside>
-
-<!-- FORM ĐĂNG NHẬP/ĐĂNG KÝ (thêm ngay sau sidebar) -->
-<div class="auth-modal" id="authModal">
-    <div class="auth-modal-content">
-        <div class="auth-modal-left">
-            <div class="auth-modal-image">
-                <img src="img/login-illustration.png" alt="Medical">
-            </div>
-            <div class="auth-modal-overlay">
-                <h2>Chào mừng bạn đến với FertilityEHR</h2>
-                <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
+            <div class="auth-modal-right">
+                <span class="close-modal">&times;</span>
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                    <button class="auth-tab" data-tab="register">Đăng ký</button>
+                </div>
+                <form id="loginForm" class="auth-form active">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Mật khẩu</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu">
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group remember-forgot">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="checkmark"></span>
+                            Ghi nhớ đăng nhập
+                        </label>
+                        <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <span>Đăng nhập</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <div class="social-login">
+                        <p>Hoặc đăng nhập với</p>
+                        <div class="social-buttons">
+                            <button type="button" class="social-btn google">
+                                <i class="fab fa-google"></i>
+                            </button>
+                            <button type="button" class="social-btn facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="registerName">Họ và tên</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="registerName" required placeholder="Nhập họ tên của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Mật khẩu</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="registerPassword" required placeholder="Tạo mật khẩu">
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Xác nhận mật khẩu</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirmPassword" required placeholder="Xác nhận mật khẩu">
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="agreeTerms" >
+                            <span class="checkmark"></span>
+                            Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <span>Đăng ký</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
             </div>
         </div>
-        <div class="auth-modal-right">
-            <span class="close-modal">&times;</span>
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-                <button class="auth-tab" data-tab="register">Đăng ký</button>
-            </div>
-
-            <form id="loginForm" class="auth-form active">
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Mật khẩu</label>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu">
-                        <i class="fas fa-eye toggle-password"></i>
-                    </div>
-                </div>
-                <div class="form-group remember-forgot">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="rememberMe">
-                        <span class="checkmark"></span>
-                        Ghi nhớ đăng nhập
-                    </label>
-                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
-                </div>
-                <button type="submit" class="btn-primary">
-                    <span>Đăng nhập</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-                <div class="social-login">
-                    <p>Hoặc đăng nhập với</p>
-                    <div class="social-buttons">
-                        <button type="button" class="social-btn google">
-                            <i class="fab fa-google"></i>
-                        </button>
-                        <button type="button" class="social-btn facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </button>
-                    </div>
-                </div>
-            </form>
-
-            <form id="registerForm" class="auth-form">
-                <div class="form-group">
-                    <label for="registerName">Họ và tên</label>
-                    <div class="input-group">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="registerName" required placeholder="Nhập họ tên của bạn">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Mật khẩu</label>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="registerPassword" required placeholder="Tạo mật khẩu">
-                        <i class="fas fa-eye toggle-password"></i>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Xác nhận mật khẩu</label>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="confirmPassword" required placeholder="Xác nhận mật khẩu">
-                        <i class="fas fa-eye toggle-password"></i>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="agreeTerms" >
-                        <span class="checkmark"></span>
-                        Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
-                    </label>
-                </div>
-                <button type="submit" class="btn-primary">
-                    <span>Đăng ký</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </form>
-        </div>
     </div>
+    
 </div>
 
 <section class="hero">
@@ -284,6 +280,6 @@
     </div>
 </footer>
 
-<script src="script.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>

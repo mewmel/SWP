@@ -16,43 +16,120 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1>FertilityEHR</h1>
+                <h1>Dashboard</h1>
                 <h2>Hệ thống điều trị và theo dõi chuyên biệt cho phòng khám hiếm muộn</h2>
                 <p>Tối ưu hóa hoạt động của phòng khám hiếm muộn với hệ thống quản lý bệnh án điện tử toàn diện được
                     thiết kế đặc biệt cho y học sinh sản.</p>
-                <!-- </div>
-        <div class="hero-image">
-            <img src="img/hero-image.png" alt="Giao diện FertilityEHR">
-        </div> -->
+
             </div>
     </section>
     <!-- Dashboard Header -->
     <header>
         <div class="container">
             <div class="logo">
-                <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
+                <img src="img/logo.png" alt="Logo Meditab">
             </div>
             <nav>
                 <ul>
-                    <li><a href="#" class="active">Trang cá nhân</a></li>
-                    <li><a href=>Tin nổi bật</a></li>
+                    <!-- <li><a href="index.html">Trang chủ</a></li> -->
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
                     <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
                     <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
-                    <li><a href="#">Liên hệ</a></li>
                     <li>
-                        <button class="notification-icon">
-                            <i class="fas fa-bell"></i>
-                            <span class="notification-badge">9</span>
-                        </button>
+                        <div class="notification-wrapper" style="position: relative;">
+                            <button class="notification-icon" id="notificationBtn">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge">9</span>
+                            </button>
+
+                            <!-- Dropdown Notification -->
+                            <div class="notification-dropdown" id="notificationDropdown">
+                                <div class="notification-dropdown-header">
+                                    <h3>Thông báo</h3>
+                                    <button class="notification-settings-btn">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                </div>
+
+                                <div class="notification-dropdown-body">
+                                    <div class="notification-dropdown-item unread">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-syringe"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Nhắc nhở tiêm thuốc</div>
+                                            <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
+                                            </div>
+                                            <div class="notification-time">5 phút trước</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-dropdown-item unread">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-flask"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Lịch xét nghiệm</div>
+                                            <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc
+                                                8:00</div>
+                                            <div class="notification-time">2 giờ trước</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-dropdown-item">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-calendar-check"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Lịch hẹn khám</div>
+                                            <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
+                                                14:00</div>
+                                            <div class="notification-time">1 ngày trước</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-dropdown-item">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Kết quả xét nghiệm</div>
+                                            <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
+                                            <div class="notification-time">2 ngày trước</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-dropdown-item">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-user-md"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Tin nhắn từ bác sĩ</div>
+                                            <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
+                                                cho bạn</div>
+                                            <div class="notification-time">3 ngày trước</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="notification-dropdown-footer">
+                                    <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </nav>
-
-
             <div class="user-menu" style="display:none;">
                 <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
                 <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
                     <i class="fas fa-bars"></i>
+                </button>
+                <button class="logout-btn"
+                    style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
                 </button>
             </div>
             <button class="mobile-menu-btn">
@@ -78,6 +155,77 @@
         <div class="sidebar-divider"></div>
         <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
     </aside>
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                <button class="auth-tab" data-tab="register">Đăng ký</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="loginPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng nhập</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div class="social-login">
+                    <button type="button" class="social-btn google">
+                        <i class="fab fa-google"></i> Đăng nhập với Google
+                    </button>
+                    <button type="button" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
+                    </button>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">Họ và tên</label>
+                    <input type="text" id="registerName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="registerPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng ký</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
 
 
     <!-- Dashboard Main Content -->
@@ -317,147 +465,7 @@
             </div>
         </aside>
     </main>
-
-    <script>
-        // Sidebar open/close logic
-        document.addEventListener('DOMContentLoaded', function () {
-            const sidebar = document.getElementById('sidebar');
-            const openSidebarBtn = document.getElementById('openSidebar');
-            const closeSidebarBtn = document.getElementById('closeSidebar');
-
-            // Mở sidebar
-            if (openSidebarBtn && sidebar) {
-                openSidebarBtn.addEventListener('click', function () {
-                    sidebar.style.display = 'block'; // Hiển thị sidebar
-                    setTimeout(() => {
-                        sidebar.classList.add('active'); // Thêm class để animation
-                    }, 10);
-                });
-            }
-
-            // Đóng sidebar
-            if (closeSidebarBtn && sidebar) {
-                closeSidebarBtn.addEventListener('click', function () {
-                    sidebar.classList.remove('active'); // Xóa class animation
-                    setTimeout(() => {
-                        sidebar.style.display = 'none'; // Ẩn sidebar
-                    }, 300); // Thời gian trùng với animation
-                });
-            }
-
-            // Đóng sidebar khi click ra ngoài
-            document.addEventListener('mousedown', function (e) {
-                if (
-                    sidebar &&
-                    sidebar.classList.contains('active') &&
-                    !sidebar.contains(e.target) &&
-                    !e.target.closest('#openSidebar')
-                ) {
-                    sidebar.classList.remove('active');
-                    setTimeout(() => {
-                        sidebar.style.display = 'none';
-                    }, 300);
-                }
-            });
-        });
-        // Đăng xuất từ sidebar
-        const sidebarLogout = document.querySelector('.sidebar-logout');
-        if (sidebarLogout) {
-            sidebarLogout.addEventListener('click', function (e) {
-                e.preventDefault();
-                alert('Đăng xuất thành công!');
-                closeSidebar();
-            });
-        }
-        // Chuyển sang trang hồ sơ cá nhân
-        const sidebarAccount = document.querySelector('.sidebar-account');
-        if (sidebarAccount) {
-            sidebarAccount.addEventListener('click', function (e) {
-                e.preventDefault();
-                window.location.href = "ho-so-ca-nhan.html";
-            });
-        }
-
-        // Temperature Chart
-        const ctx = document.getElementById('temperatureChart').getContext('2d');
-        const temperatureChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['20/6', '21/6', '22/6', '23/6', '24/6', '25/6', '26/6'],
-                datasets: [{
-                    label: 'Nhiệt độ cơ thể (°C)',
-                    data: [36.4, 36.3, 36.5, 36.7, 36.8, 36.6, 36.9],
-                    borderColor: 'rgb(74, 144, 226)',
-                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                    tension: 0.1,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        min: 36,
-                        max: 37.5
-                    }
-                }
-            }
-        });
-
-        // Interactive features
-        document.querySelectorAll('.action-item').forEach(item => {
-            item.addEventListener('click', function () {
-                const action = this.textContent.trim();
-                alert(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`);
-            });
-        });
-
-        // Notification click
-        document.querySelector('.notification-icon').addEventListener('click', function () {
-            alert('Bạn có 3 thông báo mới:\n1. Tiêm thuốc lúc 19:00\n2. Xét nghiệm ngày mai\n3. Khám bác sĩ 28/06');
-        });
-
-        // Progress animation
-        setTimeout(() => {
-            document.querySelector('.progress-fill').style.width = '40%';
-        }, 500);
-
-        // Add hover effects to timeline days
-        document.querySelectorAll('.timeline-day').forEach(day => {
-            day.addEventListener('mouseenter', function () {
-                if (this.classList.contains('has-event')) {
-                    this.style.transform = 'scale(1.05)';
-                    this.style.transition = 'transform 0.2s ease';
-                }
-            });
-
-            day.addEventListener('mouseleave', function () {
-                this.style.transform = 'scale(1)';
-            });
-        });
-        document.addEventListener('DOMContentLoaded', function () {
-            // Lấy tên người dùng từ localStorage (nếu đã đăng nhập)
-            var fullName = localStorage.getItem('userFullName');
-            var sidebarUsername = document.querySelector('.sidebar-username');
-            if (sidebarUsername) {
-                sidebarUsername.textContent = fullName || "User";
-            }
-            // Nếu bạn có avatar/user-menu ở header, có thể set tương tự:
-            var userAvatar = document.querySelector('.user-avatar');
-            if (userAvatar && fullName) {
-                userAvatar.alt = fullName;
-            }
-        });
-    </script>
-
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>
