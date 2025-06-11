@@ -1,7 +1,64 @@
-// Doctor Dashboard JavaScript
+// Bảng điều khiển bác sĩ - JavaScript
+// Chứa các chức năng riêng cho dashboard bác sĩ
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Treatment Success Chart
+    // Chờ script.js load xong trước khi khởi tạo doctor dashboard
+    setTimeout(function() {
+        initDoctorDashboard();
+    }, 200);
+});
+
+function initDoctorDashboard() {
+    // Bắt buộc hiển thị chuông thông báo cho trang bác sĩ (override script.js logic)
+    forceShowNotification();
+    
+    // Khởi tạo biểu đồ
+    initTreatmentChart();
+    
+    // Khởi tạo tương tác dashboard
+    initDashboardInteractions();
+    
+    // Khởi tạo hệ thống thông báo riêng cho bác sĩ
+    initDoctorNotifications();
+    
+    console.log('Doctor Dashboard loaded successfully!');
+}
+
+// Hàm bắt buộc hiển thị chuông thông báo cho trang bác sĩ
+function forceShowNotification() {
+    const notificationWrapper = document.querySelector('.notification-wrapper');
+    if (notificationWrapper) {
+        notificationWrapper.style.display = 'block';
+        notificationWrapper.style.visibility = 'visible';
+        notificationWrapper.style.opacity = '1';
+        
+        // Đảm bảo chuông luôn hiển thị ngay cả khi script.js cố ẩn
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const target = mutation.target;
+                    if (target.classList.contains('notification-wrapper')) {
+                        if (target.style.display === 'none') {
+                            target.style.display = 'block';
+                            target.style.visibility = 'visible';
+                            target.style.opacity = '1';
+                        }
+                    }
+                }
+            });
+        });
+        
+        observer.observe(notificationWrapper, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+        
+        console.log('Đã bắt buộc hiển thị chuông thông báo cho bác sĩ');
+    }
+}
+
+// Khởi tạo biểu đồ điều trị
+function initTreatmentChart() {
     const ctx = document.getElementById('treatmentChart');
     if (ctx) {
         const treatmentChart = new Chart(ctx.getContext('2d'), {
@@ -33,63 +90,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+        console.log('Biểu đồ điều trị đã được khởi tạo');
     }
+}
 
-    // Interactive features for action items
+// Khởi tạo tương tác dashboard
+function initDashboardInteractions() {
+    // Tương tác với các mục hành động sử dụng showNotification từ script.js
     document.querySelectorAll('.action-item').forEach(item => {
         item.addEventListener('click', function() {
             const action = this.textContent.trim();
-            showNotification(`Chức năng "${action}" sẽ được phát triển!`, 'info');
+            if (typeof showNotification === 'function') {
+                showNotification(`Chức năng "${action}" sẽ được phát triển!`, 'info');
+            }
         });
     });
 
-    // Doctor Notification System
-    const doctorNotificationBtn = document.getElementById('doctorNotificationBtn');
-    const doctorNotificationDropdown = document.getElementById('doctorNotificationDropdown');
-
-    if (doctorNotificationBtn && doctorNotificationDropdown) {
-        const doctorBadge = doctorNotificationBtn.querySelector('.notification-badge');
-
-        doctorNotificationBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            doctorNotificationDropdown.classList.toggle('show');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!doctorNotificationDropdown.contains(e.target) && !doctorNotificationBtn.contains(e.target)) {
-                doctorNotificationDropdown.classList.remove('show');
-            }
-        });
-
-        // Mark notifications as read when dropdown opens
-        doctorNotificationDropdown.addEventListener('click', function() {
-            const unreadItems = this.querySelectorAll('.notification-dropdown-item.unread');
-            let unreadCount = unreadItems.length;
-            
-            unreadItems.forEach((item, index) => {
-                setTimeout(() => {
-                    item.classList.remove('unread');
-                    unreadCount--;
-                    if (doctorBadge) {
-                        doctorBadge.textContent = unreadCount;
-                        if (unreadCount === 0) {
-                            doctorBadge.style.display = 'none';
-                        }
-                    }
-                }, (index + 1) * 500);
-            });
-        });
-
-        // ESC key to close notification
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                doctorNotificationDropdown.classList.remove('show');
-            }
-        });
-    }
-
-    // Schedule item interactions
+    // Tương tác với các mục lịch khám
     document.querySelectorAll('.btn-small').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -97,165 +114,179 @@ document.addEventListener('DOMContentLoaded', function() {
             const patientName = scheduleItem.querySelector('strong').textContent;
             
             if (this.textContent.includes('Xem hồ sơ')) {
-                showNotification(`Mở hồ sơ của ${patientName}`, 'success');
+                if (typeof showNotification === 'function') {
+                    showNotification(`Mở hồ sơ của ${patientName}`, 'success');
+                }
             } else if (this.textContent.includes('Đang khám')) {
-                showNotification(`${patientName} đang trong quá trình khám`, 'info');
+                if (typeof showNotification === 'function') {
+                    showNotification(`${patientName} đang trong quá trình khám`, 'info');
+                }
             }
         });
     });
 
-    // Add hover effects to schedule items
+    // Thêm hiệu ứng khi click vào các mục lịch
     document.querySelectorAll('.schedule-item').forEach(item => {
         item.addEventListener('click', function() {
             if (!this.classList.contains('current')) {
                 const patientName = this.querySelector('strong').textContent;
                 const appointmentType = this.querySelector('.appointment-type').textContent;
-                showNotification(`Chi tiết: ${patientName} - ${appointmentType}`, 'info');
+                if (typeof showNotification === 'function') {
+                    showNotification(`Chi tiết: ${patientName} - ${appointmentType}`, 'info');
+                }
             }
         });
     });
+    
+    console.log('Tương tác dashboard đã được khởi tạo');
+}
 
-    // Add new notification function
-    function addNewNotification(title, description, type = 'info') {
-        const dropdown = document.getElementById('doctorNotificationDropdown');
-        const notificationBody = dropdown?.querySelector('.notification-dropdown-body');
-        const badge = document.querySelector('#doctorNotificationBtn .notification-badge');
-        
-        if (notificationBody) {
-            const iconMap = {
-                'info': 'fas fa-info-circle',
-                'warning': 'fas fa-exclamation-triangle',
-                'success': 'fas fa-check-circle',
-                'appointment': 'fas fa-calendar-plus',
-                'patient': 'fas fa-user-injured'
-            };
-
-            const newNotification = document.createElement('div');
-            newNotification.className = 'notification-dropdown-item unread';
-            newNotification.innerHTML = `
-                <div class="notification-avatar">
-                    <i class="${iconMap[type] || iconMap.info}"></i>
-                </div>
-                <div class="notification-content">
-                    <div class="notification-title">${title}</div>
-                    <div class="notification-description">${description}</div>
-                    <div class="notification-time">Vừa xong</div>
-                </div>
-            `;
-
-            notificationBody.insertBefore(newNotification, notificationBody.firstChild);
-
-            // Update badge
-            if (badge) {
-                const currentCount = parseInt(badge.textContent) || 0;
-                badge.textContent = currentCount + 1;
-                badge.style.display = 'block';
-            }
-        }
-    }
-
-    // Notification display function
-    function showNotification(message, type = 'info') {
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = `notification-toast notification-${type}`;
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-                <span>${message}</span>
-            </div>
-            <button class="notification-close">&times;</button>
-        `;
-
-        // Add styles if not exists
-        if (!document.querySelector('#notification-toast-styles')) {
-            const styles = document.createElement('style');
-            styles.id = 'notification-toast-styles';
-            styles.textContent = `
-                .notification-toast {
-                    position: fixed;
-                    top: 80px;
-                    right: 20px;
-                    background: white;
-                    border-left: 4px solid #2196f3;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                    border-radius: 8px;
-                    padding: 16px;
-                    max-width: 300px;
-                    z-index: 1000;
-                    animation: slideIn 0.3s ease;
-                }
-                .notification-toast.notification-success { border-left-color: #4caf50; }
-                .notification-toast.notification-warning { border-left-color: #ff9800; }
-                .notification-toast.notification-error { border-left-color: #f44336; }
-                .notification-content {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-                .notification-close {
-                    position: absolute;
-                    top: 8px;
-                    right: 8px;
-                    background: none;
-                    border: none;
-                    font-size: 16px;
-                    cursor: pointer;
-                    color: #999;
-                }
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-            `;
-            document.head.appendChild(styles);
+// Hàm khởi tạo thông báo đặc biệt cho bác sĩ
+function initDoctorNotifications() {
+    // Thêm function đặc biệt cho bác sĩ sử dụng addNewNotification từ script.js
+    window.addDoctorNotification = function(title, description, type = 'appointment') {
+        // Mapping type cho bác sĩ
+        let notificationType;
+        switch(type) {
+            case 'urgent-patient':
+                notificationType = 'injection';
+                break;
+            case 'new-appointment':
+                notificationType = 'appointment';
+                break;
+            case 'test-result':
+                notificationType = 'test';
+                break;
+            case 'medication-alert':
+                notificationType = 'injection';
+                break;
+            default:
+                notificationType = 'message';
         }
 
-        document.body.appendChild(notification);
-
-        // Auto remove after 3 seconds
-        setTimeout(() => {
-            notification.style.animation = 'slideIn 0.3s ease reverse';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
-
-        // Close button
-        notification.querySelector('.notification-close').addEventListener('click', () => {
-            notification.style.animation = 'slideIn 0.3s ease reverse';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        });
-    }
-
-    // Simulate real-time notifications (for demo)
-    let notificationInterval;
-    function startNotificationDemo() {
-        const notifications = [
-            { title: 'Lịch hẹn mới', description: 'BN Trần Thị Lan đặt lịch khám ngày mai', type: 'appointment' },
-            { title: 'Kết quả xét nghiệm', description: 'BN Nguyễn Văn A có kết quả mới', type: 'info' },
-            { title: 'Cảnh báo thuốc', description: 'BN Phạm Thị B chưa tiêm thuốc đúng giờ', type: 'warning' },
-            { title: 'Chu kỳ hoàn thành', description: 'BN Lê Thị C hoàn thành chu kỳ IVF thành công', type: 'success' }
-        ];
-
-        notificationInterval = setInterval(() => {
-            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
-            addNewNotification(randomNotification.title, randomNotification.description, randomNotification.type);
-        }, 30000); // Every 30 seconds
-    }
-
-    // Start demo notifications after 5 seconds
-    setTimeout(startNotificationDemo, 5000);
-
-    // Export functions for external use
-    window.doctorDashboard = {
-        addNewNotification,
-        showNotification
+        // Sử dụng function có sẵn trong script.js
+        if (typeof addNewNotification === 'function') {
+            addNewNotification(title, description, notificationType);
+        }
     };
-});
+
+    // Function test thông báo cho bác sĩ
+    window.testDoctorNotification = function() {
+        const doctorNotifications = [
+            { 
+                title: 'Bệnh nhân cần chú ý khẩn', 
+                desc: 'BN Nguyễn Thị Hoa - Phản ứng thuốc bất thường cần xử lý ngay', 
+                type: 'urgent-patient' 
+            },
+            { 
+                title: 'Lịch hẹn mới', 
+                desc: 'BN Trần Văn Nam đặt lịch tư vấn IVF ngày mai lúc 9:00', 
+                type: 'new-appointment' 
+            },
+            { 
+                title: 'Kết quả xét nghiệm cần xem', 
+                desc: '3 kết quả xét nghiệm hormone mới cần đánh giá', 
+                type: 'test-result' 
+            },
+            { 
+                title: 'Cảnh báo thuốc', 
+                desc: 'BN Phạm Thị Lan chưa tiêm Gonal-F theo lịch', 
+                type: 'medication-alert' 
+            },
+            { 
+                title: 'Chu kỳ IVF hoàn thành', 
+                desc: 'BN Lê Thị Mai hoàn thành chuyển phôi thành công', 
+                type: 'new-appointment' 
+            }
+        ];
+        
+        const randomNotification = doctorNotifications[Math.floor(Math.random() * doctorNotifications.length)];
+        addDoctorNotification(randomNotification.title, randomNotification.desc, randomNotification.type);
+        
+        // Hiển thị toast notification
+        if (typeof showNotification === 'function') {
+            showNotification('Đã thêm thông báo mới cho bác sĩ!', 'success');
+        }
+    };
+
+    // Tự động tạo thông báo demo cho bác sĩ (bỏ comment để test)
+    // setInterval(function() {
+    //     if (Math.random() > 0.7) { // 30% chance mỗi 15 giây
+    //         testDoctorNotification();
+    //     }
+    // }, 15000);
+
+    // Thêm button test vào console để demo
+    console.log('Doctor Notifications initialized! Sử dụng testDoctorNotification() để test thông báo bác sĩ');
+}
+
+// Hàm đặc biệt cho dashboard bác sĩ
+window.doctorDashboard = {
+    // Sử dụng showNotification từ script.js
+    showMessage: function(message, type = 'info') {
+        if (typeof showNotification === 'function') {
+            showNotification(message, type);
+        }
+    },
+    
+    // Thêm thông báo cho bác sĩ
+    addNotification: function(title, description, type = 'appointment') {
+        if (typeof addDoctorNotification === 'function') {
+            addDoctorNotification(title, description, type);
+        }
+    },
+    
+    // Test function
+    test: function() {
+        if (typeof testDoctorNotification === 'function') {
+            testDoctorNotification();
+        }
+    },
+    
+    // Cập nhật thống kê dashboard
+    updateStats: function(todayPatients, totalPatients, successRate, pendingTests) {
+        const cards = document.querySelectorAll('.overview-card .value');
+        if (cards.length >= 4) {
+            cards[0].textContent = todayPatients;
+            cards[1].textContent = totalPatients;
+            cards[2].textContent = successRate + '%';
+            cards[3].textContent = pendingTests;
+            
+            this.showMessage('Đã cập nhật thống kê dashboard!', 'success');
+        }
+    },
+    
+    // Thêm bệnh nhân vào lịch trình
+    addScheduleItem: function(time, patientName, appointmentType) {
+        const scheduleContainer = document.querySelector('.doctor-schedule');
+        if (scheduleContainer) {
+            const newItem = document.createElement('div');
+            newItem.className = 'schedule-item';
+            newItem.innerHTML = `
+                <div class="schedule-time">${time}</div>
+                <div class="schedule-content">
+                    <div class="patient-info">
+                        <strong>BN: ${patientName}</strong>
+                        <span class="appointment-type">${appointmentType}</span>
+                    </div>
+                    <div class="schedule-actions">
+                        <button class="btn-small btn-primary">Xem hồ sơ</button>
+                    </div>
+                </div>
+            `;
+            
+            scheduleContainer.appendChild(newItem);
+            
+            // Thêm event listener cho item mới
+            const newBtn = newItem.querySelector('.btn-small');
+            newBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (typeof showNotification === 'function') {
+                    showNotification(`Mở hồ sơ của BN: ${patientName}`, 'success');
+                }
+            });
+            
+            this.showMessage(`Đã thêm lịch hẹn ${time} - ${patientName}`, 'success');
+        }
+    }
+};
