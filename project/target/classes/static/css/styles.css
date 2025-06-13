@@ -954,9 +954,40 @@ footer::before {
     transform: scaleX(1);
 }
 
-/* Auth Forms */
+/* Điều chỉnh kích thước form đăng nhập và đăng ký */
 .auth-form {
     display: none;
+    width: 100%;
+    height: 500px; /* Đặt chiều cao cố định cho cả 2 form */
+    padding: 2rem;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+/* Thêm scroll cho form đăng ký khi nội dung vượt quá */
+#registerForm {
+    overflow-y: auto;
+}
+
+/* Style cho thanh cuộn của form đăng ký */
+#registerForm::-webkit-scrollbar {
+    width: 6px;
+}
+
+#registerForm::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#registerForm::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#registerForm::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .auth-form.active {

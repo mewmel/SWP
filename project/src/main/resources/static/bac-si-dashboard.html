@@ -19,11 +19,10 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="index.html">Trang chủ</a></li>
-                    <li><a href="#" class="active">Bác sĩ Dashboard</a></li>
-                    <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
-                    <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
-                    <li><a href="ho-so-ca-nhan.html">Hồ sơ</a></li>
+                    <li><a href="#" class="active">Trang chủ</a></li>
+                    <li><a href="">Đăng Blog</a></li>
+                    <li><a href="">Lịch làm</a></li>
+                    <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
                     <li>
                         <div class="auth-buttons dashboard-user-area">
                             <div class="notification-wrapper" style="position: relative;">
@@ -110,23 +109,7 @@
             </button>
         </div>
     </header>
-
-    <!-- Sidebar giống trang index -->
-    <aside class="sidebar" id="sidebar" style="display:none;">
-        <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
-        <div class="sidebar-user">
-            <i class="fas fa-user-circle"></i>
-            <span class="sidebar-username"></span>
-        </div>
-        <a href="ho-so-ca-nhan.html" class="sidebar-account"><i class="fas fa-user"></i> Hồ sơ cá nhân</a>
-        <a href="#">Tin nổi bật</a>
-        <a href="#">Bệnh án</a>
-        <a href="#">Lịch hẹn</a>
-        <a href="#">Kết quả xét nghiệm</a>
-        <a href="#">Cài đặt</a>
-        <div class="sidebar-divider"></div>
-        <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-    </aside>
+    
     <!-- Auth Modal -->
     <div id="authModal" class="auth-modal">
         <div class="auth-modal-content">
@@ -202,30 +185,6 @@
     <main class="dashboard-main">
         <!-- Main Content Area -->
         <div class="dashboard-content">
-            <!-- Doctor Overview Cards -->
-            <section class="overview-cards">
-                <div class="overview-card">
-                    <h3>Bệnh nhân hôm nay</h3>
-                    <div class="value">12</div>
-                    <div class="subtitle">Lịch hẹn</div>
-                </div>
-                <div class="overview-card">
-                    <h3>Tổng bệnh nhân</h3>
-                    <div class="value">145</div>
-                    <div class="subtitle">Đang điều trị</div>
-                </div>
-                <div class="overview-card">
-                    <h3>Chu kỳ thành công</h3>
-                    <div class="value">78%</div>
-                    <div class="subtitle">Tháng này</div>
-                </div>
-                <div class="overview-card">
-                    <h3>Cần xem xét</h3>
-                    <div class="value">5</div>
-                    <div class="subtitle">Kết quả XN</div>
-                </div>
-            </section>
-
             <!-- Today's Schedule -->
             <section class="timeline-section">
                 <div class="timeline-header">
@@ -286,34 +245,33 @@
                 </div>
             </section>
 
-            <!-- Patient Management -->
-            <section class="quick-actions">
-                <h3>Quản lý bệnh nhân</h3>
-                <div class="patient-quick-stats">
-                    <div class="stat-item">
-                        <i class="fas fa-users text-primary"></i>
-                        <div>
-                            <div class="stat-number">24</div>
-                            <div class="stat-label">Bệnh nhân mới tuần này</div>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-heart text-success"></i>
-                        <div>
-                            <div class="stat-number">8</div>
-                            <div class="stat-label">Chu kỳ thành công tháng này</div>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-exclamation-circle text-warning"></i>
-                        <div>
-                            <div class="stat-number">3</div>
-                            <div class="stat-label">Cần theo dõi đặc biệt</div>
-                        </div>
-                    </div>
-                </div>
+            
                 
-                <ul class="action-list">
+               
+            </section>
+
+            <!-- Chart Section -->
+            <section class="chart-container">
+            </section>
+        </div>
+
+        <!-- Doctor Sidebar -->
+        <aside class="dashboard-sidebar">
+            
+
+            <!-- Social sidebar -->
+            <div class="social-sidebar">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fas fa-envelope"></i></a>
+            </div>
+
+
+            <!-- Today's Appointments -->
+            <div class="sidebar-card notifications-card">
+                <h3><i class="fas fa-calendar-check"></i> Quản lý bệnh nhân</h3>
+                <div>
+                    <ul class="action-list">
                     <li class="action-item">
                         <div class="action-icon">👥</div>
                         <span>Xem danh sách bệnh nhân</span>
@@ -327,74 +285,12 @@
                         <span>Báo cáo thống kê</span>
                     </li>
                     <li class="action-item">
-                        <div class="action-icon">💬</div>
-                        <span>Tin nhắn với bệnh nhân</span>
-                    </li>
-                    <li class="action-item">
                         <div class="action-icon">📋</div>
                         <span>Tạo đơn thuốc</span>
                     </li>
                 </ul>
-            </section>
-
-            <!-- Chart Section -->
-            <section class="chart-container">
-                <h3>Thống kê chu kỳ điều trị</h3>
-                <canvas id="treatmentChart"></canvas>
-            </section>
-        </div>
-
-        <!-- Doctor Sidebar -->
-        <aside class="dashboard-sidebar">
-            <!-- Doctor Info -->
-            <div class="sidebar-card">
-                <h3><i class="fas fa-user-md"></i> Thông tin bác sĩ</h3>
-                <div class="treatment-info">
-                    <div class="info-row">
-                        <span class="info-label">Bác sĩ:</span>
-                        <span class="info-value">BS. Nguyễn Thị Hương</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Chuyên khoa:</span>
-                        <span class="info-value">Hiếm muộn</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Kinh nghiệm:</span>
-                        <span class="info-value">15 năm</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Bệnh nhân:</span>
-                        <span class="info-value">145 người</span>
-                    </div>
                 </div>
-            </div>
-
-            <!-- Urgent Patients -->
-            <div class="sidebar-card">
-                <h3><i class="fas fa-exclamation-triangle text-warning"></i> Cần chú ý</h3>
-                <div class="medication-info">
-                    <div class="medication-item">
-                        <div class="medication-name">BN: Mai Thị Hoa</div>
-                        <div class="medication-details">
-                            <span>Phản ứng thuốc bất thường</span>
-                            <span class="text-warning">Ưu tiên cao</span>
-                        </div>
-                    </div>
-                    <div class="medication-item">
-                        <div class="medication-name">BN: Trần Văn Nam</div>
-                        <div class="medication-details">
-                            <span>Chỉ số E2 cao bất thường</span>
-                            <span class="text-info">Cần theo dõi</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Social sidebar -->
-            <div class="social-sidebar">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fas fa-envelope"></i></a>
+                
             </div>
 
             <!-- Today's Appointments -->
@@ -411,25 +307,6 @@
                 <div class="notification-item">
                     <div class="notification-time">15:30</div>
                     <span>Theo dõi - BN Phạm Văn Đức</span>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="sidebar-card">
-                <h3><i class="fas fa-bolt"></i> Thao tác nhanh</h3>
-                <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
-                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
-                        📝 Tạo đơn thuốc
-                    </a>
-                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
-                        📋 Ghi chú bệnh án
-                    </a>
-                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
-                        📊 Xem báo cáo
-                    </a>
-                    <a href="#" style="color: var(--primary-color); text-decoration: none; padding: var(--spacing-sm); background: var(--light-background); border-radius: var(--border-radius-md); transition: all 0.3s ease;">
-                        💬 Tin nhắn khẩn
-                    </a>
                 </div>
             </div>
         </aside>

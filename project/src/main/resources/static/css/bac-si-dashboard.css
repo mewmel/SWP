@@ -228,6 +228,32 @@
     font-weight: 500;
 }
 
+/* Điều chỉnh chiều cao của aside */
+.dashboard-sidebar {
+    height: calc(100vh - 70px); /* 70px là chiều cao của header */
+    position: sticky;
+    top: 70px; /* Để nó dính vào phía dưới header */
+    overflow-y: auto; /* Thêm thanh cuộn khi nội dung dài */
+}
+
+/* Style cho thanh cuộn */
+.dashboard-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
 /* Enhanced Sidebar Cards */
 .sidebar-card {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);

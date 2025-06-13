@@ -26,7 +26,7 @@
                 <li><a href="#blog">Blog</a></li>
                 <li><a href="#footer">Liên hệ</a></li>
                 <li><a href="dat-lich.html">Đặt lịch khám</a></li>
-                <li><a href="bac-si-dashboard.html">Bác sĩ Dashboard</a></li>
+               
                 <li>
                     <div class="notification-wrapper" style="position: relative; display: none">
                         <button class="notification-icon" id="notificationBtn">
@@ -141,6 +141,7 @@
     <a href="#" id="appointmentLink"><i class="fas fa-calendar-check"></i> Lịch hẹn</a>
     <a href="#">Kết quả xét nghiệm</a>
     <a href="#">Cài đặt</a>
+    <a href="bac-si-dashboard.html">Dashboard bác sĩ</a>
     <div class="sidebar-divider"></div>
     <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
 </aside>
@@ -219,7 +220,20 @@
                         <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
                     </div>
                 </div>
-                
+                <div class="form-group">
+                    <label for="registerEmail">Số điện thoại</label>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="registerPhone" required placeholder="Nhập số điện thoại của bạn">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Ngày sinh</label>
+                    <div class="input-group">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="registerDob" required placeholder="Chọn ngày sinh">
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="registerPassword">Mật khẩu</label>
                     <div class="input-group">
