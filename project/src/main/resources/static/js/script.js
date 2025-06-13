@@ -807,5 +807,58 @@ document.addEventListener('DOMContentLoaded', function() {
      // setInterval(testNotification, 10000); // Thêm notification mới mỗi 10 giây
 
      
+         document.addEventListener('DOMContentLoaded', function() {
+        // ...existing code...
+    
+        // Xử lý popup lịch hẹn
+        const appointmentLink = document.getElementById('appointmentLink');
+        const appointmentModal = document.getElementById('appointmentModal');
+        const closeAppointmentBtn = document.querySelector('.close-appointment-modal');
+    
+        // Mở popup khi click vào link lịch hẹn
+        if(appointmentLink) {
+            appointmentLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                appointmentModal.style.display = 'block';
+            });
+        }
+    
+        // Đóng popup khi click vào nút close
+        if(closeAppointmentBtn) {
+            closeAppointmentBtn.addEventListener('click', function() {
+                appointmentModal.style.display = 'none';
+            });
+        }
+    
+        // Đóng popup khi click ra ngoài
+        window.addEventListener('click', function(e) {
+            if (e.target == appointmentModal) {
+                appointmentModal.style.display = 'none';
+            }
+        });
+    });
  });
- 
+
+   document.addEventListener('DOMContentLoaded', function() {
+    // Lấy thông tin từ localStorage đã được lưu bởi script.js
+    //tự động điền vào form đăng kí khám khi đã đăng nhập
+    const fullName = localStorage.getItem('userFullName');
+    const userEmail = localStorage.getItem('userEmail');
+    const dobInput = document.getElementById('dob');
+    const emailInput = document.getElementById('email');
+    const nameInput = document.getElementById('fullName');
+
+    if (fullName && nameInput) {
+        nameInput.value = fullName;
+    }
+
+    if (userEmail && emailInput) {
+        emailInput.value = userEmail;
+    }
+
+    if (userDob && dobInput) {
+        dobInput.value = userDob;
+    }
+    
+    
+})

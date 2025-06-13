@@ -138,7 +138,7 @@
     <a href="#" class="sidebar-account"><i class="fas fa-user"></i> Trang người dùng</a>
     <a href="#">Tin nổi bật</a>
     <a href="#">Bệnh án</a>
-    <a href="#">Lịch hẹn</a>
+    <a href="#" id="appointmentLink"><i class="fas fa-calendar-check"></i> Lịch hẹn</a>
     <a href="#">Kết quả xét nghiệm</a>
     <a href="#">Cài đặt</a>
     <div class="sidebar-divider"></div>
@@ -171,6 +171,7 @@
                         <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
                     </div>
                 </div>
+                
                 <div class="form-group">
                     <label for="loginPassword">Mật khẩu</label>
                     <div class="input-group">
@@ -218,6 +219,7 @@
                         <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
                     </div>
                 </div>
+                
                 <div class="form-group">
                     <label for="registerPassword">Mật khẩu</label>
                     <div class="input-group">
@@ -497,7 +499,49 @@
     </div>
 </section>
 
-
+<!-- Thêm trước thẻ đóng </body> -->
+<div id="appointmentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Lịch hẹn của bạn</h2>
+            <span class="close-appointment-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="appointment-list">
+                <div class="appointment-item">
+                    <div class="appointment-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="appointment-info">
+                        <h3>Khám siêu âm theo dõi</h3>
+                        <p><i class="fas fa-clock"></i> 09:00 - 28/06/2024</p>
+                        <p><i class="fas fa-user-md"></i> BS. Nguyễn Văn A</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Phòng 303</p>
+                        <span class="appointment-status upcoming">Sắp tới</span>
+                    </div>
+                </div>
+                
+                <div class="appointment-item">
+                    <div class="appointment-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <div class="appointment-info">
+                        <h3>Xét nghiệm máu E2</h3>
+                        <p><i class="fas fa-clock"></i> 08:00 - 25/06/2024</p>
+                        <p><i class="fas fa-user-md"></i> BS. Nguyễn Thị B</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Phòng xét nghiệm 2</p>
+                        <span class="appointment-status upcoming">Sắp tới</span>
+                    </div>
+                </div>
+            </div>
+            <div class="appointment-actions">
+                <button class="btn-secondary" onclick="location.href='dat-lich.html'">
+                    <i class="fas fa-plus"></i> Đặt lịch mới
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <section class="cta" id="cta">
     <div class="container">

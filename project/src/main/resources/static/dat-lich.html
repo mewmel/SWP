@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="css/dat-lich.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        .form-input[readonly] {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+    color: #495057;
+}
         .booking-hero {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
@@ -420,7 +425,7 @@
                                     <i class="fas fa-bell"></i>
                                     <span class="notification-badge">9</span>
                                 </button>
-        
+
                                 <!-- Dropdown Notification -->
                                 <div class="notification-dropdown" id="notificationDropdown">
                                     <div class="notification-dropdown-header">
@@ -429,7 +434,7 @@
                                             <i class="fas fa-cog"></i>
                                         </button>
                                     </div>
-        
+
                                     <div class="notification-dropdown-body">
                                         <div class="notification-dropdown-item unread">
                                             <div class="notification-avatar">
@@ -437,12 +442,13 @@
                                             </div>
                                             <div class="notification-content">
                                                 <div class="notification-title">Nhắc nhở tiêm thuốc</div>
-                                                <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
+                                                <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150
+                                                    IU
                                                 </div>
                                                 <div class="notification-time">5 phút trước</div>
                                             </div>
                                         </div>
-        
+
                                         <div class="notification-dropdown-item unread">
                                             <div class="notification-avatar">
                                                 <i class="fas fa-flask"></i>
@@ -454,43 +460,46 @@
                                                 <div class="notification-time">2 giờ trước</div>
                                             </div>
                                         </div>
-        
+
                                         <div class="notification-dropdown-item">
                                             <div class="notification-avatar">
                                                 <i class="fas fa-calendar-check"></i>
                                             </div>
                                             <div class="notification-content">
                                                 <div class="notification-title">Lịch hẹn khám</div>
-                                                <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
+                                                <div class="notification-description">Khám siêu âm kiểm tra vào 28/06
+                                                    lúc
                                                     14:00</div>
                                                 <div class="notification-time">1 ngày trước</div>
                                             </div>
                                         </div>
-        
+
                                         <div class="notification-dropdown-item">
                                             <div class="notification-avatar">
                                                 <i class="fas fa-chart-line"></i>
                                             </div>
                                             <div class="notification-content">
                                                 <div class="notification-title">Kết quả xét nghiệm</div>
-                                                <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
+                                                <div class="notification-description">Kết quả xét nghiệm hormone đã có
+                                                </div>
                                                 <div class="notification-time">2 ngày trước</div>
                                             </div>
                                         </div>
-        
+
                                         <div class="notification-dropdown-item">
                                             <div class="notification-avatar">
                                                 <i class="fas fa-user-md"></i>
                                             </div>
                                             <div class="notification-content">
                                                 <div class="notification-title">Tin nhắn từ bác sĩ</div>
-                                                <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
+                                                <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin
+                                                    nhắn
                                                     cho bạn</div>
                                                 <div class="notification-time">3 ngày trước</div>
                                             </div>
                                         </div>
                                     </div>
-        
+
                                     <div class="notification-dropdown-footer">
                                         <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
                                     </div>
@@ -514,25 +523,25 @@
                 </button>
             </div>
         </header>
-        
+
         <!-- Sidebar giống trang index -->
-    <aside class="sidebar" id="sidebar" style="display:none;">
-        <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
-        <div class="sidebar-user">
-            <i class="fas fa-user-circle"></i>
-            <span class="sidebar-username"></span>
-        </div>
-        <a href="ho-so-ca-nhan.html"><i class="fas fa-user"></i> Hồ sơ cá nhân</a>
-    <a href="lich-dieu-tri.html"><i class="fas fa-calendar-alt"></i> Lịch điều trị</a>
-    <a href="#"><i class="fas fa-calendar-check"></i> Lịch hẹn</a>
-    <a href="ket-qua-xet-nghiem.html"><i class="fas fa-vials"></i> Kết quả xét nghiệm</a>
-    <a href="dashboard.html"><i class="fas fa-book"></i> Nhật ký sức khỏe</a>
-    <a href="#"><i class="fas fa-book-open"></i> Blog</a>
-    <a href="cai-dat.html"><i class="fas fa-cog"></i> Cài đặt</a>
-    <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
-        <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-    </aside>
-        
+        <aside class="sidebar" id="sidebar" style="display:none;">
+            <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+            <div class="sidebar-user">
+                <i class="fas fa-user-circle"></i>
+                <span class="sidebar-username"></span>
+            </div>
+            <a href="ho-so-ca-nhan.html"><i class="fas fa-user"></i> Hồ sơ cá nhân</a>
+            <a href="lich-dieu-tri.html"><i class="fas fa-calendar-alt"></i> Lịch điều trị</a>
+            <a href="#"><i class="fas fa-calendar-check"></i> Lịch hẹn</a>
+            <a href="ket-qua-xet-nghiem.html"><i class="fas fa-vials"></i> Kết quả xét nghiệm</a>
+            <a href="dashboard.html"><i class="fas fa-book"></i> Nhật ký sức khỏe</a>
+            <a href="#"><i class="fas fa-book-open"></i> Blog</a>
+            <a href="cai-dat.html"><i class="fas fa-cog"></i> Cài đặt</a>
+            <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
+            <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+        </aside>
+
         <!-- Auth Modal -->
         <div class="auth-modal" id="authModal">
             <div class="auth-modal-content">
@@ -624,7 +633,7 @@
                         </div>
                         <div class="form-group">
                             <label class="checkbox-container">
-                                <input type="checkbox" id="agreeTerms" >
+                                <input type="checkbox" id="agreeTerms">
                                 <span class="checkmark"></span>
                                 Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
                             </label>
@@ -660,8 +669,9 @@
                                 <div class="form-group">
                                     <label for="fullName">Họ và tên <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input type="text" id="fullName" class="form-input" required
-                                            placeholder="Nhập họ tên">
+                                        <input type="text" id="fullName" class="form-input logged-in-name" required
+                                            placeholder="Nhập họ tên" readonly>
+                                        <!-- Thêm readonly để không cho sửa khi đã đăng nhập -->
                                         <i class="fas fa-user"></i>
                                     </div>
                                 </div>
@@ -677,7 +687,7 @@
                                 <div class="form-group">
                                     <label for="email">Email</label>
                                     <div class="input-wrapper">
-                                        <input type="email" id="email" class="form-input" placeholder="Nhập email">
+                                        <input type="email" id="email" class="form-input" placeholder="Nhập email" readonly>
                                         <i class="fas fa-envelope"></i>
                                     </div>
                                 </div>
@@ -685,7 +695,7 @@
                                 <div class="form-group">
                                     <label for="dob">Ngày sinh</label>
                                     <div class="input-wrapper calendar-input">
-                                        <input type="date" id="dob" class="form-input">
+                                        <input type="date" id="dob" class="form-input" required placeholder="Chọn ngày sinh"> 
                                         <i class="fas fa-calendar-alt"></i>
                                     </div>
                                 </div>

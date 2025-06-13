@@ -427,22 +427,4 @@ nav a.active {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    .sidebar-card {
-        padding: var(--spacing-md);
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard-main {
-        padding: var(--spacing-sm);
-        padding-top: 85px;
-    }
-
-    .overview-card {
-        padding: var(--spacing-md);
-    }
-
-    .timeline-week {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
+   

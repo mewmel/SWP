@@ -2542,3 +2542,138 @@ nav ul li a.active {
         grid-template-columns: 1fr;
     }
 }
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 50px auto;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.close-appointment-modal {
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.appointment-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.appointment-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.appointment-icon {
+    font-size: 24px;
+    color: #4A90E2;
+    width: 40px;
+    text-align: center;
+}
+
+.appointment-info h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.appointment-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.appointment-info i {
+    width: 20px;
+    color: #4A90E2;
+}
+
+.appointment-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+.appointment-status.upcoming {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.appointment-actions {
+    text-align: center;
+    padding-top: 20px;
+}
+
+/* Main dashboard container - account for fixed header */
+.dashboard-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);  
+    padding-top: 110px;
+    display: grid;
+    grid-template-columns: 1fr 300px;  /* Thay đổi thành 300px */
+    gap: var(--spacing-xl);
+    min-height: calc(100vh - 70px);
+    position: relative;  /* Thêm position relative */
+}
+
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    width: 100%;  /* Đảm bảo chiều rộng tối đa */
+}
+
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    position: sticky;
+    top: 110px;
+    height: fit-content;
+    z-index: 1;
+    width: 300px;  /* Đặt chiều rộng cố định */
+}@media (max-width: 1200px) {
+    .dashboard-main {
+        grid-template-columns: 1fr;  /* Chuyển về 1 cột khi màn hình nhỏ */
+    }
+    
+    .dashboard-sidebar {
+        width: 100%;  /* Chiều rộng 100% khi ở dưới */
+        position: relative;  /* Bỏ sticky khi ở dưới */
+        top: 0;
+    }
+}
