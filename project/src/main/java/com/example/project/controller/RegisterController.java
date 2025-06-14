@@ -1,7 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.dto.RegisterRequest;
-import com.example.project.Service.CustomerService;
+import com.example.project.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

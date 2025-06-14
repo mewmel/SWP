@@ -954,9 +954,40 @@ footer::before {
     transform: scaleX(1);
 }
 
-/* Auth Forms */
+/* Điều chỉnh kích thước form đăng nhập và đăng ký */
 .auth-form {
     display: none;
+    width: 100%;
+    height: 500px; /* Đặt chiều cao cố định cho cả 2 form */
+    padding: 2rem;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+/* Thêm scroll cho form đăng ký khi nội dung vượt quá */
+#registerForm {
+    overflow-y: auto;
+}
+
+/* Style cho thanh cuộn của form đăng ký */
+#registerForm::-webkit-scrollbar {
+    width: 6px;
+}
+
+#registerForm::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#registerForm::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#registerForm::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .auth-form.active {
@@ -2042,6 +2073,7 @@ nav ul li .dropdown-menu li:not(:last-child) {
     padding: 32px 20px 20px 20px;
     display: none;
     flex-direction: column;
+    
     /* Sửa hiệu ứng trượt */
     transform: translateX(100%);
     opacity: 0;
@@ -2196,4 +2228,483 @@ nav ul li a.active {
     color: #1976d2;
     position: relative;
     z-index: 1;
+}
+/* Notification Dropdown - giống như YouTube */
+.notification-dropdown {
+    position: absolute;
+    top: 55px;
+    right: 0;
+    width: 400px;
+    max-height: 500px;
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-color);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.notification-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notification-dropdown-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--light-background);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification-dropdown-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.notification-settings-btn {
+    background: none;
+    border: none;
+    color: var(--light-text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.notification-settings-btn:hover {
+    background: var(--border-color);
+    color: var(--primary-color);
+}
+
+.notification-dropdown-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-dropdown-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.notification-dropdown-item:hover {
+    background: var(--light-background);
+}
+
+.notification-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.notification-dropdown-item.unread {
+    background: rgba(74, 144, 226, 0.05);
+    border-left: 3px solid var(--primary-color);
+}
+
+.notification-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.notification-description {
+    color: var(--light-text);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: var(--spacing-xs);
+}
+
+.notification-time {
+    color: var(--light-text);
+    font-size: 0.8rem;
+}
+
+.notification-dropdown-footer {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.view-all-notifications {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.view-all-notifications:hover {
+    color: var(--secondary-color);
+}
+
+.no-notifications {
+    padding: var(--spacing-xl);
+    text-align: center;
+    color: var(--light-text);
+}
+
+.no-notifications i {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+/* Notification dropdown responsive */
+@media (max-width: 768px) {
+    .notification-dropdown {
+        width: 350px;
+        right: -50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-dropdown {
+        width: 300px;
+        right: -80px;
+    }
+}
+.notification-icon {
+    position: relative;
+    background: var(--light-background);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.notification-icon:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Blog Section Styling */
+.blog-section {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+}
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.blog-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+}
+
+.blog-image {
+    position: relative;
+    height: 220px;
+}
+
+.blog-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.blog-category {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Màu sắc cho từng danh mục */
+.blog-category:nth-of-type(1) {
+    background: #4A90E2;
+    color: #fff;
+}
+
+.blog-card:nth-child(2) .blog-category {
+    background: #47B881;
+    color: #fff;
+}
+
+.blog-card:nth-child(3) .blog-category {
+    background: #F7B731;
+    color: #fff;
+}
+
+.blog-content {
+    padding: 25px;
+}
+
+.blog-date {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+}
+
+.blog-card h3 {
+    font-size: 1.25rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.blog-card p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.read-more {
+    color: #4A90E2;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.read-more:hover {
+    color: #357ABD;
+}
+
+.read-more i {
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.read-more:hover i {
+    transform: translateX(5px);
+}
+
+.blog-view-all {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.btn-secondary {
+    background: #4A90E2;
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid #4A90E2;
+}
+
+.btn-secondary:hover {
+    background: transparent;
+    color: #4A90E2;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .blog-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .blog-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 50px auto;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.close-appointment-modal {
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.appointment-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.appointment-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.appointment-icon {
+    font-size: 24px;
+    color: #4A90E2;
+    width: 40px;
+    text-align: center;
+}
+
+.appointment-info h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.appointment-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.appointment-info i {
+    width: 20px;
+    color: #4A90E2;
+}
+
+.appointment-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+.appointment-status.upcoming {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.appointment-actions {
+    text-align: center;
+    padding-top: 20px;
+}
+
+/* Main dashboard container - account for fixed header */
+.dashboard-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);  
+    padding-top: 110px;
+    display: grid;
+    grid-template-columns: 1fr 300px;  /* Thay đổi thành 300px */
+    gap: var(--spacing-xl);
+    min-height: calc(100vh - 70px);
+    position: relative;  /* Thêm position relative */
+}
+
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    width: 100%;  /* Đảm bảo chiều rộng tối đa */
+}
+
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    position: sticky;
+    top: 110px;
+    height: fit-content;
+    z-index: 1;
+    width: 300px;  /* Đặt chiều rộng cố định */
+}@media (max-width: 1200px) {
+    .dashboard-main {
+        grid-template-columns: 1fr;  /* Chuyển về 1 cột khi màn hình nhỏ */
+    }
+    
+    .dashboard-sidebar {
+        width: 100%;  /* Chiều rộng 100% khi ở dưới */
+        position: relative;  /* Bỏ sticky khi ở dưới */
+        top: 0;
+    }
 }
