@@ -137,6 +137,15 @@
         } catch (err) {
             alert('Có lỗi khi cập nhật: ' + err.message);
         }
+        // Cập nhật lại vào localStorage
+        const SESSION_TTL = 30 * 60 * 1000;
+        setWithExpiry('userFullName', fullName, SESSION_TTL);
+        setWithExpiry('userPhone', phone, SESSION_TTL);
+        setWithExpiry('userGender', gender, SESSION_TTL);
+        setWithExpiry('userDob', dob, SESSION_TTL);
+        setWithExpiry('userAddress', address, SESSION_TTL);
+        setWithExpiry('userOccupation', job, SESSION_TTL);
+        setWithExpiry('userEmergency', emergency, SESSION_TTL);
     });
 
         
