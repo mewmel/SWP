@@ -1,3 +1,4 @@
+
     // Sidebar logic (giữ nguyên)
     document.addEventListener('DOMContentLoaded', function() {
         // Hiện tên user từ localStorage
@@ -103,14 +104,14 @@
             }
         });
 
-        // Delete account
-        document.querySelector('.btn').addEventListener('click', function() {
-            if (this.textContent.includes('Xóa tài khoản')) {
-                if (confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.')) {
-                    alert('Yêu cầu xóa tài khoản đã được gửi đến quản trị viên');
-                }
-            }
-        });
+        // // Delete account
+        // document.querySelector('.btn').addEventListener('click', function() {
+        //     if (this.textContent.includes('Xóa tài khoản')) {
+        //         if (confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.')) {
+        //             alert('Yêu cầu xóa tài khoản đã được gửi đến quản trị viên');
+        //         }
+        //     }
+        // });
 
         
 
@@ -127,13 +128,59 @@
                     if (document.querySelector('.info-ngaysinh')) document.querySelector('.info-ngaysinh').value = data.cusDate ?? '';
                     if (document.querySelector('.info-phone')) document.querySelector('.info-phone').value = data.cusPhone ?? '';
                     if (document.querySelector('.info-email')) document.querySelector('.info-email').value = data.cusEmail ?? '';
-                    if (document.querySelector('.info-cccd')) document.querySelector('.info-cccd').value = data.cusId ?? '';
-                    if (document.querySelector('.info-nghenghiep')) document.querySelector('.info-nghenghiep').value = data.cusJob ?? '';
+                    if (document.querySelector('.info-nghenghiep')) document.querySelector('.info-nghenghiep').value = data.cusOccupation ?? '';
                     if (document.querySelector('.info-address')) document.querySelector('.info-address').value = data.cusAddress ?? '';
-                    if (document.querySelector('.info-khan-cap')) document.querySelector('.info-khan-cap').value = data.cusContactEmergency ?? '';
+                    if (document.querySelector('.info-khan-cap')) document.querySelector('.info-khan-cap').value = data.emergencyContact ?? '';
                 })
                 .catch(err => {
                     alert('Không lấy được thông tin hồ sơ!');
                 });
         }
     });
+
+    // ========= CẬP NHẬT THÔNG TIN NGƯỜI DÙNG =========
+// Lấy thông tin từ localStorage đã được lưu bởi script.js  
+document.querySelector('.btn.btn-primary').addEventListener('click', function(e) {
+    e.preventDefault(); // không reload trang
+
+    // Lấy giá trị từ các input
+    const fullName = document.querySelector('.info-hoten').value;
+    const dob = document.querySelector('.info-ngaysinh').value;
+    const phone = document.querySelector('.info-phone').value;
+    const email = document.querySelector('.info-email').value;
+    const occupation = document.querySelector('.info-nghenghiep').value;
+    const address = document.querySelector('.info-address').value;
+    const emergencyContact = document.querySelector('.info-khan-cap').value;
+
+    // Gói lại thành object
+    const userInfo = {
+        fullName,
+        dob,
+        phone,
+        email,
+        occupation,
+        address,
+        emergencyContact
+    };
+
+    // Gửi lên backend qua API 
+    fetch('/api/customer/profile/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userInfo)
+    })
+    .then(res => res.json())
+    .then(data => {
+        // Xử lý kết quả trả về (success, fail)
+        alert('Cập nhật thành công!');
+        // Có thể cập nhật localStorage luôn nếu muốn dữ liệu đồng bộ
+        localStorage.setItem('userFullName', fullName);
+        localStorage.setItem('userDob', dob);
+        localStorage.setItem('userPhone', phone);
+        localStorage.setItem('userEmail', email);
+    })
+    .catch(err => {
+        alert('Cập nhật thất bại!');
+        console.error(err);
+    });
+});

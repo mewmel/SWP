@@ -1,23 +1,24 @@
 package com.example.project.service;
 
-import com.example.project.dto.LoginRequest;
-import com.example.project.dto.RegisterRequest;
-import com.example.project.entity.Customer;
-import com.example.project.repository.CustomerRepository;
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Optional;
-import java.util.regex.Pattern;
+import com.example.project.dto.LoginRequest;
+import com.example.project.dto.RegisterRequest;
+import com.example.project.entity.Customer;
+import com.example.project.repository.CustomerRepository;
 
 @Service
 public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Optional<Customer> login(LoginRequest request) {
         Optional<Customer> customerOpt = customerRepository.findByCusEmail(request.getCusEmail());
@@ -69,6 +70,7 @@ public class CustomerService {
         customer.setCusGender(null);
         customer.setCusAddress(null);
         customer.setCusStatus("active"); // chỉ set là  "active" hoặc "inactive"
+        customer.setCusProvider("local"); // <<< CHỈ CẦN THÊM DÒNG NÀY CHO ĐĂNG KÝ THƯỜNG
 
         customerRepository.save(customer);
         return "success";
@@ -90,6 +92,7 @@ public class CustomerService {
             customer.setCusFullName(name);
             customer.setCusEmail(email);
             customer.setCusStatus("active");
+            customer.setCusProvider("google"); // <<< Đảm bảo Google login cũng set provider
             customerRepository.save(customer);
             return customer;
         }

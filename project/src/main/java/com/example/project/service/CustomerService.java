@@ -1,23 +1,24 @@
 package com.example.project.service;
 
-import com.example.project.dto.LoginRequest;
-import com.example.project.dto.RegisterRequest;
-import com.example.project.entity.Customer;
-import com.example.project.repository.CustomerRepository;
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Optional;
-import java.util.regex.Pattern;
+import com.example.project.dto.LoginRequest;
+import com.example.project.dto.RegisterRequest;
+import com.example.project.entity.Customer;
+import com.example.project.repository.CustomerRepository;
 
 @Service
 public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Optional<Customer> login(LoginRequest request) {
         Optional<Customer> customerOpt = customerRepository.findByCusEmail(request.getCusEmail());
