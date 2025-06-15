@@ -992,9 +992,16 @@
                     alert('Vui lòng chọn khung giờ khám!');
                     return;
                 }
-                // Lấy và tách thời gian
-                const timeRange = document.getElementById('selectedTime').value;
-                const [startTime, endTime] = timeRange.split('-');
+                // Lấy và tách thời gian, loại bỏ giây và khoảng trắng nếu có
+                const timeRange = document.getElementById('selectedTime').value.trim();
+                let [startTime, endTime] = timeRange.split('-').map(t => t.trim());
+                // Nếu thừa :00 thì cắt bỏ
+                if (startTime.length === 8) startTime = startTime.slice(0,5);
+                if (endTime.length === 8) endTime = endTime.slice(0,5);
+
+                // Debug để kiểm tra giá trị gửi đi
+                // console.log('startTime:', startTime, 'endTime:', endTime);
+
                 const data = {
                     fullName: document.getElementById('fullName').value,
                     phone: document.getElementById('phone').value,
@@ -1003,8 +1010,8 @@
                     docId: parseInt(document.getElementById('doctor').value),
                     appointmentDate: document.getElementById('appointmentDate').value,
                     service: document.getElementById('service').value,
-                    startTime: startTime,
-                    endTime: endTime,
+                    startTime: startTime,      // luôn là "HH:mm"
+                    endTime: endTime,          // luôn là "HH:mm"
                     note: document.getElementById('symptoms').value
                 };
                 fetch('/api/booking', {

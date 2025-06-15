@@ -48,5 +48,5 @@ public class Customer {
     private String emergencyContact;
 
     @Column(name = "cusProvider", length = 20, nullable = false)
-    private String cusProvider;
+    private String cusProvider = "local";
 }

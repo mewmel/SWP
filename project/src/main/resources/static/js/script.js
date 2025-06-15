@@ -1,3 +1,27 @@
+// Thêm 2 hàm này vào đầu file (hoặc ngay sau showNotification, trước mọi thao tác localStorage)
+function setWithExpiry(key, value, ttlMs) {
+    const now = Date.now();
+    const item = {
+        value: value,
+        expiry: now + ttlMs
+    };
+    localStorage.setItem(key, JSON.stringify(item));
+}
+function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) return null;
+    try {
+        const item = JSON.parse(itemStr);
+        if (!item.expiry) return item.value;
+        if (Date.now() > item.expiry) {
+            localStorage.removeItem(key);
+            return null;
+        }
+        return item.value;
+    } catch {
+        return null;
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
@@ -7,8 +31,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebarUsername = document.querySelector('.sidebar-username');
     const notificationWrapper = document.querySelector('.notification-wrapper');
 
-    // Hiển thị đúng trạng thái đăng nhập khi load lại trang
-    const fullName = localStorage.getItem('userFullName');
+    // Hiển thị thông báo đăng ký thành công nếu có
+    const registerSuccessMessage = localStorage.getItem('registerSuccessMessage');
+    if (registerSuccessMessage) {
+        showNotification(registerSuccessMessage, 'success');
+        localStorage.removeItem('registerSuccessMessage');
+    }
+
+    // Sử dụng getWithExpiry thay cho localStorage.getItem để tự động xóa sau 30 phút
+    const fullName = getWithExpiry('userFullName');
     if (fullName) {
         if (authButtons) authButtons.style.display = 'none';
         if (userMenu) userMenu.style.display = 'flex';
@@ -24,10 +55,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Kiểm tra và hiển thị thông báo đăng xuất
     const logoutMessage = localStorage.getItem('logoutMessage');
     if (logoutMessage) {
-        // Thêm delay nhỏ để trang load xong trước khi hiển thị thông báo
         setTimeout(() => {
             showNotification(logoutMessage, 'success');
-            localStorage.removeItem('logoutMessage'); // Xóa thông báo sau khi hiển thị
+            localStorage.removeItem('logoutMessage');
         }, 100);
     }
 
@@ -56,10 +86,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                // Lưu tên và email vào localStorage
-                localStorage.setItem('userFullName', data.cusFullName || data.cusEmail || 'Người dùng');
-                localStorage.setItem('userEmail', data.cusEmail || '');
-                // Hiển thị giao diện đã đăng nhập
+                // Dùng setWithExpiry để lưu 30 phút
+                setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', 30 * 60 * 1000);
+                setWithExpiry('userEmail', data.cusEmail || '', 30 * 60 * 1000);
                 if (authButtons) authButtons.style.display = 'none';
                 if (userMenu) userMenu.style.display = 'flex';
                 if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
@@ -69,9 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const closeModal = document.querySelector('.close-modal');
                 if (closeModal) closeModal.click();
 
-                // Chuyển hướng đến trang dashboard
                 window.location.href = "dashboard.html";
-
             })
             .catch((err) => {
                 showNotification(
@@ -94,18 +121,16 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             localStorage.removeItem('userFullName');
             localStorage.removeItem('userEmail');
-            // Lưu thông báo đăng xuất để hiển thị trên trang index
+            localStorage.removeItem('userDob');
             localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
             if (notificationWrapper) notificationWrapper.style.display = 'none';
             closeSidebar();
             clearLoginForm();
-            // Chuyển trang ngay lập tức nếu không ở trang index
             if (window.location.pathname !== '/index.html' && !window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
                 window.location.href = "index.html";
             } else {
-                // Nếu đã ở trang index, hiển thị thông báo ngay
                 showNotification('Đã đăng xuất!', 'success');
                 localStorage.removeItem('logoutMessage');
             }
@@ -117,18 +142,15 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             localStorage.removeItem('userFullName');
             localStorage.removeItem('userEmail');
-            // Lưu thông báo đăng xuất để hiển thị trên trang index
             localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
             if (notificationWrapper) notificationWrapper.style.display = 'none';
             closeSidebar();
             clearLoginForm();
-            // Chuyển trang ngay lập tức
             window.location.href = "index.html";
         });
     }
-
 
     // ========== ĐĂNG KÝ (Register) ==========
     document.getElementById('registerForm').addEventListener('submit', function (e) {
@@ -136,13 +158,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const submitBtn = this.querySelector('button[type="submit"]');
         const agreeTerms = document.getElementById('agreeTerms');
 
-        // Kiểm tra đã tích vào ô điều khoản chưa
         if (!agreeTerms.checked) {
             showNotification('Bạn phải đồng ý với điều khoản sử dụng trước khi đăng ký!', 'error');
             return;
         }
 
-        // Lấy dữ liệu từ form
         const cusFullName = document.getElementById('registerName').value.trim();
         const cusEmail = document.getElementById('registerEmail').value.trim();
         const cusPhone = document.getElementById('registerPhone').value.trim();
@@ -150,7 +170,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const cusPassword = document.getElementById('registerPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
 
-        // Validate dữ liệu
         let errorMsg = '';
         let errorField = null;
         if (!cusFullName) {
@@ -196,14 +215,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Bỏ highlight lỗi cũ
         this.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
 
-        // Hiển thị loading
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
         submitBtn.disabled = true;
 
-        // Gửi dữ liệu lên backend
         fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -215,11 +231,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 return text;
             })
             .then(msg => {
-                showNotification('Đăng ký thành công!', 'success');
-                submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
-                submitBtn.disabled = false;
-                const closeModal = document.querySelector('.close-modal');
-                if (closeModal) closeModal.click();
+                // Đăng ký thành công => tự động đăng nhập
+                fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cusEmail, cusPassword })
+                })
+                    .then(async response => {
+                        if (!response.ok) {
+                            const errText = await response.text();
+                            throw new Error(errText || 'Đăng nhập thất bại');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', 30 * 60 * 1000);
+                        setWithExpiry('userEmail', data.cusEmail || '', 30 * 60 * 1000);
+                        if (authButtons) authButtons.style.display = 'none';
+                        if (userMenu) userMenu.style.display = 'flex';
+                        if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+                        if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+                        if (notificationWrapper) notificationWrapper.style.display = 'block';
+                        localStorage.setItem('registerSuccessMessage', 'Đăng ký thành công!');
+                        const closeModal = document.querySelector('.close-modal');
+                        if (closeModal) closeModal.click();
+                        window.location.href = "dashboard.html";
+                    })
+                    .catch(err => {
+                        showNotification('Đăng ký thành công, nhưng đăng nhập tự động thất bại: ' + (err.message || ''), 'error');
+                        submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+                        submitBtn.disabled = false;
+                    });
             })
             .catch(err => {
                 let message = err.message || 'Đăng ký thất bại!';
@@ -228,6 +270,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.disabled = false;
             });
     });
+
+
 
     // ========== UI & HIỆU ỨNG KHÁC ==========
     // Smooth scrolling for anchor links
