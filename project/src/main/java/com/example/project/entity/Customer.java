@@ -1,9 +1,16 @@
 package com.example.project.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -49,4 +56,5 @@ public class Customer {
 
     @Column(name = "cusProvider", length = 20, nullable = false)
     private String cusProvider = "local";
+
 }

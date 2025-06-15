@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Lưu vào localStorage
 // Thời hạn session: ví dụ 30 phút (30 * 60 * 1000 ms)
             const SESSION_TTL = 30 * 60 * 1000;
-
+            setWithExpiry('userId', data.cusId, SESSION_TTL);
             setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', SESSION_TTL);
             setWithExpiry('userEmail', data.cusEmail || 'Chưa cập nhật email', SESSION_TTL);
             setWithExpiry('userDob', data.cusDate || 'Chưa cập nhật ngày sinh', SESSION_TTL);

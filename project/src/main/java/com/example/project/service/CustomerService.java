@@ -74,6 +74,25 @@ public class CustomerService {
         customerRepository.save(customer);
         return "success";
     }
+    public Customer updateCustomer(Integer cusId, Customer updatedData) {
+    Optional<Customer> customerOpt = customerRepository.findByCusId(cusId);
+    if (!customerOpt.isPresent()) return null;
+    Customer customer = customerOpt.get();
+
+    // tạm chưa cho update email và password!
+    customer.setCusFullName(updatedData.getCusFullName());
+    customer.setCusGender(updatedData.getCusGender());
+    customer.setCusDate(updatedData.getCusDate());
+    customer.setCusPhone(updatedData.getCusPhone());
+    customer.setCusOccupation(updatedData.getCusOccupation());
+    customer.setCusAddress(updatedData.getCusAddress());
+    customer.setEmergencyContact(updatedData.getEmergencyContact());
+
+    // Có thể validate số điện thoại, ngày sinh... nếu muốn
+
+    return customerRepository.save(customer);
+}
+
 
     private boolean isValidEmail(String email) {
         return Pattern.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", email);

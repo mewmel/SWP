@@ -85,13 +85,62 @@
             });
         }
 
-        // Save changes
+        // Change personal information
         const btnPrimary = document.querySelector('.btn-primary');
         if (btnPrimary) {
-            btnPrimary.addEventListener('click', function() {
-                alert('Thông tin đã được lưu thành công!');
-            });
+            btnPrimary.addEventListener('click', async function (e) {
+            e.preventDefault();
+
+        // Lấy ID 
+        const userId = getWithExpiry('userId'); 
+        if (!userId) {
+            alert('Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.');
+            window.location.href = "index.html";
+            return;
         }
+
+        // Lấy dữ liệu từ form
+        const fullName = document.querySelector('.info-hoten')?.value.trim();
+        const dob = document.querySelector('.info-ngaysinh')?.value;
+        const phone = document.querySelector('.info-phone')?.value.trim();
+        const job = document.querySelector('.info-nghenghiep')?.value.trim();
+        const gender = document.querySelector('.info-gioitinh')?.value;
+        const address = document.querySelector('.info-address')?.value.trim();
+        const emergency = document.querySelector('.info-khan-cap')?.value.trim();
+
+        // nhớ bổ sung validate nha
+
+        // Gửi API cập nhật (chỉ gửi các trường KHÔNG gửi email)
+        try {
+            const response = await fetch(`http://localhost:8080/api/customer/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    cusFullName: fullName,
+                    cusDate: dob,
+                    cusPhone: phone,
+                    cusOccupation: job,
+                    cusGender: gender,
+                    cusAddress: address,
+                    emergencyContact: emergency
+                })
+            });
+
+            if (response.ok) {
+                alert('Cập nhật thông tin thành công!');
+                // Có thể reload trang hoặc cập nhật lại giao diện nếu muốn
+            } else {
+                alert('Cập nhật thất bại!');
+            }
+        } catch (err) {
+            alert('Có lỗi khi cập nhật: ' + err.message);
+        }
+    });
+
+        
+       
 
         // Add medical history
        
@@ -145,13 +194,16 @@
                     if (document.querySelector('.info-ngaysinh')) document.querySelector('.info-ngaysinh').value = data.cusDate ?? '';
                     if (document.querySelector('.info-phone')) document.querySelector('.info-phone').value = data.cusPhone ?? '';
                     if (document.querySelector('.info-email')) document.querySelector('.info-email').value = data.cusEmail ?? '';
-                    if (document.querySelector('.info-cccd')) document.querySelector('.info-cccd').value = data.cusId ?? '';
-                    if (document.querySelector('.info-nghenghiep')) document.querySelector('.info-nghenghiep').value = data.cusJob ?? '';
+                    if (document.querySelector('.info-gioitinh')) document.querySelector('.info-gioitinh').value = data.cusGender ?? '';
+                    if (document.querySelector('.info-nghenghiep')) document.querySelector('.info-nghenghiep').value = data.cusOccupation ?? '';
                     if (document.querySelector('.info-address')) document.querySelector('.info-address').value = data.cusAddress ?? '';
-                    if (document.querySelector('.info-khan-cap')) document.querySelector('.info-khan-cap').value = data.cusContactEmergency ?? '';
+                    if (document.querySelector('.info-khan-cap')) document.querySelector('.info-khan-cap').value = data.emergencyContact ?? '';
                 })
                 .catch(err => {
                     alert('Không lấy được thông tin hồ sơ!');
                 });
         }
+    }
     });
+
+
