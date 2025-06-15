@@ -70,7 +70,6 @@ public class CustomerService {
         customer.setCusGender(null);
         customer.setCusAddress(null);
         customer.setCusStatus("active"); // chỉ set là  "active" hoặc "inactive"
-        customer.setCusProvider("local"); // <<< CHỈ CẦN THÊM DÒNG NÀY CHO ĐĂNG KÝ THƯỜNG
 
         customerRepository.save(customer);
         return "success";
@@ -92,7 +91,6 @@ public class CustomerService {
             customer.setCusFullName(name);
             customer.setCusEmail(email);
             customer.setCusStatus("active");
-            customer.setCusProvider("google"); // <<< Đảm bảo Google login cũng set provider
             customerRepository.save(customer);
             return customer;
         }

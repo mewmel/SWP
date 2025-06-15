@@ -1,7 +1,12 @@
-    // Sidebar logic (giữ nguyên)
+    // --- KIỂM TRA ĐĂNG NHẬP ---
+    const userFullName = getWithExpiry('userFullName');
+    if (!userFullName) {
+        window.location.href = "index.html";
+    }
     document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar logic (giữ nguyên)
         // Hiện tên user từ localStorage
-        var fullName = localStorage.getItem('userFullName');
+        var fullName = getWithExpiry('userFullName');
         var sidebarUsername = document.querySelector('.sidebar-username');
         if (sidebarUsername) {
             sidebarUsername.textContent = fullName || "User";
@@ -73,16 +78,23 @@
         });
 
         // Avatar upload
-        document.querySelector('.avatar-upload').addEventListener('click', function() {
-            alert('Chọn ảnh mới từ thiết bị của bạn');
-        });
+        const avatarUpload = document.querySelector('.avatar-upload');
+        if (avatarUpload) {
+            avatarUpload.addEventListener('click', function() {
+                alert('Chọn ảnh mới từ thiết bị của bạn');
+            });
+        }
 
         // Save changes
-        document.querySelector('.btn-primary').addEventListener('click', function() {
-            alert('Thông tin đã được lưu thành công!');
-        });
+        const btnPrimary = document.querySelector('.btn-primary');
+        if (btnPrimary) {
+            btnPrimary.addEventListener('click', function() {
+                alert('Thông tin đã được lưu thành công!');
+            });
+        }
 
         // Add medical history
+       
         document.querySelectorAll('.add-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 alert('Mở form thêm thông tin mới');
@@ -90,32 +102,38 @@
         });
 
         // Change password
-        document.querySelector('.btn-secondary').addEventListener('click', function() {
-            if (this.textContent.includes('Đổi mật khẩu')) {
+        const btnChangePassword = Array.from(document.querySelectorAll('.btn-secondary')).find(
+            btn => btn.textContent.includes('Đổi mật khẩu')
+        );
+        if (btnChangePassword) {
+            btnChangePassword.addEventListener('click', function() {
                 alert('Mở form đổi mật khẩu');
-            }
-        });
+            });
+        }
 
         // Export data
-        document.querySelector('.btn-secondary').addEventListener('click', function() {
-            if (this.textContent.includes('Xuất dữ liệu')) {
+        const btnExportData = Array.from(document.querySelectorAll('.btn-secondary')).find(
+            btn => btn.textContent.includes('Xuất dữ liệu')
+        );
+        if (btnExportData) {
+            btnExportData.addEventListener('click', function() {
                 alert('Đang chuẩn bị file xuất dữ liệu...');
-            }
-        });
+            });
+        }
 
-        // Delete account
-        document.querySelector('.btn').addEventListener('click', function() {
-            if (this.textContent.includes('Xóa tài khoản')) {
-                if (confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.')) {
-                    alert('Yêu cầu xóa tài khoản đã được gửi đến quản trị viên');
-                }
-            }
-        });
+        // // Delete account
+        // document.querySelector('.btn').addEventListener('click', function() {
+        //     if (this.textContent.includes('Xóa tài khoản')) {
+        //         if (confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.')) {
+        //             alert('Yêu cầu xóa tài khoản đã được gửi đến quản trị viên');
+        //         }
+        //     }
+        // });
 
         
 
         // ------- AUTO FILL FORM FROM API (CHỈ CHẠY 1 LẦN DUY NHẤT) ----------
-        const userEmail = localStorage.getItem('userEmail');
+        const userEmail = getWithExpiry('userEmail');
         if (userEmail) {
             fetch(`http://localhost:8080/api/customer/${encodeURIComponent(userEmail)}`)
                 .then(res => res.json())
