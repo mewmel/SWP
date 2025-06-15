@@ -1,4 +1,3 @@
-
     // Sidebar logic (giữ nguyên)
     document.addEventListener('DOMContentLoaded', function() {
         // Hiện tên user từ localStorage

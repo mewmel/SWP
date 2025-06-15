@@ -6,6 +6,8 @@
     <title>FertilityEHR bởi Meditab</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Nếu dùng Google One Tap, có thể thêm meta client_id ở đây -->
+    <!-- <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"> -->
 </head>
 <body>
 <header>
@@ -26,14 +28,12 @@
                 <li><a href="#blog">Blog</a></li>
                 <li><a href="#footer">Liên hệ</a></li>
                 <li><a href="dat-lich.html">Đặt lịch khám</a></li>
-               
                 <li>
                     <div class="notification-wrapper" style="position: relative; display: none">
                         <button class="notification-icon" id="notificationBtn">
                             <i class="fas fa-bell"></i>
                             <span class="notification-badge">9</span>
                         </button>
-
                         <!-- Dropdown Notification -->
                         <div class="notification-dropdown" id="notificationDropdown">
                             <div class="notification-dropdown-header">
@@ -107,6 +107,8 @@
                             <div class="notification-dropdown-footer">
                                 <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
                             </div>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <!-- ... nội dung notification ... -->
                         </div>
                     </div>
                 </li>
@@ -137,6 +139,14 @@
         </div>
         <a href="dashboard.html"><i class="fas fa-user"></i> Bệnh án</a>
         <a href="ket-qua-xet-nghiem.html"><i class="fas fa-vials"></i> Kết quả xét nghiệm</a>
+<aside class="sidebar" id="sidebar" style="display:none;">
+    <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+    <div class="sidebar-user">
+        <i class="fas fa-user-circle"></i>
+        <span class="sidebar-username"></span>
+    </div>
+    <a href="dashboard.html"><i class="fas fa-user"></i> Bệnh án</a>
+    <a href="ket-qua-xet-nghiem.html"><i class="fas fa-vials"></i> Kết quả xét nghiệm</a>
     <a href="lich-dieu-tri.html"><i class="fas fa-calendar-alt"></i> Lịch điều trị</a>
     <a href="#"><i class="fas fa-calendar-check"></i> Lịch hẹn</a>
     <a href="index.html#blog"><i class="fas fa-book-open"></i> Blog</a>
@@ -145,6 +155,9 @@
     <a href="bac-si-dashboard.html">Bác sĩ dashboard</a>
         <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
     </aside>
+
+    <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+</aside>
 
 <!-- Auth Modal -->
 <div class="auth-modal" id="authModal">
@@ -196,7 +209,8 @@
                 <div class="social-login">
                     <p>Hoặc đăng nhập với</p>
                     <div class="social-buttons">
-                        <button type="button" class="social-btn google">
+                        <!-- Nút Google đã gắn id -->
+                        <button type="button" class="social-btn google" id="googleSignInBtn">
                             <i class="fab fa-google"></i>
                         </button>
                         <button type="button" class="social-btn facebook">
@@ -534,7 +548,6 @@
                         <span class="appointment-status upcoming">Sắp tới</span>
                     </div>
                 </div>
-                
                 <div class="appointment-item">
                     <div class="appointment-icon">
                         <i class="fas fa-flask"></i>
@@ -612,5 +625,70 @@
     </div>
 </footer>
 <script src="js/script.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+    // ========== GOOGLE LOGIN ==========
+    function handleGoogleCredentialResponse(response) {
+        fetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken: response.credential })
+        })
+            .then(async res => {
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(errText || 'Google login failed');
+                }
+                return res.json();
+            })
+            .then(data => {
+                // Lưu tên/email vào localStorage
+                localStorage.setItem('userFullName', data.cusFullName || data.cusEmail || 'Người dùng');
+                localStorage.setItem('userEmail', data.cusEmail || '');
+                // Hiển thị giao diện đã đăng nhập
+                const authButtons = document.querySelector('.auth-buttons');
+                const userMenu = document.querySelector('.user-menu');
+                const userNameSpan = document.querySelector('.user-name');
+                const sidebarUsername = document.querySelector('.sidebar-username');
+                const notificationWrapper = document.querySelector('.notification-wrapper');
+                if (authButtons) authButtons.style.display = 'none';
+                if (userMenu) userMenu.style.display = 'flex';
+                if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+                if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+                if (notificationWrapper) notificationWrapper.style.display = 'block';
+                if (typeof showNotification === 'function') showNotification('Đăng nhập Google thành công!', 'success');
+                const closeModal = document.querySelector('.close-modal');
+                if (closeModal) closeModal.click();
+                window.location.href = "dashboard.html";
+            })
+            .catch(err => {
+                if (typeof showNotification === 'function') showNotification(err.message || 'Đăng nhập Google thất bại!', 'error');
+            });
+    }
+
+    // Khởi tạo Google Sign-In khi DOM đã sẵn sàng
+    function initGoogleSignIn(clientId) {
+        const btn = document.getElementById('googleSignInBtn');
+        if (!btn) return;
+        btn.addEventListener('click', function() {
+            google.accounts.id.initialize({
+                client_id: clientId,
+                callback: handleGoogleCredentialResponse
+            });
+            google.accounts.id.prompt();
+        });
+    }
+
+    // Lấy clientId từ backend và init Google Sign-In
+    fetch('/api/config/google-client-id')
+        .then(res => res.text())
+        .then(clientId => {
+            initGoogleSignIn(clientId);
+        });
+</script>
+<script>
+    const GOOGLE_CLIENT_ID = "1046743424225-h1jmd70g7enbl5bbdouvrn1jhl8im4aq.apps.googleusercontent.com";
+    // dùng GOOGLE_CLIENT_ID khi khởi tạo google.accounts.id.initialize
+</script>
 </body>
 </html>

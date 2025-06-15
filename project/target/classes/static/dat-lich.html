@@ -662,7 +662,6 @@
                             <h2>Thông tin đặt lịch</h2>
                             <p>Vui lòng điền đầy đủ thông tin</p>
                         </div>
-
                         <form class="booking-form" id="bookingForm">
                             <div class="form-grid">
                                 <div class="form-group">
@@ -671,10 +670,10 @@
                                         <input type="text" id="fullName" class="form-input logged-in-name" required
                                             placeholder="Nhập họ tên">
                                         <!-- Thêm readonly để không cho sửa khi đã đăng nhập -->
+                                        <input type="text" id="fullName" class="form-input" required placeholder="Nhập họ tên">
                                         <i class="fas fa-user"></i>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="phone">Số điện thoại <span class="required">*</span></label>
                                     <div class="input-wrapper">
@@ -682,34 +681,26 @@
                                         <i class="fas fa-phone"></i>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
-                                    <label for="email">Email</label>
+                                    <label for="email">Email <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input type="email" id="email" class="form-input" placeholder="Nhập email" >
+                                        <input type="email" id="email" class="form-input" required placeholder="Nhập email">
                                         <i class="fas fa-envelope"></i>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
-                                    <label for="dob">Ngày sinh</label>
+                                    <label for="dob">Ngày sinh <span class="required">*</span></label>
                                     <div class="input-wrapper calendar-input">
-                                        <input type="date" id="dob" class="form-input" required placeholder="Chọn ngày sinh"> 
+                                        <input type="date" id="dob" class="form-input" required placeholder="Chọn ngày sinh">
                                         <i class="fas fa-calendar-alt"></i>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="doctor">Bác sĩ <span class="required">*</span></label>
                                     <select id="doctor" class="form-select" required>
                                         <option value="">Chọn bác sĩ</option>
-                                        <option value="dr-nguyen">BS. Nguyễn Thị Hương - IVF</option>
-                                        <option value="dr-tran">BS. Trần Văn Minh - Nam học</option>
-                                        <option value="dr-le">BS. Lê Thị Hà - Phụ khoa</option>
-                                        <option value="dr-pham">BS. Phạm Văn An - Nội tiết</option>
                                     </select>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="appointmentDate">Ngày khám <span class="required">*</span></label>
                                     <div class="input-wrapper calendar-input">
@@ -718,7 +709,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="form-group form-group-full">
                                 <label for="service">Loại dịch vụ <span class="required">*</span></label>
                                 <select id="service" class="form-select" required>
@@ -731,43 +721,37 @@
                                     <option value="ultrasound">Siêu âm theo dõi</option>
                                 </select>
                             </div>
-
                             <div class="form-group form-group-full">
                                 <label for="timeSlot">Khung giờ <span class="required">*</span></label>
                                 <div class="time-slots">
-                                    <div class="time-slot" data-time="08:00">08:00-09:00</div>
-                                    <div class="time-slot" data-time="09:00">09:00-10:00</div>
-                                    <div class="time-slot" data-time="10:00">10:00-11:00</div>
-                                    <div class="time-slot" data-time="11:00">11:00-12:00</div>
-                                    <div class="time-slot" data-time="14:00">14:00-15:00</div>
-                                    <div class="time-slot" data-time="15:00">15:00-16:00</div>
-                                    <div class="time-slot" data-time="16:00">16:00-17:00</div>
-                                    <div class="time-slot disabled" data-time="17:00">17:00-18:00</div>
+                                    <div class="time-slot" data-time="08:00-09:00">08:00-09:00</div>
+                                    <div class="time-slot" data-time="09:00-10:00">09:00-10:00</div>
+                                    <div class="time-slot" data-time="10:00-11:00">10:00-11:00</div>
+                                    <div class="time-slot" data-time="11:00-12:00">11:00-12:00</div>
+                                    <div class="time-slot" data-time="14:00-15:00">14:00-15:00</div>
+                                    <div class="time-slot" data-time="15:00-16:00">15:00-16:00</div>
+                                    <div class="time-slot" data-time="16:00-17:00">16:00-17:00</div>
+                                    <div class="time-slot disabled" data-time="17:00-18:00">17:00-18:00</div>
                                 </div>
                                 <input type="hidden" id="selectedTime" name="selectedTime" required>
                             </div>
-
                             <div class="form-group form-group-full">
                                 <label for="symptoms">Triệu chứng/Ghi chú</label>
                                 <textarea id="symptoms" class="form-textarea"
-                                    placeholder="Mô tả triệu chứng hoặc ghi chú..."></textarea>
+                                          placeholder="Mô tả triệu chứng hoặc ghi chú..."></textarea>
                             </div>
-
                             <button type="submit" class="submit-btn">
                                 <span>Đặt lịch ngay</span>
                                 <i class="fas fa-arrow-right"></i>
                             </button>
                         </form>
                     </div>
-
-                    <!-- Social sidebar fixed bên phải -->
+                    <!-- Social sidebar + booking-info giữ nguyên -->
                     <div class="social-sidebar">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
                         <a href="#"><i class="fas fa-envelope"></i></a>
                     </div>
-
-                    <!-- Thông tin bên phải -->
                     <div class="booking-info">
                         <div class="info-section">
                             <h3><i class="fas fa-clock"></i> Giờ làm việc</h3>
@@ -855,27 +839,31 @@
         </footer>
 
         <script>
-            // Define working hours for each day
+            // ================================
+            // Khai báo giờ làm việc theo ngày
+            // ================================
             const workingHours = {
-                1: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Monday
-                2: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Tuesday
-                3: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Wednesday
-                4: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Thursday
-                5: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00',], // Friday
-                6: ['08:00', '09:00', '10:00', '11:00'], // Saturday (8:00-12:00)
-                0: ['08:00', '09:00', '10:00', '11:00'] // Sunday (8:00-11:30)
+                1: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00'], // Mon
+                2: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00'], // Tue
+                3: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00'], // Wed
+                4: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00'], // Thu
+                5: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00'], // Fri
+                6: ['08:00', '09:00', '10:00', '11:00'], // Sat
+                0: ['08:00', '09:00', '10:00', '11:00']  // Sun
             };
 
-            // Function to update time slots based on selected date
+            // ================================
+            // Hàm cập nhật khung giờ theo ngày
+            // ================================
             function updateTimeSlots(selectedDate) {
                 const timeSlotsContainer = document.querySelector('.time-slots');
                 const date = new Date(selectedDate);
                 const dayOfWeek = date.getDay();
 
-                // Clear existing time slots
+                // Xóa slot cũ
                 timeSlotsContainer.innerHTML = '';
 
-                // Get available hours for the selected day
+                // Lấy giờ làm việc của ngày
                 const availableHours = workingHours[dayOfWeek] || [];
 
                 if (availableHours.length === 0) {
@@ -883,17 +871,17 @@
                     return;
                 }
 
-                // Create time slots
+                // Tạo các slot giờ
                 availableHours.forEach(hour => {
                     const endHour = parseInt(hour.split(':')[0]) + 1;
                     const endTime = endHour.toString().padStart(2, '0') + ':00';
 
                     const timeSlot = document.createElement('div');
                     timeSlot.className = 'time-slot';
-                    timeSlot.setAttribute('data-time', hour);
+                    timeSlot.setAttribute('data-time', `${hour}-${endTime}`);
                     timeSlot.textContent = `${hour}-${endTime}`;
 
-                    // Add click event listener
+                    // Sự kiện click chọn khung giờ
                     timeSlot.addEventListener('click', function () {
                         document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
                         this.classList.add('selected');
@@ -903,101 +891,165 @@
                     timeSlotsContainer.appendChild(timeSlot);
                 });
 
-                // Reset selected time
+                // Reset selectedTime
                 document.getElementById('selectedTime').value = '';
             }
 
-            // Function to get day name in Vietnamese
+            // ================================
+            // Hàm lấy tên ngày trong tuần (vi)
+            // ================================
             function getDayName(dayOfWeek) {
                 const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
                 return days[dayOfWeek];
             }
 
-            // Set minimum date to today
+            // ========== Thiết lập min/max ngày =============
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('appointmentDate').setAttribute('min', today);
             document.getElementById('dob').setAttribute('max', today);
 
-            // Initialize with today's date if no date is selected
+            // ========== Khởi tạo mặc định =============
             document.addEventListener('DOMContentLoaded', function () {
                 const appointmentDateInput = document.getElementById('appointmentDate');
-
-                // Set default to today
+                // Set default to today & update slot
                 appointmentDateInput.value = today;
                 updateTimeSlots(today);
             });
 
-            // Update time slots when date changes
+            // ========== Đổi ngày sẽ đổi khung giờ =============
             document.getElementById('appointmentDate').addEventListener('change', function () {
                 const selectedDate = this.value;
                 if (selectedDate) {
                     updateTimeSlots(selectedDate);
 
-                    // Show working hours info
+                    // Hiển thị thông tin giờ làm việc
                     const date = new Date(selectedDate);
                     const dayOfWeek = date.getDay();
                     const dayName = getDayName(dayOfWeek);
 
                     let workingInfo = '';
-                    if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Monday to Friday
+                    if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Monday - Friday
                         workingInfo = `${dayName}: 8:00 - 17:00`;
-                    } else if (dayOfWeek === 6) { // Saturday
+                    } else if (dayOfWeek === 6) {
                         workingInfo = `${dayName}: 8:00 - 12:00`;
-                    } else if (dayOfWeek === 0) { // Sunday
+                    } else if (dayOfWeek === 0) {
                         workingInfo = `${dayName}: 8:00 - 12:00`;
                     }
 
-                    // Update or create working hours display
+                    // Tạo hoặc update info giờ làm
                     let workingHoursDisplay = document.querySelector('.working-hours-display');
                     if (!workingHoursDisplay) {
                         workingHoursDisplay = document.createElement('div');
                         workingHoursDisplay.className = 'working-hours-display';
                         workingHoursDisplay.style.cssText = `
-                        background: #e3f2fd;
-                        border: 1px solid #2196f3;
-                        border-radius: 8px;
-                        padding: 8px 12px;
-                        margin-top: 8px;
-                        font-size: 0.85rem;
-                        color: #1976d2;
-                        text-align: center;
-                    `;
+                background: #e3f2fd;
+                border: 1px solid #2196f3;
+                border-radius: 8px;
+                padding: 8px 12px;
+                margin-top: 8px;
+                font-size: 0.85rem;
+                color: #1976d2;
+                text-align: center;
+            `;
                         document.querySelector('.time-slots').parentNode.appendChild(workingHoursDisplay);
                     }
                     workingHoursDisplay.textContent = `Giờ làm việc ${workingInfo}`;
                 }
             });
 
-            // Form submission
+            // ========== Lấy danh sách bác sĩ từ backend ============
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('/api/doctors')
+                    .then(response => response.json())
+                    .then(data => {
+                        const doctorSelect = document.getElementById('doctor');
+                        doctorSelect.innerHTML = '<option value="">Chọn bác sĩ</option>';
+                        data.forEach(doctor => {
+                            const option = document.createElement('option');
+                            option.value = doctor.docId;
+                            option.textContent = doctor.docFullName + (doctor.expertise ? ' - ' + doctor.expertise : '');
+                            doctorSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Lỗi lấy danh sách bác sĩ:', error);
+                    });
+            });
+
+            // ========== Bắt sự kiện click chọn khung giờ ===========
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.time-slot').forEach(slot => {
+                    slot.addEventListener('click', function () {
+                        if(this.classList.contains('disabled')) return;
+                        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                        this.classList.add('selected');
+                        document.getElementById('selectedTime').value = this.dataset.time;
+                    });
+                });
+            });
+
+            // ========== Submit form đặt lịch ===========
             document.getElementById('bookingForm').addEventListener('submit', function (e) {
                 e.preventDefault();
-
                 if (!document.getElementById('selectedTime').value) {
                     alert('Vui lòng chọn khung giờ khám!');
                     return;
                 }
+                // Lấy và tách thời gian, loại bỏ giây và khoảng trắng nếu có
+                const timeRange = document.getElementById('selectedTime').value.trim();
+                let [startTime, endTime] = timeRange.split('-').map(t => t.trim());
+                // Nếu thừa :00 thì cắt bỏ
+                if (startTime.length === 8) startTime = startTime.slice(0,5);
+                if (endTime.length === 8) endTime = endTime.slice(0,5);
 
-                alert('Đặt lịch thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
+                // Debug để kiểm tra giá trị gửi đi
+                // console.log('startTime:', startTime, 'endTime:', endTime);
 
-                // Reset form and update time slots for today
-                this.reset();
-                document.getElementById('appointmentDate').value = today;
-                updateTimeSlots(today);
-                document.getElementById('selectedTime').value = '';
-
-                // Remove working hours display
-                const workingHoursDisplay = document.querySelector('.working-hours-display');
-                if (workingHoursDisplay) {
-                    workingHoursDisplay.remove();
-                }
+                const data = {
+                    fullName: document.getElementById('fullName').value,
+                    phone: document.getElementById('phone').value,
+                    email: document.getElementById('email').value,
+                    dob: document.getElementById('dob').value,
+                    docId: parseInt(document.getElementById('doctor').value),
+                    appointmentDate: document.getElementById('appointmentDate').value,
+                    service: document.getElementById('service').value,
+                    startTime: startTime,      // luôn là "HH:mm"
+                    endTime: endTime,          // luôn là "HH:mm"
+                    note: document.getElementById('symptoms').value
+                };
+                fetch('/api/booking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                    .then(res => res.json())
+                    .then(resp => {
+                        if (resp.success) {
+                            alert('Đặt lịch thành công! Nếu bạn chưa có tài khoản, thông tin tài khoản sẽ được gửi về email.');
+                            document.getElementById('bookingForm').reset();
+                            // Reset lại time slot cho ngày hôm nay
+                            const today = new Date().toISOString().split('T')[0];
+                            document.getElementById('appointmentDate').value = today;
+                            // Remove working hours display nếu có
+                            const workingHoursDisplay = document.querySelector('.working-hours-display');
+                            if (workingHoursDisplay) {
+                                workingHoursDisplay.remove();
+                            }
+                            // Reset slot selection
+                            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                            document.getElementById('selectedTime').value = '';
+                        } else {
+                            alert('Đặt lịch thất bại: ' + (resp.message || 'Có lỗi xảy ra!'));
+                        }
+                    })
+                    .catch(err => alert('Có lỗi xảy ra khi gửi dữ liệu!'));
             });
 
-            // Mobile menu toggle
+            // ========== Mobile menu toggle ===========
             document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
                 document.querySelector('nav').classList.toggle('active');
             });
         </script>
         <script src="js/script.js"></script>
     </body>
-
     </html>
