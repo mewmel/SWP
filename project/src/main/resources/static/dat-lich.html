@@ -713,12 +713,7 @@
                                 <label for="service">Loại dịch vụ <span class="required">*</span></label>
                                 <select id="service" class="form-select" required>
                                     <option value="">Chọn dịch vụ</option>
-                                    <option value="consultation">Tư vấn ban đầu</option>
-                                    <option value="follow-up">Tái khám</option>
-                                    <option value="ivf">Thụ tinh trong ống nghiệm (IVF)</option>
-                                    <option value="iui">Thụ tinh nhân tạo (IUI)</option>
-                                    <option value="fertility-test">Xét nghiệm sinh sản</option>
-                                    <option value="ultrasound">Siêu âm theo dõi</option>
+                                    <!-- Các option sẽ được JS render từ backend, xóa toàn bộ option cứng ở đây -->
                                 </select>
                             </div>
                             <div class="form-group form-group-full">
@@ -998,12 +993,8 @@
                 // Lấy và tách thời gian, loại bỏ giây và khoảng trắng nếu có
                 const timeRange = document.getElementById('selectedTime').value.trim();
                 let [startTime, endTime] = timeRange.split('-').map(t => t.trim());
-                // Nếu thừa :00 thì cắt bỏ
                 if (startTime.length === 8) startTime = startTime.slice(0,5);
                 if (endTime.length === 8) endTime = endTime.slice(0,5);
-
-                // Debug để kiểm tra giá trị gửi đi
-                // console.log('startTime:', startTime, 'endTime:', endTime);
 
                 const data = {
                     fullName: document.getElementById('fullName').value,
@@ -1012,10 +1003,11 @@
                     dob: document.getElementById('dob').value,
                     docId: parseInt(document.getElementById('doctor').value),
                     appointmentDate: document.getElementById('appointmentDate').value,
-                    service: document.getElementById('service').value,
-                    startTime: startTime,      // luôn là "HH:mm"
-                    endTime: endTime,          // luôn là "HH:mm"
-                    note: document.getElementById('symptoms').value
+                    serId: parseInt(document.getElementById('service').value),
+                    startTime: startTime,
+                    endTime: endTime,
+                    note: document.getElementById('symptoms').value,
+                    bookType: 'initial' // <--- Thêm dòng này (hoặc 'follow-up' tuỳ logic)
                 };
                 fetch('/api/booking', {
                     method: 'POST',
@@ -1025,7 +1017,7 @@
                     .then(res => res.json())
                     .then(resp => {
                         if (resp.success) {
-                            alert('Đặt lịch thành công! Nếu bạn chưa có tài khoản, thông tin tài khoản sẽ được gửi về email.');
+                            alert('Đặt lịch thành công! Vì bạn chưa có tài khoản nên,thông tin tài khoản sẽ được gửi về email.');
                             document.getElementById('bookingForm').reset();
                             // Reset lại time slot cho ngày hôm nay
                             const today = new Date().toISOString().split('T')[0];
@@ -1045,6 +1037,7 @@
                     .catch(err => alert('Có lỗi xảy ra khi gửi dữ liệu!'));
             });
 
+
             // ========== Mobile menu toggle ===========
             document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
                 document.querySelector('nav').classList.toggle('active');
@@ -1052,5 +1045,6 @@
         </script>
         <script src="js/auth-expiry.js"></script>
         <script src="js/script.js"></script>
+        <script src="js/service-dropdown.js"></script>
     </body>
     </html>

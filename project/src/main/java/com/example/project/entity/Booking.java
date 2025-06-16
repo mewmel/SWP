@@ -24,7 +24,10 @@ public class Booking {
     @Column(name = "slotId", nullable = false)
     private Integer slotId;
 
-    @Column(name = "bookType", length = 20, nullable = false)
+    @Column(name = "serId", nullable = false)
+    private Integer serId;
+
+    @Column(nullable = false)
     private String bookType;
 
     @Column(name = "bookStatus", length = 20, nullable = false)

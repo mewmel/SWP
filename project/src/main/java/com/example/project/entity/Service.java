@@ -22,7 +22,7 @@ public class Service {
     private String serDescription;
 
     @Column(name = "serPrice", precision = 12, scale = 2)
-    private BigDecimal serPrice;
+    private BigDecimal serPrice; // Dùng BigDecimal, không dùng Double/Float!
 
     @Column(name = "duration")
     private Integer duration;

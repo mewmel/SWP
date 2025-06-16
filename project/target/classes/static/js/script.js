@@ -134,30 +134,78 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    // ========= ĐĂNG KÝ GỌI API BACKEND =========
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
+    // ========== ĐĂNG KÝ (Register) ==========
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const submitBtn = this.querySelector('button[type="submit"]');
         const agreeTerms = document.getElementById('agreeTerms');
 
-        // Kiểm tra đã tích vào ô điều khoản chưa
         if (!agreeTerms.checked) {
             showNotification('Bạn phải đồng ý với điều khoản sử dụng trước khi đăng ký!', 'error');
             return;
         }
 
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
-        submitBtn.disabled = true;
-
-        const cusFullName = document.getElementById('registerName').value;
-        const cusEmail = document.getElementById('registerEmail').value;
+        const cusFullName = document.getElementById('registerName').value.trim();
+        const cusEmail = document.getElementById('registerEmail').value.trim();
+        const cusPhone = document.getElementById('registerPhone').value.trim();
+        const cusDob = document.getElementById('registerDob').value;
         const cusPassword = document.getElementById('registerPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
+
+        let errorMsg = '';
+        let errorField = null;
+        if (!cusFullName) {
+            errorMsg = "Vui lòng nhập họ tên.";
+            errorField = document.getElementById('registerName');
+        } else if (!cusEmail) {
+            errorMsg = "Vui lòng nhập email.";
+            errorField = document.getElementById('registerEmail');
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cusEmail)) {
+            errorMsg = "Email không hợp lệ.";
+            errorField = document.getElementById('registerEmail');
+        } else if (!cusPhone) {
+            errorMsg = "Vui lòng nhập số điện thoại.";
+            errorField = document.getElementById('registerPhone');
+        } else if (!/^(0|\+84)\d{9,10}$/.test(cusPhone)) {
+            errorMsg = "Số điện thoại không hợp lệ.";
+            errorField = document.getElementById('registerPhone');
+        } else if (!cusDob) {
+            errorMsg = "Vui lòng chọn ngày sinh.";
+            errorField = document.getElementById('registerDob');
+        } else if (!cusPassword) {
+            errorMsg = "Vui lòng nhập mật khẩu.";
+            errorField = document.getElementById('registerPassword');
+        } else if (cusPassword.length < 6) {
+            errorMsg = "Mật khẩu phải từ 6 ký tự trở lên.";
+            errorField = document.getElementById('registerPassword');
+        } else if (!confirmPassword) {
+            errorMsg = "Vui lòng xác nhận mật khẩu.";
+            errorField = document.getElementById('confirmPassword');
+        } else if (cusPassword !== confirmPassword) {
+            errorMsg = "Mật khẩu xác nhận không khớp.";
+            errorField = document.getElementById('confirmPassword');
+        }
+
+        if (errorMsg) {
+            showNotification(errorMsg, 'error');
+            if (errorField) {
+                errorField.classList.add('error');
+                errorField.focus();
+            }
+submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+            submitBtn.disabled = false;
+            return;
+        }
+
+        this.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+        submitBtn.disabled = true;
 
         fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cusFullName, cusEmail, cusPassword, confirmPassword })
+            body: JSON.stringify({ cusFullName, cusEmail, cusPhone, cusDob, cusPassword, confirmPassword })
         })
             .then(async response => {
                 const text = await response.text();
@@ -165,23 +213,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 return text;
             })
             .then(msg => {
-                showNotification('Đăng ký thành công!', 'success');
-                submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
-                submitBtn.disabled = false;
-                const closeModal = document.querySelector('.close-modal');
-                if (closeModal) closeModal.click();
+                // Đăng ký thành công => tự động đăng nhập
+                fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cusEmail, cusPassword })
+                })
+                    .then(async response => {
+                        if (!response.ok) {
+                            const errText = await response.text();
+                            throw new Error(errText || 'Đăng nhập thất bại');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', 30 * 60 * 1000);
+                        setWithExpiry('userEmail', data.cusEmail || '', 30 * 60 * 1000);
+                        if (authButtons) authButtons.style.display = 'none';
+                        if (userMenu) userMenu.style.display = 'flex';
+                        if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+                        if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+                        if (notificationWrapper) notificationWrapper.style.display = 'block';
+                        localStorage.setItem('registerSuccessMessage', 'Đăng ký thành công!');
+                        const closeModal = document.querySelector('.close-modal');
+                        if (closeModal) closeModal.click();
+                        window.location.href = "dashboard.html";
+                    })
+                    .catch(err => {
+                        showNotification('Đăng ký thành công, nhưng đăng nhập tự động thất bại: ' + (err.message || ''), 'error');
+                        submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+                        submitBtn.disabled = false;
+                    });
             })
             .catch(err => {
                 let message = err.message || 'Đăng ký thất bại!';
-                if (message.includes('Email đã tồn tại') || message.includes('Email đã được đăng ký') || message.includes('email')) {
-                    showNotification(message, 'error');
-                } else {
-                    showNotification(message, 'error');
-                }
+                showNotification(message, 'error');
                 submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
                 submitBtn.disabled = false;
             });
     });
+
+
+
+
+
 
     // ========== UI & HIỆU ỨNG KHÁC ==========
     // Smooth scrolling for anchor links

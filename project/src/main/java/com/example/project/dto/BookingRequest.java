@@ -20,4 +20,5 @@ public class BookingRequest {
     private String endTime;   // HH:mm
     private String note;
     private String bookType; // "initial"|"follow-up"
+    private Integer serId;   // <== BỔ SUNG: để truyền dịch vụ
 }
