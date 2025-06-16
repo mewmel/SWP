@@ -1,3 +1,4 @@
+
 // Calendar navigation
 document.getElementById('prevMonth').addEventListener('click', function() {
     // Previous month logic
