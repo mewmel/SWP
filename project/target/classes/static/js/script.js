@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
     const authButtons = document.querySelector('.auth-buttons');
@@ -6,9 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const userNameSpan = document.querySelector('.user-name');
     const sidebarUsername = document.querySelector('.sidebar-username');
     const notificationWrapper = document.querySelector('.notification-wrapper');
-
+    
     // Hiển thị đúng trạng thái đăng nhập khi load lại trang
-    const fullName = localStorage.getItem('userFullName');
+    const fullName = getWithExpiry('userFullName');
     if (fullName) {
         if (authButtons) authButtons.style.display = 'none';
         if (userMenu) userMenu.style.display = 'flex';
@@ -20,9 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (userMenu) userMenu.style.display = 'none';
         if (notificationWrapper) notificationWrapper.style.display = 'none';
     }
-
+    
     // Kiểm tra và hiển thị thông báo đăng xuất
-    const logoutMessage = localStorage.getItem('logoutMessage');
+    const logoutMessage = getWithExpiry('logoutMessage');
     if (logoutMessage) {
         // Thêm delay nhỏ để trang load xong trước khi hiển thị thông báo
         setTimeout(() => {
@@ -56,9 +55,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                // Lưu tên và email vào localStorage
-                localStorage.setItem('userFullName', data.cusFullName || data.cusEmail || 'Người dùng');
-                localStorage.setItem('userEmail', data.cusEmail || '');
+                // Lưu vào localStorage
+// Thời hạn session: ví dụ 30 phút (30 * 60 * 1000 ms)
+            const SESSION_TTL = 30 * 60 * 1000;
+            setWithExpiry('userId', data.cusId, SESSION_TTL);
+            setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', SESSION_TTL);
+            setWithExpiry('userEmail', data.cusEmail || 'Chưa cập nhật email', SESSION_TTL);
+            setWithExpiry('userDob', data.cusDate || 'Chưa cập nhật ngày sinh', SESSION_TTL);
+            setWithExpiry('userPhone', data.cusPhone || 'Chưa cập nhật số điện thoại', SESSION_TTL);
                 // Hiển thị giao diện đã đăng nhập
                 if (authButtons) authButtons.style.display = 'none';
                 if (userMenu) userMenu.style.display = 'flex';
@@ -71,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Chuyển hướng đến trang dashboard
                 window.location.href = "dashboard.html";
-
+                
             })
             .catch((err) => {
                 showNotification(
@@ -136,13 +140,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const submitBtn = this.querySelector('button[type="submit"]');
         const agreeTerms = document.getElementById('agreeTerms');
 
-        // Kiểm tra đã tích vào ô điều khoản chưa
         if (!agreeTerms.checked) {
             showNotification('Bạn phải đồng ý với điều khoản sử dụng trước khi đăng ký!', 'error');
             return;
         }
 
-        // Lấy dữ liệu từ form
         const cusFullName = document.getElementById('registerName').value.trim();
         const cusEmail = document.getElementById('registerEmail').value.trim();
         const cusPhone = document.getElementById('registerPhone').value.trim();
@@ -150,7 +152,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const cusPassword = document.getElementById('registerPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
 
-        // Validate dữ liệu
         let errorMsg = '';
         let errorField = null;
         if (!cusFullName) {
@@ -191,19 +192,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorField.classList.add('error');
                 errorField.focus();
             }
-            submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
             submitBtn.disabled = false;
             return;
         }
 
-        // Bỏ highlight lỗi cũ
         this.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
 
-        // Hiển thị loading
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
         submitBtn.disabled = true;
 
-        // Gửi dữ liệu lên backend
         fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -215,11 +213,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 return text;
             })
             .then(msg => {
-                showNotification('Đăng ký thành công!', 'success');
-                submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
-                submitBtn.disabled = false;
-                const closeModal = document.querySelector('.close-modal');
-                if (closeModal) closeModal.click();
+                // Đăng ký thành công => tự động đăng nhập
+                fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cusEmail, cusPassword })
+                })
+                    .then(async response => {
+                        if (!response.ok) {
+                            const errText = await response.text();
+                            throw new Error(errText || 'Đăng nhập thất bại');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', 30 * 60 * 1000);
+                        setWithExpiry('userEmail', data.cusEmail || '', 30 * 60 * 1000);
+                        if (authButtons) authButtons.style.display = 'none';
+                        if (userMenu) userMenu.style.display = 'flex';
+                        if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+                        if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+                        if (notificationWrapper) notificationWrapper.style.display = 'block';
+                        localStorage.setItem('registerSuccessMessage', 'Đăng ký thành công!');
+                        const closeModal = document.querySelector('.close-modal');
+                        if (closeModal) closeModal.click();
+                        window.location.href = "dashboard.html";
+                    })
+                    .catch(err => {
+                        showNotification('Đăng ký thành công, nhưng đăng nhập tự động thất bại: ' + (err.message || ''), 'error');
+                        submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+                        submitBtn.disabled = false;
+                    });
             })
             .catch(err => {
                 let message = err.message || 'Đăng ký thất bại!';
@@ -228,6 +252,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.disabled = false;
             });
     });
+
+
+
+
+
 
     // ========== UI & HIỆU ỨNG KHÁC ==========
     // Smooth scrolling for anchor links
@@ -490,7 +519,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============= NOTIFICATION DROPDOWN =============
     const notificationBtn = document.getElementById('notificationBtn');
     const notificationDropdown = document.getElementById('notificationDropdown');
-
+    
     if (notificationBtn && notificationDropdown) {
         // Toggle dropdown khi click vào bell icon
         notificationBtn.addEventListener('click', function(e) {
@@ -518,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Xóa trạng thái unread
                 const wasUnread = this.classList.contains('unread');
                 this.classList.remove('unread');
-
+                
                 // Cập nhật số badge nếu notification chưa đọc
                 if (wasUnread) {
                     const badge = document.querySelector('.notification-badge');
@@ -533,10 +562,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                 }
-
+                
                 // Đóng dropdown sau khi click
                 notificationDropdown.classList.remove('show');
-
+                
                 // Lấy thông tin notification và hiển thị thông báo
                 const title = this.querySelector('.notification-title');
                 if (title) {
@@ -576,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 notificationDropdown.classList.remove('show');
                 showNotification('Trang xem tất cả thông báo sẽ được phát triển trong phiên bản tiếp theo!', 'info');
-
+                
                 // Có thể chuyển hướng đến trang thông báo chuyên dụng
                 // window.location.href = 'thong-bao.html';
             });
@@ -587,13 +616,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Tạo element thông báo mới
             const newNotification = document.createElement('div');
             newNotification.className = 'notification-dropdown-item unread';
-
+            
             let iconClass = 'fas fa-bell';
             if (type === 'injection') iconClass = 'fas fa-syringe';
             else if (type === 'test') iconClass = 'fas fa-flask';
             else if (type === 'appointment') iconClass = 'fas fa-calendar-check';
             else if (type === 'message') iconClass = 'fas fa-user-md';
-
+            
             newNotification.innerHTML = `
                 <div class="notification-avatar">
                     <i class="${iconClass}"></i>
@@ -604,12 +633,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="notification-time">${time}</div>
                 </div>
             `;
-
+            
             // Thêm vào đầu danh sách
             const notificationBody = document.querySelector('.notification-dropdown-body');
             if (notificationBody) {
                 notificationBody.insertBefore(newNotification, notificationBody.firstChild);
-
+                
                 // Cập nhật badge
                 const badge = document.querySelector('.notification-badge');
                 if (badge) {
@@ -618,12 +647,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     badge.textContent = count;
                     badge.style.display = 'flex';
                 }
-
+                
                 // Thêm event listener cho notification mới
                 newNotification.addEventListener('click', function() {
                     const wasUnread = this.classList.contains('unread');
                     this.classList.remove('unread');
-
+                    
                     if (wasUnread) {
                         const badge = document.querySelector('.notification-badge');
                         if (badge) {
@@ -637,11 +666,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
                     }
-
+                    
                     notificationDropdown.classList.remove('show');
                     showNotification('Đã xem: ' + title, 'success');
                 });
-
+                
                 // Animation cho thông báo mới
                 newNotification.style.animation = 'slideInNotification 0.3s ease-out';
             }
@@ -652,12 +681,12 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.notification-dropdown-item.unread').forEach(item => {
                 item.classList.remove('unread');
             });
-
+            
             const badge = document.querySelector('.notification-badge');
             if (badge) {
                 badge.style.display = 'none';
             }
-
+            
             showNotification('Đã đánh dấu tất cả thông báo đã đọc!', 'success');
         };
     }
@@ -679,9 +708,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    // Add notification styles
-    const style = document.createElement('style');
-    style.textContent = `
+         // Add notification styles
+     const style = document.createElement('style');
+     style.textContent = `
          .notification {
              position: fixed;
              top: 20px;
@@ -767,105 +796,105 @@ document.addEventListener('DOMContentLoaded', function() {
                     modal.style.transform = 'scale(1)';
                 }, 50);
             }
-        });
-    });
+                 });
+     });
 
-    // ============= DASHBOARD FEATURES =============
-    // Temperature Chart (chỉ load khi có element temperatureChart)
-    const temperatureChart = document.getElementById('temperatureChart');
-    if (temperatureChart) {
-        const ctx = temperatureChart.getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['20/6', '21/6', '22/6', '23/6', '24/6', '25/6', '26/6'],
-                datasets: [{
-                    label: 'Nhiệt độ cơ thể (°C)',
-                    data: [36.4, 36.3, 36.5, 36.7, 36.8, 36.6, 36.9],
-                    borderColor: 'rgb(74, 144, 226)',
-                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                    tension: 0.1,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        min: 36,
-                        max: 37.5
-                    }
-                }
-            }
-        });
-    }
+     // ============= DASHBOARD FEATURES =============
+     // Temperature Chart (chỉ load khi có element temperatureChart)
+     const temperatureChart = document.getElementById('temperatureChart');
+     if (temperatureChart) {
+         const ctx = temperatureChart.getContext('2d');
+         new Chart(ctx, {
+             type: 'line',
+             data: {
+                 labels: ['20/6', '21/6', '22/6', '23/6', '24/6', '25/6', '26/6'],
+                 datasets: [{
+                     label: 'Nhiệt độ cơ thể (°C)',
+                     data: [36.4, 36.3, 36.5, 36.7, 36.8, 36.6, 36.9],
+                     borderColor: 'rgb(74, 144, 226)',
+                     backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                     tension: 0.1,
+                     fill: true
+                 }]
+             },
+             options: {
+                 responsive: true,
+                 maintainAspectRatio: false,
+                 plugins: {
+                     legend: {
+                         display: false
+                     }
+                 },
+                 scales: {
+                     y: {
+                         beginAtZero: false,
+                         min: 36,
+                         max: 37.5
+                     }
+                 }
+             }
+         });
+     }
 
-    // Interactive action items
-    document.querySelectorAll('.action-item').forEach(item => {
-        item.addEventListener('click', function () {
-            const action = this.textContent.trim();
-            showNotification(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`, 'info');
-        });
-    });
+     // Interactive action items
+     document.querySelectorAll('.action-item').forEach(item => {
+         item.addEventListener('click', function () {
+             const action = this.textContent.trim();
+             showNotification(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`, 'info');
+         });
+     });
 
-    // Progress bar animation
-    const progressFill = document.querySelector('.progress-fill');
-    if (progressFill) {
-        setTimeout(() => {
-            progressFill.style.width = '40%';
-        }, 500);
-    }
+     // Progress bar animation
+     const progressFill = document.querySelector('.progress-fill');
+     if (progressFill) {
+         setTimeout(() => {
+             progressFill.style.width = '40%';
+         }, 500);
+     }
 
-    // Timeline day hover effects
-    document.querySelectorAll('.timeline-day').forEach(day => {
-        day.addEventListener('mouseenter', function () {
-            if (this.classList.contains('has-event')) {
-                this.style.transform = 'scale(1.05)';
-                this.style.transition = 'transform 0.2s ease';
-            }
-        });
+     // Timeline day hover effects
+     document.querySelectorAll('.timeline-day').forEach(day => {
+         day.addEventListener('mouseenter', function () {
+             if (this.classList.contains('has-event')) {
+                 this.style.transform = 'scale(1.05)';
+                 this.style.transition = 'transform 0.2s ease';
+             }
+         });
 
-        day.addEventListener('mouseleave', function () {
-            this.style.transform = 'scale(1)';
-        });
-    });
+         day.addEventListener('mouseleave', function () {
+             this.style.transform = 'scale(1)';
+         });
+     });
 
-    // ============= DEMO FUNCTIONS FOR TESTING =============
-    // Function để test thêm notification mới
-    window.testNotification = function() {
-        const types = ['injection', 'test', 'appointment', 'message'];
-        const messages = [
-            { title: 'Nhắc nhở tiêm thuốc', desc: 'Đã đến giờ tiêm thuốc Gonal-F 150 IU', type: 'injection' },
-            { title: 'Lịch xét nghiệm mới', desc: 'Xét nghiệm hormone FSH vào ngày mai', type: 'test' },
-            { title: 'Cuộc hẹn với bác sĩ', desc: 'Khám tái khám với BS. Nguyễn Thị Hương', type: 'appointment' },
-            { title: 'Tin nhắn từ phòng khám', desc: 'Bạn có một tin nhắn mới từ phòng khám', type: 'message' }
-        ];
+     // ============= DEMO FUNCTIONS FOR TESTING =============
+     // Function để test thêm notification mới
+     window.testNotification = function() {
+         const types = ['injection', 'test', 'appointment', 'message'];
+         const messages = [
+             { title: 'Nhắc nhở tiêm thuốc', desc: 'Đã đến giờ tiêm thuốc Gonal-F 150 IU', type: 'injection' },
+             { title: 'Lịch xét nghiệm mới', desc: 'Xét nghiệm hormone FSH vào ngày mai', type: 'test' },
+             { title: 'Cuộc hẹn với bác sĩ', desc: 'Khám tái khám với BS. Nguyễn Thị Hương', type: 'appointment' },
+             { title: 'Tin nhắn từ phòng khám', desc: 'Bạn có một tin nhắn mới từ phòng khám', type: 'message' }
+         ];
+         
+         const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+         if (typeof addNewNotification === 'function') {
+             addNewNotification(randomMsg.title, randomMsg.desc, randomMsg.type);
+         }
+     };
 
-        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-        if (typeof addNewNotification === 'function') {
-            addNewNotification(randomMsg.title, randomMsg.desc, randomMsg.type);
-        }
-    };
+     // Auto-demo notification (uncomment để test)
+     // setInterval(testNotification, 10000); // Thêm notification mới mỗi 10 giây
 
-    // Auto-demo notification (uncomment để test)
-    // setInterval(testNotification, 10000); // Thêm notification mới mỗi 10 giây
-
-
-    document.addEventListener('DOMContentLoaded', function() {
+     
+         document.addEventListener('DOMContentLoaded', function() {
         // ...existing code...
-
+    
         // Xử lý popup lịch hẹn
         const appointmentLink = document.getElementById('appointmentLink');
         const appointmentModal = document.getElementById('appointmentModal');
         const closeAppointmentBtn = document.querySelector('.close-appointment-modal');
-
+    
         // Mở popup khi click vào link lịch hẹn
         if(appointmentLink) {
             appointmentLink.addEventListener('click', function(e) {
@@ -873,14 +902,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 appointmentModal.style.display = 'block';
             });
         }
-
+    
         // Đóng popup khi click vào nút close
         if(closeAppointmentBtn) {
             closeAppointmentBtn.addEventListener('click', function() {
                 appointmentModal.style.display = 'none';
             });
         }
-
+    
         // Đóng popup khi click ra ngoài
         window.addEventListener('click', function(e) {
             if (e.target == appointmentModal) {
@@ -888,28 +917,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+ });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Lấy thông tin từ localStorage đã được lưu bởi script.js
+   document.addEventListener('DOMContentLoaded', function() {
     //tự động điền vào form đăng kí khám khi đã đăng nhập
-    const fullName = localStorage.getItem('userFullName');
-    const userEmail = localStorage.getItem('userEmail');
+    const userfullName = getWithExpiry('userFullName');
+    const userEmail = getWithExpiry('userEmail');
+    const userDob = getWithExpiry('userDob'); // Lấy ngày sinh nếu có
+    const userPhone = getWithExpiry('userPhone'); // Lấy số điện thoại nếu có
+
+
     const dobInput = document.getElementById('dob');
     const emailInput = document.getElementById('email');
     const nameInput = document.getElementById('fullName');
+    const phoneInput = document.getElementById('phone');
 
-    if (fullName && nameInput) {
-        nameInput.value = fullName;
+
+    if (userfullName && nameInput) {
+        nameInput.value = userfullName;
     }
 
     if (userEmail && emailInput) {
         emailInput.value = userEmail;
     }
-
-    if (userDob && dobInput) {
-        dobInput.value = userDob;
-    }
-
-
+if (phoneInput) phoneInput.value = userPhone;
+if (dobInput) dobInput.value = userDob;
+    
+    
+    
 })
+

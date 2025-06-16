@@ -1,23 +1,24 @@
 package com.example.project.service;
 
-import com.example.project.dto.LoginRequest;
-import com.example.project.dto.RegisterRequest;
-import com.example.project.entity.Customer;
-import com.example.project.repository.CustomerRepository;
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Optional;
-import java.util.regex.Pattern;
+import com.example.project.dto.LoginRequest;
+import com.example.project.dto.RegisterRequest;
+import com.example.project.entity.Customer;
+import com.example.project.repository.CustomerRepository;
 
 @Service
 public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Optional<Customer> login(LoginRequest request) {
         Optional<Customer> customerOpt = customerRepository.findByCusEmail(request.getCusEmail());
@@ -69,11 +70,29 @@ public class CustomerService {
         customer.setCusGender(null);
         customer.setCusAddress(null);
         customer.setCusStatus("active"); // chỉ set là  "active" hoặc "inactive"
-        customer.setCusProvider("local"); // <<< CHỈ CẦN THÊM DÒNG NÀY CHO ĐĂNG KÝ THƯỜNG
 
         customerRepository.save(customer);
         return "success";
     }
+    public Customer updateCustomer(Integer cusId, Customer updatedData) {
+    Optional<Customer> customerOpt = customerRepository.findByCusId(cusId);
+    if (!customerOpt.isPresent()) return null;
+    Customer customer = customerOpt.get();
+
+    // tạm chưa cho update email và password!
+    customer.setCusFullName(updatedData.getCusFullName());
+    customer.setCusGender(updatedData.getCusGender());
+    customer.setCusDate(updatedData.getCusDate());
+    customer.setCusPhone(updatedData.getCusPhone());
+    customer.setCusOccupation(updatedData.getCusOccupation());
+    customer.setCusAddress(updatedData.getCusAddress());
+    customer.setEmergencyContact(updatedData.getEmergencyContact());
+
+    // Có thể validate số điện thoại, ngày sinh... nếu muốn
+
+    return customerRepository.save(customer);
+}
+
 
     private boolean isValidEmail(String email) {
         return Pattern.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", email);
@@ -91,7 +110,6 @@ public class CustomerService {
             customer.setCusFullName(name);
             customer.setCusEmail(email);
             customer.setCusStatus("active");
-            customer.setCusProvider("google"); // <<< Đảm bảo Google login cũng set provider
             customerRepository.save(customer);
             return customer;
         }

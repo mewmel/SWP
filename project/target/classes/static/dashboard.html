@@ -412,6 +412,35 @@
            
         </aside>
     </main>
+    <script src="js/auth-expiry.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Thêm đoạn này vào ngay phía sau hàm showNotification
+        document.addEventListener('DOMContentLoaded', function() {
+            const message = localStorage.getItem('registerSuccessMessage');
+            if (message) {
+                showNotification(message, 'success');
+                localStorage.removeItem('registerSuccessMessage');
+            }
+        });
+    </script>
+    <script src="js/auth-expiry.js"></script>
     <script src="js/script.js"></script>
 </body>
 

@@ -1,28 +1,3 @@
-// Thêm 2 hàm này vào đầu file (hoặc ngay sau showNotification, trước mọi thao tác localStorage)
-function setWithExpiry(key, value, ttlMs) {
-    const now = Date.now();
-    const item = {
-        value: value,
-        expiry: now + ttlMs
-    };
-    localStorage.setItem(key, JSON.stringify(item));
-}
-function getWithExpiry(key) {
-    const itemStr = localStorage.getItem(key);
-    if (!itemStr) return null;
-    try {
-        const item = JSON.parse(itemStr);
-        if (!item.expiry) return item.value;
-        if (Date.now() > item.expiry) {
-            localStorage.removeItem(key);
-            return null;
-        }
-        return item.value;
-    } catch {
-        return null;
-    }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
     const authButtons = document.querySelector('.auth-buttons');
@@ -30,15 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const userNameSpan = document.querySelector('.user-name');
     const sidebarUsername = document.querySelector('.sidebar-username');
     const notificationWrapper = document.querySelector('.notification-wrapper');
-
-    // Hiển thị thông báo đăng ký thành công nếu có
-    const registerSuccessMessage = localStorage.getItem('registerSuccessMessage');
-    if (registerSuccessMessage) {
-        showNotification(registerSuccessMessage, 'success');
-        localStorage.removeItem('registerSuccessMessage');
-    }
-
-    // Sử dụng getWithExpiry thay cho localStorage.getItem để tự động xóa sau 30 phút
+    
+    // Hiển thị đúng trạng thái đăng nhập khi load lại trang
     const fullName = getWithExpiry('userFullName');
     if (fullName) {
         if (authButtons) authButtons.style.display = 'none';
@@ -51,13 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (userMenu) userMenu.style.display = 'none';
         if (notificationWrapper) notificationWrapper.style.display = 'none';
     }
-
+    
     // Kiểm tra và hiển thị thông báo đăng xuất
-    const logoutMessage = localStorage.getItem('logoutMessage');
+    const logoutMessage = getWithExpiry('logoutMessage');
     if (logoutMessage) {
+        // Thêm delay nhỏ để trang load xong trước khi hiển thị thông báo
         setTimeout(() => {
             showNotification(logoutMessage, 'success');
-            localStorage.removeItem('logoutMessage');
+            localStorage.removeItem('logoutMessage'); // Xóa thông báo sau khi hiển thị
         }, 100);
     }
 
@@ -86,9 +55,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                // Dùng setWithExpiry để lưu 30 phút
-                setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', 30 * 60 * 1000);
-                setWithExpiry('userEmail', data.cusEmail || '', 30 * 60 * 1000);
+                // Lưu vào localStorage
+// Thời hạn session: ví dụ 30 phút (30 * 60 * 1000 ms)
+            const SESSION_TTL = 30 * 60 * 1000;
+            setWithExpiry('userId', data.cusId, SESSION_TTL);
+            setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', SESSION_TTL);
+            setWithExpiry('userEmail', data.cusEmail || 'Chưa cập nhật email', SESSION_TTL);
+            setWithExpiry('userDob', data.cusDate || 'Chưa cập nhật ngày sinh', SESSION_TTL);
+            setWithExpiry('userPhone', data.cusPhone || 'Chưa cập nhật số điện thoại', SESSION_TTL);
+                // Hiển thị giao diện đã đăng nhập
                 if (authButtons) authButtons.style.display = 'none';
                 if (userMenu) userMenu.style.display = 'flex';
                 if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
@@ -98,7 +73,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const closeModal = document.querySelector('.close-modal');
                 if (closeModal) closeModal.click();
 
+                // Chuyển hướng đến trang dashboard
                 window.location.href = "dashboard.html";
+                
             })
             .catch((err) => {
                 showNotification(
@@ -121,16 +98,18 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             localStorage.removeItem('userFullName');
             localStorage.removeItem('userEmail');
-            localStorage.removeItem('userDob');
+            // Lưu thông báo đăng xuất để hiển thị trên trang index
             localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
             if (notificationWrapper) notificationWrapper.style.display = 'none';
             closeSidebar();
             clearLoginForm();
+            // Chuyển trang ngay lập tức nếu không ở trang index
             if (window.location.pathname !== '/index.html' && !window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
                 window.location.href = "index.html";
             } else {
+                // Nếu đã ở trang index, hiển thị thông báo ngay
                 showNotification('Đã đăng xuất!', 'success');
                 localStorage.removeItem('logoutMessage');
             }
@@ -142,15 +121,18 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             localStorage.removeItem('userFullName');
             localStorage.removeItem('userEmail');
+            // Lưu thông báo đăng xuất để hiển thị trên trang index
             localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
             if (notificationWrapper) notificationWrapper.style.display = 'none';
             closeSidebar();
             clearLoginForm();
+            // Chuyển trang ngay lập tức
             window.location.href = "index.html";
         });
     }
+
 
     // ========== ĐĂNG KÝ (Register) ==========
     document.getElementById('registerForm').addEventListener('submit', function (e) {
@@ -210,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorField.classList.add('error');
                 errorField.focus();
             }
-            submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
             submitBtn.disabled = false;
             return;
         }
@@ -270,6 +252,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.disabled = false;
             });
     });
+
+
+
 
 
 
@@ -534,7 +519,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============= NOTIFICATION DROPDOWN =============
     const notificationBtn = document.getElementById('notificationBtn');
     const notificationDropdown = document.getElementById('notificationDropdown');
-
+    
     if (notificationBtn && notificationDropdown) {
         // Toggle dropdown khi click vào bell icon
         notificationBtn.addEventListener('click', function(e) {
@@ -562,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Xóa trạng thái unread
                 const wasUnread = this.classList.contains('unread');
                 this.classList.remove('unread');
-
+                
                 // Cập nhật số badge nếu notification chưa đọc
                 if (wasUnread) {
                     const badge = document.querySelector('.notification-badge');
@@ -577,10 +562,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                 }
-
+                
                 // Đóng dropdown sau khi click
                 notificationDropdown.classList.remove('show');
-
+                
                 // Lấy thông tin notification và hiển thị thông báo
                 const title = this.querySelector('.notification-title');
                 if (title) {
@@ -620,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 notificationDropdown.classList.remove('show');
                 showNotification('Trang xem tất cả thông báo sẽ được phát triển trong phiên bản tiếp theo!', 'info');
-
+                
                 // Có thể chuyển hướng đến trang thông báo chuyên dụng
                 // window.location.href = 'thong-bao.html';
             });
@@ -631,13 +616,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Tạo element thông báo mới
             const newNotification = document.createElement('div');
             newNotification.className = 'notification-dropdown-item unread';
-
+            
             let iconClass = 'fas fa-bell';
             if (type === 'injection') iconClass = 'fas fa-syringe';
             else if (type === 'test') iconClass = 'fas fa-flask';
             else if (type === 'appointment') iconClass = 'fas fa-calendar-check';
             else if (type === 'message') iconClass = 'fas fa-user-md';
-
+            
             newNotification.innerHTML = `
                 <div class="notification-avatar">
                     <i class="${iconClass}"></i>
@@ -648,12 +633,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="notification-time">${time}</div>
                 </div>
             `;
-
+            
             // Thêm vào đầu danh sách
             const notificationBody = document.querySelector('.notification-dropdown-body');
             if (notificationBody) {
                 notificationBody.insertBefore(newNotification, notificationBody.firstChild);
-
+                
                 // Cập nhật badge
                 const badge = document.querySelector('.notification-badge');
                 if (badge) {
@@ -662,12 +647,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     badge.textContent = count;
                     badge.style.display = 'flex';
                 }
-
+                
                 // Thêm event listener cho notification mới
                 newNotification.addEventListener('click', function() {
                     const wasUnread = this.classList.contains('unread');
                     this.classList.remove('unread');
-
+                    
                     if (wasUnread) {
                         const badge = document.querySelector('.notification-badge');
                         if (badge) {
@@ -681,11 +666,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
                     }
-
+                    
                     notificationDropdown.classList.remove('show');
                     showNotification('Đã xem: ' + title, 'success');
                 });
-
+                
                 // Animation cho thông báo mới
                 newNotification.style.animation = 'slideInNotification 0.3s ease-out';
             }
@@ -696,12 +681,12 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.notification-dropdown-item.unread').forEach(item => {
                 item.classList.remove('unread');
             });
-
+            
             const badge = document.querySelector('.notification-badge');
             if (badge) {
                 badge.style.display = 'none';
             }
-
+            
             showNotification('Đã đánh dấu tất cả thông báo đã đọc!', 'success');
         };
     }
@@ -723,9 +708,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    // Add notification styles
-    const style = document.createElement('style');
-    style.textContent = `
+         // Add notification styles
+     const style = document.createElement('style');
+     style.textContent = `
          .notification {
              position: fixed;
              top: 20px;
@@ -811,105 +796,105 @@ document.addEventListener('DOMContentLoaded', function() {
                     modal.style.transform = 'scale(1)';
                 }, 50);
             }
-        });
-    });
+                 });
+     });
 
-    // ============= DASHBOARD FEATURES =============
-    // Temperature Chart (chỉ load khi có element temperatureChart)
-    const temperatureChart = document.getElementById('temperatureChart');
-    if (temperatureChart) {
-        const ctx = temperatureChart.getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['20/6', '21/6', '22/6', '23/6', '24/6', '25/6', '26/6'],
-                datasets: [{
-                    label: 'Nhiệt độ cơ thể (°C)',
-                    data: [36.4, 36.3, 36.5, 36.7, 36.8, 36.6, 36.9],
-                    borderColor: 'rgb(74, 144, 226)',
-                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                    tension: 0.1,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        min: 36,
-                        max: 37.5
-                    }
-                }
-            }
-        });
-    }
+     // ============= DASHBOARD FEATURES =============
+     // Temperature Chart (chỉ load khi có element temperatureChart)
+     const temperatureChart = document.getElementById('temperatureChart');
+     if (temperatureChart) {
+         const ctx = temperatureChart.getContext('2d');
+         new Chart(ctx, {
+             type: 'line',
+             data: {
+                 labels: ['20/6', '21/6', '22/6', '23/6', '24/6', '25/6', '26/6'],
+                 datasets: [{
+                     label: 'Nhiệt độ cơ thể (°C)',
+                     data: [36.4, 36.3, 36.5, 36.7, 36.8, 36.6, 36.9],
+                     borderColor: 'rgb(74, 144, 226)',
+                     backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                     tension: 0.1,
+                     fill: true
+                 }]
+             },
+             options: {
+                 responsive: true,
+                 maintainAspectRatio: false,
+                 plugins: {
+                     legend: {
+                         display: false
+                     }
+                 },
+                 scales: {
+                     y: {
+                         beginAtZero: false,
+                         min: 36,
+                         max: 37.5
+                     }
+                 }
+             }
+         });
+     }
 
-    // Interactive action items
-    document.querySelectorAll('.action-item').forEach(item => {
-        item.addEventListener('click', function () {
-            const action = this.textContent.trim();
-            showNotification(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`, 'info');
-        });
-    });
+     // Interactive action items
+     document.querySelectorAll('.action-item').forEach(item => {
+         item.addEventListener('click', function () {
+             const action = this.textContent.trim();
+             showNotification(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`, 'info');
+         });
+     });
 
-    // Progress bar animation
-    const progressFill = document.querySelector('.progress-fill');
-    if (progressFill) {
-        setTimeout(() => {
-            progressFill.style.width = '40%';
-        }, 500);
-    }
+     // Progress bar animation
+     const progressFill = document.querySelector('.progress-fill');
+     if (progressFill) {
+         setTimeout(() => {
+             progressFill.style.width = '40%';
+         }, 500);
+     }
 
-    // Timeline day hover effects
-    document.querySelectorAll('.timeline-day').forEach(day => {
-        day.addEventListener('mouseenter', function () {
-            if (this.classList.contains('has-event')) {
-                this.style.transform = 'scale(1.05)';
-                this.style.transition = 'transform 0.2s ease';
-            }
-        });
+     // Timeline day hover effects
+     document.querySelectorAll('.timeline-day').forEach(day => {
+         day.addEventListener('mouseenter', function () {
+             if (this.classList.contains('has-event')) {
+                 this.style.transform = 'scale(1.05)';
+                 this.style.transition = 'transform 0.2s ease';
+             }
+         });
 
-        day.addEventListener('mouseleave', function () {
-            this.style.transform = 'scale(1)';
-        });
-    });
+         day.addEventListener('mouseleave', function () {
+             this.style.transform = 'scale(1)';
+         });
+     });
 
-    // ============= DEMO FUNCTIONS FOR TESTING =============
-    // Function để test thêm notification mới
-    window.testNotification = function() {
-        const types = ['injection', 'test', 'appointment', 'message'];
-        const messages = [
-            { title: 'Nhắc nhở tiêm thuốc', desc: 'Đã đến giờ tiêm thuốc Gonal-F 150 IU', type: 'injection' },
-            { title: 'Lịch xét nghiệm mới', desc: 'Xét nghiệm hormone FSH vào ngày mai', type: 'test' },
-            { title: 'Cuộc hẹn với bác sĩ', desc: 'Khám tái khám với BS. Nguyễn Thị Hương', type: 'appointment' },
-            { title: 'Tin nhắn từ phòng khám', desc: 'Bạn có một tin nhắn mới từ phòng khám', type: 'message' }
-        ];
+     // ============= DEMO FUNCTIONS FOR TESTING =============
+     // Function để test thêm notification mới
+     window.testNotification = function() {
+         const types = ['injection', 'test', 'appointment', 'message'];
+         const messages = [
+             { title: 'Nhắc nhở tiêm thuốc', desc: 'Đã đến giờ tiêm thuốc Gonal-F 150 IU', type: 'injection' },
+             { title: 'Lịch xét nghiệm mới', desc: 'Xét nghiệm hormone FSH vào ngày mai', type: 'test' },
+             { title: 'Cuộc hẹn với bác sĩ', desc: 'Khám tái khám với BS. Nguyễn Thị Hương', type: 'appointment' },
+             { title: 'Tin nhắn từ phòng khám', desc: 'Bạn có một tin nhắn mới từ phòng khám', type: 'message' }
+         ];
+         
+         const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+         if (typeof addNewNotification === 'function') {
+             addNewNotification(randomMsg.title, randomMsg.desc, randomMsg.type);
+         }
+     };
 
-        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-        if (typeof addNewNotification === 'function') {
-            addNewNotification(randomMsg.title, randomMsg.desc, randomMsg.type);
-        }
-    };
+     // Auto-demo notification (uncomment để test)
+     // setInterval(testNotification, 10000); // Thêm notification mới mỗi 10 giây
 
-    // Auto-demo notification (uncomment để test)
-    // setInterval(testNotification, 10000); // Thêm notification mới mỗi 10 giây
-
-
-    document.addEventListener('DOMContentLoaded', function() {
+     
+         document.addEventListener('DOMContentLoaded', function() {
         // ...existing code...
-
+    
         // Xử lý popup lịch hẹn
         const appointmentLink = document.getElementById('appointmentLink');
         const appointmentModal = document.getElementById('appointmentModal');
         const closeAppointmentBtn = document.querySelector('.close-appointment-modal');
-
+    
         // Mở popup khi click vào link lịch hẹn
         if(appointmentLink) {
             appointmentLink.addEventListener('click', function(e) {
@@ -917,14 +902,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 appointmentModal.style.display = 'block';
             });
         }
-
+    
         // Đóng popup khi click vào nút close
         if(closeAppointmentBtn) {
             closeAppointmentBtn.addEventListener('click', function() {
                 appointmentModal.style.display = 'none';
             });
         }
-
+    
         // Đóng popup khi click ra ngoài
         window.addEventListener('click', function(e) {
             if (e.target == appointmentModal) {
@@ -932,28 +917,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+ });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Lấy thông tin từ localStorage đã được lưu bởi script.js
+   document.addEventListener('DOMContentLoaded', function() {
     //tự động điền vào form đăng kí khám khi đã đăng nhập
-    const fullName = localStorage.getItem('userFullName');
-    const userEmail = localStorage.getItem('userEmail');
+    const userfullName = getWithExpiry('userFullName');
+    const userEmail = getWithExpiry('userEmail');
+    const userDob = getWithExpiry('userDob'); // Lấy ngày sinh nếu có
+    const userPhone = getWithExpiry('userPhone'); // Lấy số điện thoại nếu có
+
+
     const dobInput = document.getElementById('dob');
     const emailInput = document.getElementById('email');
     const nameInput = document.getElementById('fullName');
+    const phoneInput = document.getElementById('phone');
 
-    if (fullName && nameInput) {
-        nameInput.value = fullName;
+
+    if (userfullName && nameInput) {
+        nameInput.value = userfullName;
     }
 
     if (userEmail && emailInput) {
         emailInput.value = userEmail;
     }
-
-    if (userDob && dobInput) {
-        dobInput.value = userDob;
-    }
-
-
+if (phoneInput) phoneInput.value = userPhone;
+if (dobInput) dobInput.value = userDob;
+    
+    
+    
 })
+

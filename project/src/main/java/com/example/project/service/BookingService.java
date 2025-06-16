@@ -1,12 +1,10 @@
 package com.example.project.service;
 
-import com.example.project.dto.BookingRequest;
-import com.example.project.entity.Booking;
-import com.example.project.entity.Customer;
-import com.example.project.entity.WorkSlot;
-import com.example.project.repository.BookingRepository;
-import com.example.project.repository.CustomerRepository;
-import com.example.project.repository.WorkSlotRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Optional;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -14,10 +12,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Optional;
+import com.example.project.dto.BookingRequest;
+import com.example.project.entity.Booking;
+import com.example.project.entity.Customer;
+import com.example.project.entity.WorkSlot;
+import com.example.project.repository.BookingRepository;
+import com.example.project.repository.CustomerRepository;
+import com.example.project.repository.WorkSlotRepository;
 
 @Service
 public class BookingService {
@@ -119,7 +120,7 @@ public class BookingService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(to);
         msg.setSubject("Tài khoản mới trên FertilityEHR");
-        msg.setText("Bạn đã được tạo tài khoản tự động trên hệ thống phòng khám FertilityEHR.\n\n"
+        msg.setText("Bạn đã được tạo tài khoản tự động trên hệ thống phòng khám FertilityEHR.\n"
                 + "Tên đăng nhập: " + to
                 + "\nMật khẩu: " + password
                 + "\nVui lòng đăng nhập và đổi mật khẩu sau khi nhận được email này.");

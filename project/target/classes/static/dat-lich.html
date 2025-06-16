@@ -667,8 +667,11 @@
                                 <div class="form-group">
                                     <label for="fullName">Họ và tên <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input type="text" id="fullName" class="form-input" required placeholder="Nhập họ tên">
-                                        <i class="fas fa-user"></i>
+                                        <input type="text" id="fullName" class="form-input logged-in-name" required
+                                            placeholder="Nhập họ tên">
+                                        <!-- Thêm readonly để không cho sửa khi đã đăng nhập -->
+                                        <!-- <input type="text" id="fullName" class="form-input" required placeholder="Nhập họ tên">
+                                        <i class="fas fa-user"></i> -->
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -992,9 +995,16 @@
                     alert('Vui lòng chọn khung giờ khám!');
                     return;
                 }
-                // Lấy và tách thời gian
-                const timeRange = document.getElementById('selectedTime').value;
-                const [startTime, endTime] = timeRange.split('-');
+                // Lấy và tách thời gian, loại bỏ giây và khoảng trắng nếu có
+                const timeRange = document.getElementById('selectedTime').value.trim();
+                let [startTime, endTime] = timeRange.split('-').map(t => t.trim());
+                // Nếu thừa :00 thì cắt bỏ
+                if (startTime.length === 8) startTime = startTime.slice(0,5);
+                if (endTime.length === 8) endTime = endTime.slice(0,5);
+
+                // Debug để kiểm tra giá trị gửi đi
+                // console.log('startTime:', startTime, 'endTime:', endTime);
+
                 const data = {
                     fullName: document.getElementById('fullName').value,
                     phone: document.getElementById('phone').value,
@@ -1003,8 +1013,8 @@
                     docId: parseInt(document.getElementById('doctor').value),
                     appointmentDate: document.getElementById('appointmentDate').value,
                     service: document.getElementById('service').value,
-                    startTime: startTime,
-                    endTime: endTime,
+                    startTime: startTime,      // luôn là "HH:mm"
+                    endTime: endTime,          // luôn là "HH:mm"
                     note: document.getElementById('symptoms').value
                 };
                 fetch('/api/booking', {
@@ -1040,7 +1050,7 @@
                 document.querySelector('nav').classList.toggle('active');
             });
         </script>
+        <script src="js/auth-expiry.js"></script>
         <script src="js/script.js"></script>
     </body>
-
     </html>

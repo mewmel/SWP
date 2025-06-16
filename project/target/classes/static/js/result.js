@@ -1,4 +1,3 @@
-
 // Hormone chart
 const ctx = document.getElementById('hormoneChart').getContext('2d');
 const hormoneChart = new Chart(ctx, {
@@ -51,3 +50,4 @@ document.querySelectorAll('.test-item').forEach(item => {
         alert(`Xem chi tiết: ${testName}`);
     });
 });
+

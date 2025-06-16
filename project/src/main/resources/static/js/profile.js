@@ -1,8 +1,12 @@
-
-    // Sidebar logic (giữ nguyên)
+    // --- KIỂM TRA ĐĂNG NHẬP ---
+    const userFullName = getWithExpiry('userFullName');
+    if (!userFullName) {
+        window.location.href = "index.html";
+    }
     document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar logic (giữ nguyên)
         // Hiện tên user từ localStorage
-        var fullName = localStorage.getItem('userFullName');
+        var fullName = getWithExpiry('userFullName');
         var sidebarUsername = document.querySelector('.sidebar-username');
         if (sidebarUsername) {
             sidebarUsername.textContent = fullName || "User";
@@ -74,16 +78,81 @@
         });
 
         // Avatar upload
-        document.querySelector('.avatar-upload').addEventListener('click', function() {
-            alert('Chọn ảnh mới từ thiết bị của bạn');
-        });
+        const avatarUpload = document.querySelector('.avatar-upload');
+        if (avatarUpload) {
+            avatarUpload.addEventListener('click', function() {
+                alert('Chọn ảnh mới từ thiết bị của bạn');
+            });
+        }
 
-        // Save changes
-        document.querySelector('.btn-primary').addEventListener('click', function() {
-            alert('Thông tin đã được lưu thành công!');
-        });
+        // Change personal information
+        const btnPrimary = document.querySelector('.btn-primary');
+        if (btnPrimary) {
+            btnPrimary.addEventListener('click', async function (e) {
+            e.preventDefault();
+
+        // Lấy ID 
+        const userId = getWithExpiry('userId'); 
+        if (!userId) {
+            alert('Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.');
+            window.location.href = "index.html";
+            return;
+        }
+
+        // Lấy dữ liệu từ form
+        const fullName = document.querySelector('.info-hoten')?.value.trim();
+        const dob = document.querySelector('.info-ngaysinh')?.value;
+        const phone = document.querySelector('.info-phone')?.value.trim();
+        const job = document.querySelector('.info-nghenghiep')?.value.trim();
+        const gender = document.querySelector('.info-gioitinh')?.value;
+        const address = document.querySelector('.info-address')?.value.trim();
+        const emergency = document.querySelector('.info-khan-cap')?.value.trim();
+
+        // nhớ bổ sung validate nha
+
+        // Gửi API cập nhật (chỉ gửi các trường KHÔNG gửi email)
+        try {
+            const response = await fetch(`http://localhost:8080/api/customer/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    cusFullName: fullName,
+                    cusDate: dob,
+                    cusPhone: phone,
+                    cusOccupation: job,
+                    cusGender: gender,
+                    cusAddress: address,
+                    emergencyContact: emergency
+                })
+            });
+
+            if (response.ok) {
+                alert('Cập nhật thông tin thành công!');
+                // Có thể reload trang hoặc cập nhật lại giao diện nếu muốn
+            } else {
+                alert('Cập nhật thất bại!');
+            }
+        } catch (err) {
+            alert('Có lỗi khi cập nhật: ' + err.message);
+        }
+        // Cập nhật lại vào localStorage
+        const SESSION_TTL = 30 * 60 * 1000;
+        setWithExpiry('userFullName', fullName, SESSION_TTL);
+        setWithExpiry('userPhone', phone, SESSION_TTL);
+        setWithExpiry('userGender', gender, SESSION_TTL);
+        setWithExpiry('userDob', dob, SESSION_TTL);
+        setWithExpiry('userAddress', address, SESSION_TTL);
+        setWithExpiry('userOccupation', job, SESSION_TTL);
+        setWithExpiry('userEmergency', emergency, SESSION_TTL);
+    });
+
+        
+       
 
         // Add medical history
+       
         document.querySelectorAll('.add-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 alert('Mở form thêm thông tin mới');
@@ -91,32 +160,38 @@
         });
 
         // Change password
-        document.querySelector('.btn-secondary').addEventListener('click', function() {
-            if (this.textContent.includes('Đổi mật khẩu')) {
+        const btnChangePassword = Array.from(document.querySelectorAll('.btn-secondary')).find(
+            btn => btn.textContent.includes('Đổi mật khẩu')
+        );
+        if (btnChangePassword) {
+            btnChangePassword.addEventListener('click', function() {
                 alert('Mở form đổi mật khẩu');
-            }
-        });
+            });
+        }
 
         // Export data
-        document.querySelector('.btn-secondary').addEventListener('click', function() {
-            if (this.textContent.includes('Xuất dữ liệu')) {
+        const btnExportData = Array.from(document.querySelectorAll('.btn-secondary')).find(
+            btn => btn.textContent.includes('Xuất dữ liệu')
+        );
+        if (btnExportData) {
+            btnExportData.addEventListener('click', function() {
                 alert('Đang chuẩn bị file xuất dữ liệu...');
-            }
-        });
+            });
+        }
 
-        // Delete account
-        document.querySelector('.btn').addEventListener('click', function() {
-            if (this.textContent.includes('Xóa tài khoản')) {
-                if (confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.')) {
-                    alert('Yêu cầu xóa tài khoản đã được gửi đến quản trị viên');
-                }
-            }
-        });
+        // // Delete account
+        // document.querySelector('.btn').addEventListener('click', function() {
+        //     if (this.textContent.includes('Xóa tài khoản')) {
+        //         if (confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.')) {
+        //             alert('Yêu cầu xóa tài khoản đã được gửi đến quản trị viên');
+        //         }
+        //     }
+        // });
 
         
 
         // ------- AUTO FILL FORM FROM API (CHỈ CHẠY 1 LẦN DUY NHẤT) ----------
-        const userEmail = localStorage.getItem('userEmail');
+        const userEmail = getWithExpiry('userEmail');
         if (userEmail) {
             fetch(`http://localhost:8080/api/customer/${encodeURIComponent(userEmail)}`)
                 .then(res => res.json())
@@ -128,13 +203,16 @@
                     if (document.querySelector('.info-ngaysinh')) document.querySelector('.info-ngaysinh').value = data.cusDate ?? '';
                     if (document.querySelector('.info-phone')) document.querySelector('.info-phone').value = data.cusPhone ?? '';
                     if (document.querySelector('.info-email')) document.querySelector('.info-email').value = data.cusEmail ?? '';
-                    if (document.querySelector('.info-cccd')) document.querySelector('.info-cccd').value = data.cusId ?? '';
-                    if (document.querySelector('.info-nghenghiep')) document.querySelector('.info-nghenghiep').value = data.cusJob ?? '';
+                    if (document.querySelector('.info-gioitinh')) document.querySelector('.info-gioitinh').value = data.cusGender ?? '';
+                    if (document.querySelector('.info-nghenghiep')) document.querySelector('.info-nghenghiep').value = data.cusOccupation ?? '';
                     if (document.querySelector('.info-address')) document.querySelector('.info-address').value = data.cusAddress ?? '';
-                    if (document.querySelector('.info-khan-cap')) document.querySelector('.info-khan-cap').value = data.cusContactEmergency ?? '';
+                    if (document.querySelector('.info-khan-cap')) document.querySelector('.info-khan-cap').value = data.emergencyContact ?? '';
                 })
                 .catch(err => {
                     alert('Không lấy được thông tin hồ sơ!');
                 });
         }
+    }
     });
+
+

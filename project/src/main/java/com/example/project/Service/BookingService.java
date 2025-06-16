@@ -1,12 +1,10 @@
 package com.example.project.service;
 
-import com.example.project.dto.BookingRequest;
-import com.example.project.entity.Booking;
-import com.example.project.entity.Customer;
-import com.example.project.entity.WorkSlot;
-import com.example.project.repository.BookingRepository;
-import com.example.project.repository.CustomerRepository;
-import com.example.project.repository.WorkSlotRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Optional;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -14,10 +12,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Optional;
+import com.example.project.dto.BookingRequest;
+import com.example.project.entity.Booking;
+import com.example.project.entity.Customer;
+import com.example.project.entity.WorkSlot;
+import com.example.project.repository.BookingRepository;
+import com.example.project.repository.CustomerRepository;
+import com.example.project.repository.WorkSlotRepository;
 
 @Service
 public class BookingService {
@@ -62,14 +63,42 @@ public class BookingService {
             customer = optCustomer.get();
         }
 
+        // ==== XỬ LÝ CHUẨN DỮ LIỆU GIỜ ĐỂ TRÁNH LỖI KIỂU DỮ LIỆU ====
+        String startTimeStr = req.getStartTime();
+        String endTimeStr = req.getEndTime();
+
+        // Xử lý trường hợp FE gửi dư :00 hoặc thừa/khoảng trắng
+        if (startTimeStr != null) {
+            startTimeStr = startTimeStr.trim();
+            if (startTimeStr.length() == 8) startTimeStr = startTimeStr.substring(0, 5);
+        }
+        if (endTimeStr != null) {
+            endTimeStr = endTimeStr.trim();
+            if (endTimeStr.length() == 8) endTimeStr = endTimeStr.substring(0, 5);
+        }
+
+        // Log để debug (có thể bỏ sau khi chạy ổn định)
+        System.out.println("DEBUG startTime: '" + startTimeStr + "', endTime: '" + endTimeStr + "'");
+
+        // Parse đúng kiểu LocalDate, LocalTime
+        LocalDate workDate = LocalDate.parse(req.getAppointmentDate());
+        LocalTime startTime = LocalTime.parse(startTimeStr);
+        LocalTime endTime = LocalTime.parse(endTimeStr);
+
+        // Log kiểu dữ liệu thực
+        System.out.println("LocalTime start: " + startTime + " (" + startTime.getClass().getName() + ")");
+        System.out.println("LocalTime end: " + endTime + " (" + endTime.getClass().getName() + ")");
+
         // Tìm WorkSlot
-        Optional<WorkSlot> optSlot = workSlotRepo.findByDocIdAndWorkDateAndStartTimeAndEndTime(
+        Optional<WorkSlot> optSlot = workSlotRepo.findSlotNative(
                 req.getDocId(),
-                LocalDate.parse(req.getAppointmentDate()),
-                LocalTime.parse(req.getStartTime()),
-                LocalTime.parse(req.getEndTime())
+                workDate,
+                startTime.toString(), // "09:00"
+                endTime.toString()    // "10:00"
         );
-        if(optSlot.isEmpty()) throw new RuntimeException("Không tìm thấy khung giờ phù hợp!");
+        if (optSlot.isEmpty()) {
+            throw new RuntimeException("Không tìm thấy khung giờ phù hợp!");
+        }
 
         WorkSlot slot = optSlot.get();
 
@@ -91,7 +120,7 @@ public class BookingService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(to);
         msg.setSubject("Tài khoản mới trên FertilityEHR");
-        msg.setText("Bạn đã được tạo tài khoản tự động trên hệ thống phòng khám FertilityEHR.\n\n"
+        msg.setText("Bạn đã được tạo tài khoản tự động trên hệ thống phòng khám FertilityEHR.\n"
                 + "Tên đăng nhập: " + to
                 + "\nMật khẩu: " + password
                 + "\nVui lòng đăng nhập và đổi mật khẩu sau khi nhận được email này.");
