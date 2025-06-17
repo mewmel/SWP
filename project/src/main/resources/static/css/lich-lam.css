@@ -81,7 +81,7 @@ body {
 .nav-link.active {
     color: #2563eb;
     font-weight: 600;
-}
+} 
 
 .user-info {
     display: flex;

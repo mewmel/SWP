@@ -90,10 +90,10 @@
 }
 
 /* Override for active dashboard link */
-nav a.active {
+/* nav a.active {
     background: var(--primary-color);
     color: white;
-}
+} */
 
 /* Timeline Section */
 .timeline-section {
