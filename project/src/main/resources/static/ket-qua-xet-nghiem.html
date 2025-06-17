@@ -20,7 +20,7 @@
                    <li><a href="dashboard.html" >Bệnh án</a></li>
                    <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
                     <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
-                    <li><a href="dat-lich.html">Đặt lịch khám</a></li>
+                    <li><a href="ket-qua-xet-nghiem.html" class="active">Kết quả xét nghiệm</a></li>
                         <div class="notification-wrapper" style="position: relative;">
                             <button class="notification-icon" id="notificationBtn">
                                 <i class="fas fa-bell"></i>
@@ -134,12 +134,10 @@
         </div>
         <nav class="sidebar-nav">
             <a href="ho-so-ca-nhan.html"><i class="fas fa-user"></i> Bệnh án</a>
-            <a href="ket-qua-xet-nghiem.html"><i class="fas fa-vials"></i> Kết quả xét nghiệm</a>
-            <a href="lich-dieu-tri.html"><i class="fas fa-calendar-alt"></i> Lịch điều trị</a>
-            <a href="#"><i class="fas fa-calendar-check"></i> Lịch hẹn</a>
-            <a href="dashboard.html"><i class="fas fa-book"></i> Nhật ký sức khỏe</a>
-            <a href="#"><i class="fas fa-book-open"></i> Blog</a>
-            <a href="cai-dat.html"><i class="fas fa-cog"></i> Cài đặt</a>
+            <a href="lich-dieu-tri.html"><i class="fas fa-calendar-check"></i> Lịch điều trị</a>
+            <a href="index.html#blog"><i class="fas fa-book-open"></i> Blog</a>
+            <a href="dat-lich.html"><i class="fas fa-calendar-alt"></i> Đặt lịch</a>
+            <a href="ho-so-ca-nhan.html"><i class="fas fa-cog"></i> Cài đặt</a>
             <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
             <div class="sidebar-divider"></div>
             <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
@@ -246,37 +244,6 @@
             </button>
         </div>
 
-        <div class="test-summary">
-            <div class="summary-card">
-                <div class="summary-icon">
-                    <i class="fas fa-vial"></i>
-                </div>
-                <div class="summary-value">24</div>
-                <div class="summary-label">Tổng xét nghiệm</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-icon" style="background: #27ae60;">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="summary-value">21</div>
-                <div class="summary-label">Kết quả bình thường</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-icon" style="background: #e74c3c;">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div class="summary-value">2</div>
-                <div class="summary-label">Cần chú ý</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-icon" style="background: #f39c12;">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="summary-value">1</div>
-                <div class="summary-label">Đang chờ kết quả</div>
-            </div>
-        </div>
-
         <!-- Social sidebar fixed bên phải -->
 <div class="social-sidebar">
     <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -285,7 +252,8 @@
 </div>
 
         <div class="main-content">
-            <div class="results-list">
+            <div class="left-content">
+                <div class="results-list">
                 <div class="results-header">
                     <h3><i class="fas fa-list"></i> Kết quả xét nghiệm gần đây</h3>
                 </div>
@@ -456,6 +424,19 @@
                         <div class="note-header">Hemoglobin thấp</div>
                         <div class="note-content">Cần bổ sung sắt và theo dõi chế độ ăn uống. Tái khám sau 2 tuần.</div>
                         <div class="note-author">- BS. Trần Văn Nam</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <div class="right-content">
+                <div class="test-summary">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-vial"></i>
+                        </div>
+                        <div class="summary-value">24</div>
+                        <div class="summary-label">Tổng xét nghiệm</div>
                     </div>
                 </div>
             </div>
