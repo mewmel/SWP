@@ -31,67 +31,401 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ========== ĐĂNG NHẬP ==========
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
+//     document.getElementById('loginForm').addEventListener('submit', function(e) {
+//         e.preventDefault();
+//         const submitBtn = this.querySelector('button[type="submit"]');
+//         const originalText = submitBtn.innerHTML;
 
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
-        submitBtn.disabled = true;
+//         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+//         submitBtn.disabled = true;
 
-        const cusEmail = document.getElementById('loginEmail').value;
-        const cusPassword = document.getElementById('loginPassword').value;
+//         const cusEmail = document.getElementById('loginEmail').value;
+//         const cusPassword = document.getElementById('loginPassword').value;
 
+//         fetch('/api/auth/login', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ cusEmail, cusPassword })
+//         })
+//             .then(async response => {
+//                 if (!response.ok) {
+//                     const errText = await response.text();
+//                     throw new Error(errText || 'Đăng nhập thất bại');
+//                 }
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 // Lưu vào localStorage
+// // Thời hạn session: ví dụ 30 phút (30 * 60 * 1000 ms)
+//             const SESSION_TTL = 30 * 60 * 1000;
+//             setWithExpiry('userId', data.cusId, SESSION_TTL);
+//             setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', SESSION_TTL);
+//             setWithExpiry('userEmail', data.cusEmail || 'Chưa cập nhật email', SESSION_TTL);
+//             setWithExpiry('userDob', data.cusDate || 'Chưa cập nhật ngày sinh', SESSION_TTL);
+//             setWithExpiry('userPhone', data.cusPhone || 'Chưa cập nhật số điện thoại', SESSION_TTL);
+//                 // Hiển thị giao diện đã đăng nhập
+//                 if (authButtons) authButtons.style.display = 'none';
+//                 if (userMenu) userMenu.style.display = 'flex';
+//                 if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+//                 if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+//                 if (notificationWrapper) notificationWrapper.style.display = 'block';
+//                 showNotification('Đăng nhập thành công!', 'success');
+//                 const closeModal = document.querySelector('.close-modal');
+//                 if (closeModal) closeModal.click();
+
+//                 // Chuyển hướng đến trang dashboard
+//                 window.location.href = "dashboard.html";
+                
+//             })
+//             .catch((err) => {
+//                 showNotification(
+//                     (err.message && err.message.startsWith('Invalid'))
+//                         ? err.message
+//                         : 'Email hoặc mật khẩu không đúng hoặc tài khoản chưa kích hoạt!',
+//                     'error'
+//                 );
+//             })
+//             .finally(() => {
+//                 submitBtn.innerHTML = '<span>Đăng nhập</span><i class="fas fa-arrow-right"></i>';
+//                 submitBtn.disabled = false;
+//             });
+//     });
+
+
+    // // ========== ĐĂNG KÝ (Register) ==========
+    // document.getElementById('registerForm').addEventListener('submit', function (e) {
+    //     e.preventDefault();
+    //     const submitBtn = this.querySelector('button[type="submit"]');
+    //     const agreeTerms = document.getElementById('agreeTerms');
+
+    //     if (!agreeTerms.checked) {
+    //         showNotification('Bạn phải đồng ý với điều khoản sử dụng trước khi đăng ký!', 'error');
+    //         return;
+    //     }
+
+    //     const cusFullName = document.getElementById('registerName').value.trim();
+    //     const cusEmail = document.getElementById('registerEmail').value.trim();
+    //     const cusPhone = document.getElementById('registerPhone').value.trim();
+    //     const cusDob = document.getElementById('registerDob').value;
+    //     const cusPassword = document.getElementById('registerPassword').value;
+    //     const confirmPassword = document.getElementById('confirmPassword').value;
+
+    //     let errorMsg = '';
+    //     let errorField = null;
+    //     if (!cusFullName) {
+    //         errorMsg = "Vui lòng nhập họ tên.";
+    //         errorField = document.getElementById('registerName');
+    //     } else if (!cusEmail) {
+    //         errorMsg = "Vui lòng nhập email.";
+    //         errorField = document.getElementById('registerEmail');
+    //     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cusEmail)) {
+    //         errorMsg = "Email không hợp lệ.";
+    //         errorField = document.getElementById('registerEmail');
+    //     } else if (!cusPhone) {
+    //         errorMsg = "Vui lòng nhập số điện thoại.";
+    //         errorField = document.getElementById('registerPhone');
+    //     } else if (!/^(0|\+84)\d{9,10}$/.test(cusPhone)) {
+    //         errorMsg = "Số điện thoại không hợp lệ.";
+    //         errorField = document.getElementById('registerPhone');
+    //     } else if (!cusDob) {
+    //         errorMsg = "Vui lòng chọn ngày sinh.";
+    //         errorField = document.getElementById('registerDob');
+    //     } else if (!cusPassword) {
+    //         errorMsg = "Vui lòng nhập mật khẩu.";
+    //         errorField = document.getElementById('registerPassword');
+    //     } else if (cusPassword.length < 6) {
+    //         errorMsg = "Mật khẩu phải từ 6 ký tự trở lên.";
+    //         errorField = document.getElementById('registerPassword');
+    //     } else if (!confirmPassword) {
+    //         errorMsg = "Vui lòng xác nhận mật khẩu.";
+    //         errorField = document.getElementById('confirmPassword');
+    //     } else if (cusPassword !== confirmPassword) {
+    //         errorMsg = "Mật khẩu xác nhận không khớp.";
+    //         errorField = document.getElementById('confirmPassword');
+    //     }
+
+    //     if (errorMsg) {
+    //         showNotification(errorMsg, 'error');
+    //         if (errorField) {
+    //             errorField.classList.add('error');
+    //             errorField.focus();
+    //         }
+    //         submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+    //         submitBtn.disabled = false;
+    //         return;
+    //     }
+
+    //     this.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+
+    //     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+    //     submitBtn.disabled = true;
+
+    //     fetch('/api/auth/register', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ cusFullName, cusEmail, cusPhone, cusDob, cusPassword, confirmPassword })
+    //     })
+    //         .then(async response => {
+    //             const text = await response.text();
+    //             if (!response.ok) throw new Error(text || 'Đăng ký thất bại!');
+    //             return text;
+    //         })
+    //         .then(msg => {
+    //             // Đăng ký thành công => tự động đăng nhập
+    //             fetch('/api/auth/login', {
+    //                 method: 'POST',
+    //                 headers: { 'Content-Type': 'application/json' },
+    //                 body: JSON.stringify({ cusEmail, cusPassword })
+    //             })
+    //                 .then(async response => {
+    //                     if (!response.ok) {
+    //                         const errText = await response.text();
+    //                         throw new Error(errText || 'Đăng nhập thất bại');
+    //                     }
+    //                     return response.json();
+    //                 })
+    //                 .then(data => {
+    //                     setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', 30 * 60 * 1000);
+    //                     setWithExpiry('userEmail', data.cusEmail || '', 30 * 60 * 1000);
+    //                     if (authButtons) authButtons.style.display = 'none';
+    //                     if (userMenu) userMenu.style.display = 'flex';
+    //                     if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+    //                     if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+    //                     if (notificationWrapper) notificationWrapper.style.display = 'block';
+    //                     localStorage.setItem('registerSuccessMessage', 'Đăng ký thành công!');
+    //                     const closeModal = document.querySelector('.close-modal');
+    //                     if (closeModal) closeModal.click();
+    //                     window.location.href = "dashboard.html";
+    //                 })
+    //                 .catch(err => {
+    //                     showNotification('Đăng ký thành công, nhưng đăng nhập tự động thất bại: ' + (err.message || ''), 'error');
+    //                     submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+    //                     submitBtn.disabled = false;
+    //                 });
+    //         })
+    //         .catch(err => {
+    //             let message = err.message || 'Đăng ký thất bại!';
+    //             showNotification(message, 'error');
+    //             submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+    //             submitBtn.disabled = false;
+    //         });
+    // });
+
+    // ====== Ẩn/hiện modal đăng nhập ==============
+function openAuthModal(tab = 'login') {
+    document.getElementById('authModal').classList.add('active');
+    showRoleSelection();
+    // Optionally, focus input, clear fields
+}
+function closeAuthModal() {
+    document.getElementById('authModal').classList.remove('active');
+    // Reset về role selection nếu muốn
+    showRoleSelection();
+}
+document.querySelectorAll('.close-modal').forEach(btn => btn.onclick = closeAuthModal);
+
+// ====== Hiển thị Bước chọn vai trò =======
+const roleSelection = document.getElementById('roleSelection');
+const authSection = document.getElementById('authSection');
+const roleOptions = document.querySelectorAll('.role-option');
+const roleBadge = document.querySelector('.role-badge');
+const authTabs = document.querySelectorAll('.auth-tab');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+
+// Hàm show/hide từng bước
+function showRoleSelection() {
+    roleSelection.style.display = '';
+    authSection.style.display = 'none';
+}
+function showAuthSection(role) {
+    roleSelection.style.display = 'none';
+    authSection.style.display = '';
+    if (roleBadge) roleBadge.textContent = role;
+    // Mặc định hiện tab login
+    switchTab('login');
+}
+// Chọn role
+roleOptions.forEach(opt => {
+    opt.onclick = function() {
+        const role = this.querySelector('h3').textContent.trim();
+        showAuthSection(role);
+        window.currentRole = this.dataset.role; // Lưu nếu cần gửi về backend
+    };
+});
+// Quay lại chọn vai trò
+document.getElementById('backToRole').onclick = showRoleSelection;
+
+// ====== Tab Đăng nhập/Đăng ký =======
+authTabs.forEach(tab => {
+    tab.onclick = function() {
+        switchTab(this.dataset.tab);
+    };
+});
+function switchTab(tab) {
+    authTabs.forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+    // Active tab
+    document.querySelector(`.auth-tab[data-tab="${tab}"]`).classList.add('active');
+    document.getElementById(tab + 'Form').classList.add('active');
+}
+
+// ========== ĐĂNG NHẬP ==========
+loginForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+    submitBtn.disabled = true;
+
+    const cusEmail = document.getElementById('loginEmail').value;
+    const cusPassword = document.getElementById('loginPassword').value;
+
+    fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cusEmail, cusPassword, role: window.currentRole || '' })
+    })
+    .then(async response => {
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(errText || 'Đăng nhập thất bại');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Lưu vào localStorage
+        const SESSION_TTL = 30 * 60 * 1000;
+        setWithExpiry('userId', data.cusId, SESSION_TTL);
+        setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', SESSION_TTL);
+        setWithExpiry('userEmail', data.cusEmail || 'Chưa cập nhật email', SESSION_TTL);
+        setWithExpiry('userDob', data.cusDate || 'Chưa cập nhật ngày sinh', SESSION_TTL);
+        setWithExpiry('userPhone', data.cusPhone || 'Chưa cập nhật số điện thoại', SESSION_TTL);
+
+        // Hiển thị giao diện đã đăng nhập
+        if (typeof authButtons !== "undefined") authButtons.style.display = 'none';
+        if (typeof userMenu !== "undefined") userMenu.style.display = 'flex';
+        if (typeof userNameSpan !== "undefined") userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+        if (typeof sidebarUsername !== "undefined") sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+        if (typeof notificationWrapper !== "undefined") notificationWrapper.style.display = 'block';
+        showNotification('Đăng nhập thành công!', 'success');
+        closeAuthModal();
+        window.location.href = "dashboard.html";
+    })
+    .catch((err) => {
+        showNotification(
+            (err.message && err.message.startsWith('Invalid'))
+                ? err.message
+                : 'Email hoặc mật khẩu không đúng hoặc tài khoản chưa kích hoạt!',
+            'error'
+        );
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+// ========== ĐĂNG KÝ (Register) ==========
+registerForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const agreeTerms = document.getElementById('agreeTerms');
+    if (!agreeTerms.checked) {
+        showNotification('Bạn phải đồng ý với điều khoản sử dụng trước khi đăng ký!', 'error');
+        return;
+    }
+    const cusFullName = document.getElementById('registerName').value.trim();
+    const cusEmail = document.getElementById('registerEmail').value.trim();
+    const cusPhone = document.getElementById('registerPhone').value.trim();
+    const cusDob = document.getElementById('registerDob').value;
+    const cusPassword = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    let errorMsg = '';
+    let errorField = null;
+    if (!cusFullName) {
+        errorMsg = "Vui lòng nhập họ tên."; errorField = document.getElementById('registerName');
+    } else if (!cusEmail) {
+        errorMsg = "Vui lòng nhập email."; errorField = document.getElementById('registerEmail');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cusEmail)) {
+        errorMsg = "Email không hợp lệ."; errorField = document.getElementById('registerEmail');
+    } else if (!cusPhone) {
+        errorMsg = "Vui lòng nhập số điện thoại."; errorField = document.getElementById('registerPhone');
+    } else if (!/^(0|\+84)\d{9,10}$/.test(cusPhone)) {
+        errorMsg = "Số điện thoại không hợp lệ."; errorField = document.getElementById('registerPhone');
+    } else if (!cusDob) {
+        errorMsg = "Vui lòng chọn ngày sinh."; errorField = document.getElementById('registerDob');
+    } else if (!cusPassword) {
+        errorMsg = "Vui lòng nhập mật khẩu."; errorField = document.getElementById('registerPassword');
+    } else if (cusPassword.length < 6) {
+        errorMsg = "Mật khẩu phải từ 6 ký tự trở lên."; errorField = document.getElementById('registerPassword');
+    } else if (!confirmPassword) {
+        errorMsg = "Vui lòng xác nhận mật khẩu."; errorField = document.getElementById('confirmPassword');
+    } else if (cusPassword !== confirmPassword) {
+        errorMsg = "Mật khẩu xác nhận không khớp."; errorField = document.getElementById('confirmPassword');
+    }
+    if (errorMsg) {
+        showNotification(errorMsg, 'error');
+        if (errorField) { errorField.classList.add('error'); errorField.focus(); }
+        submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>'; submitBtn.disabled = false;
+        return;
+    }
+    this.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...'; submitBtn.disabled = true;
+
+    fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cusFullName, cusEmail, cusPhone, cusDob, cusPassword, confirmPassword, role: window.currentRole || '' })
+    })
+    .then(async response => {
+        const text = await response.text();
+        if (!response.ok) throw new Error(text || 'Đăng ký thất bại!');
+        return text;
+    })
+    .then(msg => {
+        // Đăng ký thành công => tự động đăng nhập
         fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cusEmail, cusPassword })
         })
-            .then(async response => {
-                if (!response.ok) {
-                    const errText = await response.text();
-                    throw new Error(errText || 'Đăng nhập thất bại');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Lưu vào localStorage
-// Thời hạn session: ví dụ 30 phút (30 * 60 * 1000 ms)
-            const SESSION_TTL = 30 * 60 * 1000;
-            setWithExpiry('userId', data.cusId, SESSION_TTL);
-            setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', SESSION_TTL);
-            setWithExpiry('userEmail', data.cusEmail || 'Chưa cập nhật email', SESSION_TTL);
-            setWithExpiry('userDob', data.cusDate || 'Chưa cập nhật ngày sinh', SESSION_TTL);
-            setWithExpiry('userPhone', data.cusPhone || 'Chưa cập nhật số điện thoại', SESSION_TTL);
-                // Hiển thị giao diện đã đăng nhập
-                if (authButtons) authButtons.style.display = 'none';
-                if (userMenu) userMenu.style.display = 'flex';
-                if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-                if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-                if (notificationWrapper) notificationWrapper.style.display = 'block';
-                showNotification('Đăng nhập thành công!', 'success');
-                const closeModal = document.querySelector('.close-modal');
-                if (closeModal) closeModal.click();
-
-                // Chuyển hướng đến trang dashboard
-                window.location.href = "dashboard.html";
-                
-            })
-            .catch((err) => {
-                showNotification(
-                    (err.message && err.message.startsWith('Invalid'))
-                        ? err.message
-                        : 'Email hoặc mật khẩu không đúng hoặc tài khoản chưa kích hoạt!',
-                    'error'
-                );
-            })
-            .finally(() => {
-                submitBtn.innerHTML = '<span>Đăng nhập</span><i class="fas fa-arrow-right"></i>';
-                submitBtn.disabled = false;
-            });
+        .then(async response => {
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(errText || 'Đăng nhập thất bại');
+            }
+            return response.json();
+        })
+        .then(data => {
+            setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', 30 * 60 * 1000);
+            setWithExpiry('userEmail', data.cusEmail || '', 30 * 60 * 1000);
+            if (typeof authButtons !== "undefined") authButtons.style.display = 'none';
+            if (typeof userMenu !== "undefined") userMenu.style.display = 'flex';
+            if (typeof userNameSpan !== "undefined") userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+            if (typeof sidebarUsername !== "undefined") sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+            if (typeof notificationWrapper !== "undefined") notificationWrapper.style.display = 'block';
+            localStorage.setItem('registerSuccessMessage', 'Đăng ký thành công!');
+            closeAuthModal();
+            window.location.href = "dashboard.html";
+        })
+        .catch(err => {
+            showNotification('Đăng ký thành công, nhưng đăng nhập tự động thất bại: ' + (err.message || ''), 'error');
+            submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+            submitBtn.disabled = false;
+        });
+    })
+    .catch(err => {
+        let message = err.message || 'Đăng ký thất bại!';
+        showNotification(message, 'error');
+        submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+        submitBtn.disabled = false;
     });
+});
 
-    // ========== ĐĂNG XUẤT ==========
+
+
+// ========== ĐĂNG XUẤT ==========
     const logoutBtn = document.querySelector('.logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function(e) {
@@ -132,130 +466,6 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = "index.html";
         });
     }
-
-
-    // ========== ĐĂNG KÝ (Register) ==========
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const agreeTerms = document.getElementById('agreeTerms');
-
-        if (!agreeTerms.checked) {
-            showNotification('Bạn phải đồng ý với điều khoản sử dụng trước khi đăng ký!', 'error');
-            return;
-        }
-
-        const cusFullName = document.getElementById('registerName').value.trim();
-        const cusEmail = document.getElementById('registerEmail').value.trim();
-        const cusPhone = document.getElementById('registerPhone').value.trim();
-        const cusDob = document.getElementById('registerDob').value;
-        const cusPassword = document.getElementById('registerPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        let errorMsg = '';
-        let errorField = null;
-        if (!cusFullName) {
-            errorMsg = "Vui lòng nhập họ tên.";
-            errorField = document.getElementById('registerName');
-        } else if (!cusEmail) {
-            errorMsg = "Vui lòng nhập email.";
-            errorField = document.getElementById('registerEmail');
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cusEmail)) {
-            errorMsg = "Email không hợp lệ.";
-            errorField = document.getElementById('registerEmail');
-        } else if (!cusPhone) {
-            errorMsg = "Vui lòng nhập số điện thoại.";
-            errorField = document.getElementById('registerPhone');
-        } else if (!/^(0|\+84)\d{9,10}$/.test(cusPhone)) {
-            errorMsg = "Số điện thoại không hợp lệ.";
-            errorField = document.getElementById('registerPhone');
-        } else if (!cusDob) {
-            errorMsg = "Vui lòng chọn ngày sinh.";
-            errorField = document.getElementById('registerDob');
-        } else if (!cusPassword) {
-            errorMsg = "Vui lòng nhập mật khẩu.";
-            errorField = document.getElementById('registerPassword');
-        } else if (cusPassword.length < 6) {
-            errorMsg = "Mật khẩu phải từ 6 ký tự trở lên.";
-            errorField = document.getElementById('registerPassword');
-        } else if (!confirmPassword) {
-            errorMsg = "Vui lòng xác nhận mật khẩu.";
-            errorField = document.getElementById('confirmPassword');
-        } else if (cusPassword !== confirmPassword) {
-            errorMsg = "Mật khẩu xác nhận không khớp.";
-            errorField = document.getElementById('confirmPassword');
-        }
-
-        if (errorMsg) {
-            showNotification(errorMsg, 'error');
-            if (errorField) {
-                errorField.classList.add('error');
-                errorField.focus();
-            }
-submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
-            submitBtn.disabled = false;
-            return;
-        }
-
-        this.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
-        submitBtn.disabled = true;
-
-        fetch('/api/auth/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cusFullName, cusEmail, cusPhone, cusDob, cusPassword, confirmPassword })
-        })
-            .then(async response => {
-                const text = await response.text();
-                if (!response.ok) throw new Error(text || 'Đăng ký thất bại!');
-                return text;
-            })
-            .then(msg => {
-                // Đăng ký thành công => tự động đăng nhập
-                fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cusEmail, cusPassword })
-                })
-                    .then(async response => {
-                        if (!response.ok) {
-                            const errText = await response.text();
-                            throw new Error(errText || 'Đăng nhập thất bại');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        setWithExpiry('userFullName', data.cusFullName || data.cusEmail || 'Người dùng', 30 * 60 * 1000);
-                        setWithExpiry('userEmail', data.cusEmail || '', 30 * 60 * 1000);
-                        if (authButtons) authButtons.style.display = 'none';
-                        if (userMenu) userMenu.style.display = 'flex';
-                        if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-                        if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-                        if (notificationWrapper) notificationWrapper.style.display = 'block';
-                        localStorage.setItem('registerSuccessMessage', 'Đăng ký thành công!');
-                        const closeModal = document.querySelector('.close-modal');
-                        if (closeModal) closeModal.click();
-                        window.location.href = "dashboard.html";
-                    })
-                    .catch(err => {
-                        showNotification('Đăng ký thành công, nhưng đăng nhập tự động thất bại: ' + (err.message || ''), 'error');
-                        submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
-                        submitBtn.disabled = false;
-                    });
-            })
-            .catch(err => {
-                let message = err.message || 'Đăng ký thất bại!';
-                showNotification(message, 'error');
-                submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
-                submitBtn.disabled = false;
-            });
-    });
-
-
-
-
 
 
     // ========== UI & HIỆU ỨNG KHÁC ==========
@@ -323,7 +533,7 @@ submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>
     // Auth Modal Functionality
     const authModal = document.getElementById('authModal');
     const closeModal = document.querySelector('.close-modal');
-    const authTabs = document.querySelectorAll('.auth-tab');
+    //const authTabs = document.querySelectorAll('.auth-tab');
     const authForms = document.querySelectorAll('.auth-form');
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const nav = document.querySelector('nav');
