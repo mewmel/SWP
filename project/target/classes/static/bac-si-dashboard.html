@@ -3,90 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang chủ Bác sĩ - Hệ thống quản lý</title>
-    <link rel="stylesheet" href="css/doctor-common.css">
+    <title>Bác sĩ Dashboard - FertilityEHR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/bac-si-dashboard.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<!-- Header Navigation -->
-<header class="doctor-header">
-    <div class="doctor-header-container">
-        <nav class="doctor-nav">
-            <a href="bac-si-dashboard.html" class="nav-link active">Trang cá nhân</a>
-            <a href="blog.html" class="nav-link">Đăng Blog</a>
-            <a href="bac-si-lich-lam.html" class="nav-link">Đăng ký lịch làm</a>
-            <a href="index.html" class="nav-link">Hồ sơ cá nhân</a>
-        </nav>
-
-        <div class="doctor-header-right">
-            <div class="doctor-search-box">
-                <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
-                <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
+    <!-- Dashboard Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"></a><img src="img/logo.png" alt="Logo Meditab">
             </div>
-
-            <div class="notification-wrapper" style="position: relative; display: none;">
-                <button class="doctor-notification-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                    <span class="doctor-notification-badge">3</span>
-                </button>
-            </div>
-
+            <nav>
+                <ul>
+                    <li><a href="doctor-dashboard.html" class="active">Trang chủ</a></li>
+                    <li><a href="">Đăng Blog</a></li>
+                    <li><a href="#" id="openSchedule">Đăng ký lịch làm</a></li>
+                    <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
+                    <li>
+                        <div class="auth-buttons dashboard-user-area">
+                            <div class="notification-wrapper" style="position: relative;">
+                                <button class="notification-icon" id="notificationBtn">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge">5</span>
+                                </button>
+            
+                                <!-- Doctor Notification Dropdown -->
+                                <div class="notification-dropdown" id="notificationDropdown">
+                                    <div class="notification-dropdown-header">
+                                        <h3>Thông báo bác sĩ</h3>
+                                        <button class="notification-settings-btn">
+                                            <i class="fas fa-cog"></i>
+                                        </button>
+                                    </div>
+            
+                                    <div class="notification-dropdown-body">
+                                        <div class="notification-dropdown-item unread">
+                                            <div class="notification-avatar">
+                                                <i class="fas fa-user-injured"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <div class="notification-title">Bệnh nhân cần chú ý</div>
+                                                <div class="notification-description">BN Nguyễn Thị Mai - Chu kỳ IVF giai đoạn quan trọng</div>
+                                                <div class="notification-time">10 phút trước</div>
+                                            </div>
+                                        </div>
+            
+                                        <div class="notification-dropdown-item unread">
+                                            <div class="notification-avatar">
+                                                <i class="fas fa-calendar-plus"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <div class="notification-title">Lịch hẹn mới</div>
+                                                <div class="notification-description">BN Trần Văn An đặt lịch khám 28/06 lúc 10:00</div>
+                                                <div class="notification-time">30 phút trước</div>
+                                            </div>
+                                        </div>
+            
+                                        <div class="notification-dropdown-item">
+                                            <div class="notification-avatar">
+                                                <i class="fas fa-flask"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <div class="notification-title">Kết quả xét nghiệm</div>
+                                                <div class="notification-description">5 kết quả xét nghiệm mới cần xem xét</div>
+                                                <div class="notification-time">1 giờ trước</div>
+                                            </div>
+                                        </div>
+            
+                                        <div class="notification-dropdown-item">
+                                            <div class="notification-avatar">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <div class="notification-title">Cảnh báo</div>
+                                                <div class="notification-description">BN Phạm Thị Hoa chưa tiêm thuốc theo lịch</div>
+                                                <div class="notification-time">2 giờ trước</div>
+                                            </div>
+                                        </div>
+                                    </div>
+            
+                                    <div class="notification-dropdown-footer">
+                                        <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
+                                    </div>
+                                </div>
+                            </div>
+                    </li>
+                </ul>
+            </nav>
             <div class="user-menu" style="display:none;">
                 <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+                <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <button class="logout-btn"
-                        style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
                     <i class="fas fa-sign-out-alt"></i> Đăng xuất
                 </button>
             </div>
-
-            <button class="doctor-mobile-menu">
+            <button class="mobile-menu-btn">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
-    </div>
-</header>
-<!-- Auth Modal -->
-<div id="authModal" class="auth-modal">
-    <div class="auth-modal-content">
-        <span class="close-modal">&times;</span>
-        <div class="auth-tabs">
-            <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-            <button class="auth-tab" data-tab="register">Đăng ký</button>
-        </div>
+    </header>
+    
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                <button class="auth-tab" data-tab="register">Đăng ký</button>
+            </div>
 
-        <!-- Login Form -->
-        <form id="loginForm" class="auth-form active">
-            <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="loginPassword">Mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="loginPassword" name="password" required>
-                    <i class="fas fa-eye toggle-password"></i>
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required>
                 </div>
-            </div>
-            <button type="submit" class="auth-submit-btn">
-                <span>Đăng nhập</span>
-                <i class="fas fa-arrow-right"></i>
-            </button>
-            <div class="social-login">
-                <button type="button" class="social-btn google">
-                    <i class="fab fa-google"></i> Đăng nhập với Google
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="loginPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng nhập</span>
+                    <i class="fas fa-arrow-right"></i>
                 </button>
-                <button type="button" class="social-btn facebook">
-                    <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
-                </button>
-            </div>
-        </form>
+                <div class="social-login">
+                    <button type="button" class="social-btn google">
+                        <i class="fab fa-google"></i> Đăng nhập với Google
+                    </button>
+                    <button type="button" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
+                    </button>
+                </div>
+            </form>
+
 
         <!-- Register Form -->
         <form id="registerForm" class="auth-form">
@@ -124,235 +183,201 @@
     </div>
 </div>
 
-<div class="doctor-page-container">
-    <div class="container">
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="schedule-section">
-                <div class="schedule-header">
-                    <h2>Lịch trình hôm nay</h2>
-                    <span class="current-date">Thứ 4 - 24/06/2024</span>
+        <!-- Đăng ký lịch làm việc Modal -->
+    <div id="scheduleModal" class="schedule-modal">
+        <div class="schedule-modal-content">
+            <div class="schedule-modal-header">
+                <h2><i class="fas fa-calendar-alt"></i> Đăng ký lịch làm việc</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            
+            <div class="schedule-modal-body">
+                <div class="schedule-calendar">
+                    <div class="calendar-header">
+                        <button id="prevMonth" class="month-nav"><i class="fas fa-chevron-left"></i></button>
+                        <h3 id="currentMonth">Tháng 6, 2024</h3>
+                        <button id="nextMonth" class="month-nav"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-days">
+                            <span>CN</span>
+                            <span>T2</span>
+                            <span>T3</span>
+                            <span>T4</span>
+                            <span>T5</span>
+                            <span>T6</span>
+                            <span>T7</span>
+                        </div>
+                        <div id="calendarDates" class="calendar-dates"></div>
+                    </div>
                 </div>
-
-                <div class="schedule-list">
-                    <div class="appointment-item">
-                        <div class="time">08:00</div>
-                        <div class="appointment-info">
-                            <h3>BN: Nguyễn Thị Mai</h3>
-                            <p>Khám định kỳ - IVF Chu kỳ 1</p>
-                        </div>
-                        <button class="btn-primary" onclick="viewPatientRecord('mai')">Xem hồ sơ</button>
-                    </div>
-
-                    <div class="appointment-item">
-                        <div class="time">09:30</div>
-                        <div class="appointment-info">
-                            <h3>BN: Trần Văn An</h3>
-                            <p>Tư vấn lần đầu</p>
-                        </div>
-                        <button class="btn-primary" onclick="viewPatientRecord('an')">Xem hồ sơ</button>
-                    </div>
-
-                    <div class="appointment-item current">
-                        <div class="time">10:00</div>
-                        <div class="appointment-info">
-                            <h3>BN: Phạm Thị Hoa</h3>
-                            <p>Theo dõi kích thích - IVF</p>
-                        </div>
-                        <button class="btn-examining">Đang khám</button>
-                    </div>
-
-                    <div class="appointment-item">
-                        <div class="time">11:30</div>
-                        <div class="appointment-info">
-                            <h3>BN: Lê Thị Lan</h3>
-                            <p>Chuyển phôi - IVF Chu kỳ 2</p>
-                        </div>
-                        <button class="btn-primary" onclick="viewPatientRecord('lan')">Xem hồ sơ</button>
-                    </div>
-
-                    <div class="appointment-item">
-                        <div class="time">14:00</div>
-                        <div class="appointment-info">
-                            <h3>BN: Hoàng Thị Thu</h3>
-                            <p>Kiểm tra sau phẫu thuật</p>
-                        </div>
-                        <button class="btn-primary" onclick="viewPatientRecord('thu')">Xem hồ sơ</button>
+    
+                <div class="shift-selection">
+                    <h4><i class="fas fa-clock"></i> Chọn ca làm việc</h4>
+                    <div class="shift-options">
+                        <label class="shift-option">
+                            <input type="checkbox" name="shift" value="morning">
+                            <div class="shift-info">
+                                <i class="fas fa-sun"></i>
+                                <div class="shift-details">
+                                    <span class="shift-name">Ca sáng</span>
+                                    <span class="shift-time">7:00 - 11:00</span>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="shift-option">
+                            <input type="checkbox" name="shift" value="afternoon">
+                            <div class="shift-info">
+                                <i class="fas fa-cloud-sun"></i>
+                                <div class="shift-details">
+                                    <span class="shift-name">Ca chiều</span>
+                                    <span class="shift-time">13:00 - 17:00</span>
+                                </div>
+                            </div>
+                        </label>
                     </div>
                 </div>
             </div>
-        </main>
-
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">
-                    <i class="fas fa-users"></i>
-                    Quản lý bệnh nhân
-                </h3>
-                <div class="sidebar-menu">
-                    <button class="sidebar-item" onclick="openPatientList()">
-                        <i class="fas fa-list"></i>
-                        <span>Xem danh sách bệnh nhân</span>
-                    </button>
-                    <button class="sidebar-item" onclick="openScheduleManager()">
-                        <i class="fas fa-calendar"></i>
-                        <span>Quản lý lịch hẹn</span>
-                    </button>
-                    <button class="sidebar-item" onclick="openReports()">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Báo cáo thống kê</span>
-                    </button>
-                </div>
+    
+            <div class="schedule-modal-footer">
+                <button class="btn-secondary" id="cancelSchedule">Hủy</button>
+                <button class="btn-primary save-schedule-btn">
+                    <i class="fas fa-save"></i>
+                    Lưu lịch làm việc
+                </button>
             </div>
-
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">
-                    <i class="fas fa-clock"></i>
-                    Lịch hẹn hôm nay
-                </h3>
-                <div class="mini-schedule">
-                    <div class="mini-appointment">
-                        <span class="mini-time">11:30</span>
-                        <span class="mini-info">Chuyển phôi - BN Lê Thị Lan</span>
-                    </div>
-                    <div class="mini-appointment">
-                        <span class="mini-time">14:00</span>
-                        <span class="mini-info">Tư vấn - BN Nguyễn Thị Thu</span>
-                    </div>
-                    <div class="mini-appointment">
-                        <span class="mini-time">15:30</span>
-                        <span class="mini-info">Theo dõi - BN Phạm Thị Hương</span>
-                    </div>
-                </div>
-            </div>
-
-
-        </aside>
+        </div>
     </div>
 
-    <!-- Modal for Patient Record -->
-    <div id="patientModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Hồ sơ bệnh nhân</h3>
-                <span class="close" onclick="closeModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="patient-info">
-                    <h4 id="patientName">Tên bệnh nhân</h4>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label>Tuổi:</label>
-                            <span id="patientAge">32</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Số điện thoại:</label>
-                            <span id="patientPhone">0123456789</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Địa chỉ:</label>
-                            <span id="patientAddress">Hà Nội</span>
-                        </div>
-                    </div>
+
+    <!-- Dashboard Main Content -->
+    <main class="dashboard-main">
+        <!-- Main Content Area -->
+        <div class="dashboard-content">
+            <!-- Today's Schedule -->
+            <section class="timeline-section">
+                <div class="timeline-header">
+                    <h2>Lịch trình hôm nay</h2>
+                    <span style="color: var(--light-text);">Thứ 4 - 24/06/2024</span>
                 </div>
 
-                <div class="medical-record">
-                    <h4>Bệnh án</h4>
-                    <div class="record-section">
-                        <label>Chẩn đoán:</label>
-                        <textarea id="diagnosis" rows="3" placeholder="Nhập chẩn đoán..."></textarea>
+                <!-- Daily Schedule -->
+                <div class="doctor-schedule">
+                    <div class="schedule-item">
+                        <div class="schedule-time">08:00</div>
+                        <div class="schedule-content">
+                            <div class="patient-info">
+                                <strong>BN: Nguyễn Thị Mai</strong>
+                                <span class="appointment-type">Khám định kỳ - IVF Chu kỳ 1</span>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn-small btn-primary">Xem hồ sơ</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="record-section">
-                        <label>Triệu chứng:</label>
-                        <textarea id="symptoms" rows="3" placeholder="Nhập triệu chứng..."></textarea>
+                    <div class="schedule-item">
+                        <div class="schedule-time">09:30</div>
+                        <div class="schedule-content">
+                            <div class="patient-info">
+                                <strong>BN: Trần Văn An</strong>
+                                <span class="appointment-type">Tư vấn lần đầu</span>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn-small btn-primary">Xem hồ sơ</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="record-section">
-                        <label>Điều trị:</label>
-                        <textarea id="treatment" rows="3" placeholder="Nhập phương pháp điều trị..."></textarea>
+                    <div class="schedule-item current">
+                        <div class="schedule-time">10:00</div>
+                        <div class="schedule-content">
+                            <div class="patient-info">
+                                <strong>BN: Phạm Thị Hoa</strong>
+                                <span class="appointment-type">Theo dõi kích thích - IVF</span>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn-small btn-secondary">Đang khám</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="record-section">
                         <label>Ghi chú:</label>
                         <textarea id="notes" rows="3" placeholder="Ghi chú thêm..."></textarea>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal()">Hủy</button>
-                <button class="btn-primary" onclick="savePatientRecord()">Lưu thay đổi</button>
-            </div>
-        </div>
-    </div>
+            </section>
 
-    <!-- Patient List Modal -->
-    <div id="patientListModal" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3>Danh sách bệnh nhân</h3>
-                <span class="close" onclick="closePatientListModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm bệnh nhân..." onkeyup="searchPatients()">
-                    <i class="fas fa-search"></i>
-                </div>
-                <div class="patient-table">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Tên bệnh nhân</th>
-                            <th>Tuổi</th>
-                            <th>Số điện thoại</th>
-                            <th>Lần khám gần nhất</th>
-                            <th>Thao tác</th>
-                        </tr>
-                        </thead>
-                        <tbody id="patientTableBody">
-                        <tr>
-                            <td>Nguyễn Thị Mai</td>
-                            <td>28</td>
-                            <td>0123456789</td>
-                            <td>22/06/2024</td>
-                            <td>
-                                <button class="btn-small" onclick="editPatientFromList('mai')">Sửa bệnh án</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Trần Văn An</td>
-                            <td>35</td>
-                            <td>0987654321</td>
-                            <td>20/06/2024</td>
-                            <td>
-                                <button class="btn-small" onclick="editPatientFromList('an')">Sửa bệnh án</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Phạm Thị Hoa</td>
-                            <td>30</td>
-                            <td>0456789123</td>
-                            <td>24/06/2024</td>
-                            <td>
-                                <button class="btn-small" onclick="editPatientFromList('hoa')">Sửa bệnh án</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Lê Thị Lan</td>
-                            <td>33</td>
-                            <td>0789123456</td>
-                            <td>18/06/2024</td>
-                            <td>
-                                <button class="btn-small" onclick="editPatientFromList('lan')">Sửa bệnh án</button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            
+                
+               
+            </section>
+
+            <!-- Chart Section -->
+            <section class="chart-container">
+            </section>
         </div>
-    </div>
-</div>
-<script src="js/doctor-common.js"></script>
-<script src="js/script.js"></script>
-<script src="js/doctor-dashboard.js"></script>
+
+        <!-- Doctor Sidebar -->
+        <aside class="dashboard-sidebar">
+            
+
+            <!-- Social sidebar -->
+            <div class="social-sidebar">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fas fa-envelope"></i></a>
+            </div>
+
+
+            <!-- Today's Appointments -->
+            <div class="sidebar-card notifications-card">
+                <h3><i class="fas fa-calendar-check"></i> Quản lý bệnh nhân</h3>
+                <div>
+                    <ul class="action-list">
+                    <li class="action-item">
+                        <div class="action-icon">👥</div>
+                        <span>Xem danh sách bệnh nhân</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">📅</div>
+                        <span>Quản lý lịch hẹn</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">📊</div>
+                        <span>Báo cáo thống kê</span>
+                    </li>
+                    <li class="action-item">
+                        <div class="action-icon">📋</div>
+                        <span>Tạo đơn thuốc</span>
+                    </li>
+                </ul>
+                </div>
+                
+            </div>
+
+            <!-- Today's Appointments -->
+            <div class="sidebar-card notifications-card">
+                <h3><i class="fas fa-calendar-check"></i> Lịch hẹn hôm nay</h3>
+                <div class="notification-item">
+                    <div class="notification-time">11:30</div>
+                    <span>Chuyển phôi - BN Lê Thị Lan</span>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-time">14:00</div>
+                    <span>Tư vấn - BN Nguyễn Thị Thu</span>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-time">15:30</div>
+                    <span>Theo dõi - BN Phạm Văn Đức</span>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Import script.js để sử dụng chức năng chung -->
+    <script src="js/script.js"></script>
+    
+    <!-- Import doctor-dashboard.js cho các chức năng riêng của bác sĩ -->
+    <script src="js/doctor-dashboard.js"></script>
+    <script src="js/doctor-schedule.js"></script>
 </body>
 </html>
