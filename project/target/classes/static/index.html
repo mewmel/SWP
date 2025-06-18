@@ -7,8 +7,6 @@
     <title>FertilityEHR bởi Meditab</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Nếu dùng Google One Tap, có thể thêm meta client_id ở đây -->
-    <!-- <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"> -->
 </head>
 
 <body>
@@ -112,8 +110,6 @@
                                     <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
                                 </div>
                             </div>
-                        <div class="notification-dropdown" id="notificationDropdown">
-                            <!-- ... nội dung notification ... -->
                         </div>
                     </li>
                 </ul>
@@ -151,33 +147,12 @@
         <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
     </aside>
 
-    
-
-<!-- Auth Modal -->
-<div class="auth-modal" id="authModal">
-    <div class="auth-modal-content">
-        <div class="auth-modal-left">
-            <div class="auth-modal-image">
-                <img src="img/hero-image.png" alt="Medical">
-            </div>
-            <div class="auth-modal-overlay">
-                <h2>Chào mừng bạn đến với FertilityEHR</h2>
-                <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
-            </div>
-        </div>
-        <div class="auth-modal-right">
-            <span class="close-modal">&times;</span>
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-                <button class="auth-tab" data-tab="register">Đăng ký</button>
-            </div>
-            <form id="loginForm" class="auth-form active">
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
-                    </div>
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-left">
+                <div class="auth-modal-image">
+                    <img src="img/hero-image.png" alt="Medical">
                 </div>
                 <div class="auth-modal-overlay">
                     <h2>Chào mừng bạn đến với FertilityEHR</h2>
@@ -327,14 +302,19 @@
         </div>
     </div>
 
-<section class="hero">
-    <div class="container">
-        <div class="hero-content">
-            <h1>FertilityEHR</h1>
-            <h2>Hệ thống điều trị và theo dõi chuyên biệt cho phòng khám hiếm muộn</h2>
-            <p>Tối ưu hóa hoạt động của phòng khám hiếm muộn với hệ thống quản lý bệnh án điện tử toàn diện được thiết kế đặc biệt cho y học sinh sản.</p>
-    </div>
-</section>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>FertilityEHR</h1>
+                <h2>Hệ thống điều trị và theo dõi chuyên biệt cho phòng khám hiếm muộn</h2>
+                <p>Tối ưu hóa hoạt động của phòng khám hiếm muộn với hệ thống quản lý bệnh án điện tử toàn diện được
+                    thiết kế đặc biệt cho y học sinh sản.</p>
+                <!-- </div>
+        <div class="hero-image">
+            <img src="img/hero-image.png" alt="Giao diện FertilityEHR">
+        </div> -->
+            </div>
+    </section>
 
     <section id="about-fertilitycare" class="about-fertilitycare-section py-5">
         <div class="container">
