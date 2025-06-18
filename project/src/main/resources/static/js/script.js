@@ -979,3 +979,156 @@ window.openAuthModal = function(type) {
     
 })
 
+document.addEventListener('DOMContentLoaded', function() {
+    const doctorsGrid = document.querySelector('.doctors-grid');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const doctorCards = document.querySelectorAll('.doctor-card');
+    
+    if (!doctorsGrid || !prevBtn || !nextBtn || !doctorCards.length) return;
+
+    const cardsToShow = 3;
+    let currentPage = 0;
+    const totalPages = Math.ceil(doctorCards.length / cardsToShow);
+
+    // Set initial state
+    updateSliderState();
+
+    // Event Listeners for buttons
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            updateSliderState();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            updateSliderState();
+        }
+    });
+
+    function updateSliderState() {
+        // Calculate translation amount
+        const slideAmount = currentPage * -100;
+        doctorsGrid.style.transform = `translateX(${slideAmount}%)`;
+
+        // Update button states
+        prevBtn.disabled = currentPage === 0;
+        nextBtn.disabled = currentPage === totalPages - 1;
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        currentPage = Math.min(currentPage, totalPages - 1);
+        updateSliderState();
+    });
+
+    // Add touch support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    doctorsGrid.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    doctorsGrid.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0 && currentPage < totalPages - 1) {
+                // Swipe left
+                currentPage++;
+                updateSliderState();
+            } else if (diff < 0 && currentPage > 0) {
+                // Swipe right
+                currentPage--;
+                updateSliderState();
+            }
+        }
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const doctorsGrid = document.querySelector('.doctors-grid');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const doctorCards = document.querySelectorAll('.doctor-card');
+    
+    if (!doctorsGrid || !prevBtn || !nextBtn || !doctorCards.length) return;
+
+    const cardsToShow = 3;
+    let currentPage = 0;
+    const totalPages = Math.ceil(doctorCards.length / cardsToShow);
+
+    // Set initial state
+    updateSliderState();
+
+    // Event Listeners for buttons
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            updateSliderState();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            updateSliderState();
+        }
+    });
+
+    function updateSliderState() {
+        // Calculate translation amount
+        const slideAmount = currentPage * -100;
+        doctorsGrid.style.transform = `translateX(${slideAmount}%)`;
+
+        // Update button states
+        prevBtn.disabled = currentPage === 0;
+        nextBtn.disabled = currentPage === totalPages - 1;
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        currentPage = Math.min(currentPage, totalPages - 1);
+        updateSliderState();
+    });
+
+    // Add touch support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    doctorsGrid.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    doctorsGrid.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0 && currentPage < totalPages - 1) {
+                // Swipe left
+                currentPage++;
+                updateSliderState();
+            } else if (diff < 0 && currentPage > 0) {
+                // Swipe right
+                currentPage--;
+                updateSliderState();
+            }
+        }
+    }
+});
+

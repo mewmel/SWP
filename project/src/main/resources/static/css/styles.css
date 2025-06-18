@@ -1989,10 +1989,11 @@ nav ul li .dropdown-menu li:not(:last-child) {
 }
 
 .doctors-grid {
+  height: 90%;  
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 0 20px;
 }
@@ -2019,7 +2020,7 @@ nav ul li .dropdown-menu li:not(:last-child) {
 
 .doctor-image img {
   width: 100%;
-  height: 490px;
+  height: 400px;
   object-fit: cover;
   transition: transform 0.3s;
 }
@@ -2726,7 +2727,14 @@ nav ul li a.active {
     background: #F7B731;
     color: #fff;
 }
-
+.blog-card:nth-child(4) .blog-category {
+    background: #E74C3C;
+    color: #fff;
+}
+.blog-card:nth-child(6) .blog-category {
+    background: palevioletred;
+    color: #fff;
+}
 .blog-content {
     padding: 25px;
 }
@@ -2780,7 +2788,7 @@ nav ul li a.active {
 }
 
 .btn-secondary {
-    background: #4A90E2;
+       background: #4A90E2;
     color: #fff;
     padding: 12px 30px;
     border-radius: 25px;
@@ -2941,4 +2949,18 @@ nav ul li a.active {
         position: relative;  /* Bỏ sticky khi ở dưới */
         top: 0;
     }
+}
+
+/* Blog card animation */
+.blog-card.hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.blog-card.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
