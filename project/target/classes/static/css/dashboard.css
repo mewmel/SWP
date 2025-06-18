@@ -21,7 +21,7 @@
 /* Overview Cards - ensure proper positioning */
 .overview-cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-md);
     margin-top: 0; /* Reset any inherited margin */
     position: relative;
@@ -90,10 +90,10 @@
 }
 
 /* Override for active dashboard link */
-nav a.active {
+/* nav a.active {
     background: var(--primary-color);
     color: white;
-}
+} */
 
 /* Timeline Section */
 .timeline-section {
@@ -143,6 +143,7 @@ nav a.active {
     color: white;
     font-size: 0.8rem;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 .timeline-week {
@@ -258,7 +259,6 @@ nav a.active {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
-    position: relative;
     z-index: 1;
 }
 
@@ -427,4 +427,4 @@ nav a.active {
         grid-template-columns: repeat(3, 1fr);
     }
 
-   
+}

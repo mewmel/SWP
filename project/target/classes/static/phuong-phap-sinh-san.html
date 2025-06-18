@@ -8,156 +8,201 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.html#doctor">Đội ngũ bác sĩ</a></li>
-                    <li class="dropdown">
-                        <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="kham-hiem-muon.html">Khám hiếm muộn/ tiền hôn nhân</a></li>
-                            <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="index.html#blog">Blog</a></li>
-                    <li><a href="#footer">Liên hệ</a></li>
-                    <li><a href="dat-lich.html">Đặt lịch khám</a></li>
-                    <li>
-                        <div class="notification-wrapper" style="position: relative; display: none">
-                            <button class="notification-icon" id="notificationBtn">
-                                <i class="fas fa-bell"></i>
-                                <span class="notification-badge">9</span>
-                            </button>
-    
-                            <!-- Dropdown Notification -->
-                            <div class="notification-dropdown" id="notificationDropdown">
-                                <div class="notification-dropdown-header">
-                                    <h3>Thông báo</h3>
-                                    <button class="notification-settings-btn">
-                                        <i class="fas fa-cog"></i>
-                                    </button>
-                                </div>
-    
-                                <div class="notification-dropdown-body">
-                                    <div class="notification-dropdown-item unread">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-syringe"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Nhắc nhở tiêm thuốc</div>
-                                            <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
-                                            </div>
-                                            <div class="notification-time">5 phút trước</div>
-                                        </div>
+<header>
+    <div class="container">
+        <div class="logo">
+            <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html#doctor">Đội ngũ bác sĩ</a></li>
+                <li class="dropdown">
+                    <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="kham-hiem-muon.html">Khám hiếm muộn/ tiền hôn nhân</a></li>
+                        <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
+                    </ul>
+                </li>
+                <li><a href="index.html#blog">Blog</a></li>
+                <li><a href="#footer">Liên hệ</a></li>
+                <li><a href="dat-lich.html">Đặt lịch khám</a></li>
+                <li>
+                    <div class="notification-wrapper" style="position: relative; display: none">
+                        <button class="notification-icon" id="notificationBtn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">9</span>
+                        </button>
+
+                        <!-- Dropdown Notification -->
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-dropdown-header">
+                                <h3>Thông báo</h3>
+                                <button class="notification-settings-btn">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+
+                            <div class="notification-dropdown-body">
+                                <div class="notification-dropdown-item unread">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-syringe"></i>
                                     </div>
-    
-                                    <div class="notification-dropdown-item unread">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-flask"></i>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Nhắc nhở tiêm thuốc</div>
+                                        <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
                                         </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Lịch xét nghiệm</div>
-                                            <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc
-                                                8:00</div>
-                                            <div class="notification-time">2 giờ trước</div>
-                                        </div>
-                                    </div>
-    
-                                    <div class="notification-dropdown-item">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-calendar-check"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Lịch hẹn khám</div>
-                                            <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
-                                                14:00</div>
-                                            <div class="notification-time">1 ngày trước</div>
-                                        </div>
-                                    </div>
-    
-                                    <div class="notification-dropdown-item">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-chart-line"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Kết quả xét nghiệm</div>
-                                            <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
-                                            <div class="notification-time">2 ngày trước</div>
-                                        </div>
-                                    </div>
-    
-                                    <div class="notification-dropdown-item">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-user-md"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Tin nhắn từ bác sĩ</div>
-                                            <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
-                                                cho bạn</div>
-                                            <div class="notification-time">3 ngày trước</div>
-                                        </div>
+                                        <div class="notification-time">5 phút trước</div>
                                     </div>
                                 </div>
-    
-                                <div class="notification-dropdown-footer">
-                                    <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
+
+                                <div class="notification-dropdown-item unread">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-flask"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Lịch xét nghiệm</div>
+                                        <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc
+                                            8:00</div>
+                                        <div class="notification-time">2 giờ trước</div>
+                                    </div>
+                                </div>
+
+                                <div class="notification-dropdown-item">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Lịch hẹn khám</div>
+                                        <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
+                                            14:00</div>
+                                        <div class="notification-time">1 ngày trước</div>
+                                    </div>
+                                </div>
+
+                                <div class="notification-dropdown-item">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Kết quả xét nghiệm</div>
+                                        <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
+                                        <div class="notification-time">2 ngày trước</div>
+                                    </div>
+                                </div>
+
+                                <div class="notification-dropdown-item">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Tin nhắn từ bác sĩ</div>
+                                        <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
+                                            cho bạn</div>
+                                        <div class="notification-time">3 ngày trước</div>
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="notification-dropdown-footer">
+                                <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
+                            </div>
                         </div>
-                    </li>
-                </ul>
-            </nav>
-            <div class="auth-buttons">
-                <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
-                <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
-            </div>
-            <div class="user-menu" style="display:none;">
-                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-                <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            <button class="mobile-menu-btn">
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
+            <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
+        </div>
+        <div class="user-menu" style="display:none;">
+            <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+            <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
-    </header>
-    
-    <!-- SIDEBAR MENU CÁ NHÂN -->
-    <aside class="sidebar" id="sidebar" style="display:none;">
-        <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
-        <div class="sidebar-user">
-            <i class="fas fa-user-circle"></i>
-            <span class="sidebar-username"></span>
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</header>
+
+<!-- SIDEBAR MENU CÁ NHÂN -->
+<aside class="sidebar" id="sidebar" style="display:none;">
+    <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+    <div class="sidebar-user">
+        <i class="fas fa-user-circle"></i>
+        <span class="sidebar-username"></span>
+    </div>
+    <a href="dashboard.html"><i class="fas fa-user"></i> Bệnh án</a>
+    <a href="lich-dieu-tri.html"><i class="fas fa-calendar-check"></i> Lịch điều trị</a>
+    <a href="index.html#blog"><i class="fas fa-book-open"></i> Blog</a>
+    <a href="dat-lich.html"><i class="fas fa-calendar-alt"></i> Đặt lịch</a>
+    <a href="ho-so-ca-nhan.html"><i class="fas fa-cog"></i> Cài đặt</a>
+    <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
+    <a href="bac-si-dashboard.html">Bác sĩ dashboard</a>
+    <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+</aside>
+
+<!-- Auth Modal -->
+<div class="auth-modal" id="authModal">
+    <div class="auth-modal-content">
+        <div class="auth-modal-left">
+            <div class="auth-modal-image">
+                <img src="img/hero-image.png" alt="Medical">
+            </div>
+            <div class="auth-modal-overlay">
+                <h2>Chào mừng bạn đến với FertilityEHR</h2>
+                <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
+            </div>
         </div>
-        <a href="#" class="sidebar-account"><i class="fas fa-user"></i> Trang người dùng</a>
-        <a href="#">Tin nổi bật</a>
-        <a href="#">Bệnh án</a>
-        <a href="#">Lịch hẹn</a>
-        <a href="#">Kết quả xét nghiệm</a>
-        <a href="#">Cài đặt</a>
-        <div class="sidebar-divider"></div>
-        <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-    </aside>
-    
-    <!-- Auth Modal -->
-    <div class="auth-modal" id="authModal">
-        <div class="auth-modal-content">
-            <div class="auth-modal-left">
-                <div class="auth-modal-image">
-                    <img src="img/hero-image.png" alt="Medical">
-                </div>
-                <div class="auth-modal-overlay">
-                    <h2>Chào mừng bạn đến với FertilityEHR</h2>
-                    <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
+        <div class="auth-modal-right">
+            <span class="close-modal">&times;</span>
+
+            <!-- Role Selection Step -->
+            <div class="role-selection" id="roleSelection">
+                <h2>Chọn vai trò của bạn</h2>
+                <p>Vui lòng chọn loại tài khoản để tiếp tục</p>
+                <div class="role-options">
+                    <div class="role-option" data-role="customer">
+                        <div class="role-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>Khách hàng</h3>
+                        <p>Bệnh nhân đăng ký điều trị hiếm muộn</p>
+                        <ul>
+                            <li>Đặt lịch khám</li>
+                            <li>Theo dõi lịch điều trị</li>
+                            <li>Xem kết quả xét nghiệm</li>
+                            <li>Quản lý hồ sơ cá nhân</li>
+                        </ul>
+                    </div>
+                    <div class="role-option" data-role="doctor">
+                        <div class="role-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h3>Bác sĩ</h3>
+                        <p>Đội ngũ y tế chuyên khoa</p>
+                        <ul>
+                            <li>Quản lý bệnh nhân</li>
+                            <li>Ghi nhận kết quả khám</li>
+                            <li>Lập lịch điều trị</li>
+                            <li>Báo cáo và thống kê</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="auth-modal-right">
-                <span class="close-modal">&times;</span>
+
+            <!-- Auth Forms (hidden initially) -->
+            <div class="auth-section" id="authSection" style="display: none;">
+                <div class="auth-header">
+                    <button class="back-to-role" id="backToRole">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </button>
+                    <div class="selected-role-info">
+                        <span class="role-badge"></span>
+                    </div>
+                </div>
                 <div class="auth-tabs">
                     <button class="auth-tab active" data-tab="login">Đăng nhập</button>
                     <button class="auth-tab" data-tab="register">Đăng ký</button>
@@ -170,6 +215,7 @@
                             <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
                         </div>
                     </div>
+
                     <div class="form-group">
                         <label for="loginPassword">Mật khẩu</label>
                         <div class="input-group">
@@ -190,17 +236,6 @@
                         <span>Đăng nhập</span>
                         <i class="fas fa-arrow-right"></i>
                     </button>
-                    <div class="social-login">
-                        <p>Hoặc đăng nhập với</p>
-                        <div class="social-buttons">
-                            <button type="button" class="social-btn google">
-                                <i class="fab fa-google"></i>
-                            </button>
-                            <button type="button" class="social-btn facebook">
-                                <i class="fab fa-facebook-f"></i>
-                            </button>
-                        </div>
-                    </div>
                 </form>
                 <form id="registerForm" class="auth-form">
                     <div class="form-group">
@@ -215,6 +250,20 @@
                         <div class="input-group">
                             <i class="fas fa-envelope"></i>
                             <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Số điện thoại</label>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="registerPhone" required placeholder="Nhập số điện thoại của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Ngày sinh</label>
+                        <div class="input-group">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="date" id="registerDob" required placeholder="Chọn ngày sinh">
                         </div>
                     </div>
                     <div class="form-group">
@@ -235,7 +284,7 @@
                     </div>
                     <div class="form-group">
                         <label class="checkbox-container">
-                            <input type="checkbox" id="agreeTerms" >
+                            <input type="checkbox" id="agreeTerms">
                             <span class="checkmark"></span>
                             Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
                         </label>
@@ -245,9 +294,10 @@
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </form>
-            </div>
+            </div> <!-- End auth-section -->
         </div>
     </div>
+</div>
 
 <section class="hero">
     <div class="container">

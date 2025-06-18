@@ -1,585 +1,178 @@
-// Bảng điều khiển bác sĩ - JavaScript
-// Chứa các chức năng riêng cho dashboard bác sĩ
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Chờ script.js load xong trước khi khởi tạo doctor dashboard
-    setTimeout(function() {
-        initDoctorDashboard();
-    }, 200);
-});
-
-function initDoctorDashboard() {
-    // Bắt buộc hiển thị chuông thông báo cho trang bác sĩ (override script.js logic)
-    forceShowNotification();
-    
-    // Khởi tạo biểu đồ
-    initTreatmentChart();
-    
-    // Khởi tạo tương tác dashboard
-    initDashboardInteractions();
-    
-    // Khởi tạo hệ thống thông báo riêng cho bác sĩ
-    initDoctorNotifications();
-    
-    console.log('Doctor Dashboard loaded successfully!');
-}
-
-// Hàm bắt buộc hiển thị chuông thông báo cho trang bác sĩ
-function forceShowNotification() {
-    const notificationWrapper = document.querySelector('.notification-wrapper');
-    if (notificationWrapper) {
-        notificationWrapper.style.display = 'block';
-        notificationWrapper.style.visibility = 'visible';
-        notificationWrapper.style.opacity = '1';
-        
-        // Đảm bảo chuông luôn hiển thị ngay cả khi script.js cố ẩn
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    const target = mutation.target;
-                    if (target.classList.contains('notification-wrapper')) {
-                        if (target.style.display === 'none') {
-                            target.style.display = 'block';
-                            target.style.visibility = 'visible';
-                            target.style.opacity = '1';
-                        }
-                    }
-                }
-            });
-        });
-        
-        observer.observe(notificationWrapper, {
-            attributes: true,
-            attributeFilter: ['style']
-        });
-        
-        console.log('Đã bắt buộc hiển thị chuông thông báo cho bác sĩ');
-    }
-}
-
-// Khởi tạo biểu đồ điều trị
-function initTreatmentChart() {
-    const ctx = document.getElementById('treatmentChart');
-    if (ctx) {
-        const treatmentChart = new Chart(ctx.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Thành công', 'Đang điều trị', 'Tạm hoãn'],
-                datasets: [{
-                    data: [78, 15, 7],
-                    backgroundColor: [
-                        'rgba(33, 150, 243, 0.8)',
-                        'rgba(76, 175, 80, 0.8)', 
-                        'rgba(255, 152, 0, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgb(33, 150, 243)',
-                        'rgb(76, 175, 80)',
-                        'rgb(255, 152, 0)'
-                    ],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-        console.log('Biểu đồ điều trị đã được khởi tạo');
-    }
-}
-
-// Khởi tạo tương tác dashboard
-function initDashboardInteractions() {
-    // Tương tác với các mục hành động sử dụng showNotification từ script.js
-    document.querySelectorAll('.action-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const action = this.textContent.trim();
-            if (typeof showNotification === 'function') {
-                showNotification(`Chức năng "${action}" sẽ được phát triển!`, 'info');
-            }
-        });
-    });
-
-    // Tương tác với các mục lịch khám
-    document.querySelectorAll('.btn-small').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const scheduleItem = this.closest('.schedule-item');
-            const patientName = scheduleItem.querySelector('strong').textContent;
-            
-            if (this.textContent.includes('Xem hồ sơ')) {
-                if (typeof showNotification === 'function') {
-                    showNotification(`Mở hồ sơ của ${patientName}`, 'success');
-                }
-            } else if (this.textContent.includes('Đang khám')) {
-                if (typeof showNotification === 'function') {
-                    showNotification(`${patientName} đang trong quá trình khám`, 'info');
-                }
-            }
-        });
-    });
-
-    // Thêm hiệu ứng khi click vào các mục lịch
-    document.querySelectorAll('.schedule-item').forEach(item => {
-        item.addEventListener('click', function() {
-            if (!this.classList.contains('current')) {
-                const patientName = this.querySelector('strong').textContent;
-                const appointmentType = this.querySelector('.appointment-type').textContent;
-                if (typeof showNotification === 'function') {
-                    showNotification(`Chi tiết: ${patientName} - ${appointmentType}`, 'info');
-                }
-            }
-        });
-    });
-    
-    console.log('Tương tác dashboard đã được khởi tạo');
-}
-
-// Hàm khởi tạo thông báo đặc biệt cho bác sĩ
-function initDoctorNotifications() {
-    // Thêm function đặc biệt cho bác sĩ sử dụng addNewNotification từ script.js
-    window.addDoctorNotification = function(title, description, type = 'appointment') {
-        // Mapping type cho bác sĩ
-        let notificationType;
-        switch(type) {
-            case 'urgent-patient':
-                notificationType = 'injection';
-                break;
-            case 'new-appointment':
-                notificationType = 'appointment';
-                break;
-            case 'test-result':
-                notificationType = 'test';
-                break;
-            case 'medication-alert':
-                notificationType = 'injection';
-                break;
-            default:
-                notificationType = 'message';
-        }
-
-        // Sử dụng function có sẵn trong script.js
-        if (typeof addNewNotification === 'function') {
-            addNewNotification(title, description, notificationType);
-        }
-    };
-
-    // Function test thông báo cho bác sĩ
-    window.testDoctorNotification = function() {
-        const doctorNotifications = [
-            { 
-                title: 'Bệnh nhân cần chú ý khẩn', 
-                desc: 'BN Nguyễn Thị Hoa - Phản ứng thuốc bất thường cần xử lý ngay', 
-                type: 'urgent-patient' 
-            },
-            { 
-                title: 'Lịch hẹn mới', 
-                desc: 'BN Trần Văn Nam đặt lịch tư vấn IVF ngày mai lúc 9:00', 
-                type: 'new-appointment' 
-            },
-            { 
-                title: 'Kết quả xét nghiệm cần xem', 
-                desc: '3 kết quả xét nghiệm hormone mới cần đánh giá', 
-                type: 'test-result' 
-            },
-            { 
-                title: 'Cảnh báo thuốc', 
-                desc: 'BN Phạm Thị Lan chưa tiêm Gonal-F theo lịch', 
-                type: 'medication-alert' 
-            },
-            { 
-                title: 'Chu kỳ IVF hoàn thành', 
-                desc: 'BN Lê Thị Mai hoàn thành chuyển phôi thành công', 
-                type: 'new-appointment' 
-            }
-        ];
-        
-        const randomNotification = doctorNotifications[Math.floor(Math.random() * doctorNotifications.length)];
-        addDoctorNotification(randomNotification.title, randomNotification.desc, randomNotification.type);
-        
-        // Hiển thị toast notification
-        if (typeof showNotification === 'function') {
-            showNotification('Đã thêm thông báo mới cho bác sĩ!', 'success');
-        }
-    };
-
-    // Tự động tạo thông báo demo cho bác sĩ (bỏ comment để test)
-    // setInterval(function() {
-    //     if (Math.random() > 0.7) { // 30% chance mỗi 15 giây
-    //         testDoctorNotification();
-    //     }
-    // }, 15000);
-
-    // Thêm button test vào console để demo
-    console.log('Doctor Notifications initialized! Sử dụng testDoctorNotification() để test thông báo bác sĩ');
-}
-
-// Hàm đặc biệt cho dashboard bác sĩ
-window.doctorDashboard = {
-    // Sử dụng showNotification từ script.js
-    showMessage: function(message, type = 'info') {
-        if (typeof showNotification === 'function') {
-            showNotification(message, type);
+// Patient data storage
+const patientData = {
+    mai: {
+        name: 'Nguyễn Thị Mai',
+        age: 28,
+        phone: '0123456789',
+        address: 'Hoàng Mai, Hà Nội',
+        medicalRecord: {
+            diagnosis: 'Hiếm muộn nguyên phát, chuẩn bị IVF chu kỳ 1',
+            symptoms: 'Không có thai sau 2 năm kết hôn, chu kỳ kinh đều',
+            treatment: 'Kích thích buồng trứng, theo dõi siêu âm định kỳ',
+            notes: 'Bệnh nhân hợp tác tốt, tuân thủ điều trị đầy đủ'
         }
     },
-    
-    // Thêm thông báo cho bác sĩ
-    addNotification: function(title, description, type = 'appointment') {
-        if (typeof addDoctorNotification === 'function') {
-            addDoctorNotification(title, description, type);
+    an: {
+        name: 'Trần Văn An',
+        age: 35,
+        phone: '0987654321',
+        address: 'Cầu Giấy, Hà Nội',
+        medicalRecord: {
+            diagnosis: 'Tư vấn hiếm muộn lần đầu',
+            symptoms: 'Vợ chồng chưa có con sau 18 tháng kết hôn',
+            treatment: 'Tư vấn chế độ sinh hoạt, dinh dưỡng. Hẹn khám lại sau 3 tháng',
+            notes: 'Cần theo dõi thêm, có thể cần làm thêm xét nghiệm'
         }
     },
-    
-    // Test function
-    test: function() {
-        if (typeof testDoctorNotification === 'function') {
-            testDoctorNotification();
+    hoa: {
+        name: 'Phạm Thị Hoa',
+        age: 30,
+        phone: '0456789123',
+        address: 'Thanh Xuân, Hà Nội',
+        medicalRecord: {
+            diagnosis: 'IVF - theo dõi kích thích buồng trứng',
+            symptoms: 'Đang trong quá trình kích thích buồng trứng chu kỳ 2',
+            treatment: 'Tiêm Gonal-F 225UI/ngày, siêu âm theo dõi',
+            notes: 'Phản ứng tốt với thuốc kích thích, dự kiến chọc hút sau 2 ngày'
         }
     },
-    
-    // Cập nhật thống kê dashboard
-    updateStats: function(todayPatients, totalPatients, successRate, pendingTests) {
-        const cards = document.querySelectorAll('.overview-card .value');
-        if (cards.length >= 4) {
-            cards[0].textContent = todayPatients;
-            cards[1].textContent = totalPatients;
-            cards[2].textContent = successRate + '%';
-            cards[3].textContent = pendingTests;
-            
-            this.showMessage('Đã cập nhật thống kê dashboard!', 'success');
+    lan: {
+        name: 'Lê Thị Lan',
+        age: 33,
+        phone: '0789123456',
+        address: 'Đống Đa, Hà Nội',
+        medicalRecord: {
+            diagnosis: 'IVF chu kỳ 2 - chuẩn bị chuyển phôi',
+            symptoms: 'Đã có 3 phôi chất lượng tốt được đông lạnh',
+            treatment: 'Chuẩn bị nội mạc tử cung, hẹn chuyển phôi',
+            notes: 'Nội mạc tử cung dày 9mm, phù hợp chuyển phôi'
         }
     },
-    
-    // Thêm bệnh nhân vào lịch trình
-    addScheduleItem: function(time, patientName, appointmentType) {
-        const scheduleContainer = document.querySelector('.doctor-schedule');
-        if (scheduleContainer) {
-            const newItem = document.createElement('div');
-            newItem.className = 'schedule-item';
-            newItem.innerHTML = `
-                <div class="schedule-time">${time}</div>
-                <div class="schedule-content">
-                    <div class="patient-info">
-                        <strong>BN: ${patientName}</strong>
-                        <span class="appointment-type">${appointmentType}</span>
-                    </div>
-                    <div class="schedule-actions">
-                        <button class="btn-small btn-primary">Xem hồ sơ</button>
-                    </div>
-                </div>
-            `;
-            
-            scheduleContainer.appendChild(newItem);
-            
-            // Thêm event listener cho item mới
-            const newBtn = newItem.querySelector('.btn-small');
-            newBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (typeof showNotification === 'function') {
-                    showNotification(`Mở hồ sơ của BN: ${patientName}`, 'success');
-                }
-            });
-            
-            this.showMessage(`Đã thêm lịch hẹn ${time} - ${patientName}`, 'success');
-        }
-    }
-};
-// Bảng điều khiển bác sĩ - JavaScript
-// Chứa các chức năng riêng cho dashboard bác sĩ
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Chờ script.js load xong trước khi khởi tạo doctor dashboard
-    setTimeout(function() {
-        initDoctorDashboard();
-    }, 200);
-});
-
-function initDoctorDashboard() {
-    // Bắt buộc hiển thị chuông thông báo cho trang bác sĩ (override script.js logic)
-    forceShowNotification();
-    
-    // Khởi tạo biểu đồ
-    initTreatmentChart();
-    
-    // Khởi tạo tương tác dashboard
-    initDashboardInteractions();
-    
-    // Khởi tạo hệ thống thông báo riêng cho bác sĩ
-    initDoctorNotifications();
-    
-    console.log('Doctor Dashboard loaded successfully!');
-}
-
-// Hàm bắt buộc hiển thị chuông thông báo cho trang bác sĩ
-function forceShowNotification() {
-    const notificationWrapper = document.querySelector('.notification-wrapper');
-    if (notificationWrapper) {
-        notificationWrapper.style.display = 'block';
-        notificationWrapper.style.visibility = 'visible';
-        notificationWrapper.style.opacity = '1';
-        
-        // Đảm bảo chuông luôn hiển thị ngay cả khi script.js cố ẩn
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    const target = mutation.target;
-                    if (target.classList.contains('notification-wrapper')) {
-                        if (target.style.display === 'none') {
-                            target.style.display = 'block';
-                            target.style.visibility = 'visible';
-                            target.style.opacity = '1';
-                        }
-                    }
-                }
-            });
-        });
-        
-        observer.observe(notificationWrapper, {
-            attributes: true,
-            attributeFilter: ['style']
-        });
-        
-        console.log('Đã bắt buộc hiển thị chuông thông báo cho bác sĩ');
-    }
-}
-
-// Khởi tạo biểu đồ điều trị
-function initTreatmentChart() {
-    const ctx = document.getElementById('treatmentChart');
-    if (ctx) {
-        const treatmentChart = new Chart(ctx.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Thành công', 'Đang điều trị', 'Tạm hoãn'],
-                datasets: [{
-                    data: [78, 15, 7],
-                    backgroundColor: [
-                        'rgba(33, 150, 243, 0.8)',
-                        'rgba(76, 175, 80, 0.8)', 
-                        'rgba(255, 152, 0, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgb(33, 150, 243)',
-                        'rgb(76, 175, 80)',
-                        'rgb(255, 152, 0)'
-                    ],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-        console.log('Biểu đồ điều trị đã được khởi tạo');
-    }
-}
-
-// Khởi tạo tương tác dashboard
-function initDashboardInteractions() {
-    // Tương tác với các mục hành động sử dụng showNotification từ script.js
-    document.querySelectorAll('.action-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const action = this.textContent.trim();
-            if (typeof showNotification === 'function') {
-                showNotification(`Chức năng "${action}" sẽ được phát triển!`, 'info');
-            }
-        });
-    });
-
-    // Tương tác với các mục lịch khám
-    document.querySelectorAll('.btn-small').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const scheduleItem = this.closest('.schedule-item');
-            const patientName = scheduleItem.querySelector('strong').textContent;
-            
-            if (this.textContent.includes('Xem hồ sơ')) {
-                if (typeof showNotification === 'function') {
-                    showNotification(`Mở hồ sơ của ${patientName}`, 'success');
-                }
-            } else if (this.textContent.includes('Đang khám')) {
-                if (typeof showNotification === 'function') {
-                    showNotification(`${patientName} đang trong quá trình khám`, 'info');
-                }
-            }
-        });
-    });
-
-    // Thêm hiệu ứng khi click vào các mục lịch
-    document.querySelectorAll('.schedule-item').forEach(item => {
-        item.addEventListener('click', function() {
-            if (!this.classList.contains('current')) {
-                const patientName = this.querySelector('strong').textContent;
-                const appointmentType = this.querySelector('.appointment-type').textContent;
-                if (typeof showNotification === 'function') {
-                    showNotification(`Chi tiết: ${patientName} - ${appointmentType}`, 'info');
-                }
-            }
-        });
-    });
-    
-    console.log('Tương tác dashboard đã được khởi tạo');
-}
-
-// Hàm khởi tạo thông báo đặc biệt cho bác sĩ
-function initDoctorNotifications() {
-    // Thêm function đặc biệt cho bác sĩ sử dụng addNewNotification từ script.js
-    window.addDoctorNotification = function(title, description, type = 'appointment') {
-        // Mapping type cho bác sĩ
-        let notificationType;
-        switch(type) {
-            case 'urgent-patient':
-                notificationType = 'injection';
-                break;
-            case 'new-appointment':
-                notificationType = 'appointment';
-                break;
-            case 'test-result':
-                notificationType = 'test';
-                break;
-            case 'medication-alert':
-                notificationType = 'injection';
-                break;
-            default:
-                notificationType = 'message';
-        }
-
-        // Sử dụng function có sẵn trong script.js
-        if (typeof addNewNotification === 'function') {
-            addNewNotification(title, description, notificationType);
-        }
-    };
-
-    // Function test thông báo cho bác sĩ
-    window.testDoctorNotification = function() {
-        const doctorNotifications = [
-            { 
-                title: 'Bệnh nhân cần chú ý khẩn', 
-                desc: 'BN Nguyễn Thị Hoa - Phản ứng thuốc bất thường cần xử lý ngay', 
-                type: 'urgent-patient' 
-            },
-            { 
-                title: 'Lịch hẹn mới', 
-                desc: 'BN Trần Văn Nam đặt lịch tư vấn IVF ngày mai lúc 9:00', 
-                type: 'new-appointment' 
-            },
-            { 
-                title: 'Kết quả xét nghiệm cần xem', 
-                desc: '3 kết quả xét nghiệm hormone mới cần đánh giá', 
-                type: 'test-result' 
-            },
-            { 
-                title: 'Cảnh báo thuốc', 
-                desc: 'BN Phạm Thị Lan chưa tiêm Gonal-F theo lịch', 
-                type: 'medication-alert' 
-            },
-            { 
-                title: 'Chu kỳ IVF hoàn thành', 
-                desc: 'BN Lê Thị Mai hoàn thành chuyển phôi thành công', 
-                type: 'new-appointment' 
-            }
-        ];
-        
-        const randomNotification = doctorNotifications[Math.floor(Math.random() * doctorNotifications.length)];
-        addDoctorNotification(randomNotification.title, randomNotification.desc, randomNotification.type);
-        
-        // Hiển thị toast notification
-        if (typeof showNotification === 'function') {
-            showNotification('Đã thêm thông báo mới cho bác sĩ!', 'success');
-        }
-    };
-
-    // Tự động tạo thông báo demo cho bác sĩ (bỏ comment để test)
-    // setInterval(function() {
-    //     if (Math.random() > 0.7) { // 30% chance mỗi 15 giây
-    //         testDoctorNotification();
-    //     }
-    // }, 15000);
-
-    // Thêm button test vào console để demo
-    console.log('Doctor Notifications initialized! Sử dụng testDoctorNotification() để test thông báo bác sĩ');
-}
-
-// Hàm đặc biệt cho dashboard bác sĩ
-window.doctorDashboard = {
-    // Sử dụng showNotification từ script.js
-    showMessage: function(message, type = 'info') {
-        if (typeof showNotification === 'function') {
-            showNotification(message, type);
-        }
-    },
-    
-    // Thêm thông báo cho bác sĩ
-    addNotification: function(title, description, type = 'appointment') {
-        if (typeof addDoctorNotification === 'function') {
-            addDoctorNotification(title, description, type);
-        }
-    },
-    
-    // Test function
-    test: function() {
-        if (typeof testDoctorNotification === 'function') {
-            testDoctorNotification();
-        }
-    },
-    
-    // Cập nhật thống kê dashboard
-    updateStats: function(todayPatients, totalPatients, successRate, pendingTests) {
-        const cards = document.querySelectorAll('.overview-card .value');
-        if (cards.length >= 4) {
-            cards[0].textContent = todayPatients;
-            cards[1].textContent = totalPatients;
-            cards[2].textContent = successRate + '%';
-            cards[3].textContent = pendingTests;
-            
-            this.showMessage('Đã cập nhật thống kê dashboard!', 'success');
-        }
-    },
-    
-    // Thêm bệnh nhân vào lịch trình
-    addScheduleItem: function(time, patientName, appointmentType) {
-        const scheduleContainer = document.querySelector('.doctor-schedule');
-        if (scheduleContainer) {
-            const newItem = document.createElement('div');
-            newItem.className = 'schedule-item';
-            newItem.innerHTML = `
-                <div class="schedule-time">${time}</div>
-                <div class="schedule-content">
-                    <div class="patient-info">
-                        <strong>BN: ${patientName}</strong>
-                        <span class="appointment-type">${appointmentType}</span>
-                    </div>
-                    <div class="schedule-actions">
-                        <button class="btn-small btn-primary">Xem hồ sơ</button>
-                    </div>
-                </div>
-            `;
-            
-            scheduleContainer.appendChild(newItem);
-            
-            // Thêm event listener cho item mới
-            const newBtn = newItem.querySelector('.btn-small');
-            newBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (typeof showNotification === 'function') {
-                    showNotification(`Mở hồ sơ của BN: ${patientName}`, 'success');
-                }
-            });
-            
-            this.showMessage(`Đã thêm lịch hẹn ${time} - ${patientName}`, 'success');
+    thu: {
+        name: 'Hoàng Thị Thu',
+        age: 29,
+        phone: '0345678901',
+        address: 'Ba Đình, Hà Nội',
+        medicalRecord: {
+            diagnosis: 'Theo dõi sau phẫu thuật nội soi',
+            symptoms: 'Đã phẫu thuật cắt u xơ tử cung 1 tháng trước',
+            treatment: 'Theo dõi lành vết thương, tư vấn thời gian có thai',
+            notes: 'Vết thương lành tốt, có thể chuẩn bị có thai sau 3 tháng'
         }
     }
 };
 
+// Modal functions
+function viewPatientRecord(patientId) {
+    const patient = patientData[patientId];
+    if (!patient) return;
+
+    document.getElementById('patientName').textContent = patient.name;
+    document.getElementById('patientAge').textContent = patient.age;
+    document.getElementById('patientPhone').textContent = patient.phone;
+    document.getElementById('patientAddress').textContent = patient.address;
+
+    document.getElementById('diagnosis').value = patient.medicalRecord.diagnosis;
+    document.getElementById('symptoms').value = patient.medicalRecord.symptoms;
+    document.getElementById('treatment').value = patient.medicalRecord.treatment;
+    document.getElementById('notes').value = patient.medicalRecord.notes;
+
+    document.getElementById('patientModal').style.display = 'block';
+
+    // Store current patient ID for saving
+    document.getElementById('patientModal').dataset.patientId = patientId;
+}
+
+function closeModal() {
+    document.getElementById('patientModal').style.display = 'none';
+}
+
+function savePatientRecord() {
+    const patientId = document.getElementById('patientModal').dataset.patientId;
+    const patient = patientData[patientId];
+
+    if (!patient) return;
+
+    // Update patient record
+    patient.medicalRecord.diagnosis = document.getElementById('diagnosis').value;
+    patient.medicalRecord.symptoms = document.getElementById('symptoms').value;
+    patient.medicalRecord.treatment = document.getElementById('treatment').value;
+    patient.medicalRecord.notes = document.getElementById('notes').value;
+
+    // Show success message - use the notification function from script.js
+    if (typeof showNotification === 'function') {
+        showNotification('Đã lưu thay đổi bệnh án thành công!', 'success');
+    }
+
+    closeModal();
+}
+
+// Patient List Modal functions
+function openPatientList() {
+    document.getElementById('patientListModal').style.display = 'block';
+}
+
+function closePatientListModal() {
+    document.getElementById('patientListModal').style.display = 'none';
+}
+
+function editPatientFromList(patientId) {
+    closePatientListModal();
+    viewPatientRecord(patientId);
+}
+
+function searchPatients() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const tableBody = document.getElementById('patientTableBody');
+    const rows = tableBody.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        const patientName = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
+        if (patientName.includes(searchTerm)) {
+            rows[i].style.display = '';
+        } else {
+            rows[i].style.display = 'none';
+        }
+    }
+}
+
+
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const patientModal = document.getElementById('patientModal');
+    const patientListModal = document.getElementById('patientListModal');
+
+    if (event.target === patientModal) {
+        closeModal();
+    }
+    if (event.target === patientListModal) {
+        closePatientListModal();
+    }
+}
+
+
+function updateCurrentTime() {
+    const now = new Date();
+    const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    };
+    const dateString = now.toLocaleDateString('vi-VN', options);
+
+    const currentDateElement = document.querySelector('.current-date');
+    if (currentDateElement) {
+        currentDateElement.textContent = dateString;
+    }
+}
+
+// Enhanced patient search with debouncing
+let searchTimeout;
+const originalSearchPatients = searchPatients;
+
+searchPatients = function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(originalSearchPatients, 300);
+};
