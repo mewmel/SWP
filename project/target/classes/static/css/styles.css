@@ -1191,6 +1191,240 @@ footer::before {
 }
 
 /* Responsive Design */
+/* Role Selection Styles */
+.role-selection {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.role-selection h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+.role-selection p {
+    color: var(--light-text);
+    margin-bottom: 40px;
+    font-size: 1rem;
+}
+
+.role-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.role-option {
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 30px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.role-option::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.role-option:hover::before {
+    opacity: 0.05;
+}
+
+.role-option:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(74, 144, 226, 0.15);
+}
+
+.role-option.selected {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(74, 144, 226, 0.25);
+}
+
+.role-option.selected::before {
+    opacity: 0;
+}
+
+.role-icon {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 20px;
+}
+
+.role-icon i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.role-option:hover .role-icon i {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.role-option.selected .role-icon i {
+    color: white;
+    transform: scale(1.1);
+}
+
+.role-option h3 {
+    position: relative;
+    z-index: 2;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.role-option.selected h3 {
+    color: white;
+}
+
+.role-option > p {
+    position: relative;
+    z-index: 2;
+    color: var(--light-text);
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.role-option.selected > p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.role-option ul {
+    position: relative;
+    z-index: 2;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.role-option ul li {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+    color: var(--light-text);
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+}
+
+.role-option ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.role-option.selected ul li {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.role-option.selected ul li::before {
+    color: white;
+}
+
+/* Auth Header Styles */
+.auth-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.back-to-role {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--light-text);
+    padding: 8px 15px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back-to-role:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(74, 144, 226, 0.05);
+}
+
+.role-badge {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.role-badge i {
+    font-size: 0.9rem;
+}
+
+/* Responsive for Role Selection */
+@media (max-width: 768px) {
+    .role-options {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .role-option {
+        padding: 25px 15px;
+    }
+    
+    .role-icon i {
+        font-size: 2.5rem;
+    }
+    
+    .role-option h3 {
+        font-size: 1.2rem;
+    }
+    
+    .role-option ul li {
+        font-size: 0.8rem;
+    }
+    
+    .auth-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
+
 @media (min-width: 768px) {
     .auth-modal-left {
         display: block;
