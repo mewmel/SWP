@@ -1,11 +1,11 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
     const authButtons = document.querySelector('.auth-buttons');
     const userMenu = document.querySelector('.user-menu');
     const userNameSpan = document.querySelector('.user-name');
     const sidebarUsername = document.querySelector('.sidebar-username');
     const notificationWrapper = document.querySelector('.notification-wrapper');
-
+    
     // Hiển thị đúng trạng thái đăng nhập khi load lại trang
     const fullName = localStorage.getItem('userFullName');
     if (fullName) {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (userMenu) userMenu.style.display = 'none';
         if (notificationWrapper) notificationWrapper.style.display = 'none';
     }
-
+    
     // Kiểm tra và hiển thị thông báo đăng xuất
     const logoutMessage = localStorage.getItem('logoutMessage');
     if (logoutMessage) {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ========== ĐĂNG NHẬP ==========
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const submitBtn = this.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
@@ -73,9 +73,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     localStorage.setItem('userRole', selectedRole);
                 }
 
-                console.log('>> Sẽ chuyển sang dashboard!');
-                window.location.href = "dashboard.html";
-
+                // Chuyển hướng dựa trên role
+                if (selectedRole === 'doctor') {
+                    window.location.href = "bac-si-dashboard.html";
+                } else {
+                    window.location.href = "dashboard.html";
+                }
+                
             })
             .catch((err) => {
                 showNotification(
@@ -94,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ========== ĐĂNG XUẤT ==========
     const logoutBtn = document.querySelector('.logout-btn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function (e) {
+        logoutBtn.addEventListener('click', function(e) {
             e.preventDefault();
             localStorage.removeItem('userFullName');
             localStorage.removeItem('userEmail');
@@ -116,8 +120,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     const sidebarLogout = document.querySelector('.sidebar-logout');
-    if (sidebarLogout) {
-        sidebarLogout.addEventListener('click', function (e) {
+    if(sidebarLogout) {
+        sidebarLogout.addEventListener('click', function(e) {
             e.preventDefault();
             localStorage.removeItem('userFullName');
             localStorage.removeItem('userEmail');
@@ -135,91 +139,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // ========= ĐĂNG KÝ GỌI API BACKEND =========
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const submitBtn = this.querySelector('button[type="submit"]');
         const agreeTerms = document.getElementById('agreeTerms');
 
+        // Kiểm tra đã tích vào ô điều khoản chưa
         if (!agreeTerms.checked) {
             showNotification('Bạn phải đồng ý với điều khoản sử dụng trước khi đăng ký!', 'error');
             return;
         }
 
-        const cusFullName = document.getElementById('registerName').value.trim();
-        const cusEmail = document.getElementById('registerEmail').value.trim();
-        const cusPhone = document.getElementById('registerPhone').value.trim();
-        const cusDob = document.getElementById('registerDob').value;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+        submitBtn.disabled = true;
+
+        const cusFullName = document.getElementById('registerName').value;
+        const cusEmail = document.getElementById('registerEmail').value;
         const cusPassword = document.getElementById('registerPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
-
+        
+        // Kiểm tra đã chọn role chưa
         if (!selectedRole) {
             showNotification('Vui lòng chọn vai trò trước khi đăng ký!', 'error');
-            return;
-        }
-
-        // Validate fields
-        let errorMsg = '';
-        let errorField = null;
-        if (!cusFullName) {
-            errorMsg = "Vui lòng nhập họ tên.";
-            errorField = document.getElementById('registerName');
-        } else if (!cusEmail) {
-            errorMsg = "Vui lòng nhập email.";
-            errorField = document.getElementById('registerEmail');
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cusEmail)) {
-            errorMsg = "Email không hợp lệ.";
-            errorField = document.getElementById('registerEmail');
-        } else if (!cusPhone) {
-            errorMsg = "Vui lòng nhập số điện thoại.";
-            errorField = document.getElementById('registerPhone');
-        } else if (!/^(0|\+84)\d{9,10}$/.test(cusPhone)) {
-            errorMsg = "Số điện thoại không hợp lệ.";
-            errorField = document.getElementById('registerPhone');
-        } else if (!cusDob) {
-            errorMsg = "Vui lòng chọn ngày sinh.";
-            errorField = document.getElementById('registerDob');
-        } else if (!cusPassword) {
-            errorMsg = "Vui lòng nhập mật khẩu.";
-            errorField = document.getElementById('registerPassword');
-        } else if (cusPassword.length < 6) {
-            errorMsg = "Mật khẩu phải từ 6 ký tự trở lên.";
-            errorField = document.getElementById('registerPassword');
-        } else if (!confirmPassword) {
-            errorMsg = "Vui lòng xác nhận mật khẩu.";
-            errorField = document.getElementById('confirmPassword');
-        } else if (cusPassword !== confirmPassword) {
-            errorMsg = "Mật khẩu xác nhận không khớp.";
-            errorField = document.getElementById('confirmPassword');
-        }
-
-        if (errorMsg) {
-            showNotification(errorMsg, 'error');
-            if (errorField) {
-                errorField.classList.add('error');
-                errorField.focus();
-            }
             submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
             submitBtn.disabled = false;
             return;
         }
 
-        this.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
-        submitBtn.disabled = true;
-
         fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                cusFullName,
-                cusEmail,
-                cusPhone,
-                cusDob,
-                cusPassword,
-                confirmPassword,
-                role: selectedRole
-            })
+            body: JSON.stringify({ cusFullName, cusEmail, cusPassword, confirmPassword, role: selectedRole })
         })
             .then(async response => {
                 const text = await response.text();
@@ -227,60 +177,33 @@ document.addEventListener('DOMContentLoaded', function () {
                 return text;
             })
             .then(msg => {
-                // Đăng ký thành công => tự động đăng nhập
-                fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cusEmail, cusPassword })
-                })
-                    .then(async response => {
-                        if (!response.ok) {
-                            const errText = await response.text();
-                            throw new Error(errText || 'Đăng nhập thất bại');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Lưu thông tin vào localStorage
-                        localStorage.setItem('userFullName', data.cusFullName || data.cusEmail || 'Người dùng');
-                        localStorage.setItem('userEmail', data.cusEmail || '');
-                        localStorage.setItem('userRole', selectedRole);
-                        if (authButtons) authButtons.style.display = 'none';
-                        if (userMenu) userMenu.style.display = 'flex';
-                        if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-                        if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-                        if (notificationWrapper) notificationWrapper.style.display = 'block';
-                        showNotification('Đăng ký và đăng nhập thành công!', 'success');
-                        const closeModal = document.querySelector('.close-modal');
-                        if (closeModal) closeModal.click();
-
-                        // Chuyển trang sau khi auto login:
-                        console.log('>> Sẽ chuyển sang dashboard!');
-                        window.location.href = "dashboard.html";
-                    })
-                    .catch(err => {
-                        showNotification('Đăng ký thành công, nhưng đăng nhập tự động thất bại: ' + (err.message || ''), 'error');
-                        submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
-                        submitBtn.disabled = false;
-                    });
-
+                showNotification('Đăng ký thành công!', 'success');
+                submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
+                submitBtn.disabled = false;
+                const closeModal = document.querySelector('.close-modal');
+                if (closeModal) closeModal.click();
             })
             .catch(err => {
                 let message = err.message || 'Đăng ký thất bại!';
-                showNotification(message, 'error');
+                if (message.includes('Email đã tồn tại') || message.includes('Email đã được đăng ký') || message.includes('email')) {
+                    showNotification(message, 'error');
+                } else {
+                    showNotification(message, 'error');
+                }
                 submitBtn.innerHTML = '<span>Đăng ký</span><i class="fas fa-arrow-right"></i>';
                 submitBtn.disabled = false;
             });
     });
+
     // ========== UI & HIỆU ỨNG KHÁC ==========
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        anchor.addEventListener('click', function(e) {
             e.preventDefault();
             const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
+            if(targetId === '#') return;
             const targetElement = document.querySelector(targetId);
-            if (targetElement) {
+            if(targetElement) {
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
@@ -292,8 +215,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fixed header on scroll
     const header = document.querySelector('header');
     const scrollThreshold = 100;
-    window.addEventListener('scroll', function () {
-        if (window.scrollY > scrollThreshold) {
+    window.addEventListener('scroll', function() {
+        if(window.scrollY > scrollThreshold) {
             header.classList.add('scrolled');
         } else {
             header.classList.remove('scrolled');
@@ -303,11 +226,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Form validation for all forms
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
-        form.addEventListener('submit', function (e) {
+        form.addEventListener('submit', function(e) {
             let valid = true;
             const requiredFields = form.querySelectorAll('[required]');
             requiredFields.forEach(field => {
-                if (!field.value.trim()) {
+                if(!field.value.trim()) {
                     valid = false;
                     field.classList.add('error');
                 } else {
@@ -315,20 +238,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
             const emailField = form.querySelector('input[type="email"]');
-            if (emailField && emailField.value) {
+            if(emailField && emailField.value) {
                 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailPattern.test(emailField.value)) {
+                if(!emailPattern.test(emailField.value)) {
                     valid = false;
                     emailField.classList.add('error');
                 }
             }
-            if (!valid) {
+            if(!valid) {
                 e.preventDefault();
                 const errorMsg = document.createElement('div');
                 errorMsg.className = 'error-message';
                 errorMsg.textContent = 'Vui lòng điền đầy đủ tất cả các trường bắt buộc.';
                 const existingError = form.querySelector('.error-message');
-                if (existingError) existingError.remove();
+                if(existingError) existingError.remove();
                 form.prepend(errorMsg);
             }
         });
@@ -360,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Toggle password visibility
     document.querySelectorAll('.toggle-password').forEach(toggle => {
-        toggle.addEventListener('click', function () {
+        toggle.addEventListener('click', function() {
             const input = this.previousElementSibling;
             const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
             input.setAttribute('type', type);
@@ -369,107 +292,107 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Các biến để chọn vai trò
-    let selectedRole = null;
-    const roleSelection = document.getElementById('roleSelection');
-    const authSection = document.getElementById('authSection');
-    const roleOptions = document.querySelectorAll('.role-option');
-    const backToRoleBtn = document.getElementById('backToRole');
-    const roleBadge = document.querySelector('.role-badge');
+ // Các biến để chọn vai trò
+let selectedRole = null;
+const roleSelection = document.getElementById('roleSelection');
+const authSection = document.getElementById('authSection');
+const roleOptions = document.querySelectorAll('.role-option');
+const backToRoleBtn = document.getElementById('backToRole');
+const roleBadge = document.querySelector('.role-badge');
 
-    // Xử lý sự kiện khi nhấn vào lựa chọn vai trò
-    roleOptions.forEach(option => {
-        option.addEventListener('click', function () {
-            // Xóa class 'selected' khỏi tất cả các lựa chọn
-            roleOptions.forEach(opt => opt.classList.remove('selected'));
-
-            // Thêm class 'selected' vào lựa chọn được nhấn
-            this.classList.add('selected');
-
-            // Lưu lại vai trò đã chọn
-            selectedRole = this.dataset.role;
-
-            // Hiển thị phần đăng nhập sau một khoảng trễ nhỏ để UX mượt mà hơn
-            setTimeout(() => {
-                roleSelection.style.display = 'none';
-                authSection.style.display = 'block';
-
-                // Cập nhật huy hiệu vai trò
-                updateRoleBadge();
-
-                // Hiệu ứng hiện ra cho phần đăng nhập
-                authSection.style.opacity = '0';
-                authSection.style.transform = 'translateX(20px)';
-                setTimeout(() => {
-                    authSection.style.transition = 'all 0.3s ease';
-                    authSection.style.opacity = '1';
-                    authSection.style.transform = 'translateX(0)';
-                }, 50);
-            }, 300);
-        });
-    });
-
-    // Quay lại bước chọn vai trò
-    if (backToRoleBtn) {
-        backToRoleBtn.addEventListener('click', function () {
-            authSection.style.opacity = '0';
-            authSection.style.transform = 'translateX(-20px)';
-
-            setTimeout(() => {
-                authSection.style.display = 'none';
-                roleSelection.style.display = 'block';
-
-                // Hiệu ứng hiện ra cho phần chọn vai trò
-                roleSelection.style.opacity = '0';
-                roleSelection.style.transform = 'translateX(-20px)';
-                setTimeout(() => {
-                    roleSelection.style.transition = 'all 0.3s ease';
-                    roleSelection.style.opacity = '1';
-                    roleSelection.style.transform = 'translateX(0)';
-                }, 50);
-            }, 300);
-        });
-    }
-
-    // Hàm cập nhật huy hiệu vai trò
-    function updateRoleBadge() {
-        if (selectedRole && roleBadge) {
-            const roleInfo = {
-                customer: {
-                    icon: 'fas fa-user',
-                    text: 'Khách hàng'
-                },
-                doctor: {
-                    icon: 'fas fa-user-md',
-                    text: 'Bác sĩ'
-                }
-            };
-
-            const info = roleInfo[selectedRole];
-            roleBadge.innerHTML = `<i class="${info.icon}"></i> ${info.text}`;
-        }
-    }
-
-    // Mở modal đăng nhập với hiệu ứng (được cập nhật để hiển thị phần chọn vai trò trước tiên)
-    window.openAuthModal = function (type) {
-        authModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-
-        // Đặt lại bước về chọn vai trò ban đầu
-        selectedRole = null;
+// Xử lý sự kiện khi nhấn vào lựa chọn vai trò
+roleOptions.forEach(option => {
+    option.addEventListener('click', function() {
+        // Xóa class 'selected' khỏi tất cả các lựa chọn
         roleOptions.forEach(opt => opt.classList.remove('selected'));
-        authSection.style.display = 'none';
-        roleSelection.style.display = 'block';
-
-        // Hiệu ứng hiện ra cho phần chọn vai trò
-        roleSelection.style.opacity = '0';
-        roleSelection.style.transform = 'translateY(20px)';
+        
+        // Thêm class 'selected' vào lựa chọn được nhấn
+        this.classList.add('selected');
+        
+        // Lưu lại vai trò đã chọn
+        selectedRole = this.dataset.role;
+        
+        // Hiển thị phần đăng nhập sau một khoảng trễ nhỏ để UX mượt mà hơn
         setTimeout(() => {
-            roleSelection.style.transition = 'all 0.3s ease';
-            roleSelection.style.opacity = '1';
-            roleSelection.style.transform = 'translateY(0)';
-        }, 100);
+            roleSelection.style.display = 'none';
+            authSection.style.display = 'block';
+            
+            // Cập nhật huy hiệu vai trò
+            updateRoleBadge();
+            
+            // Hiệu ứng hiện ra cho phần đăng nhập
+            authSection.style.opacity = '0';
+            authSection.style.transform = 'translateX(20px)';
+            setTimeout(() => {
+                authSection.style.transition = 'all 0.3s ease';
+                authSection.style.opacity = '1';
+                authSection.style.transform = 'translateX(0)';
+            }, 50);
+        }, 300);
+    });
+});
 
+// Quay lại bước chọn vai trò
+if (backToRoleBtn) {
+    backToRoleBtn.addEventListener('click', function() {
+        authSection.style.opacity = '0';
+        authSection.style.transform = 'translateX(-20px)';
+        
+        setTimeout(() => {
+            authSection.style.display = 'none';
+            roleSelection.style.display = 'block';
+            
+            // Hiệu ứng hiện ra cho phần chọn vai trò
+            roleSelection.style.opacity = '0';
+            roleSelection.style.transform = 'translateX(-20px)';
+            setTimeout(() => {
+                roleSelection.style.transition = 'all 0.3s ease';
+                roleSelection.style.opacity = '1';
+                roleSelection.style.transform = 'translateX(0)';
+            }, 50);
+        }, 300);
+    });
+}
+
+// Hàm cập nhật huy hiệu vai trò
+function updateRoleBadge() {
+    if (selectedRole && roleBadge) {
+        const roleInfo = {
+            customer: {
+                icon: 'fas fa-user',
+                text: 'Khách hàng'
+            },
+            doctor: {
+                icon: 'fas fa-user-md',
+                text: 'Bác sĩ'
+            }
+        };
+        
+        const info = roleInfo[selectedRole];
+        roleBadge.innerHTML = `<i class="${info.icon}"></i> ${info.text}`;
+    }
+}
+
+// Mở modal đăng nhập với hiệu ứng (được cập nhật để hiển thị phần chọn vai trò trước tiên)
+window.openAuthModal = function(type) {
+    authModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Đặt lại bước về chọn vai trò ban đầu
+    selectedRole = null;
+    roleOptions.forEach(opt => opt.classList.remove('selected'));
+    authSection.style.display = 'none';
+    roleSelection.style.display = 'block';
+    
+    // Hiệu ứng hiện ra cho phần chọn vai trò
+    roleSelection.style.opacity = '0';
+    roleSelection.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+        roleSelection.style.transition = 'all 0.3s ease';
+        roleSelection.style.opacity = '1';
+        roleSelection.style.transform = 'translateY(0)';
+    }, 100);
+        
         if (type === 'login') {
             const submitBtn = document.querySelector('#loginForm button[type="submit"]');
             if (submitBtn) {
@@ -477,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 submitBtn.disabled = false;
             }
         }
-
+        
         if (type === 'register') {
             switchTab('register');
         } else {
@@ -487,13 +410,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Close Modal with animation
     if (closeModal && authModal) {
-        closeModal.addEventListener('click', function () {
+        closeModal.addEventListener('click', function() {
             // Reset modal state
             authSection.style.display = 'none';
             roleSelection.style.display = 'block';
             selectedRole = null;
             roleOptions.forEach(opt => opt.classList.remove('selected'));
-
+            
             const activeForm = document.querySelector('.auth-form.active');
             const inputs = activeForm ? activeForm.querySelectorAll('.form-group') : [];
             inputs.forEach((input, index) => {
@@ -508,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     input.style.transform = '';
                 });
                 clearLoginForm();
-
+                
                 // Reset role selection styles
                 roleSelection.style.opacity = '';
                 roleSelection.style.transform = '';
@@ -516,7 +439,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 authSection.style.transform = '';
             }, 300);
         });
-        authModal.addEventListener('click', function (e) {
+        authModal.addEventListener('click', function(e) {
             if (e.target === authModal) closeModal.click();
         });
     }
@@ -561,22 +484,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 300);
     }
     authTabs.forEach(tab => {
-        tab.addEventListener('click', function () {
+        tab.addEventListener('click', function() {
             switchTab(this.dataset.tab);
         });
     });
 
     // Social login buttons
     document.querySelectorAll('.social-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function() {
             const provider = this.classList.contains('google') ? 'Google' : 'Facebook';
             showNotification(`Đang xử lý đăng nhập bằng ${provider}...`, 'info');
         });
     });
 
     // Mobile menu toggle
-    if (mobileMenuBtn && nav) {
-        mobileMenuBtn.addEventListener('click', function () {
+    if(mobileMenuBtn && nav) {
+        mobileMenuBtn.addEventListener('click', function() {
             nav.classList.toggle('active');
         });
     }
@@ -593,8 +516,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 300);
         }
     }
-    if (openSidebarBtn && sidebar) {
-        openSidebarBtn.addEventListener('click', function (e) {
+    if(openSidebarBtn && sidebar) {
+        openSidebarBtn.addEventListener('click', function(e) {
             // set tên vào sidebar mỗi lần mở
             const userNameTxt = document.querySelector('.user-name').textContent;
             document.querySelector('.sidebar-username').textContent = userNameTxt;
@@ -604,13 +527,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 10);
         });
     }
-    if (closeSidebarBtn && sidebar) {
-        closeSidebarBtn.addEventListener('click', function () {
+    if(closeSidebarBtn && sidebar) {
+        closeSidebarBtn.addEventListener('click', function() {
             closeSidebar();
         });
     }
     // Đóng sidebar khi bấm ngoài
-    document.addEventListener('mousedown', function (e) {
+    document.addEventListener('mousedown', function(e) {
         if (
             sidebar &&
             sidebar.classList.contains('active') &&
@@ -622,8 +545,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     // Chuyển sang trang dashboard khi click vào "Tài khoản" trên sidebar
     const sidebarAccount = document.querySelector('.sidebar-account');
-    if (sidebarAccount) {
-        sidebarAccount.addEventListener('click', function (e) {
+    if(sidebarAccount) {
+        sidebarAccount.addEventListener('click', function(e) {
             e.preventDefault();
             window.location.href = "dashboard.html";
         });
@@ -632,23 +555,23 @@ document.addEventListener('DOMContentLoaded', function () {
     // ============= NOTIFICATION DROPDOWN =============
     const notificationBtn = document.getElementById('notificationBtn');
     const notificationDropdown = document.getElementById('notificationDropdown');
-
+    
     if (notificationBtn && notificationDropdown) {
         // Toggle dropdown khi click vào bell icon
-        notificationBtn.addEventListener('click', function (e) {
+        notificationBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             notificationDropdown.classList.toggle('show');
         });
 
         // Đóng dropdown khi click ra ngoài
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
             if (!notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
                 notificationDropdown.classList.remove('show');
             }
         });
 
         // Đóng dropdown khi nhấn ESC
-        document.addEventListener('keydown', function (e) {
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 notificationDropdown.classList.remove('show');
             }
@@ -656,11 +579,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Xử lý click vào từng notification item
         document.querySelectorAll('.notification-dropdown-item').forEach(item => {
-            item.addEventListener('click', function () {
+            item.addEventListener('click', function() {
                 // Xóa trạng thái unread
                 const wasUnread = this.classList.contains('unread');
                 this.classList.remove('unread');
-
+                
                 // Cập nhật số badge nếu notification chưa đọc
                 if (wasUnread) {
                     const badge = document.querySelector('.notification-badge');
@@ -675,10 +598,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     }
                 }
-
+                
                 // Đóng dropdown sau khi click
                 notificationDropdown.classList.remove('show');
-
+                
                 // Lấy thông tin notification và hiển thị thông báo
                 const title = this.querySelector('.notification-title');
                 if (title) {
@@ -705,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Xử lý nút cài đặt thông báo
         const settingsBtn = document.querySelector('.notification-settings-btn');
         if (settingsBtn) {
-            settingsBtn.addEventListener('click', function (e) {
+            settingsBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 showNotification('Cài đặt thông báo sẽ được phát triển trong phiên bản tiếp theo!', 'info');
             });
@@ -714,28 +637,28 @@ document.addEventListener('DOMContentLoaded', function () {
         // Xử lý link "Xem tất cả thông báo"
         const viewAllBtn = document.querySelector('.view-all-notifications');
         if (viewAllBtn) {
-            viewAllBtn.addEventListener('click', function (e) {
+            viewAllBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 notificationDropdown.classList.remove('show');
                 showNotification('Trang xem tất cả thông báo sẽ được phát triển trong phiên bản tiếp theo!', 'info');
-
+                
                 // Có thể chuyển hướng đến trang thông báo chuyên dụng
                 // window.location.href = 'thong-bao.html';
             });
         }
 
         // Function để thêm thông báo mới (cho demo hoặc real-time)
-        window.addNewNotification = function (title, description, type = 'reminder', time = 'Vừa xong') {
+        window.addNewNotification = function(title, description, type = 'reminder', time = 'Vừa xong') {
             // Tạo element thông báo mới
             const newNotification = document.createElement('div');
             newNotification.className = 'notification-dropdown-item unread';
-
+            
             let iconClass = 'fas fa-bell';
             if (type === 'injection') iconClass = 'fas fa-syringe';
             else if (type === 'test') iconClass = 'fas fa-flask';
             else if (type === 'appointment') iconClass = 'fas fa-calendar-check';
             else if (type === 'message') iconClass = 'fas fa-user-md';
-
+            
             newNotification.innerHTML = `
                 <div class="notification-avatar">
                     <i class="${iconClass}"></i>
@@ -746,12 +669,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="notification-time">${time}</div>
                 </div>
             `;
-
+            
             // Thêm vào đầu danh sách
             const notificationBody = document.querySelector('.notification-dropdown-body');
             if (notificationBody) {
                 notificationBody.insertBefore(newNotification, notificationBody.firstChild);
-
+                
                 // Cập nhật badge
                 const badge = document.querySelector('.notification-badge');
                 if (badge) {
@@ -760,12 +683,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     badge.textContent = count;
                     badge.style.display = 'flex';
                 }
-
+                
                 // Thêm event listener cho notification mới
-                newNotification.addEventListener('click', function () {
+                newNotification.addEventListener('click', function() {
                     const wasUnread = this.classList.contains('unread');
                     this.classList.remove('unread');
-
+                    
                     if (wasUnread) {
                         const badge = document.querySelector('.notification-badge');
                         if (badge) {
@@ -779,27 +702,27 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         }
                     }
-
+                    
                     notificationDropdown.classList.remove('show');
                     showNotification('Đã xem: ' + title, 'success');
                 });
-
+                
                 // Animation cho thông báo mới
                 newNotification.style.animation = 'slideInNotification 0.3s ease-out';
             }
         };
 
         // Function để đánh dấu tất cả đã đọc
-        window.markAllNotificationsRead = function () {
+        window.markAllNotificationsRead = function() {
             document.querySelectorAll('.notification-dropdown-item.unread').forEach(item => {
                 item.classList.remove('unread');
             });
-
+            
             const badge = document.querySelector('.notification-badge');
             if (badge) {
                 badge.style.display = 'none';
             }
-
+            
             showNotification('Đã đánh dấu tất cả thông báo đã đọc!', 'success');
         };
     }
@@ -821,9 +744,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 3000);
     }
 
-    // Add notification styles
-    const style = document.createElement('style');
-    style.textContent = `
+         // Add notification styles
+     const style = document.createElement('style');
+     style.textContent = `
          .notification {
              position: fixed;
              top: 20px;
@@ -885,7 +808,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Auth Buttons Animation
     document.querySelectorAll('.btn-login, .btn-register').forEach(button => {
-        button.addEventListener('click', function (e) {
+        button.addEventListener('click', function(e) {
             const ripple = document.createElement('span');
             ripple.classList.add('ripple');
             this.appendChild(ripple);
@@ -909,151 +832,302 @@ document.addEventListener('DOMContentLoaded', function () {
                     modal.style.transform = 'scale(1)';
                 }, 50);
             }
-        });
-    });
+                 });
+     });
 
-    // ============= DASHBOARD FEATURES =============
-    // Temperature Chart (chỉ load khi có element temperatureChart)
-    const temperatureChart = document.getElementById('temperatureChart');
-    if (temperatureChart) {
-        const ctx = temperatureChart.getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['20/6', '21/6', '22/6', '23/6', '24/6', '25/6', '26/6'],
-                datasets: [{
-                    label: 'Nhiệt độ cơ thể (°C)',
-                    data: [36.4, 36.3, 36.5, 36.7, 36.8, 36.6, 36.9],
-                    borderColor: 'rgb(74, 144, 226)',
-                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                    tension: 0.1,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        min: 36,
-                        max: 37.5
-                    }
-                }
-            }
-        });
-    }
+     // ============= DASHBOARD FEATURES =============
+     // Temperature Chart (chỉ load khi có element temperatureChart)
+     const temperatureChart = document.getElementById('temperatureChart');
+     if (temperatureChart) {
+         const ctx = temperatureChart.getContext('2d');
+         new Chart(ctx, {
+             type: 'line',
+             data: {
+                 labels: ['20/6', '21/6', '22/6', '23/6', '24/6', '25/6', '26/6'],
+                 datasets: [{
+                     label: 'Nhiệt độ cơ thể (°C)',
+                     data: [36.4, 36.3, 36.5, 36.7, 36.8, 36.6, 36.9],
+                     borderColor: 'rgb(74, 144, 226)',
+                     backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                     tension: 0.1,
+                     fill: true
+                 }]
+             },
+             options: {
+                 responsive: true,
+                 maintainAspectRatio: false,
+                 plugins: {
+                     legend: {
+                         display: false
+                     }
+                 },
+                 scales: {
+                     y: {
+                         beginAtZero: false,
+                         min: 36,
+                         max: 37.5
+                     }
+                 }
+             }
+         });
+     }
 
-    // Interactive action items
-    document.querySelectorAll('.action-item').forEach(item => {
-        item.addEventListener('click', function () {
-            const action = this.textContent.trim();
-            showNotification(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`, 'info');
-        });
-    });
+     // Interactive action items
+     document.querySelectorAll('.action-item').forEach(item => {
+         item.addEventListener('click', function () {
+             const action = this.textContent.trim();
+             showNotification(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`, 'info');
+         });
+     });
 
-    // Progress bar animation
-    const progressFill = document.querySelector('.progress-fill');
-    if (progressFill) {
-        setTimeout(() => {
-            progressFill.style.width = '40%';
-        }, 500);
-    }
+     // Progress bar animation
+     const progressFill = document.querySelector('.progress-fill');
+     if (progressFill) {
+         setTimeout(() => {
+             progressFill.style.width = '40%';
+         }, 500);
+     }
 
-    // Timeline day hover effects
-    document.querySelectorAll('.timeline-day').forEach(day => {
-        day.addEventListener('mouseenter', function () {
-            if (this.classList.contains('has-event')) {
-                this.style.transform = 'scale(1.05)';
-                this.style.transition = 'transform 0.2s ease';
-            }
-        });
+     // Timeline day hover effects
+     document.querySelectorAll('.timeline-day').forEach(day => {
+         day.addEventListener('mouseenter', function () {
+             if (this.classList.contains('has-event')) {
+                 this.style.transform = 'scale(1.05)';
+                 this.style.transition = 'transform 0.2s ease';
+             }
+         });
 
-        day.addEventListener('mouseleave', function () {
-            this.style.transform = 'scale(1)';
-        });
-    });
+         day.addEventListener('mouseleave', function () {
+             this.style.transform = 'scale(1)';
+         });
+     });
 
-    // ============= DEMO FUNCTIONS FOR TESTING =============
-    // Function để test thêm notification mới
-    window.testNotification = function () {
-        const types = ['injection', 'test', 'appointment', 'message'];
-        const messages = [
-            { title: 'Nhắc nhở tiêm thuốc', desc: 'Đã đến giờ tiêm thuốc Gonal-F 150 IU', type: 'injection' },
-            { title: 'Lịch xét nghiệm mới', desc: 'Xét nghiệm hormone FSH vào ngày mai', type: 'test' },
-            { title: 'Cuộc hẹn với bác sĩ', desc: 'Khám tái khám với BS. Nguyễn Thị Hương', type: 'appointment' },
-            { title: 'Tin nhắn từ phòng khám', desc: 'Bạn có một tin nhắn mới từ phòng khám', type: 'message' }
-        ];
+     // ============= DEMO FUNCTIONS FOR TESTING =============
+     // Function để test thêm notification mới
+     window.testNotification = function() {
+         const types = ['injection', 'test', 'appointment', 'message'];
+         const messages = [
+             { title: 'Nhắc nhở tiêm thuốc', desc: 'Đã đến giờ tiêm thuốc Gonal-F 150 IU', type: 'injection' },
+             { title: 'Lịch xét nghiệm mới', desc: 'Xét nghiệm hormone FSH vào ngày mai', type: 'test' },
+             { title: 'Cuộc hẹn với bác sĩ', desc: 'Khám tái khám với BS. Nguyễn Thị Hương', type: 'appointment' },
+             { title: 'Tin nhắn từ phòng khám', desc: 'Bạn có một tin nhắn mới từ phòng khám', type: 'message' }
+         ];
+         
+         const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+         if (typeof addNewNotification === 'function') {
+             addNewNotification(randomMsg.title, randomMsg.desc, randomMsg.type);
+         }
+     };
 
-        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-        if (typeof addNewNotification === 'function') {
-            addNewNotification(randomMsg.title, randomMsg.desc, randomMsg.type);
-        }
-    };
+     // Auto-demo notification (uncomment để test)
+     // setInterval(testNotification, 10000); // Thêm notification mới mỗi 10 giây
 
-    // Auto-demo notification (uncomment để test)
-    // setInterval(testNotification, 10000); // Thêm notification mới mỗi 10 giây
-
-
-    document.addEventListener('DOMContentLoaded', function () {
+     
+         document.addEventListener('DOMContentLoaded', function() {
         // ...existing code...
-
+    
         // Xử lý popup lịch hẹn
         const appointmentLink = document.getElementById('appointmentLink');
         const appointmentModal = document.getElementById('appointmentModal');
         const closeAppointmentBtn = document.querySelector('.close-appointment-modal');
-
+    
         // Mở popup khi click vào link lịch hẹn
-        if (appointmentLink) {
-            appointmentLink.addEventListener('click', function (e) {
+        if(appointmentLink) {
+            appointmentLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 appointmentModal.style.display = 'block';
             });
         }
-
+    
         // Đóng popup khi click vào nút close
-        if (closeAppointmentBtn) {
-            closeAppointmentBtn.addEventListener('click', function () {
+        if(closeAppointmentBtn) {
+            closeAppointmentBtn.addEventListener('click', function() {
                 appointmentModal.style.display = 'none';
             });
         }
-
+    
         // Đóng popup khi click ra ngoài
-        window.addEventListener('click', function (e) {
+        window.addEventListener('click', function(e) {
             if (e.target == appointmentModal) {
                 appointmentModal.style.display = 'none';
             }
         });
     });
-});
+ });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Tự động điền vào form đăng ký khám khi đã đăng nhập
-    const userFullName = localStorage.getItem('userFullName');
+   document.addEventListener('DOMContentLoaded', function() {
+    // Lấy thông tin từ localStorage đã được lưu bởi script.js
+    //tự động điền vào form đăng kí khám khi đã đăng nhập
+    const fullName = localStorage.getItem('userFullName');
     const userEmail = localStorage.getItem('userEmail');
-    const userDob = localStorage.getItem('userDob');
-    const userPhone = localStorage.getItem('userPhone');
-
     const dobInput = document.getElementById('dob');
     const emailInput = document.getElementById('email');
     const nameInput = document.getElementById('fullName');
-    const phoneInput = document.getElementById('phone');
 
-    if (userFullName && nameInput) {
-        nameInput.value = userFullName;
+    if (fullName && nameInput) {
+        nameInput.value = fullName;
     }
+
     if (userEmail && emailInput) {
         emailInput.value = userEmail;
     }
-    if (userPhone && phoneInput) {
-        phoneInput.value = userPhone;
-    }
+
     if (userDob && dobInput) {
         dobInput.value = userDob;
+    }
+    
+    
+})
+
+document.addEventListener('DOMContentLoaded', function() {
+    const doctorsGrid = document.querySelector('.doctors-grid');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const doctorCards = document.querySelectorAll('.doctor-card');
+    
+    if (!doctorsGrid || !prevBtn || !nextBtn || !doctorCards.length) return;
+
+    const cardsToShow = 3;
+    let currentPage = 0;
+    const totalPages = Math.ceil(doctorCards.length / cardsToShow);
+
+    // Set initial state
+    updateSliderState();
+
+    // Event Listeners for buttons
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            updateSliderState();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            updateSliderState();
+        }
+    });
+
+    function updateSliderState() {
+        // Calculate translation amount
+        const slideAmount = currentPage * -100;
+        doctorsGrid.style.transform = `translateX(${slideAmount}%)`;
+
+        // Update button states
+        prevBtn.disabled = currentPage === 0;
+        nextBtn.disabled = currentPage === totalPages - 1;
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        currentPage = Math.min(currentPage, totalPages - 1);
+        updateSliderState();
+    });
+
+    // Add touch support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    doctorsGrid.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    doctorsGrid.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0 && currentPage < totalPages - 1) {
+                // Swipe left
+                currentPage++;
+                updateSliderState();
+            } else if (diff < 0 && currentPage > 0) {
+                // Swipe right
+                currentPage--;
+                updateSliderState();
+            }
+        }
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const doctorsGrid = document.querySelector('.doctors-grid');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const doctorCards = document.querySelectorAll('.doctor-card');
+    
+    if (!doctorsGrid || !prevBtn || !nextBtn || !doctorCards.length) return;
+
+    const cardsToShow = 3;
+    let currentPage = 0;
+    const totalPages = Math.ceil(doctorCards.length / cardsToShow);
+
+    // Set initial state
+    updateSliderState();
+
+    // Event Listeners for buttons
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            updateSliderState();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            updateSliderState();
+        }
+    });
+
+    function updateSliderState() {
+        // Calculate translation amount
+        const slideAmount = currentPage * -100;
+        doctorsGrid.style.transform = `translateX(${slideAmount}%)`;
+
+        // Update button states
+        prevBtn.disabled = currentPage === 0;
+        nextBtn.disabled = currentPage === totalPages - 1;
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        currentPage = Math.min(currentPage, totalPages - 1);
+        updateSliderState();
+    });
+
+    // Add touch support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    doctorsGrid.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    doctorsGrid.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0 && currentPage < totalPages - 1) {
+                // Swipe left
+                currentPage++;
+                updateSliderState();
+            } else if (diff < 0 && currentPage > 0) {
+                // Swipe right
+                currentPage--;
+                updateSliderState();
+            }
+        }
     }
 });

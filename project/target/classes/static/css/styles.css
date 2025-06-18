@@ -877,11 +877,11 @@ footer::before {
 }
 
 .auth-modal-right {
-    flex: 1;
-    padding: var(--spacing-xl);
-    position: relative;
-    overflow-y: auto;
-    background: white;
+        flex: 1;
+        padding: var(--spacing-xl);
+        position: relative;
+        overflow-y: auto;
+        background: white;
 }
 
 .close-modal {
@@ -1401,23 +1401,23 @@ footer::before {
         grid-template-columns: 1fr;
         gap: 15px;
     }
-
+    
     .role-option {
         padding: 25px 15px;
     }
-
+    
     .role-icon i {
         font-size: 2.5rem;
     }
-
+    
     .role-option h3 {
         font-size: 1.2rem;
     }
-
+    
     .role-option ul li {
         font-size: 0.8rem;
     }
-
+    
     .auth-header {
         flex-direction: column;
         gap: 15px;
@@ -1740,189 +1740,189 @@ footer::before {
 
 /* About FertilityCare Section - Flex 2 cột text trái, hình phải */
 .about-fertilitycare-flex {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
 }
 
 .about-fertilitycare-left {
-    flex: 1 1 50%;
-    max-width: 50%;
-    min-width: 300px;
-    padding-right: 32px;
-    box-sizing: border-box;
+  flex: 1 1 50%;
+  max-width: 50%;
+  min-width: 300px;
+  padding-right: 32px;
+  box-sizing: border-box;
 }
 
 .about-fertilitycare-right {
-    flex: 1 1 50%;
-    max-width: 50%;
-    min-width: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-left: 32px;
-    box-sizing: border-box;
+  flex: 1 1 50%;
+  max-width: 50%;
+  min-width: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 32px;
+  box-sizing: border-box;
 }
 
 @media (max-width: 991px) {
-    .about-fertilitycare-flex {
-        flex-direction: column;
-        gap: 24px;
-    }
-    .about-fertilitycare-left,
-    .about-fertilitycare-right {
-        max-width: 100%;
-        width: 100%;
-        padding: 0;
-    }
+  .about-fertilitycare-flex {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .about-fertilitycare-left,
+  .about-fertilitycare-right {
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
+  }
 }
 
 /* Xóa các rule flex cũ liên quan col-lg-6 */
 .about-fertilitycare-section .col-lg-6.mb-4,
 .about-fertilitycare-section .col-lg-6.text-center,
 .about-fertilitycare-section .col-lg-6.mb-4.mb-lg-0 {
-    flex: unset !important;
-    max-width: unset !important;
-    min-width: unset !important;
-    padding: unset !important;
-    display: unset !important;
-    justify-content: unset !important;
-    align-items: unset !important;
-    box-sizing: unset !important;
+  flex: unset !important;
+  max-width: unset !important;
+  min-width: unset !important;
+  padding: unset !important;
+  display: unset !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+  box-sizing: unset !important;
 }
 
 /* About FertilityCare Section (Custom) - Đẹp, hiện đại, đồng bộ */
 .about-fertilitycare-section {
-    background: var(--background);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    margin: var(--spacing-xl) 0;
-    padding: var(--spacing-xl) 0;
-    position: relative;
-    overflow: hidden;
+  background: var(--background);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin: var(--spacing-xl) 0;
+  padding: var(--spacing-xl) 0;
+  position: relative;
+  overflow: hidden;
 }
 
 .about-fertilitycare-section .container {
-    max-width: 1100px;
+  max-width: 1100px;
 }
 
 .about-fertilitycare-section .section-title {
-    font-size: 2.3rem;
-    font-weight: 800;
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-md);
-    letter-spacing: -1px;
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+  letter-spacing: -1px;
 }
 
 .about-fertilitycare-section .lead {
-    font-size: 1.15rem;
-    color: var(--light-text);
-    margin-bottom: var(--spacing-lg);
+  font-size: 1.15rem;
+  color: var(--light-text);
+  margin-bottom: var(--spacing-lg);
 }
 
 .about-fertilitycare-section h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-md);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
 }
 
 .about-fertilitycare-section p {
-    color: var(--text-color);
-    font-size: 1rem;
+  color: var(--text-color);
+  font-size: 1rem;
 }
 
 .about-fertilitycare-section .row.text-center {
-    margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
 }
 
 .about-fertilitycare-section .display-5 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin-bottom: 0.25rem;
-    line-height: 1.1;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  line-height: 1.1;
 }
 
 .about-fertilitycare-section .col-4 .display-5 {
-    color: var(--accent-color);
+  color: var(--accent-color);
 }
 
 .about-fertilitycare-section .col-4:nth-child(2) .display-5 {
-    color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .about-fertilitycare-section .small {
-    color: var(--light-text);
-    font-size: 1rem;
+  color: var(--light-text);
+  font-size: 1rem;
 }
 
 .about-fertilitycare-section img {
-    max-width: 100%;
-    max-height: 350px;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    object-fit: cover;
-    margin-top: var(--spacing-lg);
+  max-width: 100%;
+  max-height: 350px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  object-fit: cover;
+  margin-top: var(--spacing-lg);
 }
 
 @media (max-width: 991px) {
-    .about-fertilitycare-section {
-        padding: var(--spacing-lg) 0;
-    }
-    .about-fertilitycare-section .section-title {
-        font-size: 1.7rem;
-    }
-    .about-fertilitycare-section .display-5 {
-        font-size: 1.5rem;
-    }
+  .about-fertilitycare-section {
+    padding: var(--spacing-lg) 0;
+  }
+  .about-fertilitycare-section .section-title {
+    font-size: 1.7rem;
+  }
+  .about-fertilitycare-section .display-5 {
+    font-size: 1.5rem;
+  }
 }
 
 @media (max-width: 767px) {
-    .about-fertilitycare-section {
-        padding: var(--spacing-md) 0;
-        margin: var(--spacing-lg) 0;
-    }
-    .about-fertilitycare-section .section-title {
-        font-size: 1.2rem;
-    }
-    .about-fertilitycare-section .display-5 {
-        font-size: 1.1rem;
-    }
-    .about-fertilitycare-section img {
-        max-height: 200px;
-    }
+  .about-fertilitycare-section {
+    padding: var(--spacing-md) 0;
+    margin: var(--spacing-lg) 0;
+  }
+  .about-fertilitycare-section .section-title {
+    font-size: 1.2rem;
+  }
+  .about-fertilitycare-section .display-5 {
+    font-size: 1.1rem;
+  }
+  .about-fertilitycare-section img {
+    max-height: 200px;
+  }
 }
 
 .about-fertilitycare-header {
-    text-align: center;
-    margin-bottom: 48px;
-    margin-top: 0;
+  text-align: center;
+  margin-bottom: 48px;
+  margin-top: 0;
 }
 .about-fertilitycare-header h2 {
-    font-size: 2.8rem;
-    font-weight: 800;
-    color: #2C3E50;
-    margin-bottom: 1rem;
-    letter-spacing: -1px;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #2C3E50;
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
 }
 .about-fertilitycare-header p {
-    font-size: 1.25rem;
-    color: #6c757d;
-    font-weight: 500;
-    margin-bottom: 0;
+  font-size: 1.25rem;
+  color: #6c757d;
+  font-weight: 500;
+  margin-bottom: 0;
 }
 @media (max-width: 767px) {
-    .about-fertilitycare-header {
-        margin-bottom: 24px;
-    }
-    .about-fertilitycare-header h2 {
-        font-size: 1.5rem;
-    }
-    .about-fertilitycare-header p {
-        font-size: 1rem;
-    }
+  .about-fertilitycare-header {
+    margin-bottom: 24px;
+  }
+  .about-fertilitycare-header h2 {
+    font-size: 1.5rem;
+  }
+  .about-fertilitycare-header p {
+    font-size: 1rem;
+  }
 }
 
 
@@ -1984,30 +1984,31 @@ nav ul li .dropdown-menu li:not(:last-child) {
 
 /* Doctors Page Styling */
 .doctors-section {
-    padding: 60px 0;
-    background-color: #f9f9f9;
+  padding: 60px 0;
+  background-color: #f9f9f9;
 }
 
 .doctors-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+  height: 90%;  
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .doctor-card {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .doctor-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* .doctor-image {
@@ -2018,69 +2019,69 @@ nav ul li .dropdown-menu li:not(:last-child) {
 } */
 
 .doctor-image img {
-    width: 100%;
-    height: 490px;
-    object-fit: cover;
-    transition: transform 0.3s;
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  transition: transform 0.3s;
 }
 
 
 .doctor-card:hover .doctor-overlay {
-    opacity: 1;
+  opacity: 1;
 }
 
 .doctor-social {
-    display: flex;
-    gap: 15px;
+  display: flex;
+  gap: 15px;
 }
 
 .doctor-social a {
-    color: white;
-    font-size: 1.5rem;
-    transition: transform 0.3s;
+  color: white;
+  font-size: 1.5rem;
+  transition: transform 0.3s;
 }
 
 .doctor-social a:hover {
-    transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 .doctor-info {
-    padding: 25px;
-    text-align: center;
+  padding: 25px;
+  text-align: center;
 }
 
 .doctor-info h3 {
-    color: #2C3E50;
-    font-size: 1.4rem;
-    margin: 0 0 10px;
+  color: #2C3E50;
+  font-size: 1.4rem;
+  margin: 0 0 10px;
 }
 
 .doctor-title {
-    color: #666;
-    font-size: 1rem;
-    margin: 0 0 5px;
+  color: #666;
+  font-size: 1rem;
+  margin: 0 0 5px;
 }
 
 .doctor-specialty {
-    color: #4A90E2;
-    font-weight: bold;
-    margin: 0 0 15px;
+  color: #4A90E2;
+  font-weight: bold;
+  margin: 0 0 15px;
 }
 
 .doctor-profile {
-    display: inline-block;
-    color: #F5A623;;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 8px 20px;
-    border: 2px solid #F5A623;;
-    border-radius: 25px;
-    transition: all 0.3s;
+  display: inline-block;
+  color: #F5A623;;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 8px 20px;
+  border: 2px solid #F5A623;;
+  border-radius: 25px;
+  transition: all 0.3s;
 }
 
 .doctor-profile:hover {
-    background: #F5A623;
-    color: white;
+  background: #F5A623;
+  color: white;
 }
 
 .social-sidebar {
@@ -2307,7 +2308,7 @@ nav ul li .dropdown-menu li:not(:last-child) {
     padding: 32px 20px 20px 20px;
     display: none;
     flex-direction: column;
-
+    
     /* Sửa hiệu ứng trượt */
     transform: translateX(100%);
     opacity: 0;
@@ -2726,7 +2727,14 @@ nav ul li a.active {
     background: #F7B731;
     color: #fff;
 }
-
+.blog-card:nth-child(4) .blog-category {
+    background: #E74C3C;
+    color: #fff;
+}
+.blog-card:nth-child(6) .blog-category {
+    background: palevioletred;
+    color: #fff;
+}
 .blog-content {
     padding: 25px;
 }
@@ -2780,7 +2788,7 @@ nav ul li a.active {
 }
 
 .btn-secondary {
-    background: #4A90E2;
+       background: #4A90E2;
     color: #fff;
     padding: 12px 30px;
     border-radius: 25px;
@@ -2906,7 +2914,7 @@ nav ul li a.active {
 .dashboard-main {
     max-width: 1400px;
     margin: 0 auto;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-lg);  
     padding-top: 110px;
     display: grid;
     grid-template-columns: 1fr 300px;  /* Thay đổi thành 300px */
@@ -2935,10 +2943,24 @@ nav ul li a.active {
     .dashboard-main {
         grid-template-columns: 1fr;  /* Chuyển về 1 cột khi màn hình nhỏ */
     }
-
+    
     .dashboard-sidebar {
         width: 100%;  /* Chiều rộng 100% khi ở dưới */
         position: relative;  /* Bỏ sticky khi ở dưới */
         top: 0;
     }
+}
+
+/* Blog card animation */
+.blog-card.hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.blog-card.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }

@@ -8,7 +8,7 @@ class BlogEditor {
             tags: [],
             status: 'draft'
         };
-
+        
         this.isPreview = false;
         this.init();
     }
@@ -27,7 +27,7 @@ class BlogEditor {
 
         previewBtn.addEventListener('click', () => {
             this.isPreview = !this.isPreview;
-
+            
             if (this.isPreview) {
                 editorSection.style.display = 'none';
                 previewSection.style.display = 'block';
@@ -108,7 +108,7 @@ class BlogEditor {
     addTag() {
         const tagInput = document.getElementById('tagInput');
         const tagValue = tagInput.value.trim();
-
+        
         if (tagValue && !this.post.tags.includes(tagValue)) {
             this.post.tags.push(tagValue);
             this.renderTags();
@@ -139,7 +139,7 @@ class BlogEditor {
     updatePreview() {
         const previewTitle = document.getElementById('previewTitle');
         const previewContent = document.getElementById('previewContent');
-
+        
         previewTitle.textContent = this.post.title || 'Tiêu đề bài viết';
         previewContent.innerHTML = this.post.content || 'Nội dung bài viết sẽ hiển thị ở đây...';
     }
@@ -169,14 +169,14 @@ class BlogEditor {
 
         // Simulate API call
         this.showLoadingState(status === 'draft' ? 'Đang lưu nháp...' : 'Đang xuất bản...');
-
+        
         setTimeout(() => {
             this.hideLoadingState();
             this.updateStatus();
-
+            
             const message = status === 'draft' ? 'Bài viết đã được lưu nháp!' : 'Bài viết đã được xuất bản!';
             this.showNotification(message, 'success');
-
+            
             // Save to localStorage for demo
             localStorage.setItem('blogPost', JSON.stringify(this.post));
         }, 1500);
@@ -187,7 +187,7 @@ class BlogEditor {
             this.post.title = document.getElementById('postTitle').value;
             this.post.content = document.getElementById('contentEditor').innerHTML;
             this.post.category = document.getElementById('categorySelect').value;
-
+            
             localStorage.setItem('blogPostDraft', JSON.stringify(this.post));
             this.showNotification('Đã tự động lưu', 'info', 2000);
         }
@@ -196,7 +196,7 @@ class BlogEditor {
     updateStatus() {
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
-
+        
         if (this.post.status === 'published') {
             statusDot.className = 'status-dot published';
             statusText.textContent = 'Đã xuất bản';
@@ -209,7 +209,7 @@ class BlogEditor {
     showLoadingState(message) {
         const saveDraftBtn = document.getElementById('saveDraftBtn');
         const publishBtn = document.getElementById('publishBtn');
-
+        
         saveDraftBtn.disabled = true;
         publishBtn.disabled = true;
         publishBtn.innerHTML = `
@@ -223,7 +223,7 @@ class BlogEditor {
     hideLoadingState() {
         const saveDraftBtn = document.getElementById('saveDraftBtn');
         const publishBtn = document.getElementById('publishBtn');
-
+        
         saveDraftBtn.disabled = false;
         publishBtn.disabled = false;
         publishBtn.innerHTML = `
@@ -242,7 +242,7 @@ class BlogEditor {
 
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
-
+        
         const colors = {
             success: 'bg-green-50 border-green-200 text-green-800',
             error: 'bg-red-50 border-red-200 text-red-800',
@@ -306,11 +306,11 @@ class BlogEditor {
         const draft = localStorage.getItem('blogPostDraft');
         if (draft) {
             const parsedDraft = JSON.parse(draft);
-
+            
             document.getElementById('postTitle').value = parsedDraft.title || '';
             document.getElementById('contentEditor').innerHTML = parsedDraft.content || '';
             document.getElementById('categorySelect').value = parsedDraft.category || '';
-
+            
             this.post = { ...parsedDraft };
             this.renderTags();
             this.updateStatus();
@@ -318,19 +318,97 @@ class BlogEditor {
     }
 }
 
-// Utility functions for toolbar
-function insertLink() {
-    const url = prompt('Nhập URL:');
-    if (url) {
-        document.execCommand('createLink', false, url);
+// Modal handling
+const patientListModal = document.getElementById('patientListModal');
+const managementItem = document.querySelector('.management-item');
+const closeBtn = document.querySelector('#patientListModal .close');
+
+// Sample patient data (replace with actual data from your backend)
+const patients = [
+    {
+        id: 'BN001',
+        name: 'Nguyễn Văn A',
+        birthDate: '1990-05-15',
+        phone: '0901234567',
+        address: 'Hà Nội'
+    },
+    {
+        id: 'BN002',
+        name: 'Trần Thị B',
+        birthDate: '1988-08-20',
+        phone: '0912345678',
+        address: 'Hồ Chí Minh'
+    },
+    // Add more patient data as needed
+];
+
+// Open modal when clicking on management item
+managementItem.addEventListener('click', () => {
+    patientListModal.style.display = 'block';
+    renderPatientList(patients);
+});
+
+// Close modal when clicking on close button
+closeBtn.addEventListener('click', () => {
+    patientListModal.style.display = 'none';
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', (event) => {
+    if (event.target === patientListModal) {
+        patientListModal.style.display = 'none';
     }
+});
+
+// Function to render patient list
+function renderPatientList(patientData) {
+    const tbody = document.querySelector('.patient-table tbody');
+    tbody.innerHTML = '';
+
+    patientData.forEach(patient => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${patient.id}</td>
+            <td>${patient.name}</td>
+            <td>${formatDate(patient.birthDate)}</td>
+            <td>${patient.phone}</td>
+            <td>${patient.address}</td>
+            <td>
+                <button class="action-btn view-btn" onclick="viewPatient('${patient.id}')">Xem</button>
+                <button class="action-btn edit-btn" onclick="editPatient('${patient.id}')">Sửa</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
 }
 
-function insertImage() {
-    const url = prompt('Nhập URL hình ảnh:');
-    if (url) {
-        document.execCommand('insertImage', false, url);
-    }
+// Search functionality
+const searchInput = document.querySelector('.search-patient .search-input');
+searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredPatients = patients.filter(patient => 
+        patient.name.toLowerCase().includes(searchTerm) ||
+        patient.id.toLowerCase().includes(searchTerm) ||
+        patient.phone.includes(searchTerm)
+    );
+    renderPatientList(filteredPatients);
+});
+
+// Utility function to format date
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return new Date(dateString).toLocaleDateString('vi-VN', options);
+}
+
+// Patient actions
+function viewPatient(id) {
+    console.log('Viewing patient:', id);
+    // Add your view patient logic here
+}
+
+function editPatient(id) {
+    console.log('Editing patient:', id);
+    // Add your edit patient logic here
 }
 
 // Add CSS animations
@@ -344,6 +422,7 @@ style.textContent = `
         to {
             transform: translateX(0);
             opacity: 1;
+            
         }
     }
     
@@ -377,10 +456,10 @@ document.head.appendChild(style);
 let blogEditor;
 document.addEventListener('DOMContentLoaded', () => {
     blogEditor = new BlogEditor();
-
+    
     // Load draft if exists
     blogEditor.loadDraft();
-
+    
     // Add some sample content for demo
     if (!localStorage.getItem('blogPostDraft')) {
         document.getElementById('postTitle').value = 'Hướng dẫn chăm sóc trẻ em trong mùa đông';
@@ -397,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>Rửa tay thường xuyên bằng xà phòng, đặc biệt trước khi ăn và sau khi về nhà.</p>
         `;
         document.getElementById('categorySelect').value = 'nhi-khoa';
-
+        
         blogEditor.post.tags = ['chăm sóc trẻ em', 'mùa đông', 'sức khỏe'];
         blogEditor.renderTags();
     }
@@ -407,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const nav = document.querySelector('.nav');
-
+    
     if (mobileMenuBtn && nav) {
         mobileMenuBtn.addEventListener('click', () => {
             nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
