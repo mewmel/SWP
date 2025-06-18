@@ -1017,7 +1017,7 @@
                     .then(res => res.json())
                     .then(resp => {
                         if (resp.success) {
-                            alert('Đặt lịch thành công! Vì bạn chưa có tài khoản nên,thông tin tài khoản sẽ được gửi về email.');
+                            alert('Đặt lịch thành công! Nếu bạn chưa có tài khoản nên,thông tin tài khoản sẽ được gửi về email.');
                             document.getElementById('bookingForm').reset();
                             // Reset lại time slot cho ngày hôm nay
                             const today = new Date().toISOString().split('T')[0];
