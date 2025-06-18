@@ -158,10 +158,55 @@
             </div>
             <div class="auth-modal-right">
                 <span class="close-modal">&times;</span>
-                <div class="auth-tabs">
-                    <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-                    <button class="auth-tab" data-tab="register">Đăng ký</button>
+                
+                <!-- Role Selection Step -->
+                <div class="role-selection" id="roleSelection">
+                    <h2>Chọn vai trò của bạn</h2>
+                    <p>Vui lòng chọn loại tài khoản để tiếp tục</p>
+                    <div class="role-options">
+                        <div class="role-option" data-role="customer">
+                            <div class="role-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3>Khách hàng</h3>
+                            <p>Bệnh nhân đăng ký điều trị hiếm muộn</p>
+                            <ul>
+                                <li>Đặt lịch khám</li>
+                                <li>Theo dõi lịch điều trị</li>
+                                <li>Xem kết quả xét nghiệm</li>
+                                <li>Quản lý hồ sơ cá nhân</li>
+                            </ul>
+                        </div>
+                        <div class="role-option" data-role="doctor">
+                            <div class="role-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <h3>Bác sĩ</h3>
+                            <p>Đội ngũ y tế chuyên khoa</p>
+                            <ul>
+                                <li>Quản lý bệnh nhân</li>
+                                <li>Ghi nhận kết quả khám</li>
+                                <li>Lập lịch điều trị</li>
+                                <li>Báo cáo và thống kê</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Auth Forms (hidden initially) -->
+                <div class="auth-section" id="authSection" style="display: none;">
+                    <div class="auth-header">
+                        <button class="back-to-role" id="backToRole">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </button>
+                        <div class="selected-role-info">
+                            <span class="role-badge"></span>
+                        </div>
+                    </div>
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                        <button class="auth-tab" data-tab="register">Đăng ký</button>
+                    </div>
                 <form id="loginForm" class="auth-form active">
                     <div class="form-group">
                         <label for="loginEmail">Email</label>
@@ -170,6 +215,7 @@
                             <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
                         </div>
                     </div>
+
                     <div class="form-group">
                         <label for="loginPassword">Mật khẩu</label>
                         <div class="input-group">
@@ -190,17 +236,6 @@
                         <span>Đăng nhập</span>
                         <i class="fas fa-arrow-right"></i>
                     </button>
-                    <div class="social-login">
-                        <p>Hoặc đăng nhập với</p>
-                        <div class="social-buttons">
-                            <button type="button" class="social-btn google">
-                                <i class="fab fa-google"></i>
-                            </button>
-                            <button type="button" class="social-btn facebook">
-                                <i class="fab fa-facebook-f"></i>
-                            </button>
-                        </div>
-                    </div>
                 </form>
                 <form id="registerForm" class="auth-form">
                     <div class="form-group">
@@ -215,6 +250,20 @@
                         <div class="input-group">
                             <i class="fas fa-envelope"></i>
                             <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Số điện thoại</label>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="registerPhone" required placeholder="Nhập số điện thoại của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Ngày sinh</label>
+                        <div class="input-group">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="date" id="registerDob" required placeholder="Chọn ngày sinh">
                         </div>
                     </div>
                     <div class="form-group">
@@ -235,7 +284,7 @@
                     </div>
                     <div class="form-group">
                         <label class="checkbox-container">
-                            <input type="checkbox" id="agreeTerms" >
+                            <input type="checkbox" id="agreeTerms">
                             <span class="checkmark"></span>
                             Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
                         </label>
@@ -245,6 +294,7 @@
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </form>
+                </div> <!-- End auth-section -->
             </div>
         </div>
     </div>
