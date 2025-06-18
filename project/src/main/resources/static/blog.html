@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEDITAB - Nền tảng Blog Y tế</title>
-    <link rel="stylesheet" href="css/doctor-dashboard.css">
+    <link rel="stylesheet" href="css/doctor-common.css">
     <link rel="stylesheet" href="css/blog.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
+    <!-- Header Navigation -->
     <header class="doctor-header">
         <div class="doctor-header-container">
             <nav class="doctor-nav">
@@ -20,45 +21,117 @@
             
             <div class="doctor-header-right">
                 <div class="doctor-search-box">
-                    <input type="text" placeholder="Tìm kiếm..." class="doctor-search-input">
+                    <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
                     <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
                 </div>
                 
-                <button class="doctor-notification-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                    <span class="doctor-notification-badge">2</span>
-                </button>
+                <div class="notification-wrapper" style="position: relative; display: none;">
+                    <button class="doctor-notification-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="doctor-notification-badge">3</span>
+                    </button>
+                </div>
                 
-                <div class="doctor-user-info">
-                    <div class="doctor-user-details">
-                        <span class="doctor-welcome-text">Welcome</span>
-                        <span class="doctor-user-name">BS. Trần Anh Thư</span>
-                    </div>
-                    <div class="doctor-user-avatar">TA</div>
+                <div class="user-menu" style="display:none;">
+                    <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+                    <button class="logout-btn"
+                        style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </button>
                 </div>
                 
                 <button class="doctor-mobile-menu">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
     </header>
 
+    
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                <button class="auth-tab" data-tab="register">Đăng ký</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="loginPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng nhập</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div class="social-login">
+                    <button type="button" class="social-btn google">
+                        <i class="fab fa-google"></i> Đăng nhập với Google
+                    </button>
+                    <button type="button" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
+                    </button>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">Họ và tên</label>
+                    <input type="text" id="registerName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="registerPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng ký</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="doctor-page-container">
         <div class="container">
-            <main class="main-content">
-            <div class="blog-editor-container">
+            <div class="blog-layout">
+                <main class="main-content">
+                <div class="blog-editor-container">
                 <div class="blog-editor">
                     <div class="editor-header">
                         <h1 class="editor-title">Tạo bài viết mới</h1>
@@ -211,90 +284,89 @@
                     </div>
                 </div>
             </div>
-        </main>
-
-        <aside class="sidebar">
-            <div class="sidebar-content">
-                <div class="sidebar-card management-card">
-                    <div class="card-header">
-                        <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        <h3>Quản lý bệnh nhân</h3>
-                    </div>
-                    <div class="card-content">
-                        <div class="management-item">
-                            <div class="management-icon">👥</div>
-                            <span>Xem danh sách bệnh nhân</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sidebar-card schedule-card">
-                    <div class="card-header">
-                        <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <h3>Quản lý lịch hẹn</h3>
-                    </div>
-                </div>
-
-                <div class="sidebar-card stats-card">
-                    <div class="card-header">
-                        <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="20" x2="12" y2="10"></line>
-                            <line x1="18" y1="20" x2="18" y2="4"></line>
-                            <line x1="6" y1="20" x2="6" y2="16"></line>
-                        </svg>
-                        <h3>Báo cáo thống kê</h3>
-                    </div>
-                </div>
-
-                <div class="sidebar-card appointments-card">
-                    <div class="card-header">
-                        <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <h3>Lịch hẹn hôm nay</h3>
-                    </div>
-                    <div class="appointments-list">
-                        <div class="appointment-item">
-                            <div class="appointment-time">11:30</div>
-                            <div class="appointment-details">
-                                <p>Chuyên phối - BN Lê Thị Lan</p>
-                            </div>
-                        </div>
-                        <div class="appointment-item">
-                            <div class="appointment-time">14:00</div>
-                            <div class="appointment-details">
-                                <p>Tư vấn - BN Nguyễn Thị Thu</p>
-                            </div>
-                        </div>
-                        <div class="appointment-item">
-                            <div class="appointment-time">15:30</div>
-                            <div class="appointment-details">
-                                <p>Theo dõi - BN Phạm Văn Nam</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                
-            </div>
-        </aside>
             </main>
+
+            <aside class="sidebar">
+                <div class="sidebar-content">
+                    <div class="sidebar-card management-card">
+                        <div class="card-header">
+                            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <h3>Quản lý bệnh nhân</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="management-item">
+                                <div class="management-icon">👥</div>
+                                <span>Xem danh sách bệnh nhân</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card schedule-card">
+                        <div class="card-header">
+                            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <h3>Quản lý lịch hẹn</h3>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card stats-card">
+                        <div class="card-header">
+                            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="20" x2="12" y2="10"></line>
+                                <line x1="18" y1="20" x2="18" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="16"></line>
+                            </svg>
+                            <h3>Báo cáo thống kê</h3>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card appointments-card">
+                        <div class="card-header">
+                            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <h3>Lịch hẹn hôm nay</h3>
+                        </div>
+                        <div class="appointments-list">
+                            <div class="appointment-item">
+                                <div class="appointment-time">11:30</div>
+                                <div class="appointment-details">
+                                    <p>Chuyển phôi - BN Lê Thị Lan</p>
+                                </div>
+                            </div>
+                            <div class="appointment-item">
+                                <div class="appointment-time">14:00</div>
+                                <div class="appointment-details">
+                                    <p>Tư vấn - BN Nguyễn Thị Thu</p>
+                                </div>
+                            </div>
+                            <div class="appointment-item">
+                                <div class="appointment-time">15:30</div>
+                                <div class="appointment-details">
+                                    <p>Theo dõi - BN Phạm Văn Nam</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            </div>
         </div>
     </div>
-
+    <script src="js/doctor-common.js"></script>
+    <script src="js/script.js"></script>
     <script src="js/blog.js"></script>
 </body>
 </html>

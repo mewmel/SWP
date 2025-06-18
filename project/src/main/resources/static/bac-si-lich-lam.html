@@ -4,55 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký lịch làm việc - MEDITAB</title>
-    <link rel="stylesheet" href="css/doctor-dashboard.css">
+    <link rel="stylesheet" href="css/doctor-common.css">
     <link rel="stylesheet" href="css/lich-lam.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
+    <!-- Header Navigation -->
     <header class="doctor-header">
         <div class="doctor-header-container">
             <nav class="doctor-nav">
                 <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
                 <a href="blog.html" class="nav-link">Đăng Blog</a>
-                <a href="bac-si-lich-lam.html" class="nav-link active">Đăng ký lịch làm</a>
+                <a href="bac-si-lich-lam.html" class="nav-link  active">Đăng ký lịch làm</a>
                 <a href="#" class="nav-link">Hồ sơ cá nhân</a>
             </nav>
             
             <div class="doctor-header-right">
                 <div class="doctor-search-box">
-                    <input type="text" placeholder="Tìm kiếm..." class="doctor-search-input">
+                    <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
                     <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
                 </div>
                 
-                <button class="doctor-notification-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                    <span class="doctor-notification-badge">1</span>
-                </button>
+                <div class="notification-wrapper" style="position: relative; display: none;">
+                    <button class="doctor-notification-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="doctor-notification-badge">3</span>
+                    </button>
+                </div>
                 
-                <div class="doctor-user-info">
-                    <div class="doctor-user-details">
-                        <span class="doctor-welcome-text">Welcome</span>
-                        <span class="doctor-user-name">BS. Trần Anh Thư</span>
-                    </div>
-                    <div class="doctor-user-avatar">TA</div>
+                <div class="user-menu" style="display:none;">
+                    <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+                    <button class="logout-btn"
+                        style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </button>
                 </div>
                 
                 <button class="doctor-mobile-menu">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
     </header>
+    
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                <button class="auth-tab" data-tab="register">Đăng ký</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="loginPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng nhập</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div class="social-login">
+                    <button type="button" class="social-btn google">
+                        <i class="fab fa-google"></i> Đăng nhập với Google
+                    </button>
+                    <button type="button" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
+                    </button>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">Họ và tên</label>
+                    <input type="text" id="registerName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="registerPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng ký</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <div class="doctor-page-container">
@@ -216,7 +287,8 @@
             </div>
         </div>
     </div>
-
+    <script src="js/doctor-common.js"></script>
+    <script src="js/script.js"></script>
     <script src="js/doctor-schedule.js"></script>
 </body>
 </html>

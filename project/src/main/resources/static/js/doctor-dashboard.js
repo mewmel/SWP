@@ -99,8 +99,10 @@ function savePatientRecord() {
     patient.medicalRecord.treatment = document.getElementById('treatment').value;
     patient.medicalRecord.notes = document.getElementById('notes').value;
 
-    // Show success message
-    showNotification('Đã lưu thay đổi bệnh án thành công!', 'success');
+    // Show success message - use the notification function from script.js
+    if (typeof showNotification === 'function') {
+        showNotification('Đã lưu thay đổi bệnh án thành công!', 'success');
+    }
     
     closeModal();
 }
@@ -134,55 +136,7 @@ function searchPatients() {
     }
 }
 
-// Sidebar functions
-function openScheduleManager() {
-    showNotification('Chức năng quản lý lịch hẹn sẽ được phát triển sớm!', 'info');
-}
 
-function openReports() {
-    showNotification('Chức năng báo cáo thống kê sẽ được phát triển sớm!', 'info');
-}
-
-// Notification system
-function showNotification(message, type = 'info') {
-    // Remove existing notification
-    const existingNotification = document.querySelector('.notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas ${getNotificationIcon(type)}"></i>
-            <span>${message}</span>
-            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `;
-
-    // Add to body
-    document.body.appendChild(notification);
-
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.remove();
-        }
-    }, 4000);
-}
-
-function getNotificationIcon(type) {
-    switch(type) {
-        case 'success': return 'fa-check-circle';
-        case 'error': return 'fa-exclamation-circle';
-        case 'warning': return 'fa-exclamation-triangle';
-        default: return 'fa-info-circle';
-    }
-}
 
 // Close modal when clicking outside
 window.onclick = function(event) {
@@ -197,39 +151,6 @@ window.onclick = function(event) {
     }
 }
 
-// Mobile menu toggle
-function toggleMobileMenu() {
-    const navLeft = document.querySelector('.nav-left');
-    navLeft.style.display = navLeft.style.display === 'flex' ? 'none' : 'flex';
-}
-
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    // Add click handler for mobile menu
-    document.querySelector('.menu-toggle').addEventListener('click', toggleMobileMenu);
-    
-    // Add current time update
-    updateCurrentTime();
-    setInterval(updateCurrentTime, 60000); // Update every minute
-    
-    // Add keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        // Escape to close modals
-        if (e.key === 'Escape') {
-            closeModal();
-            closePatientListModal();
-        }
-        
-        // Ctrl+S to save (when modal is open)
-        if (e.ctrlKey && e.key === 's') {
-            e.preventDefault();
-            const patientModal = document.getElementById('patientModal');
-            if (patientModal.style.display === 'block') {
-                savePatientRecord();
-            }
-        }
-    });
-});
 
 function updateCurrentTime() {
     const now = new Date();
@@ -247,32 +168,6 @@ function updateCurrentTime() {
     }
 }
 
-// Add smooth scrolling for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Add loading animation for buttons
-function addLoadingState(button) {
-    const originalText = button.textContent;
-    button.textContent = 'Đang xử lý...';
-    button.disabled = true;
-    
-    setTimeout(() => {
-        button.textContent = originalText;
-        button.disabled = false;
-    }, 1000);
-}
-
 // Enhanced patient search with debouncing
 let searchTimeout;
 const originalSearchPatients = searchPatients;
@@ -282,75 +177,4 @@ searchPatients = function() {
     searchTimeout = setTimeout(originalSearchPatients, 300);
 };
 
-// Add notification styles
-const notificationStyles = `
-.notification {
-    position: fixed;
-    top: 90px;
-    right: 20px;
-    z-index: 1001;
-    min-width: 300px;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    animation: slideInRight 0.3s ease;
-}
 
-.notification-success {
-    background: #10b981;
-    color: white;
-}
-
-.notification-error {
-    background: #ef4444;
-    color: white;
-}
-
-.notification-warning {
-    background: #f59e0b;
-    color: white;
-}
-
-.notification-info {
-    background: #3b82f6;
-    color: white;
-}
-
-.notification-content {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.25rem;
-}
-
-.notification-close {
-    background: none;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    margin-left: auto;
-    padding: 0.25rem;
-    border-radius: 4px;
-    opacity: 0.8;
-}
-
-.notification-close:hover {
-    opacity: 1;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-`;
-
-// Add notification styles to head
-const styleSheet = document.createElement('style');
-styleSheet.textContent = notificationStyles;
-document.head.appendChild(styleSheet);
