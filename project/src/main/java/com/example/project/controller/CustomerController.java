@@ -2,16 +2,19 @@ package com.example.project.controller;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.project.dto.RegisterRequest;
 import com.example.project.entity.Customer;
 import com.example.project.repository.CustomerRepository;
 
@@ -50,5 +53,25 @@ public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @Reques
     Customer saved = customerRepository.save(customer);
     return ResponseEntity.ok(saved);
 }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody RegisterRequest req) {
+        String email = req.getCusEmail();
+        Optional<Customer> optCustomer = customerRepository.findByCusEmailAndCusProvider(email, "local");
+        if (optCustomer.isEmpty()) {
+            return ResponseEntity.badRequest().body("Email không tồn tại!");
+    }
+    Customer customer = optCustomer.get();
+    // Tạo mật khẩu mới
+    String rawPassword = RandomStringUtils.randomAlphanumeric(8);
+    customer.setCusPassword(passwordEncoder.encode(rawPassword));
+    customerRepository.save(customer);
+
+    // Gửi email
+    sendAccountEmail(customer.getCusEmail(), rawPassword);
+
+    return ResponseEntity.ok("Đã gửi mật khẩu mới đến email của bạn.");
+    }
 
 }
