@@ -21,17 +21,29 @@ function toggleMobileMenu() {
 function checkDoctorLogin() {
     const fullName = localStorage.getItem('userFullName');
     const userRole = localStorage.getItem('userRole');
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> V-Hung2
     // Debug: Log current localStorage values
     console.log('Doctor Dashboard - Debug Info:');
     console.log('fullName:', fullName);
     console.log('userRole:', userRole);
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> V-Hung2
     if (fullName) {
         // User is logged in, show authenticated UI
         console.log('User is logged in - showing UI');
         updateDoctorUI(fullName);
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         // If role is not set or not doctor, set it to doctor for this page
         if (!userRole || userRole !== 'doctor') {
             console.log('Setting role to doctor for this page');
@@ -54,7 +66,11 @@ function updateDoctorUI(fullName) {
     // Hide notification wrapper and user menu initially shown
     const userMenu = document.querySelector('.user-menu');
     const notificationWrapper = document.querySelector('.notification-wrapper');
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> V-Hung2
     if (userMenu) {
         userMenu.style.display = 'flex';
         // Update user name
@@ -63,11 +79,19 @@ function updateDoctorUI(fullName) {
             userNameSpan.textContent = `BS. ${fullName}`;
         }
     }
+<<<<<<< HEAD
     
     if (notificationWrapper) {
         notificationWrapper.style.display = 'block';
     }
     
+=======
+
+    if (notificationWrapper) {
+        notificationWrapper.style.display = 'block';
+    }
+
+>>>>>>> V-Hung2
     // Update sidebar username if opened
     const sidebarUsername = document.querySelector('.sidebar-username');
     if (sidebarUsername) {
@@ -87,7 +111,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         // Check doctor login status after script.js has initialized
         const isLoggedIn = checkDoctorLogin();
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         // Override login success handler to ensure doctor role is saved
         const originalLoginForm = document.getElementById('loginForm');
         if (originalLoginForm) {
@@ -96,7 +124,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.selectedRole = 'doctor';
             });
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         // Initialize doctor dashboard features
         initializeDoctorDashboard();
     }, 100);
@@ -108,11 +140,19 @@ function initializeDoctorDashboard() {
     if (menuToggle) {
         menuToggle.addEventListener('click', toggleMobileMenu);
     }
+<<<<<<< HEAD
     
     // Add current time update
     updateCurrentTime();
     setInterval(updateCurrentTime, 60000); // Update every minute
     
+=======
+
+    // Add current time update
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 60000); // Update every minute
+
+>>>>>>> V-Hung2
     // Add keyboard shortcuts for doctor dashboard
     document.addEventListener('keydown', function(e) {
         // Escape to close modals
@@ -120,7 +160,11 @@ function initializeDoctorDashboard() {
             closeModal();
             closePatientListModal();
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         // Ctrl+S to save (when modal is open)
         if (e.ctrlKey && e.key === 's') {
             e.preventDefault();

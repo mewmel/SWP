@@ -882,11 +882,19 @@ User Menu Styles
         margin: 1rem;
         max-height: 95vh;
     }
+<<<<<<< HEAD
     
     .auth-form {
         padding: 20px;
     }
     
+=======
+
+    .auth-form {
+        padding: 20px;
+    }
+
+>>>>>>> V-Hung2
     .sidebar {
         width: 280px;
     }
@@ -896,11 +904,19 @@ User Menu Styles
     .auth-modal-content {
         max-width: 350px;
     }
+<<<<<<< HEAD
     
     .form-group input {
         font-size: 16px;
     }
     
+=======
+
+    .form-group input {
+        font-size: 16px;
+    }
+
+>>>>>>> V-Hung2
     .sidebar {
         width: 100%;
         right: -100%;
@@ -912,11 +928,19 @@ User Menu Styles
     .doctor-header-container {
         padding: 0 16px;
     }
+<<<<<<< HEAD
     
     .doctor-search-input {
         width: 200px;
     }
     
+=======
+
+    .doctor-search-input {
+        width: 200px;
+    }
+
+>>>>>>> V-Hung2
     .stats-grid {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 16px;
@@ -927,6 +951,7 @@ User Menu Styles
     .doctor-nav {
         display: none;
     }
+<<<<<<< HEAD
     
     .doctor-mobile-menu {
         display: flex;
@@ -952,6 +977,33 @@ User Menu Styles
         grid-template-columns: 1fr;
     }
     
+=======
+
+    .doctor-mobile-menu {
+        display: flex;
+    }
+
+    .doctor-search-box {
+        display: none;
+    }
+
+    .doctor-user-details {
+        display: none;
+    }
+
+    .doctor-page-container {
+        padding: 20px 0;
+    }
+
+    .doctor-page-title {
+        font-size: 24px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+>>>>>>> V-Hung2
     .modal-content {
         margin: 20px;
         width: calc(100% - 40px);
@@ -963,20 +1015,36 @@ User Menu Styles
         padding: 0 12px;
         height: 60px;
     }
+<<<<<<< HEAD
     
     .doctor-page-container {
         padding: 16px 0;
     }
     
+=======
+
+    .doctor-page-container {
+        padding: 16px 0;
+    }
+
+>>>>>>> V-Hung2
     .doctor-card-content,
     .modal-body {
         padding: 16px;
     }
+<<<<<<< HEAD
     
     .stat-card {
         padding: 16px;
     }
     
+=======
+
+    .stat-card {
+        padding: 16px;
+    }
+
+>>>>>>> V-Hung2
     .stat-value {
         font-size: 20px;
     }
@@ -1032,4 +1100,8 @@ User Menu Styles
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+<<<<<<< HEAD
 } 
+=======
+}
+>>>>>>> V-Hung2

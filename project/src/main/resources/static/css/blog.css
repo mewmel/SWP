@@ -177,6 +177,7 @@ body {
     min-height: calc(100vh - 80px);
 }
 
+<<<<<<< HEAD
 /* Blog Layout - 2 columns */
 .blog-layout {
     display: flex;
@@ -190,11 +191,21 @@ body {
 .main-content {
     flex: 1;
     min-width: 0; /* Prevents flex items from overflowing */
+=======
+.main-content {
+    flex: 1;
+    padding: 1.5rem;
+>>>>>>> V-Hung2
 }
 
 /* Blog Editor */
 .blog-editor-container {
+<<<<<<< HEAD
     width: 100%;
+=======
+    max-width: 1200px;
+    margin: 0 auto;
+>>>>>>> V-Hung2
 }
 
 .blog-editor {
@@ -551,9 +562,15 @@ body {
 /* Right Sidebar */
 .sidebar {
     width: 320px;
+<<<<<<< HEAD
     min-width: 320px;
     background: transparent;
     flex-shrink: 0;
+=======
+    background: white;
+    border-left: 1px solid #e5e7eb;
+    padding: 1.5rem;
+>>>>>>> V-Hung2
 }
 
 .sidebar-content {
@@ -755,6 +772,7 @@ body {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
+<<<<<<< HEAD
     
     .blog-layout {
         flex-direction: column;
@@ -766,12 +784,29 @@ body {
         min-width: auto;
     }
     
+=======
+
+    .main-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #e5e7eb;
+    }
+
+>>>>>>> V-Hung2
     .sidebar-content {
         flex-direction: row;
         overflow-x: auto;
         gap: 1rem;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> V-Hung2
     .sidebar-card {
         min-width: 280px;
         flex-shrink: 0;
@@ -782,6 +817,7 @@ body {
     .nav {
         display: none;
     }
+<<<<<<< HEAD
     
     .search-box {
         display: none;
@@ -801,16 +837,40 @@ body {
         gap: 1rem;
     }
     
+=======
+
+    .search-box {
+        display: none;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .header-container {
+        padding: 1rem;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+>>>>>>> V-Hung2
     .editor-header {
         flex-direction: column;
         gap: 1rem;
         align-items: stretch;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> V-Hung2
     .editor-actions {
         justify-content: center;
         flex-wrap: wrap;
     }
+<<<<<<< HEAD
     
     .toolbar {
         justify-content: center;
@@ -820,6 +880,17 @@ body {
         flex-direction: column;
     }
     
+=======
+
+    .toolbar {
+        justify-content: center;
+    }
+
+    .sidebar-content {
+        flex-direction: column;
+    }
+
+>>>>>>> V-Hung2
     .sidebar-card {
         min-width: auto;
     }

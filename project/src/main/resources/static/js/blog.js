@@ -8,7 +8,11 @@ class BlogEditor {
             tags: [],
             status: 'draft'
         };
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         this.isPreview = false;
         this.init();
     }
@@ -27,7 +31,11 @@ class BlogEditor {
 
         previewBtn.addEventListener('click', () => {
             this.isPreview = !this.isPreview;
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> V-Hung2
             if (this.isPreview) {
                 editorSection.style.display = 'none';
                 previewSection.style.display = 'block';
@@ -108,7 +116,11 @@ class BlogEditor {
     addTag() {
         const tagInput = document.getElementById('tagInput');
         const tagValue = tagInput.value.trim();
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         if (tagValue && !this.post.tags.includes(tagValue)) {
             this.post.tags.push(tagValue);
             this.renderTags();
@@ -139,7 +151,11 @@ class BlogEditor {
     updatePreview() {
         const previewTitle = document.getElementById('previewTitle');
         const previewContent = document.getElementById('previewContent');
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         previewTitle.textContent = this.post.title || 'Tiêu đề bài viết';
         previewContent.innerHTML = this.post.content || 'Nội dung bài viết sẽ hiển thị ở đây...';
     }
@@ -169,6 +185,7 @@ class BlogEditor {
 
         // Simulate API call
         this.showLoadingState(status === 'draft' ? 'Đang lưu nháp...' : 'Đang xuất bản...');
+<<<<<<< HEAD
         
         setTimeout(() => {
             this.hideLoadingState();
@@ -177,6 +194,16 @@ class BlogEditor {
             const message = status === 'draft' ? 'Bài viết đã được lưu nháp!' : 'Bài viết đã được xuất bản!';
             this.showNotification(message, 'success');
             
+=======
+
+        setTimeout(() => {
+            this.hideLoadingState();
+            this.updateStatus();
+
+            const message = status === 'draft' ? 'Bài viết đã được lưu nháp!' : 'Bài viết đã được xuất bản!';
+            this.showNotification(message, 'success');
+
+>>>>>>> V-Hung2
             // Save to localStorage for demo
             localStorage.setItem('blogPost', JSON.stringify(this.post));
         }, 1500);
@@ -187,7 +214,11 @@ class BlogEditor {
             this.post.title = document.getElementById('postTitle').value;
             this.post.content = document.getElementById('contentEditor').innerHTML;
             this.post.category = document.getElementById('categorySelect').value;
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> V-Hung2
             localStorage.setItem('blogPostDraft', JSON.stringify(this.post));
             this.showNotification('Đã tự động lưu', 'info', 2000);
         }
@@ -196,7 +227,11 @@ class BlogEditor {
     updateStatus() {
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         if (this.post.status === 'published') {
             statusDot.className = 'status-dot published';
             statusText.textContent = 'Đã xuất bản';
@@ -209,7 +244,11 @@ class BlogEditor {
     showLoadingState(message) {
         const saveDraftBtn = document.getElementById('saveDraftBtn');
         const publishBtn = document.getElementById('publishBtn');
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         saveDraftBtn.disabled = true;
         publishBtn.disabled = true;
         publishBtn.innerHTML = `
@@ -223,7 +262,11 @@ class BlogEditor {
     hideLoadingState() {
         const saveDraftBtn = document.getElementById('saveDraftBtn');
         const publishBtn = document.getElementById('publishBtn');
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         saveDraftBtn.disabled = false;
         publishBtn.disabled = false;
         publishBtn.innerHTML = `
@@ -242,7 +285,11 @@ class BlogEditor {
 
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         const colors = {
             success: 'bg-green-50 border-green-200 text-green-800',
             error: 'bg-red-50 border-red-200 text-red-800',
@@ -306,11 +353,19 @@ class BlogEditor {
         const draft = localStorage.getItem('blogPostDraft');
         if (draft) {
             const parsedDraft = JSON.parse(draft);
+<<<<<<< HEAD
             
             document.getElementById('postTitle').value = parsedDraft.title || '';
             document.getElementById('contentEditor').innerHTML = parsedDraft.content || '';
             document.getElementById('categorySelect').value = parsedDraft.category || '';
             
+=======
+
+            document.getElementById('postTitle').value = parsedDraft.title || '';
+            document.getElementById('contentEditor').innerHTML = parsedDraft.content || '';
+            document.getElementById('categorySelect').value = parsedDraft.category || '';
+
+>>>>>>> V-Hung2
             this.post = { ...parsedDraft };
             this.renderTags();
             this.updateStatus();
@@ -377,10 +432,17 @@ document.head.appendChild(style);
 let blogEditor;
 document.addEventListener('DOMContentLoaded', () => {
     blogEditor = new BlogEditor();
+<<<<<<< HEAD
     
     // Load draft if exists
     blogEditor.loadDraft();
     
+=======
+
+    // Load draft if exists
+    blogEditor.loadDraft();
+
+>>>>>>> V-Hung2
     // Add some sample content for demo
     if (!localStorage.getItem('blogPostDraft')) {
         document.getElementById('postTitle').value = 'Hướng dẫn chăm sóc trẻ em trong mùa đông';
@@ -397,7 +459,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>Rửa tay thường xuyên bằng xà phòng, đặc biệt trước khi ăn và sau khi về nhà.</p>
         `;
         document.getElementById('categorySelect').value = 'nhi-khoa';
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> V-Hung2
         blogEditor.post.tags = ['chăm sóc trẻ em', 'mùa đông', 'sức khỏe'];
         blogEditor.renderTags();
     }
@@ -407,7 +473,11 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const nav = document.querySelector('.nav');
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> V-Hung2
     if (mobileMenuBtn && nav) {
         mobileMenuBtn.addEventListener('click', () => {
             nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
@@ -421,4 +491,8 @@ window.addEventListener('resize', () => {
     if (window.innerWidth > 768 && nav) {
         nav.style.display = 'flex';
     }
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> V-Hung2
