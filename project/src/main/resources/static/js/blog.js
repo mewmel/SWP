@@ -318,19 +318,97 @@ class BlogEditor {
     }
 }
 
-// Utility functions for toolbar
-function insertLink() {
-    const url = prompt('Nhập URL:');
-    if (url) {
-        document.execCommand('createLink', false, url);
+// Modal handling
+const patientListModal = document.getElementById('patientListModal');
+const managementItem = document.querySelector('.management-item');
+const closeBtn = document.querySelector('#patientListModal .close');
+
+// Sample patient data (replace with actual data from your backend)
+const patients = [
+    {
+        id: 'BN001',
+        name: 'Nguyễn Văn A',
+        birthDate: '1990-05-15',
+        phone: '0901234567',
+        address: 'Hà Nội'
+    },
+    {
+        id: 'BN002',
+        name: 'Trần Thị B',
+        birthDate: '1988-08-20',
+        phone: '0912345678',
+        address: 'Hồ Chí Minh'
+    },
+    // Add more patient data as needed
+];
+
+// Open modal when clicking on management item
+managementItem.addEventListener('click', () => {
+    patientListModal.style.display = 'block';
+    renderPatientList(patients);
+});
+
+// Close modal when clicking on close button
+closeBtn.addEventListener('click', () => {
+    patientListModal.style.display = 'none';
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', (event) => {
+    if (event.target === patientListModal) {
+        patientListModal.style.display = 'none';
     }
+});
+
+// Function to render patient list
+function renderPatientList(patientData) {
+    const tbody = document.querySelector('.patient-table tbody');
+    tbody.innerHTML = '';
+
+    patientData.forEach(patient => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${patient.id}</td>
+            <td>${patient.name}</td>
+            <td>${formatDate(patient.birthDate)}</td>
+            <td>${patient.phone}</td>
+            <td>${patient.address}</td>
+            <td>
+                <button class="action-btn view-btn" onclick="viewPatient('${patient.id}')">Xem</button>
+                <button class="action-btn edit-btn" onclick="editPatient('${patient.id}')">Sửa</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
 }
 
-function insertImage() {
-    const url = prompt('Nhập URL hình ảnh:');
-    if (url) {
-        document.execCommand('insertImage', false, url);
-    }
+// Search functionality
+const searchInput = document.querySelector('.search-patient .search-input');
+searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredPatients = patients.filter(patient => 
+        patient.name.toLowerCase().includes(searchTerm) ||
+        patient.id.toLowerCase().includes(searchTerm) ||
+        patient.phone.includes(searchTerm)
+    );
+    renderPatientList(filteredPatients);
+});
+
+// Utility function to format date
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return new Date(dateString).toLocaleDateString('vi-VN', options);
+}
+
+// Patient actions
+function viewPatient(id) {
+    console.log('Viewing patient:', id);
+    // Add your view patient logic here
+}
+
+function editPatient(id) {
+    console.log('Editing patient:', id);
+    // Add your edit patient logic here
 }
 
 // Add CSS animations
@@ -344,6 +422,7 @@ style.textContent = `
         to {
             transform: translateX(0);
             opacity: 1;
+            
         }
     }
     

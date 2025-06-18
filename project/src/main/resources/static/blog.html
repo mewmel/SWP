@@ -21,6 +21,7 @@
                     <a href="blog.html" class="nav-link active">Đăng Blog</a>
                     <a href="bac-si-lich-lam.html" class="nav-link">Đăng ký lịch làm</a>
                     <a href="profile.html" class="nav-link">Hồ sơ cá nhân</a>
+                    <a href="#" class="nav-link">Đăng xuất</a>
                 </nav>
             </div>
 
@@ -298,6 +299,36 @@
                 
             </div>
         </aside>
+    </div>
+
+    <!-- Patient List Modal -->
+    <div id="patientListModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Danh sách bệnh nhân</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-patient">
+                    <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="search-input">
+                </div>
+                <table class="patient-table">
+                    <thead>
+                        <tr>
+                            <th>Mã BN</th>
+                            <th>Họ và tên</th>
+                            <th>Ngày sinh</th>
+                            <th>Số điện thoại</th>
+                            <th>Địa chỉ</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dữ liệu bệnh nhân sẽ được thêm vào đây bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script src="js/blog.js"></script>
