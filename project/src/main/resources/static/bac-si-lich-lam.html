@@ -4,54 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký lịch làm việc - MEDITAB</title>
+    <link rel="stylesheet" href="css/doctor-dashboard.css">
     <link rel="stylesheet" href="css/lich-lam.css">
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <!-- <div class="logo">
-                    <div class="logo-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>
-                        </svg>
-                    </div>
-                    <div class="logo-text">
-                        <h1>MEDITAB</h1>
-                        <p>Hệ thống quản lý y tế</p>
-                    </div>
-                </div> -->
-                
-                <nav class="nav">
-                    <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
-                    <a href="blog.html" class="nav-link">Đăng Blog</a>
-                    <a href="bac-si-lich-lam.html" class="nav-link active">Đăng ký lịch làm</a>
-                    <a href="#" class="nav-link">Hồ sơ cá nhân</a>
-                </nav>
-                
-                <div class="user-info">
-                    <span>Welcome</span>
-                    <div class="user-avatar">
-                        <div class="avatar-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                <circle cx="12" cy="7" r="4"/>
-                            </svg>
-                        </div>
-                    </div>
+    <header class="doctor-header">
+        <div class="doctor-header-container">
+            <nav class="doctor-nav">
+                <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
+                <a href="blog.html" class="nav-link">Đăng Blog</a>
+                <a href="bac-si-lich-lam.html" class="nav-link active">Đăng ký lịch làm</a>
+                <a href="#" class="nav-link">Hồ sơ cá nhân</a>
+            </nav>
+            
+            <div class="doctor-header-right">
+                <div class="doctor-search-box">
+                    <input type="text" placeholder="Tìm kiếm..." class="doctor-search-input">
+                    <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
                 </div>
+                
+                <button class="doctor-notification-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="doctor-notification-badge">1</span>
+                </button>
+                
+                <div class="doctor-user-info">
+                    <div class="doctor-user-details">
+                        <span class="doctor-welcome-text">Welcome</span>
+                        <span class="doctor-user-name">BS. Trần Anh Thư</span>
+                    </div>
+                    <div class="doctor-user-avatar">TA</div>
+                </div>
+                
+                <button class="doctor-mobile-menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="main">
+    <div class="doctor-page-container">
         <div class="container">
             <!-- Page Title -->
-            <div class="page-title">
-                <h1>Đăng ký lịch làm việc</h1>
-                <p>Chọn các ca làm việc trong tuần. Hệ thống sẽ tự động xử lý và thông báo kết quả.</p>
+            <div class="doctor-page-header">
+                <h1 class="doctor-page-title">Đăng ký lịch làm việc</h1>
+                <p class="doctor-page-subtitle">Chọn các ca làm việc trong tuần. Hệ thống sẽ tự động xử lý và thông báo kết quả.</p>
             </div>
 
             <!-- Week Selector -->
@@ -206,7 +215,7 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <script src="js/doctor-schedule.js"></script>
 </body>

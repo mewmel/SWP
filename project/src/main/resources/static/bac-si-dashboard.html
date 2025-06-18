@@ -4,41 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang chủ Bác sĩ - Hệ thống quản lý</title>
+    <link rel="stylesheet" href="css/doctor-dashboard.css">
     <link rel="stylesheet" href="css/bac-si-dashboard.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- Header Navigation -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="nav-left">
+    <header class="doctor-header">
+        <div class="doctor-header-container">
+            <nav class="doctor-nav">
                 <a href="bac-si-dashboard.html" class="nav-link active">Trang cá nhân</a>
                 <a href="blog.html" class="nav-link">Đăng Blog</a>
                 <a href="bac-si-lich-lam.html" class="nav-link">Đăng ký lịch làm</a>
                 <a href="#" class="nav-link">Hồ sơ cá nhân</a>
-            </div>
-            <div class="nav-right">
-                <span class="welcome-text">Welcome</span>
-                <span class="doctor-name">BS. Trần Anh Thư</span>
-                <button class="menu-togg    le">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-
-            <div class="header-right" style="margin-top: 30px;">
-                <div class="search-box">
-                    <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="search-input">
-                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            </nav>
+            
+            <div class="doctor-header-right">
+                <div class="doctor-search-box">
+                    <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
+                    <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
                 </div>
-        </nav>
+                
+                <button class="doctor-notification-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="doctor-notification-badge">3</span>
+                </button>
+                
+                <div class="doctor-user-info">
+                    <div class="doctor-user-details">
+                        <span class="doctor-welcome-text">Welcome</span>
+                        <span class="doctor-user-name">BS. Trần Anh Thư</span>
+                    </div>
+                    <div class="doctor-user-avatar">TA</div>
+                </div>
+                
+                <button class="doctor-mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
     </header>
 
-    <div class="container">
-        <!-- Main Content -->
-        <main class="main-content">
+    <div class="doctor-page-container">
+        <div class="container">
+            <!-- Main Content -->
+            <main class="main-content">
             <div class="schedule-section">
                 <div class="schedule-header">
                     <h2>Lịch trình hôm nay</h2>
@@ -258,6 +274,7 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
             </div>
         </div>
     </div>
