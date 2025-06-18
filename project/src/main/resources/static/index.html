@@ -7,6 +7,67 @@
     <title>FertilityEHR bởi Meditab</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Doctor Slider Styles */
+        .doctors-slider-wrapper {
+            position: relative;
+            width: 100%;
+            padding: 0 40px;
+        }
+
+        .doctors-grid {
+            display: flex;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .doctor-card {
+            min-width: calc(33.333% - 14px);
+            flex: 0 0 auto;
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .slider-btn:hover {
+            background: #4A90E2;
+            color: white;
+            border-color: #4A90E2;
+        }
+
+        .prev-btn {
+            left: 0;
+        }
+
+        .next-btn {
+            right: 0;
+        }
+
+        .slider-btn i {
+            font-size: 18px;
+        }
+
+        .slider-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 
 <body>
@@ -449,7 +510,7 @@
 
     <section class="blog-section" id="blog">
         <div class="container">
-            <h2 class="section-title">Blog & Tin tức</h2>
+            <h2 class="section-title" style="margin-top: 50px;">Blog & Tin tức</h2>
             <div class="blog-grid">
                 <div class="blog-card">
                     <div class="blog-image">
@@ -676,7 +737,56 @@
             </div>
         </div>
     </footer>
-    <script src="js/script.js"></script>
+    <script src="js/script.js"></script>    <script>
+        // Doctor Slider functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const doctorsGrid = document.querySelector('.doctors-grid');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            const doctorCards = document.querySelectorAll('.doctor-card');
+            let currentPage = 0;
+            const cardsToShow = 3;
+            const totalPages = Math.ceil(doctorCards.length / cardsToShow);
+            
+            // Initially hide previous button
+            prevBtn.style.display = 'none';
+
+            // Update buttons visibility
+            function updateButtons() {
+                prevBtn.style.display = currentPage === 0 ? 'none' : 'flex';
+                nextBtn.style.display = currentPage >= totalPages - 1 ? 'none' : 'flex';
+            }
+
+            // Calculate scroll distance for one page
+            function getPageScrollDistance() {
+                return doctorsGrid.offsetWidth;
+            }
+
+            // Slide to next set of doctors
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages - 1) {
+                    currentPage++;
+                    doctorsGrid.scrollLeft += getPageScrollDistance();
+                    updateButtons();
+                }
+            });
+
+            // Slide to previous set of doctors
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 0) {
+                    currentPage--;
+                    doctorsGrid.scrollLeft -= getPageScrollDistance();
+                    updateButtons();
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                // Reset scroll position to current page
+                doctorsGrid.scrollLeft = currentPage * getPageScrollDistance();
+            });
+        });
+    </script>
 </body>
 
 </html>
