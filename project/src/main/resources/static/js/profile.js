@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Khai báo các input trong form
+    // Khai báo các input trong form chỉnh sửa hồ sơ
     const nameInput = document.querySelector('.info-hoten');
     const dobInput = document.getElementById('dob') || document.querySelector('.info-ngaysinh');
     const phoneInput = document.getElementById('phone') || document.querySelector('.info-phone');
@@ -11,27 +11,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebarUsername = document.querySelector('.sidebar-username');
     const userNameSpan = document.querySelector('.user-name');
 
-    // Lấy email đã login
-    const userEmail = localStorage.getItem('userEmail');
+    // Lấy email đã login từ localStorage (dùng key chuẩn là cusEmail)
+    const userEmail = localStorage.getItem('cusEmail');
     let cusId = null;
 
-    // --- HIỆN DỮ LIỆU LÊN FORM ---
+    // --- HIỂN THÔNG TIN NGƯỜI DÙNG LÊN FORM ---
     if (userEmail) {
         fetch(`http://localhost:8080/api/customer/${encodeURIComponent(userEmail)}`)
             .then(res => res.json())
             .then(data => {
                 cusId = data.cusId;
                 if (nameInput) nameInput.value = data.cusFullName || '';
-                if (dobInput) dobInput.value = data.cusDate || '';
+                if (dobInput && data.cusDate) {
+                    // Chuyển đổi ngày sang định dạng yyyy-MM-dd cho input type="date"
+                    let dateStr = data.cusDate;
+                    if (/^\d{2}[/\-]\d{2}[/\-]\d{4}$/.test(dateStr)) {
+                        let [d, m, y] = dateStr.split(/[\/\-]/);
+                        dateStr = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                    }
+                    dobInput.value = dateStr;
+                }
                 if (phoneInput) phoneInput.value = data.cusPhone || '';
                 if (emailInput) emailInput.value = data.cusEmail || '';
                 if (jobInput) jobInput.value = data.cusOccupation || '';
                 if (addressInput) addressInput.value = data.cusAddress || '';
                 if (emergencyInput) emergencyInput.value = data.emergencyContact || '';
-                // Giới tính radio
+                // Hiển thị giới tính
                 if (genderRadios && genderRadios.length) {
                     genderRadios.forEach(radio => {
-                        // Backend lưu 'M' và 'F'
                         if (
                             (radio.value === 'nam' && data.cusGender === 'M') ||
                             (radio.value === 'nu' && data.cusGender === 'F')
@@ -40,11 +47,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     });
                 }
-                // Cập nhật tên vào sidebar/menu
+                // Cập nhật tên sidebar/menu
                 if (userNameSpan) userNameSpan.textContent = data.cusFullName || '';
                 if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || '';
-                localStorage.setItem('cusId', data.cusId);
-                localStorage.setItem('userFullName', data.cusFullName || '');
+                // Đồng bộ localStorage (nếu cần)
+                localStorage.setItem('cusId', data.cusId || '');
+                localStorage.setItem('cusFullName', data.cusFullName || '');
+                localStorage.setItem('cusEmail', data.cusEmail || '');
+                localStorage.setItem('cusPhone', data.cusPhone || '');
+                localStorage.setItem('cusDate', data.cusDate || '');
+                localStorage.setItem('cusAddress', data.cusAddress || '');
+                localStorage.setItem('cusOccupation', data.cusOccupation || '');
+                localStorage.setItem('cusGender', data.cusGender || '');
+                localStorage.setItem('emergencyContact', data.emergencyContact || '');
             })
             .catch(() => {
                 alert('Không lấy được thông tin hồ sơ!');
@@ -74,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cusGender: genderValue,
                 cusDate: dobInput ? dobInput.value : "",
                 cusPhone: phoneInput ? phoneInput.value.trim() : "",
+                cusEmail: emailInput ? emailInput.value.trim() : "", // có thể cho update email nếu backend cho phép
                 cusOccupation: jobInput ? jobInput.value.trim() : "",
                 cusAddress: addressInput ? addressInput.value.trim() : "",
                 emergencyContact: emergencyInput ? emergencyInput.value.trim() : ""
@@ -91,7 +107,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Cập nhật lại tên menu/sidebar
                     if (userNameSpan) userNameSpan.textContent = updated.cusFullName || '';
                     if (sidebarUsername) sidebarUsername.textContent = updated.cusFullName || '';
-                    localStorage.setItem('userFullName', updated.cusFullName || '');
+                    // Đồng bộ lại localStorage với thông tin mới nhất
+                    if (updated && typeof updated === 'object') {
+                        Object.keys(updated).forEach(key => {
+                            if (updated[key] !== undefined && updated[key] !== null) {
+                                localStorage.setItem(key, updated[key]);
+                            }
+                        });
+                    }
                     alert('Thông tin đã được lưu thành công!');
                 })
                 .catch(err => {

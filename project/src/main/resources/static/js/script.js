@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const notificationWrapper = document.querySelector('.notification-wrapper');
 
     // Hiển thị đúng trạng thái đăng nhập khi load lại trang
-    const fullName = localStorage.getItem('userFullName');
+    const fullName = localStorage.getItem('cusFullName');
     if (fullName) {
         if (authButtons) authButtons.style.display = 'none';
         if (userMenu) userMenu.style.display = 'flex';
@@ -23,10 +23,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Kiểm tra và hiển thị thông báo đăng xuất
     const logoutMessage = localStorage.getItem('logoutMessage');
     if (logoutMessage) {
-        // Thêm delay nhỏ để trang load xong trước khi hiển thị thông báo
         setTimeout(() => {
             showNotification(logoutMessage, 'success');
-            localStorage.removeItem('logoutMessage'); // Xóa thông báo sau khi hiển thị
+            localStorage.removeItem('logoutMessage');
         }, 100);
     }
 
@@ -34,8 +33,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
         submitBtn.disabled = true;
 
@@ -55,9 +52,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(data => {
-                // Lưu tên và email vào localStorage
-                localStorage.setItem('userFullName', data.cusFullName || data.cusEmail || 'Người dùng');
-                localStorage.setItem('userEmail', data.cusEmail || '');
+                // Lưu tất cả trường từ data vào localStorage
+                if (data && typeof data === 'object') {
+                    Object.keys(data).forEach(key => {
+                        if (data[key] !== undefined && data[key] !== null) {
+                            localStorage.setItem(key, data[key]);
+                        }
+                    });
+                }
+
                 // Hiển thị giao diện đã đăng nhập
                 if (authButtons) authButtons.style.display = 'none';
                 if (userMenu) userMenu.style.display = 'flex';
@@ -68,14 +71,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 const closeModal = document.querySelector('.close-modal');
                 if (closeModal) closeModal.click();
 
-                // Lưu role vào localStorage
-                if (selectedRole) {
+                // Lưu role vào localStorage nếu có
+                if (typeof selectedRole !== 'undefined' && selectedRole) {
                     localStorage.setItem('userRole', selectedRole);
                 }
 
-                console.log('>> Sẽ chuyển sang dashboard!');
                 window.location.href = "dashboard.html";
-
             })
             .catch((err) => {
                 showNotification(
@@ -92,47 +93,44 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ========== ĐĂNG XUẤT ==========
+    function clearAllLocalStorage() {
+        localStorage.clear();
+    }
+
     const logoutBtn = document.querySelector('.logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            localStorage.removeItem('userFullName');
-            localStorage.removeItem('userEmail');
-            // Lưu thông báo đăng xuất để hiển thị trên trang index
+            clearAllLocalStorage();
             localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
             if (notificationWrapper) notificationWrapper.style.display = 'none';
             closeSidebar();
             clearLoginForm();
-            // Chuyển trang ngay lập tức nếu không ở trang index
             if (window.location.pathname !== '/index.html' && !window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
                 window.location.href = "index.html";
             } else {
-                // Nếu đã ở trang index, hiển thị thông báo ngay
                 showNotification('Đã đăng xuất!', 'success');
                 localStorage.removeItem('logoutMessage');
             }
         });
     }
+
     const sidebarLogout = document.querySelector('.sidebar-logout');
     if (sidebarLogout) {
         sidebarLogout.addEventListener('click', function (e) {
             e.preventDefault();
-            localStorage.removeItem('userFullName');
-            localStorage.removeItem('userEmail');
-            // Lưu thông báo đăng xuất để hiển thị trên trang index
+            clearAllLocalStorage();
             localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
             if (userMenu) userMenu.style.display = 'none';
             if (authButtons) authButtons.style.display = 'flex';
             if (notificationWrapper) notificationWrapper.style.display = 'none';
             closeSidebar();
             clearLoginForm();
-            // Chuyển trang ngay lập tức
             window.location.href = "index.html";
         });
     }
-
 
     // ========= ĐĂNG KÝ GỌI API BACKEND =========
     document.getElementById('registerForm').addEventListener('submit', function (e) {
@@ -241,9 +239,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         return response.json();
                     })
                     .then(data => {
-                        // Lưu thông tin vào localStorage
-                        localStorage.setItem('userFullName', data.cusFullName || data.cusEmail || 'Người dùng');
-                        localStorage.setItem('userEmail', data.cusEmail || '');
+                        // Lưu tất cả field trả về từ backend vào localStorage
+                        if (data && typeof data === 'object') {
+                            Object.keys(data).forEach(key => {
+                                if (data[key] !== undefined && data[key] !== null) {
+                                    localStorage.setItem(key, data[key]);
+                                }
+                            });
+                        }
+                        // Lưu role nếu có
                         localStorage.setItem('userRole', selectedRole);
                         if (authButtons) authButtons.style.display = 'none';
                         if (userMenu) userMenu.style.display = 'flex';
@@ -254,8 +258,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         const closeModal = document.querySelector('.close-modal');
                         if (closeModal) closeModal.click();
 
-                        // Chuyển trang sau khi auto login:
-                        console.log('>> Sẽ chuyển sang dashboard!');
                         window.location.href = "dashboard.html";
                     })
                     .catch(err => {
@@ -1033,27 +1035,39 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Tự động điền vào form đăng ký khám khi đã đăng nhập
-    const userFullName = localStorage.getItem('userFullName');
-    const userEmail = localStorage.getItem('userEmail');
-    const userDob = localStorage.getItem('userDob');
-    const userPhone = localStorage.getItem('userPhone');
+    // Lấy email user đã đăng nhập
+    const userEmail = localStorage.getItem('cusEmail');
+    if (!userEmail) return;
 
-    const dobInput = document.getElementById('dob');
-    const emailInput = document.getElementById('email');
-    const nameInput = document.getElementById('fullName');
-    const phoneInput = document.getElementById('phone');
+    fetch(`http://localhost:8080/api/customer/${encodeURIComponent(userEmail)}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log('API data:', data); // DEBUG
+            if (data) {
+                const nameInput = document.getElementById('fullName');
+                const phoneInput = document.getElementById('phone');
+                const emailInput = document.getElementById('email');
+                const dobInput = document.getElementById('dob');
+                const addressInput = document.getElementById('address');
+                const occupationInput = document.getElementById('occupation');
 
-    if (userFullName && nameInput) {
-        nameInput.value = userFullName;
-    }
-    if (userEmail && emailInput) {
-        emailInput.value = userEmail;
-    }
-    if (userPhone && phoneInput) {
-        phoneInput.value = userPhone;
-    }
-    if (userDob && dobInput) {
-        dobInput.value = userDob;
-    }
+                if (nameInput) nameInput.value = data.cusFullName || '';
+                if (phoneInput) phoneInput.value = data.cusPhone || '';
+                if (emailInput) emailInput.value = data.cusEmail || '';
+                if (dobInput && data.cusDate) {
+                    let dateStr = data.cusDate;
+                    // Chuyển đổi nếu backend trả về dd/MM/yyyy hoặc dd-MM-yyyy
+                    if (/^\d{2}[/\-]\d{2}[/\-]\d{4}$/.test(dateStr)) {
+                        let [d, m, y] = dateStr.split(/[\/\-]/);
+                        dateStr = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                    }
+                    dobInput.value = dateStr;
+                }
+                if (addressInput) addressInput.value = data.cusAddress || '';
+                if (occupationInput) occupationInput.value = data.cusOccupation || '';
+            }
+        })
+        .catch(err => {
+            console.log('Không tự động lấy được dữ liệu user:', err);
+        });
 });
