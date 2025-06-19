@@ -882,11 +882,11 @@ User Menu Styles
         margin: 1rem;
         max-height: 95vh;
     }
-    
+
     .auth-form {
         padding: 20px;
     }
-    
+
     .sidebar {
         width: 280px;
     }
@@ -896,11 +896,11 @@ User Menu Styles
     .auth-modal-content {
         max-width: 350px;
     }
-    
+
     .form-group input {
         font-size: 16px;
     }
-    
+
     .sidebar {
         width: 100%;
         right: -100%;
@@ -912,11 +912,11 @@ User Menu Styles
     .doctor-header-container {
         padding: 0 16px;
     }
-    
+
     .doctor-search-input {
         width: 200px;
     }
-    
+
     .stats-grid {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 16px;
@@ -927,31 +927,31 @@ User Menu Styles
     .doctor-nav {
         display: none;
     }
-    
+
     .doctor-mobile-menu {
         display: flex;
     }
-    
+
     .doctor-search-box {
         display: none;
     }
-    
+
     .doctor-user-details {
         display: none;
     }
-    
+
     .doctor-page-container {
         padding: 20px 0;
     }
-    
+
     .doctor-page-title {
         font-size: 24px;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .modal-content {
         margin: 20px;
         width: calc(100% - 40px);
@@ -963,20 +963,20 @@ User Menu Styles
         padding: 0 12px;
         height: 60px;
     }
-    
+
     .doctor-page-container {
         padding: 16px 0;
     }
-    
+
     .doctor-card-content,
     .modal-body {
         padding: 16px;
     }
-    
+
     .stat-card {
         padding: 16px;
     }
-    
+
     .stat-value {
         font-size: 20px;
     }
@@ -1032,4 +1032,4 @@ User Menu Styles
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-} 
+}

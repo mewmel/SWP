@@ -71,14 +71,14 @@ function viewPatientRecord(patientId) {
     document.getElementById('patientAge').textContent = patient.age;
     document.getElementById('patientPhone').textContent = patient.phone;
     document.getElementById('patientAddress').textContent = patient.address;
-    
+
     document.getElementById('diagnosis').value = patient.medicalRecord.diagnosis;
     document.getElementById('symptoms').value = patient.medicalRecord.symptoms;
     document.getElementById('treatment').value = patient.medicalRecord.treatment;
     document.getElementById('notes').value = patient.medicalRecord.notes;
 
     document.getElementById('patientModal').style.display = 'block';
-    
+
     // Store current patient ID for saving
     document.getElementById('patientModal').dataset.patientId = patientId;
 }
@@ -90,7 +90,7 @@ function closeModal() {
 function savePatientRecord() {
     const patientId = document.getElementById('patientModal').dataset.patientId;
     const patient = patientData[patientId];
-    
+
     if (!patient) return;
 
     // Update patient record
@@ -103,7 +103,7 @@ function savePatientRecord() {
     if (typeof showNotification === 'function') {
         showNotification('Đã lưu thay đổi bệnh án thành công!', 'success');
     }
-    
+
     closeModal();
 }
 
@@ -142,7 +142,7 @@ function searchPatients() {
 window.onclick = function(event) {
     const patientModal = document.getElementById('patientModal');
     const patientListModal = document.getElementById('patientListModal');
-    
+
     if (event.target === patientModal) {
         closeModal();
     }
@@ -154,14 +154,14 @@ window.onclick = function(event) {
 
 function updateCurrentTime() {
     const now = new Date();
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: '2-digit', 
-        day: '2-digit' 
+    const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
     };
     const dateString = now.toLocaleDateString('vi-VN', options);
-    
+
     const currentDateElement = document.querySelector('.current-date');
     if (currentDateElement) {
         currentDateElement.textContent = dateString;
@@ -176,5 +176,3 @@ searchPatients = function() {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(originalSearchPatients, 300);
 };
-
-

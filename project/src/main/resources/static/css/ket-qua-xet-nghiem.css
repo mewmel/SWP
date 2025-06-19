@@ -441,22 +441,22 @@ nav a.active {
         grid-template-columns: 1fr;
         gap: var(--spacing-lg);
     }
-    
+
     .left-content {
         grid-template-columns: 1fr;
         order: 2;
     }
-    
+
     .right-content {
         order: 1;
     }
-    
+
     .test-summary {
         flex-direction: row;
         justify-content: center;
         flex-wrap: wrap;
     }
-    
+
     .test-summary .summary-card {
         min-width: 200px;
         width: auto;

@@ -1,140 +1,125 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Khai báo các input trong form chỉnh sửa hồ sơ
+    const nameInput = document.querySelector('.info-hoten');
+    const dobInput = document.getElementById('dob') || document.querySelector('.info-ngaysinh');
+    const phoneInput = document.getElementById('phone') || document.querySelector('.info-phone');
+    const emailInput = document.getElementById('email') || document.querySelector('.info-email');
+    const jobInput = document.querySelector('.info-nghenghiep');
+    const addressInput = document.querySelector('.info-address');
+    const emergencyInput = document.querySelector('.info-khan-cap');
+    const genderRadios = document.querySelectorAll('input[name="gender"]');
+    const sidebarUsername = document.querySelector('.sidebar-username');
+    const userNameSpan = document.querySelector('.user-name');
 
-    // Sidebar logic (giữ nguyên)
-    document.addEventListener('DOMContentLoaded', function() {
-        // Hiện tên user từ localStorage
-        var fullName = localStorage.getItem('userFullName');
-        var sidebarUsername = document.querySelector('.sidebar-username');
-        if (sidebarUsername) {
-            sidebarUsername.textContent = fullName || "User";
-        }
-        // Sidebar show/hide
-        const sidebar = document.getElementById('sidebar');
-        const openSidebarBtn = document.getElementById('openSidebar');
-        const closeSidebarBtn = document.getElementById('closeSidebar');
-        function closeSidebar() {
-            if (sidebar) {
-                sidebar.classList.remove('active');
-                setTimeout(() => {
-                    sidebar.style.display = 'none';
-                }, 300);
-            }
-        }
-        if(openSidebarBtn && sidebar) {
-            openSidebarBtn.addEventListener('click', function(e) {
-                sidebar.style.display = 'flex';
-                setTimeout(() => {
-                    sidebar.classList.add('active');
-                }, 10);
-            });
-        }
-        if(closeSidebarBtn && sidebar) {
-            closeSidebarBtn.addEventListener('click', function() {
-                closeSidebar();
-            });
-        }
-        document.addEventListener('mousedown', function(e) {
-            if (
-                sidebar &&
-                sidebar.classList.contains('active') &&
-                !sidebar.contains(e.target) &&
-                !e.target.closest('#openSidebar')
-            ) {
-                closeSidebar();
-            }
-        });
-        // Đăng xuất từ sidebar
-        const sidebarLogout = document.querySelector('.sidebar-logout');
-        if(sidebarLogout) {
-            sidebarLogout.addEventListener('click', function(e) {
-                e.preventDefault();
-                localStorage.removeItem('userFullName');
-                closeSidebar();
-                alert('Đăng xuất thành công!');
-                window.location.href = "index.html";
-            });
-        }
-        // Chuyển sang trang hồ sơ cá nhân
-        const sidebarAccount = document.querySelector('.sidebar-account');
-        if(sidebarAccount) {
-            sidebarAccount.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = "ho-so-ca-nhan.html";
-            });
-        }
+    // Lấy email đã login từ localStorage (dùng key chuẩn là cusEmail)
+    const userEmail = localStorage.getItem('cusEmail');
+    let cusId = null;
 
-        // Tab functionality
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const tabId = this.dataset.tab;
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        // Avatar upload
-        document.querySelector('.avatar-upload').addEventListener('click', function() {
-            alert('Chọn ảnh mới từ thiết bị của bạn');
-        });
-
-        // Save changes
-        document.querySelector('.btn-primary').addEventListener('click', function() {
-            alert('Thông tin đã được lưu thành công!');
-        });
-
-        // Add medical history
-        document.querySelectorAll('.add-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                alert('Mở form thêm thông tin mới');
-            });
-        });
-
-        // Change password
-        document.querySelector('.btn-secondary').addEventListener('click', function() {
-            if (this.textContent.includes('Đổi mật khẩu')) {
-                alert('Mở form đổi mật khẩu');
-            }
-        });
-
-        // Export data
-        document.querySelector('.btn-secondary').addEventListener('click', function() {
-            if (this.textContent.includes('Xuất dữ liệu')) {
-                alert('Đang chuẩn bị file xuất dữ liệu...');
-            }
-        });
-
-        // Delete account
-        document.querySelector('.btn').addEventListener('click', function() {
-            if (this.textContent.includes('Xóa tài khoản')) {
-                if (confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.')) {
-                    alert('Yêu cầu xóa tài khoản đã được gửi đến quản trị viên');
+    // --- HIỂN THÔNG TIN NGƯỜI DÙNG LÊN FORM ---
+    if (userEmail) {
+        fetch(`http://localhost:8080/api/customer/${encodeURIComponent(userEmail)}`)
+            .then(res => res.json())
+            .then(data => {
+                cusId = data.cusId;
+                if (nameInput) nameInput.value = data.cusFullName || '';
+                if (dobInput && data.cusDate) {
+                    // Chuyển đổi ngày sang định dạng yyyy-MM-dd cho input type="date"
+                    let dateStr = data.cusDate;
+                    if (/^\d{2}[/\-]\d{2}[/\-]\d{4}$/.test(dateStr)) {
+                        let [d, m, y] = dateStr.split(/[\/\-]/);
+                        dateStr = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                    }
+                    dobInput.value = dateStr;
                 }
+                if (phoneInput) phoneInput.value = data.cusPhone || '';
+                if (emailInput) emailInput.value = data.cusEmail || '';
+                if (jobInput) jobInput.value = data.cusOccupation || '';
+                if (addressInput) addressInput.value = data.cusAddress || '';
+                if (emergencyInput) emergencyInput.value = data.emergencyContact || '';
+                // Hiển thị giới tính
+                if (genderRadios && genderRadios.length) {
+                    genderRadios.forEach(radio => {
+                        if (
+                            (radio.value === 'nam' && data.cusGender === 'M') ||
+                            (radio.value === 'nu' && data.cusGender === 'F')
+                        ) {
+                            radio.checked = true;
+                        }
+                    });
+                }
+                // Cập nhật tên sidebar/menu
+                if (userNameSpan) userNameSpan.textContent = data.cusFullName || '';
+                if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || '';
+                // Đồng bộ localStorage (nếu cần)
+                localStorage.setItem('cusId', data.cusId || '');
+                localStorage.setItem('cusFullName', data.cusFullName || '');
+                localStorage.setItem('cusEmail', data.cusEmail || '');
+                localStorage.setItem('cusPhone', data.cusPhone || '');
+                localStorage.setItem('cusDate', data.cusDate || '');
+                localStorage.setItem('cusAddress', data.cusAddress || '');
+                localStorage.setItem('cusOccupation', data.cusOccupation || '');
+                localStorage.setItem('cusGender', data.cusGender || '');
+                localStorage.setItem('emergencyContact', data.emergencyContact || '');
+            })
+            .catch(() => {
+                alert('Không lấy được thông tin hồ sơ!');
+            });
+    }
+
+    // --- UPDATE DỮ LIỆU KHI LƯU ---
+    const saveBtn = document.querySelector('.btn.btn-primary');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const currentCusId = cusId || localStorage.getItem('cusId');
+            if (!currentCusId) {
+                alert('Không xác định được người dùng. Vui lòng đăng nhập lại!');
+                return;
             }
-        });
-
-        
-
-        // ------- AUTO FILL FORM FROM API (CHỈ CHẠY 1 LẦN DUY NHẤT) ----------
-        const userEmail = localStorage.getItem('userEmail');
-        if (userEmail) {
-            fetch(`http://localhost:8080/api/customer/${encodeURIComponent(userEmail)}`)
-                .then(res => res.json())
-                .then(data => {
-                    // Log để kiểm tra dữ liệu trả về
-                    console.log("API data:", data);
-
-                    if (document.querySelector('.info-hoten')) document.querySelector('.info-hoten').value = data.cusFullName ?? '';
-                    if (document.querySelector('.info-ngaysinh')) document.querySelector('.info-ngaysinh').value = data.cusDate ?? '';
-                    if (document.querySelector('.info-phone')) document.querySelector('.info-phone').value = data.cusPhone ?? '';
-                    if (document.querySelector('.info-email')) document.querySelector('.info-email').value = data.cusEmail ?? '';
-                    if (document.querySelector('.info-cccd')) document.querySelector('.info-cccd').value = data.cusId ?? '';
-                    if (document.querySelector('.info-nghenghiep')) document.querySelector('.info-nghenghiep').value = data.cusJob ?? '';
-                    if (document.querySelector('.info-address')) document.querySelector('.info-address').value = data.cusAddress ?? '';
-                    if (document.querySelector('.info-khan-cap')) document.querySelector('.info-khan-cap').value = data.cusContactEmergency ?? '';
+            let genderValue = '';
+            if (genderRadios && genderRadios.length) {
+                genderRadios.forEach(radio => {
+                    if (radio.checked) {
+                        genderValue = (radio.value === 'nam') ? 'M' : (radio.value === 'nu') ? 'F' : '';
+                    }
+                });
+            }
+            const dataUpdate = {
+                cusFullName: nameInput ? nameInput.value.trim() : "",
+                cusGender: genderValue,
+                cusDate: dobInput ? dobInput.value : "",
+                cusPhone: phoneInput ? phoneInput.value.trim() : "",
+                cusEmail: emailInput ? emailInput.value.trim() : "", // có thể cho update email nếu backend cho phép
+                cusOccupation: jobInput ? jobInput.value.trim() : "",
+                cusAddress: addressInput ? addressInput.value.trim() : "",
+                emergencyContact: emergencyInput ? emergencyInput.value.trim() : ""
+            };
+            fetch(`http://localhost:8080/api/customer/${currentCusId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataUpdate)
+            })
+                .then(async res => {
+                    if (!res.ok) throw new Error(await res.text());
+                    return res.json();
+                })
+                .then(updated => {
+                    // Cập nhật lại tên menu/sidebar
+                    if (userNameSpan) userNameSpan.textContent = updated.cusFullName || '';
+                    if (sidebarUsername) sidebarUsername.textContent = updated.cusFullName || '';
+                    // Đồng bộ lại localStorage với thông tin mới nhất
+                    if (updated && typeof updated === 'object') {
+                        Object.keys(updated).forEach(key => {
+                            if (updated[key] !== undefined && updated[key] !== null) {
+                                localStorage.setItem(key, updated[key]);
+                            }
+                        });
+                    }
+                    alert('Thông tin đã được lưu thành công!');
                 })
                 .catch(err => {
-                    alert('Không lấy được thông tin hồ sơ!');
+                    alert('Cập nhật hồ sơ thất bại: ' + err.message);
                 });
-        }
-    });
+        });
+    }
+});

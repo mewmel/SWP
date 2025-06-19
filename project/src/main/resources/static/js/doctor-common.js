@@ -21,17 +21,17 @@ function toggleMobileMenu() {
 function checkDoctorLogin() {
     const fullName = localStorage.getItem('userFullName');
     const userRole = localStorage.getItem('userRole');
-    
+
     // Debug: Log current localStorage values
     console.log('Doctor Dashboard - Debug Info:');
     console.log('fullName:', fullName);
     console.log('userRole:', userRole);
-    
+
     if (fullName) {
         // User is logged in, show authenticated UI
         console.log('User is logged in - showing UI');
         updateDoctorUI(fullName);
-        
+
         // If role is not set or not doctor, set it to doctor for this page
         if (!userRole || userRole !== 'doctor') {
             console.log('Setting role to doctor for this page');
@@ -54,7 +54,7 @@ function updateDoctorUI(fullName) {
     // Hide notification wrapper and user menu initially shown
     const userMenu = document.querySelector('.user-menu');
     const notificationWrapper = document.querySelector('.notification-wrapper');
-    
+
     if (userMenu) {
         userMenu.style.display = 'flex';
         // Update user name
@@ -63,11 +63,11 @@ function updateDoctorUI(fullName) {
             userNameSpan.textContent = `BS. ${fullName}`;
         }
     }
-    
+
     if (notificationWrapper) {
         notificationWrapper.style.display = 'block';
     }
-    
+
     // Update sidebar username if opened
     const sidebarUsername = document.querySelector('.sidebar-username');
     if (sidebarUsername) {
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         // Check doctor login status after script.js has initialized
         const isLoggedIn = checkDoctorLogin();
-        
+
         // Override login success handler to ensure doctor role is saved
         const originalLoginForm = document.getElementById('loginForm');
         if (originalLoginForm) {
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.selectedRole = 'doctor';
             });
         }
-        
+
         // Initialize doctor dashboard features
         initializeDoctorDashboard();
     }, 100);
@@ -108,11 +108,11 @@ function initializeDoctorDashboard() {
     if (menuToggle) {
         menuToggle.addEventListener('click', toggleMobileMenu);
     }
-    
+
     // Add current time update
     updateCurrentTime();
     setInterval(updateCurrentTime, 60000); // Update every minute
-    
+
     // Add keyboard shortcuts for doctor dashboard
     document.addEventListener('keydown', function(e) {
         // Escape to close modals
@@ -120,7 +120,7 @@ function initializeDoctorDashboard() {
             closeModal();
             closePatientListModal();
         }
-        
+
         // Ctrl+S to save (when modal is open)
         if (e.ctrlKey && e.key === 's') {
             e.preventDefault();
