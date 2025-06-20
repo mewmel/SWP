@@ -29,68 +29,153 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 100);
     }
 
-    // ========== ĐĂNG NHẬP ==========
+    // // ========== ĐĂNG NHẬP ==========
+    // document.getElementById('loginForm').addEventListener('submit', function (e) {
+    //     e.preventDefault();
+    //     const submitBtn = this.querySelector('button[type="submit"]');
+    //     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+    //     submitBtn.disabled = true;
+
+    //     const cusEmail = document.getElementById('loginEmail').value;
+    //     const cusPassword = document.getElementById('loginPassword').value;
+
+    //     fetch('/api/auth/login', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ cusEmail, cusPassword })
+    //     })
+    //         .then(async response => {
+    //             if (!response.ok) {
+    //                 const errText = await response.text();
+    //                 throw new Error(errText || 'Đăng nhập thất bại');
+    //             }
+    //             return response.json();
+    //         })
+    //         .then(data => {
+    //             // Lưu tất cả trường từ data vào localStorage
+    //             if (data && typeof data === 'object') {
+    //                 Object.keys(data).forEach(key => {
+    //                     if (data[key] !== undefined && data[key] !== null) {
+    //                         localStorage.setItem(key, data[key]);
+    //                     }
+    //                 });
+    //             }
+
+    //             // Hiển thị giao diện đã đăng nhập
+    //             if (authButtons) authButtons.style.display = 'none';
+    //             if (userMenu) userMenu.style.display = 'flex';
+    //             if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+    //             if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+    //             if (notificationWrapper) notificationWrapper.style.display = 'block';
+    //             showNotification('Đăng nhập thành công!', 'success');
+    //             const closeModal = document.querySelector('.close-modal');
+    //             if (closeModal) closeModal.click();
+
+    //             // Lưu role vào localStorage nếu có
+    //             if (typeof selectedRole !== 'undefined' && selectedRole) {
+    //                 localStorage.setItem('userRole', selectedRole);
+    //             }
+
+    //             window.location.href = "dashboard.html";
+    //         })
+    //         .catch((err) => {
+    //             showNotification(
+    //                 (err.message && err.message.startsWith('Invalid'))
+    //                     ? err.message
+    //                     : 'Email hoặc mật khẩu không đúng hoặc tài khoản chưa kích hoạt!',
+    //                 'error'
+    //             );
+    //         })
+    //         .finally(() => {
+    //             submitBtn.innerHTML = '<span>Đăng nhập</span><i class="fas fa-arrow-right"></i>';
+    //             submitBtn.disabled = false;
+    //         });
+    // });
+
     document.getElementById('loginForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const submitBtn = this.querySelector('button[type="submit"]');
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
-        submitBtn.disabled = true;
+    e.preventDefault();
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+    submitBtn.disabled = true;
 
-        const cusEmail = document.getElementById('loginEmail').value;
-        const cusPassword = document.getElementById('loginPassword').value;
+    const cusEmail = document.getElementById('loginEmail').value;
+    const cusPassword = document.getElementById('loginPassword').value;
 
-        fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cusEmail, cusPassword })
+    fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cusEmail, cusPassword })
+    })
+        .then(async response => {
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(errText || 'Đăng nhập thất bại');
+            }
+            return response.json();
         })
-            .then(async response => {
-                if (!response.ok) {
-                    const errText = await response.text();
-                    throw new Error(errText || 'Đăng nhập thất bại');
+        .then(data => {
+            // Tự động phát hiện role dựa trên field có trong response
+            let role = '';
+            let displayName = '';
+            let dashboardUrl = '';
+            
+            if (data.cusId) {
+                // Customer
+                role = 'customer';
+                displayName = data.cusFullName || data.cusEmail || 'Khách hàng';
+                dashboardUrl = 'dashboard.html';
+            } else if (data.docId) {
+                // Doctor
+                role = 'doctor';
+                displayName = data.docFullName || data.docEmail || 'Bác sĩ';
+                dashboardUrl = 'bac-si-dashboard.html';
+            } else if (data.maId) {
+                // Manager - check roles
+                if (data.roles === 'admin') {
+                    role = 'admin';
+                    dashboardUrl = 'admin-dashboard.html';
+                } else {
+                    role = 'manager';
+                    dashboardUrl = 'manager-dashboard.html';
                 }
-                return response.json();
-            })
-            .then(data => {
-                // Lưu tất cả trường từ data vào localStorage
-                if (data && typeof data === 'object') {
-                    Object.keys(data).forEach(key => {
-                        if (data[key] !== undefined && data[key] !== null) {
-                            localStorage.setItem(key, data[key]);
-                        }
-                    });
-                }
+                displayName = data.maFullName || data.maEmail || 'Quản lý';
+            }
 
-                // Hiển thị giao diện đã đăng nhập
-                if (authButtons) authButtons.style.display = 'none';
-                if (userMenu) userMenu.style.display = 'flex';
-                if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-                if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-                if (notificationWrapper) notificationWrapper.style.display = 'block';
-                showNotification('Đăng nhập thành công!', 'success');
-                const closeModal = document.querySelector('.close-modal');
-                if (closeModal) closeModal.click();
+            // Lưu tất cả trường từ data vào localStorage + thêm role
+            if (data && typeof data === 'object') {
+                Object.keys(data).forEach(key => {
+                    if (data[key] !== undefined && data[key] !== null) {
+                        localStorage.setItem(key, data[key]);
+                    }
+                });
+                localStorage.setItem('userRole', role);
+            }
 
-                // Lưu role vào localStorage nếu có
-                if (typeof selectedRole !== 'undefined' && selectedRole) {
-                    localStorage.setItem('userRole', selectedRole);
-                }
+            // Hiển thị giao diện đã đăng nhập
+            if (authButtons) authButtons.style.display = 'none';
+            if (userMenu) userMenu.style.display = 'flex';
+            if (userNameSpan) userNameSpan.textContent = displayName;
+            if (sidebarUsername) sidebarUsername.textContent = displayName;
+            if (notificationWrapper) notificationWrapper.style.display = 'block';
+            
+            showNotification('Đăng nhập thành công!', 'success');
+            const closeModal = document.querySelector('.close-modal');
+            if (closeModal) closeModal.click();
 
-                window.location.href = "dashboard.html";
-            })
-            .catch((err) => {
-                showNotification(
-                    (err.message && err.message.startsWith('Invalid'))
-                        ? err.message
-                        : 'Email hoặc mật khẩu không đúng hoặc tài khoản chưa kích hoạt!',
-                    'error'
-                );
-            })
-            .finally(() => {
-                submitBtn.innerHTML = '<span>Đăng nhập</span><i class="fas fa-arrow-right"></i>';
-                submitBtn.disabled = false;
-            });
-    });
+            // Chuyển hướng
+            window.location.href = dashboardUrl;
+        })
+        .catch((err) => {
+            showNotification(
+                err.message || 'Email hoặc mật khẩu không đúng!',
+                'error'
+            );
+        })
+        .finally(() => {
+            submitBtn.innerHTML = '<span>Đăng nhập</span><i class="fas fa-arrow-right"></i>';
+            submitBtn.disabled = false;
+        });
+});
 
     // ========== ĐĂNG XUẤT ==========
     function clearAllLocalStorage() {

@@ -102,6 +102,86 @@ tabButtons.forEach(button => {
             });
     }
 
+    // --- CHỨC NĂNG ĐỔI MẬT KHẨU ---
+    const currentInput = document.getElementById("currentPassword");
+    const newGroup = document.getElementById("newPasswordGroup");
+    const verifyBtn = document.getElementById("btnVerify");
+    const changeBtn = document.getElementById("btnChange");
+
+    let currentPasswordCache = ""; // Lưu tạm để gửi kèm khi đổi
+
+    // Bước 1: Xác thực mật khẩu hiện tại
+    verifyBtn.addEventListener("click", async () => {
+        const currentPassword = currentInput.value.trim();
+        if (!currentPassword) return alert("Vui lòng nhập mật khẩu hiện tại!");
+        // LẤY ID CUSTOMER
+        const cusId = localStorage.getItem('cusId'); 
+        if (!cusId) return alert("Không tìm thấy thông tin người dùng!");
+
+        try {
+            const res = await fetch(`/api/auth/${cusId}/verify-cus-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ currentPassword })
+            });
+            
+            if (res.ok) {
+                currentPasswordCache = currentPassword;          // Lưu lại
+                document.getElementById("currentPasswordGroup").style.display = "none";
+                newGroup.style.display = "block";                // Mở form mới
+            } else {
+                const errorMsg = await res.text();
+                alert(errorMsg || "Mật khẩu hiện tại không đúng!");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Không thể kết nối tới máy chủ!");
+        }
+    });
+
+    // Bước 2: Gửi mật khẩu mới
+    changeBtn.addEventListener("click", async () => {
+        const newPassword = document.getElementById("newPassword").value.trim();
+        const confirm = document.getElementById("changeConfirmPassword").value.trim();
+
+        if (!newPassword || !confirm) return alert("Vui lòng nhập đủ hai ô!");
+        if (newPassword !== confirm) return alert("Mật khẩu mới không khớp!");
+
+        // LẤY ID CUSTOMER
+        const cusId = localStorage.getItem('cusId');
+        if (!cusId) return alert("Không tìm thấy thông tin người dùng!");
+
+        try {
+            // SỬA: Thêm cusId vào đường dẫn
+            const res = await fetch(`/api/auth/${cusId}/change-cus-password`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    currentPassword: currentPasswordCache,
+                    newPassword: newPassword
+                })
+            });
+            
+            if (res.ok) {
+                alert("Đổi mật khẩu thành công!");
+                // Reset form
+                document.getElementById("currentPasswordGroup").style.display = "block";
+                document.getElementById("newPasswordGroup").style.display = "none";
+                document.getElementById("currentPassword").value = "";
+                document.getElementById("newPassword").value = "";
+                document.getElementById("changeConfirmPassword").value = "";
+                currentPasswordCache = "";
+            } else {
+                const errorMsg = await res.text();
+                alert(errorMsg || "Đổi mật khẩu thất bại!");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Không thể kết nối tới máy chủ!");
+        }
+    });
+
+
     // --- UPDATE DỮ LIỆU KHI LƯU ---
     const saveBtn = document.querySelector('.btn.btn-primary');
     if (saveBtn) {
