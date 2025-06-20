@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    // ========= ĐĂNG KÝ GỌI API BACKEND =========
+    // ========= ĐĂNG KÝ  =========
     document.getElementById('registerForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const submitBtn = this.querySelector('button[type="submit"]');
@@ -364,7 +364,7 @@ function updateRoleBadge() {
             },
             doctor: {
                 icon: 'fas fa-user-md',
-                text: 'Bác sĩ'
+                text: 'Nhân viên'
             }
         };
         
