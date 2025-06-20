@@ -132,8 +132,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ========= ĐĂNG KÝ GỌI API BACKEND =========
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
+    // ========= ĐĂNG KÝ  =========
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const submitBtn = this.querySelector('button[type="submit"]');
         const agreeTerms = document.getElementById('agreeTerms');
@@ -433,24 +433,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Hàm cập nhật huy hiệu vai trò
-    function updateRoleBadge() {
-        if (selectedRole && roleBadge) {
-            const roleInfo = {
-                customer: {
-                    icon: 'fas fa-user',
-                    text: 'Khách hàng'
-                },
-                doctor: {
-                    icon: 'fas fa-user-md',
-                    text: 'Bác sĩ'
-                }
-            };
-
-            const info = roleInfo[selectedRole];
-            roleBadge.innerHTML = `<i class="${info.icon}"></i> ${info.text}`;
-        }
+// Hàm cập nhật huy hiệu vai trò
+function updateRoleBadge() {
+    if (selectedRole && roleBadge) {
+        const roleInfo = {
+            customer: {
+                icon: 'fas fa-user',
+                text: 'Khách hàng'
+            },
+            doctor: {
+                icon: 'fas fa-user-md',
+                text: 'Nhân viên'
+            }
+        };
+        
+        const info = roleInfo[selectedRole];
+        roleBadge.innerHTML = `<i class="${info.icon}"></i> ${info.text}`;
     }
+}
 
     // Mở modal đăng nhập với hiệu ứng (được cập nhật để hiển thị phần chọn vai trò trước tiên)
     window.openAuthModal = function (type) {

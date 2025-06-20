@@ -291,7 +291,7 @@ tr:nth-child(even) {
     background-color: var(--light-background);
 }
 
-/* CTA Section */
+/* CTA Section - Đặt lịch khám*/
 .cta {
     padding: var(--spacing-xl) 0;
     background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
@@ -685,7 +685,7 @@ footer::before {
     animation: fadeIn 0.6s ease-out forwards;
 }
 
-/* Auth Buttons */
+/* Auth Buttons - Nút Đăng nhập và Đăng ký */
 .auth-buttons {
     display: flex;
     gap: var(--spacing-md);
@@ -756,7 +756,7 @@ footer::before {
     left: 0;
 }
 
-/* Add ripple effect */
+/* Add ripple effect - thêm hiệu ứng gợn sóng cho nút đăng ký */
 .btn-login::after, .btn-register::after {
     content: '';
     position: absolute;
@@ -786,7 +786,7 @@ footer::before {
     }
 }
 
-/* Auth Modal */
+/* Auth Modal - trong phần đăng nhập và đăng kí */
 .auth-modal {
     display: none;
     position: fixed;
@@ -908,7 +908,7 @@ footer::before {
     transform: rotate(90deg);
 }
 
-/* Auth Tabs */
+/* Auth Tabs - Nút chọn để đăng nhập hoặc đăng ký*/
 .auth-tabs {
     display: flex;
     gap: var(--spacing-sm);
@@ -1191,7 +1191,7 @@ footer::before {
 }
 
 /* Responsive Design */
-/* Role Selection Styles */
+/* Bước chọn role */
 .role-selection {
     padding: 40px 20px;
     text-align: center;
@@ -1349,7 +1349,7 @@ footer::before {
     color: white;
 }
 
-/* Auth Header Styles */
+/* Header trong phần Đăng nhập và Đăng ký */
 .auth-header {
     display: flex;
     justify-content: space-between;
@@ -1379,6 +1379,7 @@ footer::before {
     background: rgba(74, 144, 226, 0.05);
 }
 
+/* Thẻ badge thể hiện role đã chọn */
 .role-badge {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
@@ -1584,7 +1585,7 @@ footer::before {
     }
 }
 
-/* Testimonials Section */
+/* Testtiomonials Section - Phản hồi từ khách hàng */
 .testimonials {
     background: var(--background);
     border-radius: var(--border-radius-lg);
@@ -1982,7 +1983,7 @@ nav ul li .dropdown-menu li:not(:last-child) {
     border-bottom: 1px solid #e0e0e0;
 }
 
-/* Doctors Page Styling */
+/* Doctors Slider Section - Đội ngũ bác sĩ */
 .doctors-section {
   padding: 60px 0;
   background-color: #f9f9f9;
@@ -2293,79 +2294,13 @@ nav ul li .dropdown-menu li:not(:last-child) {
     pointer-events: auto !important;
     z-index: 10;
 }
-/* code silde bar*/
-/* ...các CSS trước đó giữ nguyên... */
 
-.sidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 270px;
-    background: #fff;
-    box-shadow: -2px 0 15px rgba(0,0,0,0.07);
-    z-index: 4000;
-    padding: 32px 20px 20px 20px;
-    display: none;
-    flex-direction: column;
-    
-    /* Sửa hiệu ứng trượt */
-    transform: translateX(100%);
-    opacity: 0;
-    transition: transform 0.45s cubic-bezier(.77,0,.18,1), opacity 0.3s;
-}
-.sidebar.active {
-    transform: translateX(0);
-    opacity: 1;
-    display: flex;
-}
-.sidebar .close-sidebar {
-    background: none;
-    border: none;
-    font-size: 2rem;
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    cursor: pointer;
-}
-.sidebar a {
-    display: block;
-    padding: 10px 0;
-    color: #333;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-.sidebar a:hover { color: #5a5fd4; }
-.user-sidebar-btn {
-    background: none;
-    border: none;
-    margin-left: 10px;
-    font-size: 1.4rem;
-    color: #333;
-    cursor: pointer;
-}
-/* ...giữ nguyên các css trước đó... */
 
 .user-menu .dropdown-menu,
 .user-menu .logout-btn {
     display: none !important;
 }
 
-/* Chỉ còn tên và nút menu */
-.user-menu {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.user-sidebar-btn {
-    background: none;
-    border: none;
-    margin-left: 10px;
-    font-size: 1.4rem;
-    color: #333;
-    cursor: pointer;
-}
 
 /* Sidebar cá nhân */
 .sidebar {
@@ -2427,6 +2362,20 @@ nav ul li .dropdown-menu li:not(:last-child) {
     align-items: center;
     gap: 8px;
 }
+/* Chỉ còn tên và nút menu */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.user-sidebar-btn {
+    background: none;
+    border: none;
+    margin-left: 10px;
+    font-size: 1.4rem;
+    color: #333;
+    cursor: pointer;
+}
 .sidebar-logout { color: #e74c3c; }
 .sidebar-account i, .sidebar-logout i { font-size: 1.1rem; }
 
@@ -2464,7 +2413,7 @@ nav ul li a.active {
     position: relative;
     z-index: 1;
 }
-/* Notification Dropdown - giống như YouTube */
+/* Hiển thị dropdown thông báo - giống như YouTube */
 .notification-dropdown {
     position: absolute;
     top: 55px;
@@ -2665,7 +2614,7 @@ nav ul li a.active {
     justify-content: center;
 }
 
-/* Blog Section Styling */
+/* Blog Section  */
 .blog-section {
     padding: 80px 0;
     background-color: #f8f9fa;
@@ -2713,6 +2662,7 @@ nav ul li a.active {
 }
 
 /* Màu sắc cho từng danh mục */
+
 .blog-category:nth-of-type(1) {
     background: #4A90E2;
     color: #fff;
@@ -2815,100 +2765,7 @@ nav ul li a.active {
         grid-template-columns: 1fr;
     }
 }
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 1000;
-}
 
-.modal-content {
-    position: relative;
-    background-color: #fff;
-    margin: 50px auto;
-    max-width: 600px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.modal-header {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h2 {
-    margin: 0;
-    color: #2c3e50;
-}
-
-.close-appointment-modal {
-    font-size: 28px;
-    cursor: pointer;
-    color: #666;
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-.appointment-list {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.appointment-item {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-}
-
-.appointment-icon {
-    font-size: 24px;
-    color: #4A90E2;
-    width: 40px;
-    text-align: center;
-}
-
-.appointment-info h3 {
-    margin: 0 0 10px 0;
-    color: #2c3e50;
-}
-
-.appointment-info p {
-    margin: 5px 0;
-    color: #666;
-}
-
-.appointment-info i {
-    width: 20px;
-    color: #4A90E2;
-}
-
-.appointment-status {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    margin-top: 10px;
-}
-
-.appointment-status.upcoming {
-    background-color: #e3f2fd;
-    color: #1976d2;
-}
-
-.appointment-actions {
-    text-align: center;
-    padding-top: 20px;
-}
 
 /* Main dashboard container - account for fixed header */
 .dashboard-main {

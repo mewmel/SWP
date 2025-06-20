@@ -65,7 +65,6 @@
         }
     </style>
 </head>
-
 <body>
     <header>
         <div class="container">
@@ -93,7 +92,7 @@
                                 <span class="notification-badge">9</span>
                             </button>
 
-                            <!-- Dropdown Notification -->
+                            <!-- Hiển thị dropdown thông báo -->
                             <div class="notification-dropdown" id="notificationDropdown">
                                 <div class="notification-dropdown-header">
                                     <h3>Thông báo</h3>
@@ -171,6 +170,7 @@
                     </li>
                 </ul>
             </nav>
+            <!--hiển thị nút Đăng nhập và đăng kí-->
             <div class="auth-buttons">
                 <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
                 <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
@@ -187,7 +187,7 @@
         </div>
     </header>
 
-    <!-- Sidebar giống trang index -->
+    <!-- Sidebar-->
     <aside class="sidebar" id="sidebar" style="display:none;">
         <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
         <div class="sidebar-user">
@@ -204,13 +204,10 @@
         <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
     </aside>
 
-    <!-- Auth Modal -->
+    <!-- Modal trong phần Đăng nhập và Đăng ký -->
     <div class="auth-modal" id="authModal">
         <div class="auth-modal-content">
             <div class="auth-modal-left">
-                <div class="auth-modal-image">
-                    <img src="img/hero-image.png" alt="Medical">
-                </div>
                 <div class="auth-modal-overlay">
                     <h2>Chào mừng bạn đến với FertilityEHR</h2>
                     <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
@@ -219,7 +216,7 @@
             <div class="auth-modal-right">
                 <span class="close-modal">&times;</span>
 
-                <!-- Role Selection Step -->
+                <!-- Bước chọn role -->
                 <div class="role-selection" id="roleSelection">
                     <h2>Chọn vai trò của bạn</h2>
                     <p>Vui lòng chọn loại tài khoản để tiếp tục</p>
@@ -358,18 +355,14 @@
             </div>
         </div>
     </div>
-
+    
+    <!-- Hero Section -->
     <section class="hero">
-        <div class="container">
             <div class="hero-content">
                 <h1>FertilityEHR</h1>
                 <h2>Hệ thống điều trị và theo dõi chuyên biệt cho phòng khám hiếm muộn</h2>
                 <p>Tối ưu hóa hoạt động của phòng khám hiếm muộn với hệ thống quản lý bệnh án điện tử toàn diện được
                     thiết kế đặc biệt cho y học sinh sản.</p>
-                <!-- </div>
-        <div class="hero-image">
-            <img src="img/hero-image.png" alt="Giao diện FertilityEHR">
-        </div> -->
             </div>
     </section>
 
@@ -411,6 +404,7 @@
         </div>
     </section>
 
+<!-- Features Section -->
     <section class="features">
         <div class="container">
             <h2 class="section-title">Tính năng chính</h2>
@@ -448,6 +442,8 @@
             </div>
         </div>
     </section>
+
+    <!-- Doctors Slider Section -->
     <section class="doctors-slider-container" id="doctor">
         <div class="container">
             <h2 class="section-title">Đội ngũ bác sĩ chuyên khoa</h2>
@@ -526,11 +522,13 @@
                 <button class="nav-button next-btn"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
-    </section>    <section class="blog-section" id="blog">
+    </section>   
+
+    <!--Blog section-->
+     <section class="blog-section" id="blog">
         <div class="container">
             <h2 class="section-title">Blog & Tin tức</h2>
             <div class="blog-grid" id="blogGrid">
-                <!-- Initial visible blog posts -->
                 <div class="blog-card">
                     <div class="blog-image">
                         <img src="img/blog1.jpg" alt="IVF Blog">
@@ -571,7 +569,7 @@
                     </div>
                 </div>
 
-                <!-- Hidden blog posts (will be shown when clicking "View All") -->
+                <!-- Ẩn các bài viết blog chỉ hiện khi bấm "Xem tất cả bài viết" -->
                 <div class="blog-card hidden">
                     <div class="blog-image">
                         <img src="img/blog4.jpg" alt="Lifestyle Blog">
@@ -615,6 +613,7 @@
         </div>
     </section>
 
+    <!-- Testimonials Section - Phản hồi từ khách hàng-->
     <section class="testimonials">
         <div class="container">
             <h2 class="section-title">Khách hàng nói gì về chúng tôi</h2>
@@ -696,50 +695,7 @@
         </div>
     </section>
 
-    <!-- Thêm trước thẻ đóng </body> -->
-    <div id="appointmentModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Lịch hẹn của bạn</h2>
-                <span class="close-appointment-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="appointment-list">
-                    <div class="appointment-item">
-                        <div class="appointment-icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="appointment-info">
-                            <h3>Khám siêu âm theo dõi</h3>
-                            <p><i class="fas fa-clock"></i> 09:00 - 28/06/2024</p>
-                            <p><i class="fas fa-user-md"></i> BS. Nguyễn Văn A</p>
-                            <p><i class="fas fa-map-marker-alt"></i> Phòng 303</p>
-                            <span class="appointment-status upcoming">Sắp tới</span>
-                        </div>
-                    </div>
-
-                    <div class="appointment-item">
-                        <div class="appointment-icon">
-                            <i class="fas fa-flask"></i>
-                        </div>
-                        <div class="appointment-info">
-                            <h3>Xét nghiệm máu E2</h3>
-                            <p><i class="fas fa-clock"></i> 08:00 - 25/06/2024</p>
-                            <p><i class="fas fa-user-md"></i> BS. Nguyễn Thị B</p>
-                            <p><i class="fas fa-map-marker-alt"></i> Phòng xét nghiệm 2</p>
-                            <span class="appointment-status upcoming">Sắp tới</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="appointment-actions">
-                    <button class="btn-secondary" onclick="location.href='dat-lich.html'">
-                        <i class="fas fa-plus"></i> Đặt lịch mới
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!--Form Đặt lịch khám-->
     <section class="cta" id="cta">
         <div class="container">
             <h2>Sẵn sàng hành trình làm cha mẹ cùng chúng tôi chứ?</h2>
@@ -755,7 +711,7 @@
         <a href="#"><i class="fab fa-instagram"></i></a>
         <a href="#"><i class="fas fa-envelope"></i></a>
     </div>
-
+         <!--Footer-->
     <footer id="footer">
         <div class="container">
             <div class="footer-columns">
