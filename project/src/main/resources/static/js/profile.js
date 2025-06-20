@@ -98,7 +98,7 @@ tabButtons.forEach(button => {
                 localStorage.setItem('emergencyContact', data.emergencyContact || '');
             })
             .catch(() => {
-                alert('Không lấy được thông tin hồ sơ!');
+                showNotification('Không lấy được thông tin hồ sơ!', 'error');
             });
     }
 
@@ -109,7 +109,7 @@ tabButtons.forEach(button => {
             e.preventDefault();
             const currentCusId = cusId || localStorage.getItem('cusId');
             if (!currentCusId) {
-                alert('Không xác định được người dùng. Vui lòng đăng nhập lại!');
+                showNotification('Không xác định được người dùng. Vui lòng đăng nhập lại!', 'error');
                 return;
             }
             let genderValue = '';
@@ -151,11 +151,32 @@ tabButtons.forEach(button => {
                             }
                         });
                     }
-                    alert('Thông tin đã được lưu thành công!');
+                    showNotification('Thông tin đã được lưu thành công!', 'success');
                 })
                 .catch(err => {
-                    alert('Cập nhật hồ sơ thất bại: ' + err.message);
+                    showNotification('Cập nhật hồ sơ thất bại: ' + err.message, 'error');
                 });
         });
     }
 });
+
+// Hàm hiển thị thông báo đẹp thay thế alert
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `profile-notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
+// CSS đã được chuyển sang styles.css
