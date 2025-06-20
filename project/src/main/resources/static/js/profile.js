@@ -15,6 +15,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const userEmail = localStorage.getItem('cusEmail');
     let cusId = null;
 
+// --- CHỨC NĂNG CHUYỂN ĐỔI TAB ---
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+// Hàm chuyển đổi tab
+function switchTab(targetTab) {
+    // Xóa class active khỏi tất cả tab buttons
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Xóa class active khỏi tất cả tab contents
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    // Thêm class active cho tab button được click
+    const activeButton = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+    
+    // Hiển thị tab content tương ứng
+    const activeContent = document.getElementById(targetTab);
+    if (activeContent) {
+        activeContent.classList.add('active');
+    }
+}
+
+// Thêm event listener cho tất cả tab buttons
+tabButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetTab = this.getAttribute('data-tab');
+        switchTab(targetTab);
+    });
+});
+
+
+
     // --- HIỂN THÔNG TIN NGƯỜI DÙNG LÊN FORM ---
     if (userEmail) {
         fetch(`http://localhost:8080/api/customer/${encodeURIComponent(userEmail)}`)
