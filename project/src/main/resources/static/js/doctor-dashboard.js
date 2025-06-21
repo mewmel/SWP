@@ -1,3 +1,51 @@
+document.addEventListener('DOMContentLoaded', function () {
+    // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
+    const authButtons = document.querySelector('.auth-buttons');
+    const userMenu = document.querySelector('.user-menu');
+    const userNameSpan = document.querySelector('.user-name');
+    const sidebarUsername = document.querySelector('.sidebar-username');
+    const notificationWrapper = document.querySelector('.notification-wrapper');
+
+    // Hiển thị đúng trạng thái đăng nhập khi load lại trang
+    const fullName = localStorage.getItem('docFullName');
+    if (fullName) {
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'flex';
+        if (userNameSpan) userNameSpan.textContent = fullName;
+        if (sidebarUsername) sidebarUsername.textContent = fullName;
+        if (notificationWrapper) notificationWrapper.style.display = 'block';
+    } else {
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+        if (notificationWrapper) notificationWrapper.style.display = 'none';
+    }
+
+    
+    // ========== ĐĂNG XUẤT ==========
+    function clearAllLocalStorage() {
+        localStorage.clear();
+    }
+
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            clearAllLocalStorage();
+            localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
+            if (userMenu) userMenu.style.display = 'none';
+            if (authButtons) authButtons.style.display = 'flex';
+            if (notificationWrapper) notificationWrapper.style.display = 'none';
+            closeSidebar();
+            clearLoginForm();
+            if (window.location.pathname !== '/index.html' && !window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
+                window.location.href = "index.html";
+            } else {
+                showNotification('Đã đăng xuất!', 'success');
+                localStorage.removeItem('logoutMessage');
+            }
+        });
+    }
+
 // Patient data storage
 const patientData = {
     mai: {
@@ -176,3 +224,5 @@ searchPatients = function() {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(originalSearchPatients, 300);
 };
+
+});
