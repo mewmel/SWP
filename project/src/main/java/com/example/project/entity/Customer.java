@@ -33,10 +33,10 @@ public class Customer {
     @Column(name = "cusDate")
     private LocalDate cusDate;
 
-    @Column(name = "cusEmail", length = 100, nullable = false)
+    @Column(name = "cusEmail", length = 100)
     private String cusEmail;
 
-    @Column(name = "cusPhone", precision = 10)
+    @Column(name = "cusPhone", length = 20)
     private String cusPhone;
 
     @Column(name = "cusPassword", length = 100)

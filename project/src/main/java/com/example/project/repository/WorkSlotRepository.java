@@ -1,15 +1,16 @@
 package com.example.project.repository;
 
-import com.example.project.entity.WorkSlot;
+import java.time.LocalDate;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
-import java.util.Optional;
+import com.example.project.entity.WorkSlot;
 
 public interface WorkSlotRepository extends JpaRepository<WorkSlot, Integer> {
-    // Method cũ (có thể để lại, nhưng không dùng nữa nếu bị lỗi mappingdo+JPA)
+    // Method cũ (có thể để lại, nhưng không dùng nữa nếu bị lỗi mappingdo+JPA);_;
     // Optional<WorkSlot> findByDocIdAndWorkDateAndStartTimeAndEndTime(
     //         Integer docId, LocalDate workDate, LocalTime startTime, LocalTime endTime
     // );

@@ -1,9 +1,15 @@
 package com.example.project.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -30,6 +36,6 @@ public class Feedback {
     @Column(name = "comment", length = 1000)
     private String comment;
 
-    @Column(name = "feedback_date")
+    @Column(name = "feedbackDate")
     private LocalDateTime feedbackDate;
 }

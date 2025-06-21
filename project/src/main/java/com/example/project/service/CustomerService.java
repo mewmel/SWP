@@ -93,6 +93,42 @@ public class CustomerService {
     return customerRepository.save(customer);
 }
 
+    // Hàm verify mật khẩu hiện tại theo ID
+    public boolean verifyCurrentPassword(Integer cusId, String currentPassword) {
+        Optional<Customer> customerOpt = customerRepository.findById(cusId);
+        if (!customerOpt.isPresent()) {
+            return false;
+        }
+        
+        Customer customer = customerOpt.get();
+        return passwordEncoder.matches(currentPassword, customer.getCusPassword());
+    }
+
+    // Hàm đổi mật khẩu theo ID
+    public String changeCusPassword(Integer cusId, String currentPassword, String newPassword) {
+        Optional<Customer> customerOpt = customerRepository.findById(cusId);
+        if (!customerOpt.isPresent()) {
+            return "Không tìm thấy khách hàng!";
+        }
+        
+        Customer customer = customerOpt.get();
+        
+        // Kiểm tra mật khẩu hiện tại
+        if (!passwordEncoder.matches(currentPassword, customer.getCusPassword())) {
+            return "Mật khẩu hiện tại không đúng!";
+        }
+        
+        // Kiểm tra mật khẩu mới có đủ mạnh không (tùy chọn)
+        if (newPassword.length() < 6) {
+            return "Mật khẩu mới phải có ít nhất 6 ký tự!";
+        }
+        
+        // Cập nhật mật khẩu mới
+        customer.setCusPassword(passwordEncoder.encode(newPassword));
+        customerRepository.save(customer);
+        return "success";
+    }
+
 
     private boolean isValidEmail(String email) {
         return Pattern.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", email);

@@ -1,10 +1,14 @@
 package com.example.project.controller;
 
-import com.example.project.dto.BookingRequest;
-import com.example.project.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.project.dto.BookingRequest;
+import com.example.project.service.BookingService;
 
 @RestController
 @RequestMapping("/api")
