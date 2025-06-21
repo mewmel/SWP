@@ -9,211 +9,204 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<header>
-    <div class="container">
-        <div class="logo">
-            <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="dashboard.html" >Dashboard</a></li>
-                <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
-                <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
-                <li><a href="ho-so-ca-nhan.html" class="active">Hồ sơ cá nhân</a></li>
-                <li>
-                    <div class="notification-wrapper" style="position: relative;">
-                        <button class="notification-icon" id="notificationBtn">
-                            <i class="fas fa-bell"></i>
-                            <span class="notification-badge">9</span>
-                        </button>
+    <!-- Dashboard Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html" >Bệnh án</a></li>
+                    <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
+                    <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
+                    <li><a href="ho-so-ca-nhan.html" class="active">Hồ sơ cá nhân</a></li>
+                        <div class="notification-wrapper" style="position: relative;">
+                            <button class="notification-icon" id="notificationBtn">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge">9</span>
+                            </button>
 
-                        <!-- Dropdown Notification -->
-                        <div class="notification-dropdown" id="notificationDropdown">
-                            <div class="notification-dropdown-header">
-                                <h3>Thông báo</h3>
-                                <button class="notification-settings-btn">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                            </div>
+                            <!-- Dropdown Notification -->
+                            <div class="notification-dropdown" id="notificationDropdown">
+                                <div class="notification-dropdown-header">
+                                    <h3>Thông báo</h3>
+                                    <button class="notification-settings-btn">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                </div>
 
-                            <div class="notification-dropdown-body">
-                                <div class="notification-dropdown-item unread">
-                                    <div class="notification-avatar">
-                                        <i class="fas fa-syringe"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <div class="notification-title">Nhắc nhở tiêm thuốc</div>
-                                        <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
+                                <div class="notification-dropdown-body">
+                                    <div class="notification-dropdown-item unread">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-syringe"></i>
                                         </div>
-                                        <div class="notification-time">5 phút trước</div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Nhắc nhở tiêm thuốc</div>
+                                            <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
+                                            </div>
+                                            <div class="notification-time">5 phút trước</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-dropdown-item unread">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-flask"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Lịch xét nghiệm</div>
+                                            <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc
+                                                8:00</div>
+                                            <div class="notification-time">2 giờ trước</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-dropdown-item">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-calendar-check"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Lịch hẹn khám</div>
+                                            <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
+                                                14:00</div>
+                                            <div class="notification-time">1 ngày trước</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-dropdown-item">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Kết quả xét nghiệm</div>
+                                            <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
+                                            <div class="notification-time">2 ngày trước</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-dropdown-item">
+                                        <div class="notification-avatar">
+                                            <i class="fas fa-user-md"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Tin nhắn từ bác sĩ</div>
+                                            <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
+                                                cho bạn</div>
+                                            <div class="notification-time">3 ngày trước</div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="notification-dropdown-item unread">
-                                    <div class="notification-avatar">
-                                        <i class="fas fa-flask"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <div class="notification-title">Lịch xét nghiệm</div>
-                                        <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc
-                                            8:00</div>
-                                        <div class="notification-time">2 giờ trước</div>
-                                    </div>
+                                <div class="notification-dropdown-footer">
+                                    <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
                                 </div>
-
-                                <div class="notification-dropdown-item">
-                                    <div class="notification-avatar">
-                                        <i class="fas fa-calendar-check"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <div class="notification-title">Lịch hẹn khám</div>
-                                        <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
-                                            14:00</div>
-                                        <div class="notification-time">1 ngày trước</div>
-                                    </div>
-                                </div>
-
-                                <div class="notification-dropdown-item">
-                                    <div class="notification-avatar">
-                                        <i class="fas fa-chart-line"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <div class="notification-title">Kết quả xét nghiệm</div>
-                                        <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
-                                        <div class="notification-time">2 ngày trước</div>
-                                    </div>
-                                </div>
-
-                                <div class="notification-dropdown-item">
-                                    <div class="notification-avatar">
-                                        <i class="fas fa-user-md"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <div class="notification-title">Tin nhắn từ bác sĩ</div>
-                                        <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
-                                            cho bạn</div>
-                                        <div class="notification-time">3 ngày trước</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="notification-dropdown-footer">
-                                <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
                             </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-        <div class="user-menu" style="display:none;">
-            <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-            <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
+                    </li>
+                </ul>
+            </nav>
+            <div class="user-menu" style="display:none;">
+                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+                <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <button class="logout-btn"
+                    style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
+            </div>
+            <button class="mobile-menu-btn">
                 <i class="fas fa-bars"></i>
             </button>
-            <button class="logout-btn"
-                    style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
-                <i class="fas fa-sign-out-alt"></i> Đăng xuất
-            </button>
         </div>
-
-        <div class="auth-buttons" style="display:flex;">
-            <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
-            <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
+    </header>
+    <!-- Sidebar giống trang index -->
+    <aside class="sidebar" id="sidebar" style="display:none;">
+        <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+        <div class="sidebar-user">
+            <i class="fas fa-user-circle"></i>
+            <span class="sidebar-username"></span>
         </div>
-        <button class="mobile-menu-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-</header>
-
-
-<!-- Sidebar giống trang index -->
-<aside class="sidebar" id="sidebar" style="display:none;">
-    <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
-    <div class="sidebar-user">
-        <i class="fas fa-user-circle"></i>
-        <span class="sidebar-username"></span>
-    </div>
-    <a href="ho-so-ca-nhan.html" class="sidebar-account"><i class="fas fa-user"></i> Hồ sơ cá nhân</a>
-    <a href="#">Tin nổi bật</a>
-    <a href="#">Bệnh án</a>
-    <a href="#">Lịch hẹn</a>
-    <a href="#">Kết quả xét nghiệm</a>
-    <a href="#">Cài đặt</a>
-    <div class="sidebar-divider"></div>
-    <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-</aside>
-<!-- Auth Modal -->
-<div id="authModal" class="auth-modal">
-    <div class="auth-modal-content">
-        <span class="close-modal">&times;</span>
-        <div class="auth-tabs">
-            <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-            <button class="auth-tab" data-tab="register">Đăng ký</button>
-        </div>
-
-        <!-- Login Form -->
-        <form id="loginForm" class="auth-form active">
-            <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" name="email" required>
+        <a href="dashboard.html"><i class="fas fa-user"></i> Bệnh án</a>
+        <a href="lich-dieu-tri.html"><i class="fas fa-calendar-check"></i> Lịch điều trị</a>
+        <a href="index.html#blog"><i class="fas fa-book-open"></i> Blog</a>
+        <a href="dat-lich.html"><i class="fas fa-calendar-alt"></i> Đặt lịch</a>
+        <a href="ho-so-ca-nhan.html"><i class="fas fa-cog"></i> Cài đặt</a>
+        <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
+        <a href="bac-si-dashboard.html">Bác sĩ dashboard</a>
+        <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+    </aside>
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                <button class="auth-tab" data-tab="register">Đăng ký</button>
             </div>
-            <div class="form-group">
-                <label for="loginPassword">Mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="loginPassword" name="password" required>
-                    <i class="fas fa-eye toggle-password"></i>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required>
                 </div>
-            </div>
-            <button type="submit" class="auth-submit-btn">
-                <span>Đăng nhập</span>
-                <i class="fas fa-arrow-right"></i>
-            </button>
-            <div class="social-login">
-                <button type="button" class="social-btn google">
-                    <i class="fab fa-google"></i> Đăng nhập với Google
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="loginPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng nhập</span>
+                    <i class="fas fa-arrow-right"></i>
                 </button>
-                <button type="button" class="social-btn facebook">
-                    <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
-                </button>
-            </div>
-        </form>
+                <div class="social-login">
+                    <button type="button" class="social-btn google">
+                        <i class="fab fa-google"></i> Đăng nhập với Google
+                    </button>
+                    <button type="button" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
+                    </button>
+                </div>
+            </form>
 
-        <!-- Register Form -->
-        <form id="registerForm" class="auth-form">
-            <div class="form-group">
-                <label for="registerName">Họ và tên</label>
-                <input type="text" id="registerName" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="registerEmail">Email</label>
-                <input type="email" id="registerEmail" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="registerPassword">Mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="registerPassword" name="password" required>
-                    <i class="fas fa-eye toggle-password"></i>
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">Họ và tên</label>
+                    <input type="text" id="registerName" name="name" required>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="confirmPassword">Xác nhận mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                    <i class="fas fa-eye toggle-password"></i>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="email" required>
                 </div>
-            </div>
-            <div class="form-group checkbox-group">
-                <input type="checkbox" id="agreeTerms" required>
-                <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
-            </div>
-            <button type="submit" class="auth-submit-btn">
-                <span>Đăng ký</span>
-                <i class="fas fa-arrow-right"></i>
-            </button>
-        </form>
-    </div>
-</div>
+                <div class="form-group">
+                    <label for="registerPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="registerPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Xác nhận mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng ký</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>  
 
 
 <main class="page-main">
@@ -239,11 +232,7 @@
         <div class="profile-grid">
             <div class="profile-card">
                 <div class="profile-avatar-section">
-                    <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Profile" class="profile-avatar">
-                    <div class="avatar-upload">
-                        <i class="fas fa-camera"></i>
-                        <p>Thay đổi ảnh đại diện</p>
-                    </div>
+                    <img src="https://graph.facebook.com/100000000000000/picture?type=large" alt="Avatar" class="sidebar-avatar">
                 </div>
 
                 <div class="profile-info">
@@ -278,20 +267,31 @@
                         <input type="date" id="dob" class="form-input info-ngaysinh" value="">
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Giới tính</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="nam" class="radio-input">
+                                <span class="radio-custom"></span>
+                                Nam
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="nu" class="radio-input">
+                                <span class="radio-custom"></span>
+                                Nữ
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Số điện thoại</label>
                         <input type="tel" id="phone" class="form-input info-phone" value="">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" id="email" class="form-input info-email" value="" readonly>
+                        <input type="email" id="email" class="form-input info-email" value="">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Nghề nghiệp</label>
                         <input type="text" class="form-input info-nghenghiep" value="">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Giới tính</label>
-                        <input type="text" class="form-input info-gioitinh" value="">
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label class="form-label">Địa chỉ</label>
@@ -469,11 +469,46 @@
                 </div> -->
 
 
-                <div class="form-group">
+                <div class="form-group" id="currentPasswordGroup">
                     <label class="form-label">Đổi mật khẩu</label>
                     <div style="display: flex; gap: 10px;">
-                        <input type="password" class="form-input" placeholder="Mật khẩu hiện tại" style="flex: 1;">
-                        <button class="btn btn-secondary">Đổi mật khẩu</button>
+                    <input
+                            type="password"
+                            id="currentPassword"
+                            name="currentPassword"
+                            class="form-input"
+                            placeholder="Mật khẩu hiện tại"
+                            style="flex:1;"
+                            required
+                        />
+                        <button type="button" id="btnVerify" class="btn btn-secondary">
+                            Tiếp tục
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group" id="newPasswordGroup" style="display:none;">
+                    <label class="form-label">Nhập mật khẩu mới</label>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                    <input
+                        type="password"
+                        id="newPassword"
+                        name="newPassword"
+                        class="form-input"
+                        placeholder="Mật khẩu mới"
+                        required
+                    />
+                    <input
+                        type="password"
+                        id="changeConfirmPassword"
+                        name="confirmPassword"
+                        class="form-input"
+                        placeholder="Nhập lại mật khẩu mới"
+                        required
+                    />
+                    <button type="button" id="btnChange" class="btn btn-primary">
+                        Đổi mật khẩu
+                    </button>
                     </div>
                 </div>
             </div>
@@ -521,7 +556,8 @@
         </div>
     </div>
 </main>
-<script src="js/auth-access.js"></script>
+
+
 <script src="js/script.js"></script>
 <script src="js/profile.js"></script>
 </body>

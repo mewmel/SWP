@@ -1,6 +1,11 @@
 package com.example.project.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,12 +25,15 @@ public class Manager {
     @Column(name = "maEmail", length = 100)
     private String maEmail;
 
-    @Column(name = "maPassword", length = 100)
-    private String maPassword;
-
     @Column(name = "maPhone", length = 20)
     private String maPhone;
 
+    @Column(name = "maPassword", length = 100)
+    private String maPassword;
+
     @Column(name = "position", length = 50)
     private String position;
+
+    @Column(name = "roles", length = 20, nullable = false)
+    private String roles;    
 }

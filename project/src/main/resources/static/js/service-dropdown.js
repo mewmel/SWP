@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const serviceSelect = document.getElementById('service');
             serviceSelect.innerHTML = '<option value="">Chọn dịch vụ</option>';
             const labelMap = {
+                1: "Khám hiếm muộn/tiền hôn nhân",
                 2: "Thụ tinh trong ống nghiệm (IVF)",
                 3: "Thụ tinh nhân tạo (IUI)",
                 4: "Tư vấn ban đầu",
