@@ -21,9 +21,6 @@ public class Drug {
     @Column(name = "drugId")
     private Integer drugId;
 
-    @Column(name = "bookId", nullable = false)
-    private Integer bookId;
-
     @Column(name = "docId", nullable = false)
     private Integer docId;
 
