@@ -42,7 +42,7 @@
             <div class="filter-section">
                 <div class="filter-group">
                     <label for="statusFilter">Trạng thái:</label>
-                    <select id="statusFilter" onchange="filterAppointments()">
+                    <select id="statusFilter" onchange="filterBookings()">
                         <option value="all">Tất cả</option>
                         <option value="pending" selected>Chờ xác nhận</option>
                         <option value="confirmed">Đã xác nhận</option>
@@ -51,9 +51,9 @@
                 </div>
                 <div class="filter-group">
                     <label for="dateFilter">Ngày hẹn:</label>
-                    <input type="date" id="dateFilter" onchange="filterAppointments()">
+                    <input type="date" id="dateFilter" onchange="filterBookings()">
                 </div>
-                <button class="btn-refresh" onclick="loadAppointments()">
+                <button class="btn-refresh" onclick="loadBookings()">
                     <i class="fas fa-sync-alt"></i> Làm mới
                 </button>
             </div>
@@ -196,10 +196,10 @@
         <div class="modal-footer">
             <button class="btn-secondary" onclick="closeDetailModal()">Đóng</button>
             <div class="action-buttons" id="appointmentActions">
-                <button class="btn-danger" onclick="rejectAppointment()">
+                <button class="btn-danger" onclick="rejectBooking()">
                     <i class="fas fa-times"></i> Từ chối
                 </button>
-                <button class="btn-success" onclick="confirmAppointment()">
+                <button class="btn-success" onclick="confirmBooking()">
                     <i class="fas fa-check"></i> Xác nhận
                 </button>
             </div>
@@ -207,9 +207,8 @@
     </div>
 </div>
 
+<script src="js/script.js"></script>
 <script src="js/doctor-common.js"></script>
 <script src="js/doctor-appointment-management.js"></script>
-<script src="js/script.js"></script>
-
 </body>
 </html>

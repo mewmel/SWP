@@ -19,10 +19,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     
     // Lấy booking theo bác sĩ và ngày
     List<Booking> findByDocIdAndCreatedAt(Integer docId, LocalDate createdAt);
-    
-    // Lấy booking theo customer
-    List<Booking> findByCusIdOrderByCreatedAt(Integer cusId);
-    
+        
     // Đếm số booking theo trạng thái
     long countByDocIdAndBookStatus(Integer docId, String bookStatus);
 

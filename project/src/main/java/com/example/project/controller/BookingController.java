@@ -41,7 +41,7 @@ public class BookingController {
     @GetMapping("/booking/doctor/{docId}")
     public ResponseEntity<List<Booking>> getBookingsByDoctor(@PathVariable Integer docId) {
         try {
-            List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAt(docId);
+            List<Booking> bookings = bookingRepository.findByDocIdOrderByCreatedAt(docId);
             return ResponseEntity.ok(bookings);
         } catch (Exception e) {
             e.printStackTrace();
