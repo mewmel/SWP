@@ -20,31 +20,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (notificationWrapper) notificationWrapper.style.display = 'none';
     }
 
-    
     // ========== ĐĂNG XUẤT ==========
-    function clearAllLocalStorage() {
-        localStorage.clear();
-    }
 
     const logoutBtn = document.querySelector('.logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            clearAllLocalStorage();
-            localStorage.setItem('logoutMessage', 'Đã đăng xuất!');
-            if (userMenu) userMenu.style.display = 'none';
-            if (authButtons) authButtons.style.display = 'flex';
-            if (notificationWrapper) notificationWrapper.style.display = 'none';
-            closeSidebar();
-            clearLoginForm();
-            if (window.location.pathname !== '/index.html' && !window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                localStorage.clear(); // <-- Sửa ở đây, không cần gọi hàm nào khác
                 window.location.href = "index.html";
-            } else {
-                showNotification('Đã đăng xuất!', 'success');
-                localStorage.removeItem('logoutMessage');
-            }
-        });
-    }
+            });
+        }
 
 // Patient data storage
 const patientData = {
@@ -154,6 +139,8 @@ function savePatientRecord() {
 
     closeModal();
 }
+
+
 
 // Patient List Modal functions
 function openPatientList() {

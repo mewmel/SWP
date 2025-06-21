@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 import com.example.project.dto.BookingRequest;
 import com.example.project.entity.Booking;
 import com.example.project.entity.Customer;
-import com.example.project.entity.WorkSlot;
 import com.example.project.entity.Doctor;
+import com.example.project.entity.WorkSlot;
 import com.example.project.repository.BookingRepository;
 import com.example.project.repository.CustomerRepository;
-import com.example.project.repository.WorkSlotRepository;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.repository.ServiceRepository;
+import com.example.project.repository.WorkSlotRepository;
 
 @Service
 public class BookingService {
@@ -128,7 +128,7 @@ public class BookingService {
         booking.setSlotId(slot.getSlotId());
         booking.setSerId(req.getSerId());
         booking.setBookType(req.getBookType());
-        booking.setBookStatus("booked");
+        booking.setBookStatus("pending");
         booking.setCreatedAt(LocalDateTime.now());
         booking.setNote(req.getNote());
         bookingRepo.save(booking);

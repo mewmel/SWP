@@ -1,6 +1,29 @@
 package com.example.project.repository;
 
-import com.example.project.entity.Booking;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.time.LocalDate;
+import java.util.List;
 
-public interface BookingRepository extends JpaRepository<Booking, Integer> {}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.project.entity.Booking;
+
+@Repository
+public interface BookingRepository extends JpaRepository<Booking, Integer> {
+    
+    // Lấy booking theo bác sĩ, sắp xếp theo ngày và giờ
+    List<Booking> findByDocIdOrderByCreatedAt(Integer docId);
+    
+    // Lấy booking theo bác sĩ và trạng thái
+    List<Booking> findByDocIdAndBookStatusOrderByCreatedAt(Integer docId, String bookStatus);
+    
+    // Lấy booking theo bác sĩ và ngày
+    List<Booking> findByDocIdAndCreatedAt(Integer docId, LocalDate createdAt);
+    
+    // Lấy booking theo customer
+    List<Booking> findByCusIdOrderByCreatedAt(Integer cusId);
+    
+    // Đếm số booking theo trạng thái
+    long countByDocIdAndBookStatus(Integer docId, String bookStatus);
+
+}

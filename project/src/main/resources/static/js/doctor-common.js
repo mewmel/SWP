@@ -1,8 +1,13 @@
 // Sidebar functions
 function openScheduleManager() {
-    if (typeof showNotification === 'function') {
-        showNotification('Chức năng quản lý lịch hẹn sẽ được phát triển sớm!', 'info');
+    console.log('Navigating to schedule manager...');
+    const docId = localStorage.getItem('docId');
+    if (!docId) {
+        alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!');
+        window.location.href = 'index.html';
+        return;
     }
+    window.location.href = 'bac-si-lich-hen-kham.html';
 }
 
 function openReports() {
@@ -17,35 +22,69 @@ function toggleMobileMenu() {
         navLeft.style.display = navLeft.style.display === 'flex' ? 'none' : 'flex';
     }
 }
+// Update current time display
+function updateCurrentTime() {
+    const timeElement = document.querySelector('.current-time');
+    if (timeElement) {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('vi-VN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        const dateString = now.toLocaleDateString('vi-VN', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        timeElement.innerHTML = `${timeString}<br><small>${dateString}</small>`;
+    }
+}
+// Close modal functions
+function closeModal() {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.style.display = 'none';
+    });
+}
+function closePatientListModal() {
+    const patientModal = document.getElementById('patientListModal');
+    if (patientModal) {
+        patientModal.style.display = 'none';
+    }
+}
 // Check and update doctor UI based on login status
 function checkDoctorLogin() {
-    const fullName = localStorage.getItem('userFullName');
-    const userRole = localStorage.getItem('userRole');
+    const docFullName = localStorage.getItem('docFullName');
 
     // Debug: Log current localStorage values
     console.log('Doctor Dashboard - Debug Info:');
-    console.log('fullName:', fullName);
-    console.log('userRole:', userRole);
+    console.log('fullName:', docFullName);
 
-    if (fullName) {
+
+    if (docFullName) {
         // User is logged in, show authenticated UI
         console.log('User is logged in - showing UI');
-        updateDoctorUI(fullName);
-
-        // If role is not set or not doctor, set it to doctor for this page
-        if (!userRole || userRole !== 'doctor') {
-            console.log('Setting role to doctor for this page');
-            localStorage.setItem('userRole', 'doctor');
-        }
+        updateDoctorUI(docFullName);
         return true;
     } else {
         // User not logged in, show login modal
-        console.log('User not logged in - showing auth modal');
+        // console.log('User not logged in - showing auth modal');
+        // setTimeout(() => {
+        //     if (typeof openAuthModal === 'function') {
+        //         openAuthModal('login');
+        //     }
+        // }, 1000);
+        // return false;
+                console.log('Doctor not logged in');
+        
+        // SỬA: KHÔNG GỌI openAuthModal - chỉ redirect
+        console.log('Redirecting to login page...');
         setTimeout(() => {
-            if (typeof openAuthModal === 'function') {
-                openAuthModal('login');
-            }
-        }, 500);
+            window.location.href = 'index.html';
+        }, 1000); // Tăng delay để user nhìn thấy message
+        
         return false;
     }
 }
