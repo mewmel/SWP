@@ -11,4 +11,3 @@ public class HomeController {
         return "forward:/index.html";
     }
 }
-

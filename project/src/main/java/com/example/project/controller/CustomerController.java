@@ -29,6 +29,7 @@ public class CustomerController {
         return customerRepository.findByCusEmail(email).orElse(null);
     }
 
+    // API lấy thông tin theo ID để update
 @PutMapping("/{id}")
 public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @RequestBody Customer updatedData) {
     Optional<Customer> optional = customerRepository.findById(id);
