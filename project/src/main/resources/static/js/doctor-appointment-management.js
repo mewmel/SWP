@@ -488,9 +488,9 @@ function displayBookings(bookings) {
         
         // Fill data vào các element
         card.querySelector('#patientName').textContent = `Booking #${booking.bookId}`;
-        card.querySelector('#appointmentTime').textContent = formatDateTime(booking.bookDate, booking.bookTime);
+        card.querySelector('#appointmentTime').textContent = formatDateTime(booking.creatAt);
         card.querySelector('#customerId').textContent = booking.cusId || 'N/A';
-        card.querySelector('#serviceId').textContent = booking.serviceId || 'N/A';
+        card.querySelector('#serviceId').textContent = booking.serId || 'N/A';
         
         const statusBadge = card.querySelector('#statusBadge');
         statusBadge.textContent = getStatusText(booking.bookStatus);
@@ -552,13 +552,10 @@ async function showBookingDetail(bookId) {
         
         // Fill dữ liệu vào modal
         document.getElementById('detailPatientName').textContent = `Customer ID: ${booking.cusId}`;
-        document.getElementById('detailPatientPhone').textContent = 'N/A';
-        document.getElementById('detailPatientEmail').textContent = 'N/A';
-        document.getElementById('detailPatientAge').textContent = 'N/A';
+
         
-        document.getElementById('detailAppointmentDate').textContent = formatDate(booking.bookDate);
-        document.getElementById('detailAppointmentTime').textContent = booking.bookTime;
-        document.getElementById('detailService').textContent = `Service ID: ${booking.serviceId || 'N/A'}`;
+        document.getElementById('detailAppointmentDate').textContent = formatDate(booking.creatAt);
+        document.getElementById('detailService').textContent = `Service ID: ${booking.serId || 'N/A'}`;
         
         const statusElement = document.getElementById('detailStatus');
         statusElement.textContent = getStatusText(booking.bookStatus);
@@ -590,7 +587,7 @@ async function confirmBooking() {
     const doctorNote = document.getElementById('doctorNote').value.trim();
     
     try {
-        const response = await fetch(`/api/booking/${currentBookId}/status?status=confirmed${doctorNote ? '&doctorNote=' + encodeURIComponent(doctorNote) : ''}`, {
+        const response = await fetch(`/api/booking/status/${currentBookId}?status=confirmed${doctorNote ? '&doctorNote=' + encodeURIComponent(doctorNote) : ''}`, {
             method: 'PUT'
         });
         
@@ -620,7 +617,7 @@ async function rejectBooking() {
     }
     
     try {
-        const response = await fetch(`/api/booking/${currentBookId}/status?status=rejected&doctorNote=${encodeURIComponent(doctorNote)}`, {
+        const response = await fetch(`/api/booking/status/${currentBookId}?status=rejected&doctorNote=${encodeURIComponent(doctorNote)}`, {
             method: 'PUT'
         });
         
@@ -642,7 +639,7 @@ async function rejectBooking() {
 // Quick actions
 async function quickConfirm(bookId) {
     try {
-        const response = await fetch(`/api/booking/${bookId}/status?status=confirmed&doctorNote=Đã xác nhận nhanh`, {
+        const response = await fetch(`/api/booking/status/${bookId}?status=confirmed&doctorNote=Đã xác nhận nhanh`, {
             method: 'PUT'
         });
         
@@ -696,7 +693,7 @@ function filterBookings() {
     
     if (dateFilter) {
         filtered = filtered.filter(booking => {
-            const bookingDate = new Date(booking.bookDate).toISOString().split('T')[0];
+            const bookingDate = new Date(booking.creatAt).toISOString().split('T')[0];
             return bookingDate === dateFilter;
         });
     }

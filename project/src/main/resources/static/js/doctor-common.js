@@ -69,22 +69,14 @@ function checkDoctorLogin() {
         updateDoctorUI(docFullName);
         return true;
     } else {
-        // User not logged in, show login modal
-        // console.log('User not logged in - showing auth modal');
-        // setTimeout(() => {
-        //     if (typeof openAuthModal === 'function') {
-        //         openAuthModal('login');
-        //     }
-        // }, 1000);
-        // return false;
-                console.log('Doctor not logged in');
-        
+        console.log('Doctor not logged in');
+
         // SỬA: KHÔNG GỌI openAuthModal - chỉ redirect
         console.log('Redirecting to login page...');
         setTimeout(() => {
             window.location.href = 'index.html';
         }, 1000); // Tăng delay để user nhìn thấy message
-        
+
         return false;
     }
 }
@@ -115,13 +107,13 @@ function updateDoctorUI(fullName) {
 }
 
 // Override selectedRole for doctor dashboard
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     // Auto-select doctor role for this page
     window.selectedRole = 'doctor';
 });
 
 // Doctor Dashboard specific initialization
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Give script.js time to load first
     setTimeout(() => {
         // Check doctor login status after script.js has initialized
@@ -130,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Override login success handler to ensure doctor role is saved
         const originalLoginForm = document.getElementById('loginForm');
         if (originalLoginForm) {
-            originalLoginForm.addEventListener('submit', function(e) {
+            originalLoginForm.addEventListener('submit', function (e) {
                 // Ensure doctor role is set for this page
                 window.selectedRole = 'doctor';
             });
@@ -153,7 +145,7 @@ function initializeDoctorDashboard() {
     setInterval(updateCurrentTime, 60000); // Update every minute
 
     // Add keyboard shortcuts for doctor dashboard
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         // Escape to close modals
         if (e.key === 'Escape') {
             closeModal();

@@ -66,7 +66,7 @@ public class BookingController {
     }
 
     // API gộp: Cập nhật trạng thái booking (confirm/reject)
-    @PutMapping("/booking/{bookId}/status")
+    @PutMapping("/booking/status/{bookId}")
     public ResponseEntity<String> updateBookingStatus(
             @PathVariable Integer bookId,
             @RequestParam String status,
@@ -112,7 +112,7 @@ public class BookingController {
     }
 
     // API lấy booking theo docId và status
-    @GetMapping("/booking/doctor/{docId}/status")
+    @GetMapping("/booking/doctor/status/{docId}")
     public ResponseEntity<List<Booking>> getBookingsByDoctorAndStatus(
             @PathVariable Integer docId, 
             @RequestParam String status) {
@@ -126,7 +126,7 @@ public class BookingController {
     }
 
     // API đếm số booking theo status
-    @GetMapping("/booking/doctor/{docId}/count")
+    @GetMapping("/booking/doctor/count/{docId}")
     public ResponseEntity<Long> countBookingsByStatus(
             @PathVariable Integer docId,
             @RequestParam String status) {
