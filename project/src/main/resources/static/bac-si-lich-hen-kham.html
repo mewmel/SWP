@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý lịch hẹn - Bác sĩ</title>
+    <link rel="stylesheet" href="css/doctor-common.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Header Navigation -->
+<header class="doctor-header">
+    <div class="doctor-header-container">
+        <nav class="doctor-nav">
+            <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
+            <a href="blog.html" class="nav-link">Đăng Blog</a>
+            <a href="bac-si-lich-lam.html" class="nav-link">Đăng ký lịch làm</a>
+            <a href="bac-si-quan-ly-lich-hen.html" class="nav-link active">Quản lý lịch hẹn</a>
+        </nav>
+
+        <div class="doctor-header-right">
+            <div class="user-menu" style="display:none;">
+                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="doctor-page-container">
+    <div class="container">
+        <main class="main-content">
+            <div class="page-header">
+                <h1><i class="fas fa-calendar-check"></i> Quản lý lịch hẹn</h1>
+                <p>Xem và phê duyệt các lịch hẹn từ bệnh nhân</p>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label for="statusFilter">Trạng thái:</label>
+                    <select id="statusFilter" onchange="filterBookings()">
+                        <option value="all">Tất cả</option>
+                        <option value="pending" selected>Chờ xác nhận</option>
+                        <option value="confirmed">Đã xác nhận</option>
+                        <option value="rejected">Đã từ chối</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="dateFilter">Ngày hẹn:</label>
+                    <input type="date" id="dateFilter" onchange="filterBookings()">
+                </div>
+                <button class="btn-refresh" onclick="loadBookings()">
+                    <i class="fas fa-sync-alt"></i> Làm mới
+                </button>
+            </div>
+
+            <!-- Appointments List -->
+            <div class="appointments-container">
+                <div class="appointments-header">
+                    <span class="pending-count">Có <span id="pendingCount">0</span> lịch hẹn chờ xác nhận</span>
+                </div>
+
+                <div id="appointmentsList" class="appointments-list">
+                    <!-- Template cho mỗi booking card - THÊM VÀO ĐÂY -->
+                    <div class="appointment-card template" id="bookingTemplate" style="display: none;">
+                        <div class="appointment-header">
+                            <h3 class="patient-name" id="patientName">Booking #</h3>
+                            <div class="appointment-time">
+                                <i class="fas fa-clock"></i>
+                                <span id="appointmentTime">--/--/---- --:--</span>
+                            </div>
+                        </div>
+
+                        <div class="appointment-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Customer ID</span>
+                                <span class="detail-value" id="customerId">N/A</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Service ID</span>
+                                <span class="detail-value" id="serviceId">N/A</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Trạng thái</span>
+                                <span class="detail-value">
+                        <span class="status-badge" id="statusBadge">--</span>
+                    </span>
+                            </div>
+                        </div>
+
+                        <div class="appointment-note" id="appointmentNote" style="display: none;">
+                            <div class="note-label">Ghi chú từ bệnh nhân:</div>
+                            <div class="note-text" id="noteText"></div>
+                        </div>
+
+                        <div class="appointment-actions">
+                            <button class="btn-small btn-view" id="btnView">
+                                <i class="fas fa-eye"></i> Xem chi tiết
+                            </button>
+                            <button class="btn-small btn-confirm" id="btnConfirm" style="display: none;">
+                                <i class="fas fa-check"></i> Xác nhận
+                            </button>
+                            <button class="btn-small btn-reject" id="btnReject" style="display: none;">
+                                <i class="fas fa-times"></i> Từ chối
+                            </button>
+                        </div>
+                    </div>
+                    <!-- HẾT TEMPLATE -->
+
+                    <!-- Các booking cards khác sẽ được JavaScript clone và thêm vào đây -->
+                </div>
+
+                <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Đang tải...
+                </div>
+
+                <div id="noAppointments" class="no-appointments" style="display: none;">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>Không có lịch hẹn nào</p>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Appointment Detail Modal -->
+<div id="appointmentDetailModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-info-circle"></i> Chi tiết lịch hẹn</h3>
+            <span class="close" onclick="closeDetailModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="appointment-detail">
+                <div class="patient-info-section">
+                    <h4><i class="fas fa-user"></i> Thông tin bệnh nhân</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Họ tên:</label>
+                            <span id="detailPatientName"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Số điện thoại:</label>
+                            <span id="detailPatientPhone"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span id="detailPatientEmail"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Tuổi:</label>
+                            <span id="detailPatientAge"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="appointment-info-section">
+                    <h4><i class="fas fa-calendar"></i> Thông tin lịch hẹn</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Ngày hẹn:</label>
+                            <span id="detailAppointmentDate"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Giờ hẹn:</label>
+                            <span id="detailAppointmentTime"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Dịch vụ:</label>
+                            <span id="detailService"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Trạng thái:</label>
+                            <span id="detailStatus" class="status-badge"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note-section">
+                    <h4><i class="fas fa-sticky-note"></i> Ghi chú từ bệnh nhân</h4>
+                    <div class="note-content" id="detailNote">
+                        Không có ghi chú
+                    </div>
+                </div>
+
+                <div class="doctor-note-section">
+                    <h4><i class="fas fa-user-md"></i> Ghi chú của bác sĩ</h4>
+                    <textarea id="doctorNote" placeholder="Nhập ghi chú của bác sĩ..." rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeDetailModal()">Đóng</button>
+            <div class="action-buttons" id="appointmentActions">
+                <button class="btn-danger" onclick="rejectBooking()">
+                    <i class="fas fa-times"></i> Từ chối
+                </button>
+                <button class="btn-success" onclick="confirmBooking()">
+                    <i class="fas fa-check"></i> Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/doctor-common.js"></script>
+<script src="js/doctor-appointment-management.js"></script>
+</body>
+</html>

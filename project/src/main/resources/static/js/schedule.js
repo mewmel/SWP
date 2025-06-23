@@ -4,41 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentMonth = currentDate.getMonth(); // 0-11
     let currentYear = currentDate.getFullYear();
 
-    // Dữ liệu events mẫu cho các tháng
-    const eventsData = {
-        '2025-6': {
-            3: [{ type: 'injection', title: 'Tiêm Gonal-F' }],
-            4: [{ type: 'injection', title: 'Tiêm Gonal-F' }],
-            5: [
-                { type: 'test', title: 'Xét nghiệm E2' },
-                { type: 'injection', title: 'Tiêm Gonal-F' }
-            ],
-            6: [{ type: 'injection', title: 'Tiêm Gonal-F' }],
-            7: [{ type: 'appointment', title: 'Khám bác sĩ' }],
-            10: [{ type: 'injection', title: 'Tiêm Cetrotide' }],
-            12: [{ type: 'test', title: 'Siêu âm' }],
-            14: [{ type: 'appointment', title: 'Tái khám' }],
-            24: [
-                { type: 'injection', title: 'Tiêm Gonal-F' },
-                { type: 'reminder', title: 'Nhắc nhở' }
-            ],
-            25: [{ type: 'test', title: 'Xét nghiệm máu' }],
-            28: [{ type: 'appointment', title: 'Siêu âm kiểm tra' }]
-        },
-        '2025-7': {
-            2: [{ type: 'injection', title: 'Tiêm Gonal-F' }],
-            5: [{ type: 'test', title: 'Xét nghiệm hormone' }],
-            10: [{ type: 'appointment', title: 'Khám định kỳ' }],
-            15: [{ type: 'injection', title: 'Tiêm HCG' }],
-            20: [{ type: 'test', title: 'Siêu âm theo dõi' }]
-        },
-        '2025-5': {
-            8: [{ type: 'injection', title: 'Tiêm Gonal-F' }],
-            12: [{ type: 'test', title: 'Xét nghiệm FSH' }],
-            18: [{ type: 'appointment', title: 'Tư vấn bác sĩ' }],
-            25: [{ type: 'injection', title: 'Tiêm Cetrotide' }]
-        }
-    };
+    // Dữ liệu sự kiện của lịch (sẽ được lấy từ API, không còn mẫu cứng)
+    const eventsData = {}; // Chỉ chứa dữ liệu thật từ backend
 
     // Lấy tên tháng tiếng Việt
     const monthNames = [
@@ -46,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
     ];
 
-    // Elements
+    // Lấy các element cần thiết
     const currentMonthElement = document.getElementById('currentMonth');
     const calendarGrid = document.querySelector('.calendar-grid');
     const prevMonthBtn = document.getElementById('prevMonth');
@@ -57,22 +24,22 @@ document.addEventListener('DOMContentLoaded', function() {
         return new Date(year, month + 1, 0).getDate();
     }
 
-    // Hàm tính ngày đầu tiên của tháng (0 = Chủ nhật, 1 = Thứ 2, ...)
+    // Hàm tính thứ của ngày đầu tiên trong tháng (0 = Thứ 2)
     function getFirstDayOfMonth(month, year) {
         const firstDay = new Date(year, month, 1).getDay();
-        // Chuyển đổi để Thứ 2 = 0 (theo calendar header)
+        // Chuyển đổi: Thứ 2 = 0 (theo tiêu chuẩn lịch đang dùng)
         return firstDay === 0 ? 6 : firstDay - 1;
     }
 
-    // Hàm kiểm tra có phải ngày hôm nay không
+    // Kiểm tra ngày có phải hôm nay không
     function isToday(day, month, year) {
         const today = new Date();
-        return day === today.getDate() && 
-               month === today.getMonth() && 
-               year === today.getFullYear();
+        return day === today.getDate() &&
+            month === today.getMonth() &&
+            year === today.getFullYear();
     }
 
-    // Hàm tạo class cho event
+    // Lấy class CSS cho loại sự kiện
     function getEventClass(eventType) {
         const eventClasses = {
             'injection': 'event-injection',
@@ -83,16 +50,14 @@ document.addEventListener('DOMContentLoaded', function() {
         return eventClasses[eventType] || 'event-item';
     }
 
-    // Hàm render calendar
+    // Hàm render lịch tháng hiện tại với dữ liệu mới nhất
     function renderCalendar() {
         // Cập nhật tên tháng
         currentMonthElement.textContent = `${monthNames[currentMonth]}, ${currentYear}`;
 
-        // Xóa tất cả ngày cũ (giữ lại header)
+        // Xóa các ngày cũ (chỉ giữ lại header)
         const headers = calendarGrid.querySelectorAll('.calendar-header');
         calendarGrid.innerHTML = '';
-        
-        // Thêm lại headers
         headers.forEach(header => {
             calendarGrid.appendChild(header.cloneNode(true));
         });
@@ -101,18 +66,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const firstDayOfMonth = getFirstDayOfMonth(currentMonth, currentYear);
         const daysInPrevMonth = getDaysInMonth(currentMonth - 1, currentYear);
 
-        // Key cho events data
+        // Key dạng "2025-6" cho mapping sự kiện
         const eventsKey = `${currentYear}-${currentMonth + 1}`;
         const monthEvents = eventsData[eventsKey] || {};
 
-        // Thêm các ngày từ tháng trước
+        // Thêm các ngày của tháng trước để lấp đầu dòng (nếu cần)
         for (let i = firstDayOfMonth - 1; i >= 0; i--) {
             const day = daysInPrevMonth - i;
             const dayElement = createDayElement(day, true, false, []);
             calendarGrid.appendChild(dayElement);
         }
 
-        // Thêm các ngày trong tháng hiện tại
+        // Thêm các ngày của tháng hiện tại
         for (let day = 1; day <= daysInMonth; day++) {
             const dayEvents = monthEvents[day] || [];
             const isCurrentDay = isToday(day, currentMonth, currentYear);
@@ -120,53 +85,48 @@ document.addEventListener('DOMContentLoaded', function() {
             calendarGrid.appendChild(dayElement);
         }
 
-        // Thêm các ngày từ tháng sau để fill đủ grid
-        const totalCells = calendarGrid.children.length - 7; // trừ 7 headers
-        const remainingCells = 42 - totalCells; // 6 rows x 7 days = 42 cells
-        
+        // Thêm các ngày của tháng sau để đủ lưới 6 hàng
+        const totalCells = calendarGrid.children.length - 7; // Trừ 7 header
+        const remainingCells = 42 - totalCells; // 6 hàng x 7 ngày = 42 cell
         for (let day = 1; day <= remainingCells; day++) {
             const dayElement = createDayElement(day, true, false, []);
             calendarGrid.appendChild(dayElement);
         }
 
-        // Cập nhật events summary
+        // Cập nhật danh sách sự kiện sắp tới
         updateEventsSummary();
     }
 
-    // Hàm tạo element cho một ngày
+    // Hàm tạo 1 ô ngày trên lịch
     function createDayElement(day, isOtherMonth, isCurrentDay, events) {
         const dayElement = document.createElement('div');
         dayElement.className = 'calendar-day';
-        
         if (isOtherMonth) {
             dayElement.classList.add('other-month');
         }
         if (isCurrentDay) {
             dayElement.classList.add('today');
         }
-
-        // Số ngày
+        // Hiển thị số ngày
         const dayNumber = document.createElement('div');
         dayNumber.className = 'day-number';
         dayNumber.textContent = day;
         dayElement.appendChild(dayNumber);
 
-        // Events
+        // Nếu có sự kiện, hiển thị các sự kiện trong ô
         if (events.length > 0) {
             const dayEvents = document.createElement('div');
             dayEvents.className = 'day-events';
-            
             events.forEach(event => {
                 const eventElement = document.createElement('div');
                 eventElement.className = `event-item ${getEventClass(event.type)}`;
                 eventElement.textContent = event.title;
                 dayEvents.appendChild(eventElement);
             });
-            
             dayElement.appendChild(dayEvents);
         }
 
-        // Thêm event listener
+        // Cho phép click xem chi tiết sự kiện trong ngày
         dayElement.addEventListener('click', function() {
             if (!isOtherMonth) {
                 showDayDetails(day, events);
@@ -176,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return dayElement;
     }
 
-    // Hàm hiển thị chi tiết ngày
+    // Hàm hiển thị popup chi tiết sự kiện trong ngày
     function showDayDetails(day, events) {
         const monthName = monthNames[currentMonth];
         if (events.length > 0) {
@@ -187,20 +147,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Hàm cập nhật events summary
+    // Hàm cập nhật danh sách sự kiện sắp tới (summary card bên phải)
     function updateEventsSummary() {
         const eventsKey = `${currentYear}-${currentMonth + 1}`;
         const monthEvents = eventsData[eventsKey] || {};
-        
-        // Cập nhật upcoming events
+
         const upcomingEventsContainer = document.querySelector('.upcoming-events');
         if (upcomingEventsContainer) {
             upcomingEventsContainer.innerHTML = '';
-            
-            // Lấy events trong tương lai gần
             const today = new Date();
             const upcomingEvents = [];
-            
+
+            // Lấy các sự kiện còn lại trong tháng (>= hôm nay)
             Object.keys(monthEvents).forEach(day => {
                 const eventDate = new Date(currentYear, currentMonth, parseInt(day));
                 if (eventDate >= today) {
@@ -216,27 +174,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Sắp xếp theo ngày
             upcomingEvents.sort((a, b) => a.date - b.date);
-            
-            // Hiển thị 3 events gần nhất
+            // Hiển thị 3 sự kiện gần nhất
             upcomingEvents.slice(0, 3).forEach(event => {
                 const eventElement = createUpcomingEventElement(event);
                 upcomingEventsContainer.appendChild(eventElement);
             });
 
+            // Nếu không có sự kiện nào
             if (upcomingEvents.length === 0) {
                 upcomingEventsContainer.innerHTML = '<p style="text-align: center; color: #666; margin: 20px 0;">Không có sự kiện sắp tới trong tháng này.</p>';
             }
         }
     }
 
-    // Hàm tạo element cho upcoming event
+    // Hàm tạo 1 element sự kiện sắp tới (summary card)
     function createUpcomingEventElement(event) {
         const eventDiv = document.createElement('div');
         eventDiv.className = 'upcoming-event';
-        
         const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
         const dayName = dayNames[event.date.getDay()];
-        
         eventDiv.innerHTML = `
             <div class="event-date">
                 <div class="day">${event.day}</div>
@@ -247,11 +203,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="event-time">08:00 - Phòng khám</div>
             </div>
         `;
-        
         return eventDiv;
     }
 
-    // Event listeners cho navigation
+    // Xử lý chuyển tháng trước
     prevMonthBtn.addEventListener('click', function() {
         currentMonth--;
         if (currentMonth < 0) {
@@ -261,6 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderCalendar();
     });
 
+    // Xử lý chuyển tháng sau
     nextMonthBtn.addEventListener('click', function() {
         currentMonth++;
         if (currentMonth > 11) {
@@ -270,21 +226,18 @@ document.addEventListener('DOMContentLoaded', function() {
         renderCalendar();
     });
 
-    // Medication done buttons
+    // Xử lý nút Đã tiêm (nếu dùng)
     document.querySelectorAll('.done-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             this.textContent = 'Hoàn thành';
             this.style.background = '#27ae60';
             this.disabled = true;
-            
-            // Hiển thị thông báo
             showNotification('Đã ghi nhận việc tiêm thuốc!', 'success');
         });
     });
 
-    // Hàm hiển thị thông báo
+    // Hàm hiển thị thông báo nổi (toast)
     function showNotification(message, type = 'success') {
-        // Tạo notification element
         const notification = document.createElement('div');
         notification.style.cssText = `
             position: fixed;
@@ -301,15 +254,10 @@ document.addEventListener('DOMContentLoaded', function() {
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         `;
         notification.textContent = message;
-        
         document.body.appendChild(notification);
-        
-        // Hiển thị
         setTimeout(() => {
             notification.style.transform = 'translateX(0)';
         }, 10);
-        
-        // Ẩn và xóa
         setTimeout(() => {
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => {
@@ -318,10 +266,105 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    // Khởi tạo calendar
-    renderCalendar();
+    // ===== LẤY DỮ LIỆU BOOKING STEP TỪ BACKEND VÀ VẼ LỊCH =====
+    function loadBookingStepsFromAPI(bookingId) {
+        // Gọi API lấy danh sách bước điều trị từ backend
+        fetch(`/api/booking-steps/by-booking/${bookingId}`)
+            .then(res => res.json())
+            .then(steps => {
+                // Xóa sạch eventsData trước khi nạp mới
+                Object.keys(eventsData).forEach(key => delete eventsData[key]);
+                // Duyệt từng bước, mapping vào eventsData theo đúng tháng/ngày
+                steps.forEach(step => {
+                    let date = new Date(step.performedAt);
+                    let year = date.getFullYear();
+                    let month = date.getMonth() + 1; // JS: 0-11, eventsData: 1-12
+                    let day = date.getDate();
 
-    // Thêm keyboard navigation
+                    let eventsKey = `${year}-${month}`;
+                    if (!eventsData[eventsKey]) eventsData[eventsKey] = {};
+                    if (!eventsData[eventsKey][day]) eventsData[eventsKey][day] = [];
+
+                    // Phân loại sự kiện dựa theo tên subService (đơn giản hóa)
+                    let type = 'appointment';
+                    if (step.subName && step.subName.toLowerCase().includes('tiêm')) type = 'injection';
+                    else if (step.subName && step.subName.toLowerCase().includes('xét nghiệm')) type = 'test';
+                    else if (step.subName && step.subName.toLowerCase().includes('siêu âm')) type = 'test';
+
+                    eventsData[eventsKey][day].push({
+                        type: type,
+                        title: step.subName || "Bước điều trị"
+                    });
+                });
+                // Sau khi nạp xong thì vẽ lại lịch
+                renderCalendar();
+            });
+    }
+    //Hàm load đồng thời nhiều bookingId và merge vào lịch
+    function loadMultipleBookingSteps(bookingIds) {
+        // Đầu tiên xóa sạch eventsData
+        Object.keys(eventsData).forEach(key => delete eventsData[key]);
+        let fetchDone = 0;
+        bookingIds.forEach(bookingId => {
+            fetch(`/api/booking-steps/by-booking/${bookingId}`)
+                .then(res => res.json())
+                .then(steps => {
+                    steps.forEach(step => {
+                        let date = new Date(step.performedAt);
+                        let year = date.getFullYear();
+                        let month = date.getMonth() + 1;
+                        let day = date.getDate();
+
+                        let eventsKey = `${year}-${month}`;
+                        if (!eventsData[eventsKey]) eventsData[eventsKey] = {};
+                        if (!eventsData[eventsKey][day]) eventsData[eventsKey][day] = [];
+
+                        let type = 'appointment';
+                        if (step.subName && step.subName.toLowerCase().includes('tiêm')) type = 'injection';
+                        else if (step.subName && step.subName.toLowerCase().includes('xét nghiệm')) type = 'test';
+                        else if (step.subName && step.subName.toLowerCase().includes('siêu âm')) type = 'test';
+
+                        eventsData[eventsKey][day].push({
+                            type: type,
+                            title: step.subName || "Bước điều trị"
+                        });
+                    });
+                    fetchDone++;
+                    // Khi đã load xong tất cả booking thì render calendar
+                    if (fetchDone === bookingIds.length) {
+                        renderCalendar();
+                    }
+                });
+        });
+    }
+    // THÊM HÀM NÀY để load lịch cho đúng khách hàng
+    function loadScheduleForCustomer(cusId) {
+        fetch(`/api/booking/by-customer/${cusId}`)
+            .then(res => res.json())
+            .then(bookings => {
+                const bookingIds = bookings.map(b => b.bookId);
+                if (bookingIds.length === 0) {
+                    // Không có booking, chỉ render lịch trống
+                    renderCalendar();
+                    return;
+                }
+                loadMultipleBookingSteps(bookingIds);
+            });
+    }
+
+// GIẢ SỬ bạn đã lấy được cusId (ví dụ lấy từ localStorage hoặc server truyền vào)
+    const cusId = localStorage.getItem('cusId');
+    if (cusId) {
+        loadScheduleForCustomer(cusId);
+    } else {
+        // Xử lý khi chưa đăng nhập hoặc chưa có cusId
+        alert("Bạn cần đăng nhập để xem lịch điều trị!");
+    }
+    // KHÔNG gọi renderCalendar() ở cuối file nữa, chỉ gọi sau khi đã load xong dữ liệu từ API
+    //loadBookingStepsFromAPI(3); // Thay 123 bằng bookingId thực tế
+    //loadBookingStepsFromAPI(4);
+    // loadMultipleBookingSteps([3, 4]);
+    // Hỗ trợ chuyển tháng bằng phím mũi tên
     document.addEventListener('keydown', function(e) {
         if (e.target.tagName.toLowerCase() !== 'input') {
             if (e.key === 'ArrowLeft') {
