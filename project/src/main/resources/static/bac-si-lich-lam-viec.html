@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch làm việc của bác sĩ</title>
+    <link rel="stylesheet" href="css/doctor-appointment.css">
+    <link rel="stylesheet" href="css/doctor-common.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .shift-button.view-only.selected {
+            background: #27ae60;
+            color: #fff;
+            border: 1.5px solid #27ae60;
+            cursor: default;
+        }
+        .shift-button.view-only {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 18px;
+            margin-top: 10px;
+        }
+        .calendar-day-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1.5px solid #e0e7ef;
+            padding: 18px 10px 12px 10px;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+        .calendar-day-card .day-header {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .calendar-day-card .day-header h3 {
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+            color: #2176bd;
+        }
+        .calendar-day-card .day-header .day-date {
+            font-size: 0.98rem;
+            color: #888;
+        }
+        .calendar-day-card .weekend-badge {
+            background: #f3e8ff;
+            color: #a855f7;
+            font-size: 0.85em;
+            border-radius: 8px;
+            padding: 2px 8px;
+            margin-top: 2px;
+            display: inline-block;
+        }
+        .calendar-day-card .shift-slot {
+            width: 100%;
+            margin-bottom: 6px;
+        }
+        .calendar-day-card .shift-label {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 2px;
+            display: block;
+        }
+        .calendar-day-card .shift-button.view-only {
+            width: 100%;
+            border-radius: 8px;
+            border: 1.5px solid #e0e7ef;
+            background: #f9fafb;
+            color: #444;
+            font-weight: 500;
+            font-size: 1em;
+            padding: 7px 0;
+            margin-bottom: 2px;
+            opacity: 1;
+            pointer-events: none;
+            transition: background 0.2s, color 0.2s;
+        }
+        .calendar-day-card .shift-button.view-only.selected {
+            background: #27ae60;
+            color: #fff;
+            border: 1.5px solid #27ae60;
+        }
+        .calendar-day-card .unavailable-slot {
+            width: 100%;
+            background: #f3f4f6;
+            color: #aaa;
+            border-radius: 8px;
+            padding: 7px 0;
+            text-align: center;
+            font-size: 0.98em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        @media (max-width: 900px) {
+            .calendar-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .calendar-grid { grid-template-columns: repeat(1, 1fr); }
+        }
+    </style>
+</head>
+<body>
+<header class="doctor-header">
+    <div class="doctor-header-container">
+        <nav class="doctor-nav">
+            <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
+            <a href="blog.html" class="nav-link">Đăng Blog</a>
+            <a href="bac-si-dang-ki-lich-lam.html" class="nav-link">Đăng ký lịch làm</a>
+            <a href="bac-si-lich-lam-viec.html" class="nav-link active">Lịch làm việc</a>
+            <a href="#" class="nav-link">Hồ sơ cá nhân</a>
+        </nav>
+    </div>
+</header>
+<div class="doctor-page-container">
+    <div class="container">
+        <main class="main-content">
+            <div class="page-header">
+                <h1><i class="fas fa-calendar-alt"></i> Lịch làm việc của tôi</h1>
+                <p>Xem các ca làm việc đã đăng ký trong tuần</p>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                <button id="prevWeek" class="btn-secondary"><i class="fas fa-chevron-left"></i> Tuần trước</button>
+                <span id="weekRange" style="font-weight: bold; font-size: 1.1rem;"></span>
+                <button id="nextWeek" class="btn-secondary">Tuần sau <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div id="scheduleGrid" class="appointments-list" style="margin-top: 0;"></div>
+        </main>
+    </div>
+</div>
+<script src="js/doctor-view-schedule.js"></script>
+</body>
+</html>

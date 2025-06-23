@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý lịch hẹn - Bác sĩ</title>
+    <link rel="stylesheet" href="css/doctor-appointment.css">
     <link rel="stylesheet" href="css/doctor-common.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -13,19 +14,43 @@
 <header class="doctor-header">
     <div class="doctor-header-container">
         <nav class="doctor-nav">
-            <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
+            <a href="bac-si-dashboard.html" class="nav-link active">Trang cá nhân</a>
             <a href="blog.html" class="nav-link">Đăng Blog</a>
-            <a href="bac-si-lich-lam.html" class="nav-link">Đăng ký lịch làm</a>
-            <a href="bac-si-quan-ly-lich-hen.html" class="nav-link active">Quản lý lịch hẹn</a>
+            <a href="bac-si-dang-ki-lich-lam.html" class="nav-link">Đăng ký lịch làm</a>
+            <a href="bac-si-lich-lam-viec.html" class="nav-link">Lịch làm việc</a>
+            <a href="index.html" class="nav-link">Hồ sơ cá nhân</a>
         </nav>
 
         <div class="doctor-header-right">
+            <div class="doctor-search-box">
+                <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
+                <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </div>
+
+            <div class="notification-wrapper" style="position: relative; display: none;">
+                <button class="doctor-notification-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="doctor-notification-badge">3</span>
+                </button>
+            </div>
+
             <div class="user-menu" style="display:none;">
                 <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-                <button class="logout-btn">
+                <button class="logout-btn"
+                        style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
                     <i class="fas fa-sign-out-alt"></i> Đăng xuất
                 </button>
             </div>
+
+            <button class="doctor-mobile-menu">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </div>
 </header>
@@ -46,7 +71,6 @@
                         <option value="all">Tất cả</option>
                         <option value="pending" selected>Chờ xác nhận</option>
                         <option value="confirmed">Đã xác nhận</option>
-                        <option value="rejected">Đã từ chối</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -187,10 +211,10 @@
                     </div>
                 </div>
 
-                <div class="doctor-note-section">
+                <!-- <div class="doctor-note-section">
                     <h4><i class="fas fa-user-md"></i> Ghi chú của bác sĩ</h4>
                     <textarea id="doctorNote" placeholder="Nhập ghi chú của bác sĩ..." rows="3"></textarea>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="modal-footer">
