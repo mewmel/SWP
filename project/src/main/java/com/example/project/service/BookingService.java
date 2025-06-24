@@ -3,7 +3,6 @@ package com.example.project.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -16,13 +15,13 @@ import org.springframework.stereotype.Service;
 import com.example.project.dto.BookingRequest;
 import com.example.project.entity.Booking;
 import com.example.project.entity.Customer;
-import com.example.project.entity.WorkSlot;
 import com.example.project.entity.Doctor;
+import com.example.project.entity.WorkSlot;
 import com.example.project.repository.BookingRepository;
 import com.example.project.repository.CustomerRepository;
-import com.example.project.repository.WorkSlotRepository;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.repository.ServiceRepository;
+import com.example.project.repository.WorkSlotRepository;
 
 @Service
 public class BookingService {
@@ -93,11 +92,13 @@ public class BookingService {
 
         if (startTimeStr != null) {
             startTimeStr = startTimeStr.trim();
-            if (startTimeStr.length() == 8) startTimeStr = startTimeStr.substring(0, 5);
+            if (startTimeStr.length() == 8)
+                startTimeStr = startTimeStr.substring(0, 5);
         }
         if (endTimeStr != null) {
             endTimeStr = endTimeStr.trim();
-            if (endTimeStr.length() == 8) endTimeStr = endTimeStr.substring(0, 5);
+            if (endTimeStr.length() == 8)
+                endTimeStr = endTimeStr.substring(0, 5);
         }
 
         LocalDate workDate = LocalDate.parse(req.getAppointmentDate());
@@ -109,8 +110,7 @@ public class BookingService {
                 req.getDocId(),
                 workDate,
                 startTime.toString(),
-                endTime.toString()
-        );
+                endTime.toString());
         if (optSlot.isEmpty()) {
             // Không gửi mail khi đặt lịch thất bại
             throw new RuntimeException("Không tìm thấy khung giờ phù hợp!");
@@ -126,7 +126,7 @@ public class BookingService {
         booking.setSerId(req.getSerId());
         booking.setBookType(req.getBookType());
         booking.setBookStatus("pending");
-        booking.setCreatedAt(LocalDateTime.now());
+        booking.setCreatedAt(LocalDateTime.of(workDate, startTime));
         booking.setNote(req.getNote());
 
         // Chỉ gửi mail khi booking save thành công
@@ -142,7 +142,8 @@ public class BookingService {
     }
 
     // Gửi email cho tài khoản mới và xác nhận đặt lịch (có mật khẩu)
-    private void sendNewAccountAndBookingEmail(Customer customer, String password, BookingRequest req, String doctorName, String serviceName) {
+    private void sendNewAccountAndBookingEmail(Customer customer, String password, BookingRequest req,
+            String doctorName, String serviceName) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(customer.getCusEmail());
         msg.setSubject("Tạo tài khoản & Đặt lịch thành công trên FertilityEHR");
@@ -158,7 +159,8 @@ public class BookingService {
     }
 
     // Gửi email xác nhận đặt lịch (không gửi tài khoản/mật khẩu)
-    private void sendBookingConfirmationEmail(Customer customer, BookingRequest req, String doctorName, String serviceName) {
+    private void sendBookingConfirmationEmail(Customer customer, BookingRequest req, String doctorName,
+            String serviceName) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(customer.getCusEmail());
         msg.setSubject("Xác nhận đặt lịch khám trên FertilityEHR");
@@ -183,32 +185,5 @@ public class BookingService {
         sb.append("Ghi chú: ").append(req.getNote() == null ? "" : req.getNote()).append("\n");
         return sb.toString();
     }
-    public void createBookingStepsForConfirmedBooking(Integer bookId) {
-        Booking booking = bookingRepo.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
 
-        if (!"confirmed".equalsIgnoreCase(booking.getBookStatus())) {
-            throw new IllegalStateException("Booking chưa ở trạng thái confirmed.");
-        }
-
-        WorkSlot slot = workSlotRepo.findById(booking.getSlotId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy khung giờ khám"));
-        LocalDate startDate = slot.getWorkDate();
-
-        java.util.List<com.example.project.entity.SubService> subServices = subServiceRepo.findBySerId(booking.getSerId());
-
-        for (com.example.project.entity.SubService ss : subServices) {
-            int offset = ss.getEstimatedDayOffset() != null ? ss.getEstimatedDayOffset() : 1;
-            LocalDate performedDate = startDate.plusDays(offset - 1);
-
-            com.example.project.entity.BookingStep step = new com.example.project.entity.BookingStep();
-            step.setBookId(booking.getBookId());
-            step.setSubId(ss.getSubId());
-            step.setPerformedAt(performedDate.atStartOfDay());
-            bookingStepRepo.save(step);
-        }
-    }
-    public List<Booking> getBookingsByCustomer(Integer cusId) {
-        return bookingRepository.findByCusIdOrderByCreatedAt(cusId);
-    }
 }
