@@ -3,9 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang chủ Quản lý - Hệ thống quản lý</title>
+    <title>Quản lý bác sĩ - Dashboard</title>
+    <link rel="stylesheet" href="css/doctor-appointment.css">
+    <link rel="stylesheet" href="css/doctor-common.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dashboard-container { max-width: 1200px; margin: 0 auto; padding: 32px 16px; }
+        .dashboard-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+        .dashboard-header h1 { font-size: 2rem; color: #2176bd; }
+        .doctor-info-card { display: flex; gap: 32px; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 28px 24px; margin-bottom: 32px; }
+        .doctor-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #e0e7ef; }
+        .doctor-info-main { flex: 1; }
+        .doctor-info-main h2 { margin: 0 0 8px 0; color: #2176bd; }
+        .doctor-info-main .doctor-meta { color: #888; margin-bottom: 8px; }
+        .doctor-info-main .doctor-status { display: inline-block; background: #eaf3fb; color: #2176bd; border-radius: 8px; padding: 2px 12px; font-size: 0.95em; margin-left: 8px; }
+        .doctor-info-main .doctor-contact { margin-top: 8px; color: #444; }
+        .dashboard-section { background: #fff; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 24px 18px; margin-bottom: 28px; }
+        .section-title { color: #2176bd; font-size: 1.2rem; margin-bottom: 16px; }
+        .degree-list, .specialty-list { list-style: none; padding: 0; margin: 0; }
+        .degree-list li, .specialty-list li { margin-bottom: 8px; color: #444; }
+        .calendar-mini { margin-top: 18px; }
+        .stat-grid { display: flex; gap: 32px; margin-bottom: 18px; }
+        .stat-card { background: #f9fafb; border-radius: 10px; padding: 18px 24px; flex: 1; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .stat-card .stat-value { font-size: 1.5rem; color: #2176bd; font-weight: bold; }
+        .stat-card .stat-label { color: #888; font-size: 1em; }
+        @media (max-width: 900px) { .doctor-info-card { flex-direction: column; align-items: center; } .stat-grid { flex-direction: column; gap: 12px; } }
+    </style>
 </head>
 <body>
-    <h1>Manager =></h1>
-    </body>
+<header class="doctor-header">
+    <div class="doctor-header-container">
+        <nav class="doctor-nav">
+            <a href="#" class="nav-link active">Quản lý bác sĩ</a>
+            <a href="sap-xep-lich-bac-si.html" class="nav-link">Sắp xếp lịch làm</a>
+            <a href="#" class="nav-link">Thống kê</a>
+        </nav>
+    </div>
+    
+</header>
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Quản lý bác sĩ</h1>
+        <button class="btn-secondary"><i class="fas fa-plus"></i> Thêm bác sĩ mới</button>
+    </div>
+    <div class="dashboard-section">
+        <div class="section-title"><i class="fas fa-users"></i> Danh sách bác sĩ</div>
+        <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+            <thead style="background:#f6f8fa;">
+                <tr style="text-align:left;">
+                    <th style="padding:12px 8px;">#</th>
+                    <th style="padding:12px 8px;">Ảnh</th>
+                    <th style="padding:12px 8px;">Họ tên</th>
+                    <th style="padding:12px 8px;">Mã</th>
+                    <th style="padding:12px 8px;">Khoa</th>
+                    <th style="padding:12px 8px;">Chuyên môn</th>
+                    <th style="padding:12px 8px;">Trạng thái</th>
+                    <th style="padding:12px 8px;">Liên hệ</th>
+                    <th style="padding:12px 8px;">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:10px 8px;">1</td>
+                    <td style="padding:10px 8px;"><img src="img/doctor1.png" alt="avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></td>
+                    <td style="padding:10px 8px;">BS. Nguyễn Văn A</td>
+                    <td style="padding:10px 8px;">BS001</td>
+                    <td style="padding:10px 8px;">Sản phụ khoa</td>
+                    <td style="padding:10px 8px;">IVF, IUI</td>
+                    <td style="padding:10px 8px;"><span style="background:#eaf3fb;color:#2176bd;border-radius:8px;padding:2px 12px;font-size:0.95em;">Đang hoạt động</span></td>
+                    <td style="padding:10px 8px;">0901 234 567<br>nguyenvana@hospital.com</td>
+                    <td style="padding:10px 8px;">
+                        <button class="btn-secondary view-degree-btn" data-doctor="BS001" title="Xem chi tiết"><i class="fas fa-user-graduate"></i></button>
+                        <button class="btn-secondary" title="Sửa"><i class="fas fa-edit"></i></button>
+                        <button class="btn-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 8px;">2</td>
+                    <td style="padding:10px 8px;"><img src="img/doctor2.png" alt="avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></td>
+                    <td style="padding:10px 8px;">BS. Trần Thị B</td>
+                    <td style="padding:10px 8px;">BS002</td>
+                    <td style="padding:10px 8px;">Nội tiết</td>
+                    <td style="padding:10px 8px;">Nội tiết sinh sản</td>
+                    <td style="padding:10px 8px;"><span style="background:#f7b731;color:#fff;border-radius:8px;padding:2px 12px;font-size:0.95em;">Tạm nghỉ</span></td>
+                    <td style="padding:10px 8px;">0902 345 678<br>tranthib@hospital.com</td>
+                    <td style="padding:10px 8px;">
+                        <button class="btn-secondary view-degree-btn" data-doctor="BS002" title="Xem chi tiết"><i class="fas fa-user-graduate"></i></button>
+                        <button class="btn-secondary" title="Sửa"><i class="fas fa-edit"></i></button>
+                        <button class="btn-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 8px;">3</td>
+                    <td style="padding:10px 8px;"><img src="img/doctor3.png" alt="avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></td>
+                    <td style="padding:10px 8px;">BS. Lê Văn C</td>
+                    <td style="padding:10px 8px;">BS003</td>
+                    <td style="padding:10px 8px;">Nhi</td>
+                    <td style="padding:10px 8px;">Nhi tổng quát</td>
+                    <td style="padding:10px 8px;"><span style="background:#eaf3fb;color:#2176bd;border-radius:8px;padding:2px 12px;font-size:0.95em;">Đang hoạt động</span></td>
+                    <td style="padding:10px 8px;">0903 456 789<br>levanc@hospital.com</td>
+                    <td style="padding:10px 8px;">
+                        <button class="btn-secondary view-degree-btn" data-doctor="BS003" title="Xem chi tiết"><i class="fas fa-user-graduate"></i></button>
+                        <button class="btn-secondary" title="Sửa"><i class="fas fa-edit"></i></button>
+                        <button class="btn-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 8px;">4</td>
+                    <td style="padding:10px 8px;"><img src="img/doctor1.png" alt="avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></td>
+                    <td style="padding:10px 8px;">BS. Phạm Thị D</td>
+                    <td style="padding:10px 8px;">BS004</td>
+                    <td style="padding:10px 8px;">Tim mạch</td>
+                    <td style="padding:10px 8px;">Siêu âm tim</td>
+                    <td style="padding:10px 8px;"><span style="background:#eaf3fb;color:#2176bd;border-radius:8px;padding:2px 12px;font-size:0.95em;">Đang hoạt động</span></td>
+                    <td style="padding:10px 8px;">0904 567 890<br>phamthid@hospital.com</td>
+                    <td style="padding:10px 8px;">
+                        <button class="btn-secondary view-degree-btn" data-doctor="BS004" title="Xem chi tiết"><i class="fas fa-user-graduate"></i></button>
+                        <button class="btn-secondary" title="Sửa"><i class="fas fa-edit"></i></button>
+                        <button class="btn-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 8px;">5</td>
+                    <td style="padding:10px 8px;"><img src="img/doctor2.png" alt="avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></td>
+                    <td style="padding:10px 8px;">BS. Hoàng Văn E</td>
+                    <td style="padding:10px 8px;">BS005</td>
+                    <td style="padding:10px 8px;">Ngoại khoa</td>
+                    <td style="padding:10px 8px;">Phẫu thuật tổng quát</td>
+                    <td style="padding:10px 8px;"><span style="background:#eaf3fb;color:#2176bd;border-radius:8px;padding:2px 12px;font-size:0.95em;">Đang hoạt động</span></td>
+                    <td style="padding:10px 8px;">0905 678 901<br>hoangvane@hospital.com</td>
+                    <td style="padding:10px 8px;">
+                        <button class="btn-secondary view-degree-btn" data-doctor="BS005" title="Xem chi tiết"><i class="fas fa-user-graduate"></i></button>
+                        <button class="btn-secondary" title="Sửa"><i class="fas fa-edit"></i></button>
+                        <button class="btn-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 8px;">6</td>
+                    <td style="padding:10px 8px;"><img src="img/doctor3.png" alt="avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></td>
+                    <td style="padding:10px 8px;">BS. Đặng Thị F</td>
+                    <td style="padding:10px 8px;">BS006</td>
+                    <td style="padding:10px 8px;">Da liễu</td>
+                    <td style="padding:10px 8px;">Chăm sóc da</td>
+                    <td style="padding:10px 8px;"><span style="background:#eaf3fb;color:#2176bd;border-radius:8px;padding:2px 12px;font-size:0.95em;">Đang hoạt động</span></td>
+                    <td style="padding:10px 8px;">0906 789 012<br>dangthif@hospital.com</td>
+                    <td style="padding:10px 8px;">
+                        <button class="btn-secondary view-degree-btn" data-doctor="BS006" title="Xem chi tiết"><i class="fas fa-user-graduate"></i></button>
+                        <button class="btn-secondary" title="Sửa"><i class="fas fa-edit"></i></button>
+                        <button class="btn-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+    <!-- <div class="dashboard-section">
+        <div class="section-title"><i class="fas fa-calendar-alt"></i> Lịch làm việc</div>
+        <div id="calendarMini" class="calendar-mini"></div>
+        <a href="bac-si-lich-lam-viec.html" class="btn-secondary" style="margin-top:12px;display:inline-block;"><i class="fas fa-eye"></i> Xem chi tiết lịch làm việc</a>
+    </div> -->
+</div>
+<!-- Modal xem bằng cấp chuyên môn -->
+<div id="degreeModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:500px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-graduate"></i> Bằng cấp & Chuyên môn của <span id="degreeDoctorName"></span></h3>
+            <span class="close" id="closeDegreeModal" style="cursor:pointer;">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div id="degreeDetailContent"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" id="closeDegreeBtn">Đóng</button>
+        </div>
+    </div>
+</div>
+<!-- Modal chỉnh sửa bằng cấp chuyên môn -->
+<div id="editDegreeModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:520px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-edit"></i> Sửa bằng cấp & Chuyên môn của <span id="editDegreeDoctorName"></span></h3>
+            <span class="close" id="closeEditDegreeModal" style="cursor:pointer;">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="editDegreeForm">
+                <div><b>Bằng cấp:</b>
+                    <ul id="editDegreeList" style="list-style:none;padding-left:0;margin-top:8px;"></ul>
+                    <div style="margin-top:8px;">
+                        <input type="text" id="newDegreeInput" placeholder="Thêm bằng cấp mới..." style="width:70%;padding:4px;">
+                        <button type="button" id="addDegreeBtn" class="btn-secondary" style="padding:4px 10px;">Thêm</button>
+                    </div>
+                </div>
+                <div style="margin-top:18px;"><b>Chuyên môn:</b>
+                    <ul id="editSpecialtyList" style="list-style:none;padding-left:0;margin-top:8px;"></ul>
+                    <div style="margin-top:8px;">
+                        <input type="text" id="newSpecialtyInput" placeholder="Thêm chuyên môn mới..." style="width:70%;padding:4px;">
+                        <button type="button" id="addSpecialtyBtn" class="btn-secondary" style="padding:4px 10px;">Thêm</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" id="cancelEditDegreeBtn">Hủy</button>
+            <button class="btn-success" id="saveEditDegreeBtn">Lưu thay đổi</button>
+        </div>
+    </div>
+</div>
+<script>
+// Demo: Render lịch làm việc tuần này dạng mini
+function renderMiniCalendar() {
+    const container = document.getElementById('calendarMini');
+    if (!container) return;
+    const days = ['T2','T3','T4','T5','T6','T7','CN'];
+    let html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;">';
+    for(let i=0;i<7;i++) {
+        html += `<div style="background:#f9fafb;border-radius:8px;padding:10px 0;text-align:center;font-weight:500;">${days[i]}<br><span style="font-size:0.95em;color:#2176bd;">08:00-12:00</span><br><span style="font-size:0.95em;color:#2176bd;">14:00-17:00</span></div>`;
+    }
+    html += '</div>';
+    container.innerHTML = html;
+}
+document.addEventListener('DOMContentLoaded', renderMiniCalendar);
+
+// Xử lý sự kiện mở modal sắp xếp lịch
+document.querySelectorAll('.arrange-schedule-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const doctorName = this.closest('tr').querySelector('td:nth-child(3)').innerText;
+        document.getElementById('modalDoctorName').innerText = doctorName;
+        document.getElementById('arrangeScheduleModal').style.display = 'block';
+
+        // TODO: Tải và hiển thị lịch hiện tại của bác sĩ lên grid trong modal
+    });
+});
+
+// Đóng modal khi nhấn nút đóng hoặc ngoài vùng modal
+document.getElementById('closeArrangeModal').addEventListener('click', function() {
+    document.getElementById('arrangeScheduleModal').style.display = 'none';
+});
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('arrangeScheduleModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+});
+
+// Hủy bỏ sắp xếp lịch
+document.getElementById('cancelArrangeBtn').addEventListener('click', function() {
+    document.getElementById('arrangeScheduleModal').style.display = 'none';
+});
+
+// Lưu lịch sắp xếp
+document.getElementById('saveArrangeBtn').addEventListener('click', function() {
+    // TODO: Lưu lịch làm việc mới cho bác sĩ
+
+    alert('Lịch làm việc đã được lưu!');
+    document.getElementById('arrangeScheduleModal').style.display = 'none';
+});
+
+// Dữ liệu demo bằng cấp chuyên môn
+const doctorDegrees = {
+    'BS001': {
+        name: 'BS. Nguyễn Văn A',
+        degrees: [
+            'Bác sĩ Đa khoa - Đại học Y Hà Nội (2012)',
+            'Chứng chỉ Sản phụ khoa nâng cao (2015)',
+            'Chứng chỉ IVF quốc tế (2018)'
+        ],
+        specialties: ['Sản phụ khoa', 'Hỗ trợ sinh sản', 'IVF, IUI']
+    },
+    'BS002': {
+        name: 'BS. Trần Thị B',
+        degrees: [
+            'Bác sĩ Nội tiết - Đại học Y Dược TP.HCM (2013)',
+            'Chứng chỉ Nội tiết sinh sản (2016)'
+        ],
+        specialties: ['Nội tiết', 'Nội tiết sinh sản']
+    },
+    'BS003': {
+        name: 'BS. Lê Văn C',
+        degrees: [
+            'Bác sĩ Đa khoa - Đại học Y Hà Nội (2014)',
+            'Chứng chỉ Nhi khoa (2017)'
+        ],
+        specialties: ['Nhi', 'Nhi tổng quát']
+    },
+    'BS004': {
+        name: 'BS. Phạm Thị D',
+        degrees: [
+            'Bác sĩ Đa khoa - Đại học Y Dược TP.HCM (2015)',
+            'Chứng chỉ Tim mạch (2018)'
+        ],
+        specialties: ['Tim mạch', 'Siêu âm tim']
+    },
+    'BS005': {
+        name: 'BS. Hoàng Văn E',
+        degrees: [
+            'Bác sĩ Đa khoa - Đại học Y Hà Nội (2016)',
+            'Chứng chỉ Ngoại khoa (2019)'
+        ],
+        specialties: ['Ngoại khoa', 'Phẫu thuật tổng quát']
+    },
+    'BS006': {
+        name: 'BS. Đặng Thị F',
+        degrees: [
+            'Bác sĩ Đa khoa - Đại học Y Dược TP.HCM (2017)',
+            'Chứng chỉ Da liễu (2020)'
+        ],
+        specialties: ['Da liễu', 'Chăm sóc da']
+    }
+};
+// Xử lý nút xem bằng cấp chuyên môn
+function openDegreeModal(doctorId) {
+    const data = doctorDegrees[doctorId];
+    if (!data) return;
+    document.getElementById('degreeDoctorName').innerText = data.name;
+    let html = '<div><b>Bằng cấp:</b><ul>';
+    data.degrees.forEach(d => html += `<li>${d}</li>`);
+    html += '</ul></div>';
+    html += '<div style="margin-top:10px;"><b>Chuyên môn:</b><ul>';
+    data.specialties.forEach(s => html += `<li>${s}</li>`);
+    html += '</ul></div>';
+    document.getElementById('degreeDetailContent').innerHTML = html;
+    document.getElementById('degreeModal').style.display = 'block';
+}
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.view-degree-btn').forEach(btn => {
+        btn.onclick = function() {
+            try {
+                openDegreeModal(this.getAttribute('data-doctor'));
+            } catch (e) {
+                alert('Lỗi khi mở modal bằng cấp: ' + e.message);
+            }
+        };
+    });
+    // Đóng modal bằng cấp
+    document.getElementById('closeDegreeModal').onclick = function() {
+        document.getElementById('degreeModal').style.display = 'none';
+    };
+    document.getElementById('closeDegreeBtn').onclick = function() {
+        document.getElementById('degreeModal').style.display = 'none';
+    };
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('degreeModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+
+// Xử lý nút sửa bằng cấp chuyên môn
+let currentEditDoctorId = null;
+document.querySelectorAll('button[title="Sửa"]:not(.edit-degree-initialized)').forEach(btn => {
+    btn.classList.add('edit-degree-initialized');
+    btn.addEventListener('click', function() {
+        const doctorId = this.closest('tr').querySelector('.view-degree-btn').getAttribute('data-doctor');
+        currentEditDoctorId = doctorId;
+        const data = doctorDegrees[doctorId];
+        if (!data) return;
+        document.getElementById('editDegreeDoctorName').innerText = data.name;
+        // Render degree list
+        const degreeList = document.getElementById('editDegreeList');
+        degreeList.innerHTML = '';
+        data.degrees.forEach((deg, idx) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<input type="text" value="${deg}" data-idx="${idx}" style="width:75%;padding:3px;"> <button type="button" class="btn-danger btn-sm remove-degree-btn" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
+            degreeList.appendChild(li);
+        });
+        // Render specialty list
+        const specialtyList = document.getElementById('editSpecialtyList');
+        specialtyList.innerHTML = '';
+        data.specialties.forEach((sp, idx) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<input type="text" value="${sp}" data-idx="${idx}" style="width:75%;padding:3px;"> <button type="button" class="btn-danger btn-sm remove-specialty-btn" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
+            specialtyList.appendChild(li);
+        });
+        document.getElementById('editDegreeModal').style.display = 'block';
+    });
+});
+// Thêm bằng cấp
+if (!window.editDegreeModalInit) {
+    window.editDegreeModalInit = true;
+    document.getElementById('addDegreeBtn').onclick = function() {
+        const val = document.getElementById('newDegreeInput').value.trim();
+        if (val) {
+            const li = document.createElement('li');
+            li.innerHTML = `<input type="text" value="${val}" style="width:75%;padding:3px;"> <button type="button" class="btn-danger btn-sm remove-degree-btn"><i class="fas fa-times"></i></button>`;
+            document.getElementById('editDegreeList').appendChild(li);
+            document.getElementById('newDegreeInput').value = '';
+        }
+    };
+    // Thêm chuyên môn
+    document.getElementById('addSpecialtyBtn').onclick = function() {
+        const val = document.getElementById('newSpecialtyInput').value.trim();
+        if (val) {
+            const li = document.createElement('li');
+            li.innerHTML = `<input type="text" value="${val}" style="width:75%;padding:3px;"> <button type="button" class="btn-danger btn-sm remove-specialty-btn"><i class="fas fa-times"></i></button>`;
+            document.getElementById('editSpecialtyList').appendChild(li);
+            document.getElementById('newSpecialtyInput').value = '';
+        }
+    };
+    // Xóa bằng cấp/chuyên môn
+    document.getElementById('editDegreeList').addEventListener('click', function(e) {
+        if (e.target.closest('.remove-degree-btn')) {
+            e.target.closest('li').remove();
+        }
+    });
+    document.getElementById('editSpecialtyList').addEventListener('click', function(e) {
+        if (e.target.closest('.remove-specialty-btn')) {
+            e.target.closest('li').remove();
+        }
+    });
+    // Đóng modal
+    document.getElementById('closeEditDegreeModal').onclick = function() {
+        document.getElementById('editDegreeModal').style.display = 'none';
+    };
+    document.getElementById('cancelEditDegreeBtn').onclick = function() {
+        document.getElementById('editDegreeModal').style.display = 'none';
+    };
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('editDegreeModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+    // Lưu thay đổi
+    document.getElementById('saveEditDegreeBtn').onclick = function() {
+        if (!currentEditDoctorId) return;
+        // Lấy lại danh sách bằng cấp
+        const degrees = Array.from(document.querySelectorAll('#editDegreeList input[type="text"]')).map(i => i.value.trim()).filter(Boolean);
+        // Lấy lại danh sách chuyên môn
+        const specialties = Array.from(document.querySelectorAll('#editSpecialtyList input[type="text"]')).map(i => i.value.trim()).filter(Boolean);
+        doctorDegrees[currentEditDoctorId].degrees = degrees;
+        doctorDegrees[currentEditDoctorId].specialties = specialties;
+        document.getElementById('editDegreeModal').style.display = 'none';
+        alert('Đã lưu thay đổi bằng cấp & chuyên môn!');
+    };
+}
+
+// Gắn lại sự kiện cho nút xem bằng cấp
+// Đảm bảo chỉ gắn 1 lần duy nhất sau khi DOM đã sẵn sàng
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.view-degree-btn').forEach(btn => {
+        btn.onclick = function() {
+            try {
+                openDegreeModal(this.getAttribute('data-doctor'));
+            } catch (e) {
+                alert('Lỗi khi mở modal bằng cấp: ' + e.message);
+            }
+        };
+    });
+});
+</script>
+</body>
 </html>
