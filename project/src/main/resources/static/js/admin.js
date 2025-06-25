@@ -504,12 +504,7 @@ function renderServicesTable() {
             </td>
             <td>${formatDuration(service.duration)}</td>
             <td><strong>${formatCurrency(service.price)}</strong></td>
-            <td>
-                <span class="status-badge ${service.isActive ? 'active' : 'inactive'} clickable" 
-                      onclick="toggleServiceStatus('${service.id}')">
-                    ${service.isActive ? 'Hoạt động' : 'Không hoạt động'}
-                </span>
-            </td>
+            
             <td>
                 <div class="action-buttons">
                     <button class="action-btn edit" onclick="editService('${service.id}')" title="Chỉnh sửa">

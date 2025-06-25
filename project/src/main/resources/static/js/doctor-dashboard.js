@@ -212,4 +212,207 @@ document.addEventListener('DOMContentLoaded', function () {
         searchTimeout = setTimeout(originalSearchPatients, 300);
     };
 
+    // ========== PATIENT STATUS MANAGEMENT ==========
+    
+    // Mark patient as examined
+    window.markAsExamined = function(patientId) {
+        const appointmentItem = document.querySelector(`[data-patient="${patientId}"]`);
+        if (!appointmentItem) return;
+        
+        // Update status
+        appointmentItem.setAttribute('data-status', 'examined');
+        
+        // Update status badge
+        const statusBadge = appointmentItem.querySelector('.status-badge');
+        statusBadge.textContent = 'Đã khám';
+        statusBadge.className = 'status-badge completed';
+        
+        // Update action button
+        const actionDiv = appointmentItem.querySelector('.appointment-actions');
+        actionDiv.innerHTML = `
+            <button class="btn-record" onclick="viewPatientRecord('${patientId}')">
+                <i class="fas fa-file-medical"></i> Xem hồ sơ
+            </button>
+        `;
+        
+        // Show success notification
+        if (typeof showNotification === 'function') {
+            showNotification(`Đã check-in bệnh nhân thành công`, 'success');
+        }
+    };
+    
+
+
+    // ========== MODAL TAB MANAGEMENT ==========
+    
+    // Switch tabs in patient record modal
+    window.switchTab = function(tabName) {
+        // Remove active class from all tabs and contents
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        event.target.classList.add('active');
+        
+        // Show corresponding content
+        const tabContentId = tabName + 'Tab';
+        const tabContent = document.getElementById(tabContentId);
+        if (tabContent) {
+            tabContent.classList.add('active');
+        }
+    };
+    
+    // Print patient record
+    window.printRecord = function() {
+        const patientName = document.getElementById('patientName').textContent;
+        
+        // Create printable content
+        const printContent = `
+            <html>
+            <head>
+                <title>Hồ sơ bệnh án - ${patientName}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    .header { text-align: center; margin-bottom: 20px; }
+                    .section { margin-bottom: 15px; }
+                    .label { font-weight: bold; }
+                    textarea { width: 100%; min-height: 80px; border: 1px solid #ccc; padding: 8px; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h2>HỒ SƠ BỆNH ÁN</h2>
+                    <h3>${patientName}</h3>
+                    <p>Ngày in: ${new Date().toLocaleDateString('vi-VN')}</p>
+                </div>
+                
+                <div class="section">
+                    <div class="label">Lý do khám:</div>
+                    <p>${document.getElementById('visitReason').value}</p>
+                </div>
+                
+                <div class="section">
+                    <div class="label">Triệu chứng:</div>
+                    <p>${document.getElementById('currentSymptoms').value}</p>
+                </div>
+                
+                <div class="section">
+                    <div class="label">Chẩn đoán:</div>
+                    <p>${document.getElementById('diagnosis').value}</p>
+                </div>
+                
+                <div class="section">
+                    <div class="label">Kê đơn thuốc:</div>
+                    <p style="white-space: pre-line;">${document.getElementById('prescription').value}</p>
+                </div>
+                
+                <div class="section">
+                    <div class="label">Hướng dẫn:</div>
+                    <p>${document.getElementById('instructions').value}</p>
+                </div>
+                
+                <div class="section">
+                    <div class="label">Ghi chú của bác sĩ:</div>
+                    <p>${document.getElementById('doctorNotes').value}</p>
+                </div>
+                
+                <div style="margin-top: 40px; text-align: right;">
+                    <p>Bác sĩ điều trị</p>
+                    <br><br>
+                    <p>_________________</p>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        // Open print window
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.print();
+    };
+
+    // Update viewPatientRecord function to work with new modal structure
+    window.viewPatientRecord = function(patientId) {
+        const patient = patientData[patientId];
+        if (!patient) return;
+
+        // Update basic info
+        document.getElementById('patientName').textContent = patient.name;
+        document.getElementById('patientId').textContent = 'BN' + patientId.toUpperCase();
+        document.getElementById('patientAge').textContent = patient.age + ' tuổi';
+        document.getElementById('patientPhone').textContent = patient.phone;
+        document.getElementById('patientAddress').textContent = patient.address;
+        document.getElementById('patientBirthDate').textContent = '15/03/1996'; // Sample date
+        
+        // Update current status
+        const appointmentItem = document.querySelector(`[data-patient="${patientId}"]`);
+        const statusBadge = appointmentItem ? appointmentItem.querySelector('.status-badge') : null;
+        const currentStatus = statusBadge ? statusBadge.textContent : 'Không xác định';
+        document.getElementById('currentStatus').textContent = currentStatus;
+        document.getElementById('currentStatus').className = 'status-badge ' + 
+            (currentStatus === 'Đã khám' ? 'completed' : 'waiting');
+
+        // Update medical record data with sample content
+        document.getElementById('visitReason').value = 'Khám định kỳ theo lịch hẹn';
+        document.getElementById('currentSymptoms').value = patient.medicalRecord.symptoms;
+        document.getElementById('diagnosis').value = patient.medicalRecord.diagnosis;
+        document.getElementById('bloodPressure').value = '120/80 mmHg';
+        document.getElementById('heartRate').value = '72 bpm';
+        document.getElementById('weight').value = '55 kg';
+        document.getElementById('prescription').value = '1. Folic Acid 5mg - 1 viên/ngày\n2. Vitamin E 400IU - 1 viên/ngày\n3. Duphaston 10mg - 2 viên/ngày';
+        document.getElementById('instructions').value = patient.medicalRecord.treatment;
+        document.getElementById('doctorNotes').value = patient.medicalRecord.notes;
+
+        // Reset to first tab
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelector('.tab-btn').classList.add('active');
+        document.getElementById('currentTab').classList.add('active');
+
+        // Show modal
+        document.getElementById('patientModal').style.display = 'block';
+        document.getElementById('patientModal').dataset.patientId = patientId;
+    };
+
+    // Update close modal functions
+    window.closeModal = function() {
+        document.getElementById('patientModal').style.display = 'none';
+    };
+    
+    window.savePatientRecord = function() {
+        const patientId = document.getElementById('patientModal').dataset.patientId;
+        const patient = patientData[patientId];
+
+        if (!patient) return;
+
+        // Update patient record with current tab data
+        patient.medicalRecord.diagnosis = document.getElementById('diagnosis').value;
+        patient.medicalRecord.symptoms = document.getElementById('currentSymptoms').value;
+        patient.medicalRecord.treatment = document.getElementById('instructions').value;
+        patient.medicalRecord.notes = document.getElementById('doctorNotes').value;
+
+        // Show success message
+        if (typeof showNotification === 'function') {
+            showNotification('Đã lưu thay đổi hồ sơ bệnh án thành công!', 'success');
+        } else {
+            alert('Đã lưu thay đổi hồ sơ bệnh án thành công!');
+        }
+
+        closeModal();
+    };
+
+    // Additional utility functions for sidebar
+    window.openScheduleManager = function() {
+        if (typeof showNotification === 'function') {
+            showNotification('Tính năng quản lý lịch hẹn đang được phát triển', 'info');
+        }
+    };
+
+    window.openReports = function() {
+        if (typeof showNotification === 'function') {
+            showNotification('Tính năng báo cáo thống kê đang được phát triển', 'info');
+        }
+    };
+
 });

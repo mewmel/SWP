@@ -54,79 +54,6 @@
         </div>
     </div>
 </header>
-<!-- Auth Modal -->
-<!-- 
-<div id="authModal" class="auth-modal">
-    <div class="auth-modal-content">
-        <span class="close-modal">&times;</span>
-        <div class="auth-tabs">
-            <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-            <button class="auth-tab" data-tab="register">Đăng ký</button>
-        </div>
-
-        -- Login Form 
-        <form id="loginForm" class="auth-form active">
-            <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="loginPassword">Mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="loginPassword" name="password" required>
-                    <i class="fas fa-eye toggle-password"></i>
-                </div>
-            </div>
-            <button type="submit" class="auth-submit-btn">
-                <span>Đăng nhập</span>
-                <i class="fas fa-arrow-right"></i>
-            </button>
-            <div class="social-login">
-                <button type="button" class="social-btn google">
-                    <i class="fab fa-google"></i> Đăng nhập với Google
-                </button>
-                <button type="button" class="social-btn facebook">
-                    <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
-                </button>
-            </div>
-        </form>
-
-        -- Register Form 
-        <form id="registerForm" class="auth-form">
-            <div class="form-group">
-                <label for="registerName">Họ và tên</label>
-                <input type="text" id="registerName" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="registerEmail">Email</label>
-                <input type="email" id="registerEmail" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="registerPassword">Mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="registerPassword" name="password" required>
-                    <i class="fas fa-eye toggle-password"></i>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="confirmPassword">Xác nhận mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                    <i class="fas fa-eye toggle-password"></i>
-                </div>
-            </div>
-            <div class="form-group checkbox-group">
-                <input type="checkbox" id="agreeTerms" required>
-                <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
-            </div>
-            <button type="submit" class="auth-submit-btn">
-                <span>Đăng ký</span>
-                <i class="fas fa-arrow-right"></i>
-            </button>
-        </form>
-    </div>
-</div> -->
-
 <div class="doctor-page-container">
     <div class="container">
         <!-- Main Content -->
@@ -138,49 +65,74 @@
                 </div>
 
                 <div class="schedule-list">
-                    <div class="appointment-item">
+                    <div class="appointment-item" data-patient="mai" data-status="examined">
                         <div class="time">08:00</div>
                         <div class="appointment-info">
                             <h3>BN: Nguyễn Thị Mai</h3>
                             <p>Khám định kỳ - IVF Chu kỳ 1</p>
+                            <span class="status-badge completed">Đã khám</span>
                         </div>
-                        <button class="btn-primary" onclick="viewPatientRecord('mai')">Xem hồ sơ</button>
+                        <div class="appointment-actions">
+                            <button class="btn-record" onclick="viewPatientRecord('mai')">
+                                <i class="fas fa-file-medical"></i> Xem hồ sơ
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="appointment-item">
+                    <div class="appointment-item" data-patient="an" data-status="waiting">
                         <div class="time">09:30</div>
                         <div class="appointment-info">
                             <h3>BN: Trần Văn An</h3>
                             <p>Tư vấn lần đầu</p>
+                            <span class="status-badge waiting">Đang chờ khám</span>
                         </div>
-                        <button class="btn-primary" onclick="viewPatientRecord('an')">Xem hồ sơ</button>
+                        <div class="appointment-actions">
+                            <button class="btn-waiting" onclick="markAsExamined('an')">
+                                <i class="fas fa-check"></i> Đã khám
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="appointment-item current">
+                    <div class="appointment-item" data-patient="hoa" data-status="waiting">
                         <div class="time">10:00</div>
                         <div class="appointment-info">
                             <h3>BN: Phạm Thị Hoa</h3>
                             <p>Theo dõi kích thích - IVF</p>
+                            <span class="status-badge waiting">Đang chờ khám</span>
                         </div>
-                        <button class="btn-examining">Đang khám</button>
+                        <div class="appointment-actions">
+                            <button class="btn-waiting" onclick="markAsExamined('hoa')">
+                                <i class="fas fa-check"></i> Đã khám
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="appointment-item">
+                    <div class="appointment-item" data-patient="lan" data-status="waiting">
                         <div class="time">11:30</div>
                         <div class="appointment-info">
                             <h3>BN: Lê Thị Lan</h3>
                             <p>Chuyển phôi - IVF Chu kỳ 2</p>
+                            <span class="status-badge waiting">Đang chờ khám</span>
                         </div>
-                        <button class="btn-primary" onclick="viewPatientRecord('lan')">Xem hồ sơ</button>
+                        <div class="appointment-actions">
+                            <button class="btn-waiting" onclick="markAsExamined('lan')">
+                                <i class="fas fa-check"></i> Đã khám
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="appointment-item">
+                    <div class="appointment-item" data-patient="thu" data-status="waiting">
                         <div class="time">14:00</div>
                         <div class="appointment-info">
                             <h3>BN: Hoàng Thị Thu</h3>
                             <p>Kiểm tra sau phẫu thuật</p>
+                            <span class="status-badge waiting">Đang chờ khám</span>
                         </div>
-                        <button class="btn-primary" onclick="viewPatientRecord('thu')">Xem hồ sơ</button>
+                        <div class="appointment-actions">
+                            <button class="btn-waiting" onclick="markAsExamined('thu')">
+                                <i class="fas fa-check"></i> Đã khám
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -236,53 +188,189 @@
 
     <!-- Modal for Patient Record -->
     <div id="patientModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content large-modal">
             <div class="modal-header">
-                <h3>Hồ sơ bệnh nhân</h3>
+                <h3><i class="fas fa-file-medical"></i> Hồ sơ bệnh án</h3>
                 <span class="close" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="patient-info">
-                    <h4 id="patientName">Tên bệnh nhân</h4>
+                <!-- Patient Basic Info -->
+                <div class="patient-info-section">
+                    <div class="patient-header">
+                        <div class="patient-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="patient-details">
+                            <h4 id="patientName">Nguyễn Thị Mai</h4>
+                            <p class="patient-id">Mã BN: <span id="patientId">BN001</span></p>
+                        </div>
+                        <div class="patient-status">
+                            <span class="status-badge" id="currentStatus">Đã khám</span>
+                        </div>
+                    </div>
+                    
                     <div class="info-grid">
-                        <div class="info-item">
-                            <label>Tuổi:</label>
-                            <span id="patientAge">32</span>
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label><i class="fas fa-birthday-cake"></i> Tuổi:</label>
+                                <span id="patientAge">28 tuổi</span>
+                            </div>
+                            <div class="info-item">
+                                <label><i class="fas fa-phone"></i> Số điện thoại:</label>
+                                <span id="patientPhone">0123456789</span>
+                            </div>
                         </div>
-                        <div class="info-item">
-                            <label>Số điện thoại:</label>
-                            <span id="patientPhone">0123456789</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Địa chỉ:</label>
-                            <span id="patientAddress">Hà Nội</span>
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label><i class="fas fa-map-marker-alt"></i> Địa chỉ:</label>
+                                <span id="patientAddress">Quận Ba Đình, Hà Nội</span>
+                            </div>
+                            <div class="info-item">
+                                <label><i class="fas fa-calendar"></i> Ngày sinh:</label>
+                                <span id="patientBirthDate">15/03/1996</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="medical-record">
-                    <h4>Bệnh án</h4>
-                    <div class="record-section">
-                        <label>Chẩn đoán:</label>
-                        <textarea id="diagnosis" rows="3" placeholder="Nhập chẩn đoán..."></textarea>
+                <!-- Medical Record Tabs -->
+                <div class="record-tabs">
+                    <button class="tab-btn active" onclick="switchTab('current')">Khám hôm nay</button>
+                    <button class="tab-btn" onclick="switchTab('history')">Lịch sử khám</button>
+                    <button class="tab-btn" onclick="switchTab('treatment')">Điều trị</button>
+                    <button class="tab-btn" onclick="switchTab('tests')">Xét nghiệm</button>
+                </div>
+
+                <!-- Current Examination Tab -->
+                <div id="currentTab" class="tab-content active">
+                    <div class="medical-record">
+                        <h4><i class="fas fa-stethoscope"></i> Khám bệnh hôm nay</h4>
+                        
+                        <div class="record-grid">
+                            <div class="record-section">
+                                <label>Lý do khám:</label>
+                                <textarea id="visitReason" rows="2" placeholder="Nhập lý do đến khám...">Khám định kỳ theo lịch hẹn</textarea>
+                            </div>
+                            
+                            <div class="record-section">
+                                <label>Triệu chứng hiện tại:</label>
+                                <textarea id="currentSymptoms" rows="3" placeholder="Mô tả triệu chứng...">Không có triệu chứng bất thường</textarea>
+                            </div>
+                        </div>
+
+                        <div class="record-grid">
+                            <div class="record-section">
+                                <label>Chẩn đoán:</label>
+                                <textarea id="diagnosis" rows="3" placeholder="Nhập chẩn đoán...">IVF chu kỳ 1 - tiến triển tốt. Follicle phát triển bình thường.</textarea>
+                            </div>
+                            
+                            <div class="record-section">
+                                <label>Chỉ số sinh hiệu:</label>
+                                <div class="vital-signs">
+                                    <div class="vital-item">
+                                        <label>Huyết áp:</label>
+                                        <input type="text" id="bloodPressure" value="120/80 mmHg">
+                                    </div>
+                                    <div class="vital-item">
+                                        <label>Nhịp tim:</label>
+                                        <input type="text" id="heartRate" value="72 bpm">
+                                    </div>
+                                    <div class="vital-item">
+                                        <label>Cân nặng:</label>
+                                        <input type="text" id="weight" value="55 kg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="record-section">
+                            <label>Kê đơn thuốc:</label>
+                            <textarea id="prescription" rows="4" placeholder="Danh sách thuốc và liều dùng...">1. Folic Acid 5mg - 1 viên/ngày
+2. Vitamin E 400IU - 1 viên/ngày  
+3. Duphaston 10mg - 2 viên/ngày</textarea>
+                        </div>
+
+                        <div class="record-section">
+                            <label>Hướng dẫn và chú ý:</label>
+                            <textarea id="instructions" rows="3" placeholder="Hướng dẫn cho bệnh nhân...">Tiếp tục sử dụng thuốc theo đúng chỉ định. Hẹn tái khám sau 1 tuần.</textarea>
+                        </div>
+
+                        <div class="record-section">
+                            <label>Ghi chú của bác sĩ:</label>
+                            <textarea id="doctorNotes" rows="3" placeholder="Ghi chú riêng của bác sĩ...">Bệnh nhân tuân thủ điều trị tốt. Cần theo dõi phản ứng với thuốc kích thích.</textarea>
+                        </div>
                     </div>
-                    <div class="record-section">
-                        <label>Triệu chứng:</label>
-                        <textarea id="symptoms" rows="3" placeholder="Nhập triệu chứng..."></textarea>
+                </div>
+
+                <!-- Medical History Tab -->
+                <div id="historyTab" class="tab-content">
+                    <div class="history-list">
+                        <h4><i class="fas fa-history"></i> Lịch sử khám bệnh</h4>
+                        <div class="history-item">
+                            <div class="history-date">20/06/2024</div>
+                            <div class="history-content">
+                                <p><strong>Chẩn đoán:</strong> Tư vấn IVF lần đầu</p>
+                                <p><strong>Điều trị:</strong> Tư vấn quy trình, xét nghiệm cơ bản</p>
+                            </div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-date">15/06/2024</div>
+                            <div class="history-content">
+                                <p><strong>Chẩn đoán:</strong> Vô sinh nguyên phát</p>
+                                <p><strong>Điều trị:</strong> Khám tổng quát, siêu âm</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="record-section">
-                        <label>Điều trị:</label>
-                        <textarea id="treatment" rows="3" placeholder="Nhập phương pháp điều trị..."></textarea>
+                </div>
+
+                <!-- Treatment Tab -->
+                <div id="treatmentTab" class="tab-content">
+                    <div class="treatment-plan">
+                        <h4><i class="fas fa-tasks"></i> Kế hoạch điều trị</h4>
+                        <div class="treatment-phase">
+                            <h5>Giai đoạn hiện tại: Kích thích buồng trứng</h5>
+                            <div class="phase-details">
+                                <p><strong>Thời gian:</strong> 10-14 ngày</p>
+                                <p><strong>Thuốc sử dụng:</strong> Gonal-F, Menopur</p>
+                                <p><strong>Theo dõi:</strong> Siêu âm mỗi 2-3 ngày</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="record-section">
-                        <label>Ghi chú:</label>
-                        <textarea id="notes" rows="3" placeholder="Ghi chú thêm..."></textarea>
+                </div>
+
+                <!-- Tests Tab -->
+                <div id="testsTab" class="tab-content">
+                    <div class="test-results">
+                        <h4><i class="fas fa-flask"></i> Kết quả xét nghiệm</h4>
+                        <div class="test-item">
+                            <div class="test-name">Hormone AMH</div>
+                            <div class="test-value">2.5 ng/ml</div>
+                            <div class="test-status normal">Bình thường</div>
+                        </div>
+                        <div class="test-item">
+                            <div class="test-name">FSH</div>
+                            <div class="test-value">8.2 mIU/ml</div>
+                            <div class="test-status normal">Bình thường</div>
+                        </div>
+                        <div class="test-item">
+                            <div class="test-name">LH</div>
+                            <div class="test-value">5.1 mIU/ml</div>
+                            <div class="test-status normal">Bình thường</div>
+                        </div>
                     </div>
                 </div>
             </div>
+            
             <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal()">Hủy</button>
-                <button class="btn-primary" onclick="savePatientRecord()">Lưu thay đổi</button>
+                <button class="btn-secondary" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+                <button class="btn-print" onclick="printRecord()">
+                    <i class="fas fa-print"></i> In hồ sơ
+                </button>
+                <button class="btn-primary" onclick="savePatientRecord()">
+                    <i class="fas fa-save"></i> Lưu thay đổi
+                </button>
             </div>
         </div>
     </div>
