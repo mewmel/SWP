@@ -4,149 +4,138 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sắp xếp lịch làm việc bác sĩ</title>
-  <link rel="stylesheet" href="css/doctor-appointment.css">
   <link rel="stylesheet" href="css/doctor-common.css">
+  <link rel="stylesheet" href="css/manager-common.css">
+  <link rel="stylesheet" href="css/sap-xep-lich-bac-si.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <style>
-    body { background: #f6f8fa; }
-    .schedule-container { max-width: 1200px; margin: 32px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 18px; }
-    h1 { color: #2176bd; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; background: #fff; }
-    th, td { padding: 10px 8px; text-align: center; }
-    th { background: #eaf3fb; color: #2176bd; }
-    tr:nth-child(even) { background: #f9fafb; }
-    .doctor-name { text-align: left; font-weight: 500; color: #2176bd; }
-    .shift-label { font-size: 0.95em; color: #888; }
-    .save-btn { margin-top: 24px; }
-    .shift-cell { min-width: 70px; }
-    .shift-checkbox { transform: scale(1.2); margin: 0 4px; }
-  </style>
+  
 </head>
-<body>
-<div class="schedule-container">
-  <h1><i class="fas fa-calendar-plus"></i> Sắp xếp lịch làm việc cho các bác sĩ trong tuần</h1>
-  <table id="doctorScheduleTable">
-    <thead>
-      <tr>
-        <th>Bác sĩ</th>
-        <th>T2</th>
-        <th>T3</th>
-        <th>T4</th>
-        <th>T5</th>
-        <th>T6</th>
-        <th>T7</th>
-        <th>CN</th>
-      </tr>
-    </thead>
-    <tbody id="scheduleTableBody">
-      <!-- Nội dung sẽ render bằng JS -->
-    </tbody>
-  </table>
-  <button class="btn-success save-btn" id="saveAllScheduleBtn"><i class="fas fa-save"></i> Lưu lịch làm việc</button>
-</div>
-<script>
-// Dữ liệu demo bác sĩ
-const doctors = [
-  { id: 'BS001', name: 'BS. Nguyễn Văn A' },
-  { id: 'BS002', name: 'BS. Trần Thị B' },
-  { id: 'BS003', name: 'BS. Lê Văn C' },
-  { id: 'BS004', name: 'BS. Phạm Thị D' },
-  { id: 'BS005', name: 'BS. Hoàng Văn E' },
-  { id: 'BS006', name: 'BS. Đặng Thị F' }
-];
-// Dữ liệu demo lịch làm việc
-const doctorSchedules = {
-  'BS001': {
-    'T2': { morning: true, afternoon: false },
-    'T3': { morning: true, afternoon: true },
-    'T4': { morning: false, afternoon: true },
-    'T5': { morning: true, afternoon: false },
-    'T6': { morning: false, afternoon: false },
-    'T7': { morning: false, afternoon: false },
-    'CN': { morning: false, afternoon: false }
-  },
-  'BS002': {
-    'T2': { morning: false, afternoon: false },
-    'T3': { morning: true, afternoon: true },
-    'T4': { morning: true, afternoon: false },
-    'T5': { morning: false, afternoon: true },
-    'T6': { morning: true, afternoon: true },
-    'T7': { morning: false, afternoon: false },
-    'CN': { morning: false, afternoon: false }
-  },
-  'BS003': {
-    'T2': { morning: false, afternoon: false },
-    'T3': { morning: false, afternoon: false },
-    'T4': { morning: false, afternoon: false },
-    'T5': { morning: false, afternoon: false },
-    'T6': { morning: false, afternoon: false },
-    'T7': { morning: false, afternoon: false },
-    'CN': { morning: false, afternoon: false }
-  },
-  'BS004': {
-    'T2': { morning: false, afternoon: false },
-    'T3': { morning: false, afternoon: false },
-    'T4': { morning: false, afternoon: false },
-    'T5': { morning: false, afternoon: false },
-    'T6': { morning: false, afternoon: false },
-    'T7': { morning: false, afternoon: false },
-    'CN': { morning: false, afternoon: false }
-  },
-  'BS005': {
-    'T2': { morning: false, afternoon: false },
-    'T3': { morning: false, afternoon: false },
-    'T4': { morning: false, afternoon: false },
-    'T5': { morning: false, afternoon: false },
-    'T6': { morning: false, afternoon: false },
-    'T7': { morning: false, afternoon: false },
-    'CN': { morning: false, afternoon: false }
-  },
-  'BS006': {
-    'T2': { morning: false, afternoon: false },
-    'T3': { morning: false, afternoon: false },
-    'T4': { morning: false, afternoon: false },
-    'T5': { morning: false, afternoon: false },
-    'T6': { morning: false, afternoon: false },
-    'T7': { morning: false, afternoon: false },
-    'CN': { morning: false, afternoon: false }
-  }
-};
-const days = ['T2','T3','T4','T5','T6','T7','CN'];
-function renderScheduleTable() {
-  const tbody = document.getElementById('scheduleTableBody');
-  tbody.innerHTML = '';
-  doctors.forEach(doctor => {
-    // Hàng ca sáng
-    let trMorning = document.createElement('tr');
-    trMorning.innerHTML = `<td class='doctor-name' rowspan='2'>${doctor.name}</td>`;
-    days.forEach(day => {
-      const checked = doctorSchedules[doctor.id]?.[day]?.morning ? 'checked' : '';
-      trMorning.innerHTML += `<td class='shift-cell'><label class='shift-label'>Sáng</label><br><input type='checkbox' class='shift-checkbox' data-doctor='${doctor.id}' data-day='${day}' data-shift='morning' ${checked}></td>`;
-    });
-    tbody.appendChild(trMorning);
-    // Hàng ca chiều
-    let trAfternoon = document.createElement('tr');
-    days.forEach(day => {
-      const checked = doctorSchedules[doctor.id]?.[day]?.afternoon ? 'checked' : '';
-      trAfternoon.innerHTML += `<td class='shift-cell'><label class='shift-label'>Chiều</label><br><input type='checkbox' class='shift-checkbox' data-doctor='${doctor.id}' data-day='${day}' data-shift='afternoon' ${checked}></td>`;
-    });
-    tbody.appendChild(trAfternoon);
-  });
-}
-renderScheduleTable();
-// Lưu lịch làm việc
-function saveAllSchedule() {
-  document.querySelectorAll('.shift-checkbox').forEach(cb => {
-    const doctor = cb.getAttribute('data-doctor');
-    const day = cb.getAttribute('data-day');
-    const shift = cb.getAttribute('data-shift');
-    if (!doctorSchedules[doctor]) doctorSchedules[doctor] = {};
-    if (!doctorSchedules[doctor][day]) doctorSchedules[doctor][day] = {};
-    doctorSchedules[doctor][day][shift] = cb.checked;
-  });
-  alert('Đã lưu lịch làm việc cho tất cả bác sĩ!');
-}
-document.getElementById('saveAllScheduleBtn').onclick = saveAllSchedule;
-</script>
+<body class="manager-dashboard">
+  <header class="doctor-header">
+    <div class="doctor-header-container">
+        <nav class="doctor-nav">
+            <a href="manager-dashboard.html" class="nav-link">
+                <i class="fas fa-users-cog"></i>
+                Quản lý bác sĩ
+            </a>
+            <a href="sap-xep-lich-bac-si.html" class="nav-link active">
+                <i class="fas fa-calendar-plus"></i>
+                Sắp xếp lịch làm
+            </a>
+            <a href="thong-ke-manager.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                Thống kê
+            </a>
+        </nav>
+        
+        <div class="doctor-header-right">
+            <div class="doctor-user-info">
+                <div class="doctor-user-details">
+                    <span class="doctor-welcome-text">Chào mừng</span>
+                    <span class="doctor-user-name">Quản lý</span>
+                </div>
+                <div class="doctor-user-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+            </div>
+            <button class="doctor-logout-btn" title="Đăng xuất">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+  <div class="schedule-container">
+    <!-- Page Header -->
+    <div class="schedule-header">
+      <h1 class="schedule-title">
+        <i class="fas fa-calendar-plus"></i>
+        Sắp xếp lịch làm việc bác sĩ
+      </h1>
+      <p class="schedule-subtitle">Quản lý và phân công lịch làm việc cho đội ngũ bác sĩ trong tuần</p>
+      <div style="margin-top: 16px; padding: 16px; background: #f1f5f9; border-radius: 8px; font-size: 14px; color: #64748b;">
+        <strong>Khung giờ làm việc:</strong>
+        <ul style="margin: 8px 0 0 20px;">
+          <li>Thứ 2 - Thứ 6: 8:00-12:00 (sáng), 14:00-17:00 (chiều)</li>
+          <li>Thứ 7 & Chủ nhật: 8:00-12:00 (chỉ buổi sáng)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="stats-summary">
+      <div class="summary-card blue">
+        <div class="summary-value" id="totalDoctors">6</div>
+        <div class="summary-label">Tổng số bác sĩ</div>
+      </div>
+      <div class="summary-card green">
+        <div class="summary-value" id="workingDoctors">4</div>
+        <div class="summary-label">Bác sĩ làm việc</div>
+      </div>
+      <div class="summary-card orange">
+        <div class="summary-value" id="totalShifts">42</div>
+        <div class="summary-label">Tổng ca làm việc</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value" id="coverageRate">85%</div>
+        <div class="summary-label">Tỷ lệ phủ sóng</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="schedule-controls">
+      <div class="week-selector">
+        <button class="week-nav-btn" id="prevWeek" title="Tuần trước">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <span class="current-week" id="currentWeekDisplay">Tuần 1 - 7 Tháng 1, 2025</span>
+        <button class="week-nav-btn" id="nextWeek" title="Tuần sau">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+      
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-outline" id="selectAllBtn">
+          <i class="fas fa-check-double"></i>
+          Chọn tất cả
+        </button>
+        <button class="btn btn-outline" id="clearAllBtn">
+          <i class="fas fa-times"></i>
+          Bỏ chọn tất cả
+        </button>
+      </div>
+    </div>
+
+        <!-- Modern Schedule Cards -->
+    <div class="schedule-cards-section">
+      <div class="section-header">
+        <i class="fas fa-calendar-week"></i>
+        <h3>Lịch làm việc trong tuần</h3>
+      </div>
+      
+      <div class="doctors-grid" id="doctorsGrid">
+        <!-- Doctor cards will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Save Section -->
+    <div class="save-section">
+      <button class="reset-btn" id="resetScheduleBtn">
+        <i class="fas fa-undo"></i>
+        Đặt lại
+      </button>
+      <button class="save-btn" id="saveAllScheduleBtn">
+        <i class="fas fa-save"></i>
+        Lưu lịch làm việc
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <script src="js/sap-xep-lich-bac-si.js"></script>
 </body>
 </html>
