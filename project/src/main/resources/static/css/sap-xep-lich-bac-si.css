@@ -1,0 +1,291 @@
+/* Schedule specific styles */
+    /* Modern Card-Based Schedule Layout */
+    .schedule-cards-section {
+      background: transparent;
+    }
+
+    .section-header {
+      background: linear-gradient(135deg, #4A90E2, #357ABD);
+      color: white;
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .doctors-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .doctor-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doctor-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .doctor-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #4A90E2, #357ABD, #10b981, #f59e0b);
+    }
+
+
+    .doctor-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #4A90E2, #357ABD);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .doctor-info h4 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .doctor-stats {
+      margin: 4px 0 0 0;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .week-schedule {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 12px;
+    }
+
+    .day-column {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    .day-column:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .day-header {
+      text-align: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: #475569;
+      margin-bottom: 12px;
+      padding: 8px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .weekday { 
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      color: #1e40af;
+    }
+
+    .weekend { 
+      background: linear-gradient(135deg, #fdf4ff, #fae8ff);
+      color: #7c3aed;
+    }
+
+    .time-slots {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .time-slot {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .time-slot:hover {
+      border-color: #4A90E2;
+      background: #f8faff;
+      transform: scale(1.02);
+    }
+
+    .time-slot.selected {
+      border-color: #4A90E2;
+      background: linear-gradient(135deg, #4A90E2, #357ABD);
+      color: white;
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+    }
+
+    .time-slot.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .slot-time {
+      font-size: 11px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .morning-slot {
+      border-left: 4px solid #f59e0b;
+    }
+
+    .afternoon-slot {
+      border-left: 4px solid #3b82f6;
+    }
+
+    .weekend-slot {
+      border-left: 4px solid #8b5cf6;
+    }
+
+    .session-divider {
+      margin: 8px 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    }
+
+    .save-btn, .reset-btn {
+      padding: 14px 32px;
+      font-size: 16px;
+    }
+
+    .save-btn {
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(74, 144, 226, 0.2);
+    }
+
+    .reset-btn {
+      font-weight: 500;
+    }
+
+    /* Schedule responsive styles */
+    @media (max-width: 1200px) {
+      .doctor-card {
+        padding: 20px;
+      }
+      
+      .week-schedule {
+        gap: 10px;
+      }
+      
+      .day-column {
+        padding: 10px;
+      }
+      
+      .time-slot {
+        padding: 6px;
+      }
+      
+      .slot-time {
+        font-size: 10px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .doctor-card {
+        padding: 16px;
+      }
+      
+      .week-schedule {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+      
+      .day-header {
+        font-size: 11px;
+        padding: 6px;
+      }
+      
+      .doctor-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+      
+      .doctor-info h4 {
+        font-size: 14px;
+      }
+      
+      .doctor-stats {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .doctor-card {
+        padding: 12px;
+        margin-bottom: 16px;
+      }
+      
+      .week-schedule {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+      
+      .day-column {
+        padding: 8px;
+      }
+      
+      .day-header {
+        font-size: 10px;
+        padding: 4px;
+        margin-bottom: 8px;
+      }
+      
+      .time-slot {
+        padding: 4px;
+        margin-bottom: 4px;
+      }
+      
+      .slot-time {
+        font-size: 9px;
+      }
+      
+      .doctor-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+      }
+      
+      .doctor-info h4 {
+        font-size: 13px;
+      }
+      
+      .doctor-stats {
+        font-size: 10px;
+      }
+      
+      .time-slots {
+        gap: 4px;
+      }
+    }
