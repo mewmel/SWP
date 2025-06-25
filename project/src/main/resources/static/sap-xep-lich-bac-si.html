@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sắp xếp lịch làm việc bác sĩ</title>
+  <link rel="stylesheet" href="css/doctor-appointment.css">
+  <link rel="stylesheet" href="css/doctor-common.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { background: #f6f8fa; }
+    .schedule-container { max-width: 1200px; margin: 32px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 18px; }
+    h1 { color: #2176bd; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { padding: 10px 8px; text-align: center; }
+    th { background: #eaf3fb; color: #2176bd; }
+    tr:nth-child(even) { background: #f9fafb; }
+    .doctor-name { text-align: left; font-weight: 500; color: #2176bd; }
+    .shift-label { font-size: 0.95em; color: #888; }
+    .save-btn { margin-top: 24px; }
+    .shift-cell { min-width: 70px; }
+    .shift-checkbox { transform: scale(1.2); margin: 0 4px; }
+  </style>
+</head>
+<body>
+<div class="schedule-container">
+  <h1><i class="fas fa-calendar-plus"></i> Sắp xếp lịch làm việc cho các bác sĩ trong tuần</h1>
+  <table id="doctorScheduleTable">
+    <thead>
+      <tr>
+        <th>Bác sĩ</th>
+        <th>T2</th>
+        <th>T3</th>
+        <th>T4</th>
+        <th>T5</th>
+        <th>T6</th>
+        <th>T7</th>
+        <th>CN</th>
+      </tr>
+    </thead>
+    <tbody id="scheduleTableBody">
+      <!-- Nội dung sẽ render bằng JS -->
+    </tbody>
+  </table>
+  <button class="btn-success save-btn" id="saveAllScheduleBtn"><i class="fas fa-save"></i> Lưu lịch làm việc</button>
+</div>
+<script>
+// Dữ liệu demo bác sĩ
+const doctors = [
+  { id: 'BS001', name: 'BS. Nguyễn Văn A' },
+  { id: 'BS002', name: 'BS. Trần Thị B' },
+  { id: 'BS003', name: 'BS. Lê Văn C' },
+  { id: 'BS004', name: 'BS. Phạm Thị D' },
+  { id: 'BS005', name: 'BS. Hoàng Văn E' },
+  { id: 'BS006', name: 'BS. Đặng Thị F' }
+];
+// Dữ liệu demo lịch làm việc
+const doctorSchedules = {
+  'BS001': {
+    'T2': { morning: true, afternoon: false },
+    'T3': { morning: true, afternoon: true },
+    'T4': { morning: false, afternoon: true },
+    'T5': { morning: true, afternoon: false },
+    'T6': { morning: false, afternoon: false },
+    'T7': { morning: false, afternoon: false },
+    'CN': { morning: false, afternoon: false }
+  },
+  'BS002': {
+    'T2': { morning: false, afternoon: false },
+    'T3': { morning: true, afternoon: true },
+    'T4': { morning: true, afternoon: false },
+    'T5': { morning: false, afternoon: true },
+    'T6': { morning: true, afternoon: true },
+    'T7': { morning: false, afternoon: false },
+    'CN': { morning: false, afternoon: false }
+  },
+  'BS003': {
+    'T2': { morning: false, afternoon: false },
+    'T3': { morning: false, afternoon: false },
+    'T4': { morning: false, afternoon: false },
+    'T5': { morning: false, afternoon: false },
+    'T6': { morning: false, afternoon: false },
+    'T7': { morning: false, afternoon: false },
+    'CN': { morning: false, afternoon: false }
+  },
+  'BS004': {
+    'T2': { morning: false, afternoon: false },
+    'T3': { morning: false, afternoon: false },
+    'T4': { morning: false, afternoon: false },
+    'T5': { morning: false, afternoon: false },
+    'T6': { morning: false, afternoon: false },
+    'T7': { morning: false, afternoon: false },
+    'CN': { morning: false, afternoon: false }
+  },
+  'BS005': {
+    'T2': { morning: false, afternoon: false },
+    'T3': { morning: false, afternoon: false },
+    'T4': { morning: false, afternoon: false },
+    'T5': { morning: false, afternoon: false },
+    'T6': { morning: false, afternoon: false },
+    'T7': { morning: false, afternoon: false },
+    'CN': { morning: false, afternoon: false }
+  },
+  'BS006': {
+    'T2': { morning: false, afternoon: false },
+    'T3': { morning: false, afternoon: false },
+    'T4': { morning: false, afternoon: false },
+    'T5': { morning: false, afternoon: false },
+    'T6': { morning: false, afternoon: false },
+    'T7': { morning: false, afternoon: false },
+    'CN': { morning: false, afternoon: false }
+  }
+};
+const days = ['T2','T3','T4','T5','T6','T7','CN'];
+function renderScheduleTable() {
+  const tbody = document.getElementById('scheduleTableBody');
+  tbody.innerHTML = '';
+  doctors.forEach(doctor => {
+    // Hàng ca sáng
+    let trMorning = document.createElement('tr');
+    trMorning.innerHTML = `<td class='doctor-name' rowspan='2'>${doctor.name}</td>`;
+    days.forEach(day => {
+      const checked = doctorSchedules[doctor.id]?.[day]?.morning ? 'checked' : '';
+      trMorning.innerHTML += `<td class='shift-cell'><label class='shift-label'>Sáng</label><br><input type='checkbox' class='shift-checkbox' data-doctor='${doctor.id}' data-day='${day}' data-shift='morning' ${checked}></td>`;
+    });
+    tbody.appendChild(trMorning);
+    // Hàng ca chiều
+    let trAfternoon = document.createElement('tr');
+    days.forEach(day => {
+      const checked = doctorSchedules[doctor.id]?.[day]?.afternoon ? 'checked' : '';
+      trAfternoon.innerHTML += `<td class='shift-cell'><label class='shift-label'>Chiều</label><br><input type='checkbox' class='shift-checkbox' data-doctor='${doctor.id}' data-day='${day}' data-shift='afternoon' ${checked}></td>`;
+    });
+    tbody.appendChild(trAfternoon);
+  });
+}
+renderScheduleTable();
+// Lưu lịch làm việc
+function saveAllSchedule() {
+  document.querySelectorAll('.shift-checkbox').forEach(cb => {
+    const doctor = cb.getAttribute('data-doctor');
+    const day = cb.getAttribute('data-day');
+    const shift = cb.getAttribute('data-shift');
+    if (!doctorSchedules[doctor]) doctorSchedules[doctor] = {};
+    if (!doctorSchedules[doctor][day]) doctorSchedules[doctor][day] = {};
+    doctorSchedules[doctor][day][shift] = cb.checked;
+  });
+  alert('Đã lưu lịch làm việc cho tất cả bác sĩ!');
+}
+document.getElementById('saveAllScheduleBtn').onclick = saveAllSchedule;
+</script>
+</body>
+</html>

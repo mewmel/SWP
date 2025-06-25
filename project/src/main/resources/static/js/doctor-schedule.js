@@ -2,16 +2,30 @@
 let currentWeek = new Date();
 let selectedSlots = new Set();
 
+// Generate schedule data for the current week
+function getScheduleDataForWeek(weekDate) {
+    // weekDate: Date object (any day in week)
+    const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+    const schedule = [];
+    // Find Monday of the week
+    const monday = new Date(weekDate);
+    const dayOfWeek = monday.getDay();
+    const diff = monday.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    monday.setDate(diff);
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        schedule.push({
+            day: days[(i + 1) % 7],
+            date: `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`,
+            isWeekend: (i === 5 || i === 6) // Thứ 7, Chủ nhật
+        });
+    }
+    return schedule;
+}
+
 // Schedule data
-const scheduleData = [
-    { day: 'Thứ 2', date: '24/06', isWeekend: false },
-    { day: 'Thứ 3', date: '25/06', isWeekend: false },
-    { day: 'Thứ 4', date: '26/06', isWeekend: false },
-    { day: 'Thứ 5', date: '27/06', isWeekend: false },
-    { day: 'Thứ 6', date: '28/06', isWeekend: false },
-    { day: 'Thứ 7', date: '29/06', isWeekend: true },
-    { day: 'Chủ nhật', date: '30/06', isWeekend: true }
-];
+let scheduleData = getScheduleDataForWeek(currentWeek);
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -78,7 +92,7 @@ function createDayCard(day) {
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12,6 12,12 16,14"/>
                         </svg>
-                        <span>13:00 - 17:00</span>
+                        <span>14:00 - 17:00</span>
                     </div>
                     <svg class="check-icon orange" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -155,14 +169,18 @@ function updateWeekDisplay() {
 
     const weekRange = `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
     document.getElementById('weekRange').textContent = weekRange;
+
+    // Update data theo tuần mới
+    scheduleData = getScheduleDataForWeek(currentWeek);
+    initializeScheduleGrid();
 }
 
-// Update statistics
+// Update giờ làm việc
 function updateStats() {
     const totalSlots = selectedSlots.size;
     const morningSlots = Array.from(selectedSlots).filter(slot => slot.includes('morning')).length;
     const afternoonSlots = Array.from(selectedSlots).filter(slot => slot.includes('afternoon')).length;
-    const totalHours = (morningSlots * 4) + (afternoonSlots * 4);
+    const totalHours = (morningSlots * 4) + (afternoonSlots * 3);
     
     document.getElementById('totalHours').textContent = `${totalHours} giờ`;
     document.getElementById('totalShifts').textContent = `${totalSlots} ca`;
