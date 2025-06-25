@@ -37,7 +37,6 @@ window.loadBookings = loadBookings;
 window.filterBookings = filterBookings;
 window.showBookingDetail = showBookingDetail;
 window.confirmBooking = confirmBooking;
-window.rejectBooking = rejectBooking;
 window.closeDetailModal = closeDetailModal;
 
 // Load bookings từ API
@@ -111,12 +110,10 @@ function displayBookings(bookings) {
         // Handle buttons
         const btnView = card.querySelector('#btnView');
         const btnConfirm = card.querySelector('#btnConfirm');
-        const btnReject = card.querySelector('#btnReject');
 
         // Set unique IDs
         btnView.id = `btnView-${booking.bookId}`;
         btnConfirm.id = `btnConfirm-${booking.bookId}`;
-        btnReject.id = `btnReject-${booking.bookId}`;
 
         // Add event listeners
         btnView.onclick = () => showBookingDetail(booking.bookId);
@@ -124,19 +121,14 @@ function displayBookings(bookings) {
 
         if (booking.bookStatus === 'pending') {
             btnConfirm.style.display = 'inline-block';
-            btnReject.style.display = 'inline-block';
+
 
             btnConfirm.onclick = (e) => {
                 e.stopPropagation();
                 quickConfirm(booking.bookId);
             };
-            btnReject.onclick = (e) => {
-                e.stopPropagation();
-                quickReject(booking.bookId);
-            };
         } else {
             btnConfirm.style.display = 'none';
-            btnReject.style.display = 'none';
         }
 
         container.appendChild(card);
@@ -155,9 +147,7 @@ async function showBookingDetail(bookId) {
 
         // Fill dữ liệu vào modal
         document.getElementById('detailPatientName').textContent = `Customer ID: ${booking.cusId}`;
-        document.getElementById('detailPatientPhone').textContent = 'N/A';
-        document.getElementById('detailPatientEmail').textContent = 'N/A';
-        document.getElementById('detailPatientAge').textContent = 'N/A';
+
 
         document.getElementById('detailAppointmentDate').textContent = formatDate(booking.bookDate);
         document.getElementById('detailAppointmentTime').textContent = booking.bookTime;
@@ -168,7 +158,7 @@ async function showBookingDetail(bookId) {
         statusElement.className = `status-badge status-${booking.bookStatus.toLowerCase()}`;
 
         document.getElementById('detailNote').textContent = booking.note || 'Không có ghi chú';
-        document.getElementById('doctorNote').value = booking.doctorNote || '';
+
 
         // Hiển thị/ẩn action buttons
         const actionButtons = document.getElementById('appointmentActions');
@@ -190,11 +180,9 @@ async function showBookingDetail(bookId) {
 async function confirmBooking() {
     if (!currentBookId) return;
 
-    const doctorNote = document.getElementById('doctorNote').value.trim();
-
     try {
         // 1. Đổi trạng thái booking
-        const response = await fetch(`/api/booking/${currentBookId}/status?status=confirmed${doctorNote ? '&doctorNote=' + encodeURIComponent(doctorNote) : ''}`, {
+        const response = await fetch(`/api/booking/${currentBookId}/status?status=confirmed}`, {
             method: 'PUT'
         });
 
@@ -232,41 +220,12 @@ async function createBookingStep(bookId) {
     }
 }
 
-// Từ chối booking
-async function rejectBooking() {
-    if (!currentBookId) return;
-
-    const doctorNote = document.getElementById('doctorNote').value.trim();
-    if (!doctorNote) {
-        showError('Vui lòng nhập lý do từ chối!');
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/booking/${currentBookId}/status?status=rejected&doctorNote=${encodeURIComponent(doctorNote)}`, {
-            method: 'PUT'
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || 'Không thể từ chối booking');
-        }
-
-        showSuccess('Đã từ chối booking!');
-        closeDetailModal();
-        loadBookings();
-
-    } catch (error) {
-        console.error('Error rejecting booking:', error);
-        showError('Không thể từ chối booking. Vui lòng thử lại.');
-    }
-}
 
 // Quick actions
 async function quickConfirm(bookId) {
     try {
         // 1. Đổi trạng thái
-        const response = await fetch(`/api/booking/${bookId}/status?status=confirmed&doctorNote=Đã xác nhận nhanh`, {
+        const response = await fetch(`/api/booking/${bookId}/status?status=confirmed`, {
             method: 'PUT'
         });
 
@@ -287,28 +246,6 @@ async function quickConfirm(bookId) {
     }
 }
 
-async function quickReject(bookId) {
-    const reason = prompt('Nhập lý do từ chối:');
-    if (!reason) return;
-
-    try {
-        const response = await fetch(`/api/booking/${bookId}/status?status=rejected&doctorNote=${encodeURIComponent(reason)}`, {
-            method: 'PUT'
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || 'Không thể từ chối booking');
-        }
-
-        showSuccess('Đã từ chối booking!');
-        loadBookings();
-
-    } catch (error) {
-        console.error('Error rejecting booking:', error);
-        showError('Không thể từ chối booking');
-    }
-}
 
 // Filter bookings
 function filterBookings() {
@@ -323,7 +260,7 @@ function filterBookings() {
 
     if (dateFilter) {
         filtered = filtered.filter(booking => {
-            const bookingDate = new Date(booking.bookDate).toISOString().split('T')[0];
+            const bookingDate = new Date(booking.creatAt).toISOString().split('T')[0];
             return bookingDate === dateFilter;
         });
     }
@@ -351,7 +288,6 @@ function getStatusText(status) {
     const statusMap = {
         'pending': 'Chờ xác nhận',
         'confirmed': 'Đã xác nhận',
-        'rejected': 'Đã từ chối',
         'completed': 'Đã hoàn thành'
     };
     return statusMap[status] || status;

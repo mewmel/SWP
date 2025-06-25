@@ -105,7 +105,7 @@
                                 <span class="detail-value" id="customerId">N/A</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Service ID</span>
+                                <span class="detail-label">Service: </span>
                                 <span class="detail-value" id="serviceId">N/A</span>
                             </div>
                             <div class="detail-item">
@@ -127,9 +127,6 @@
                             </button>
                             <button class="btn-small btn-confirm" id="btnConfirm" style="display: none;">
                                 <i class="fas fa-check"></i> Xác nhận
-                            </button>
-                            <button class="btn-small btn-reject" id="btnReject" style="display: none;">
-                                <i class="fas fa-times"></i> Từ chối
                             </button>
                         </div>
                     </div>
@@ -166,19 +163,7 @@
                         <div class="info-item">
                             <label>Họ tên:</label>
                             <span id="detailPatientName"></span>
-                        </div>
-                        <div class="info-item">
-                            <label>Số điện thoại:</label>
-                            <span id="detailPatientPhone"></span>
-                        </div>
-                        <div class="info-item">
-                            <label>Email:</label>
-                            <span id="detailPatientEmail"></span>
-                        </div>
-                        <div class="info-item">
-                            <label>Tuổi:</label>
-                            <span id="detailPatientAge"></span>
-                        </div>
+                        </div>                      
                     </div>
                 </div>
 
@@ -210,19 +195,11 @@
                         Không có ghi chú
                     </div>
                 </div>
-
-                <!-- <div class="doctor-note-section">
-                    <h4><i class="fas fa-user-md"></i> Ghi chú của bác sĩ</h4>
-                    <textarea id="doctorNote" placeholder="Nhập ghi chú của bác sĩ..." rows="3"></textarea>
-                </div> -->
             </div>
         </div>
         <div class="modal-footer">
             <button class="btn-secondary" onclick="closeDetailModal()">Đóng</button>
             <div class="action-buttons" id="appointmentActions">
-                <button class="btn-danger" onclick="rejectBooking()">
-                    <i class="fas fa-times"></i> Từ chối
-                </button>
                 <button class="btn-success" onclick="confirmBooking()">
                     <i class="fas fa-check"></i> Xác nhận
                 </button>
