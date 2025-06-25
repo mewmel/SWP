@@ -756,9 +756,14 @@ body {
     position: sticky;
     bottom: 0;
     background: white;
-    z-index: 1;
-    padding: 15px 20px;
-    border-top: 1px solid #ddd;
+    z-index: 10;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
 }
 
 /* ========== PATIENT STATUS & ACTION STYLES ========== */
@@ -864,18 +869,21 @@ body {
 /* ========== ENHANCED MODAL STYLES ========== */
 
 .large-modal {
-    max-width: 1200px;
-    width: 95%;
+    max-width: 1400px;
+    width: 98%;
     max-height: 90vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    margin: 2vh auto;
+    position: relative;
+    top: 0;
 }
 
 .large-modal .modal-body {
     flex: 1;
     overflow-y: auto;
-    padding: 2rem;
+    padding: 2.5rem 2.5rem 3rem 2.5rem;
 }
 
 /* Patient Info Section */
@@ -886,9 +894,9 @@ body {
 .patient-header {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-    padding: 1.5rem;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 2rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 12px;
     color: white;
@@ -924,8 +932,9 @@ body {
 .info-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 1rem;
+    gap: 2.5rem;
+    margin-bottom: 1.5rem;
+    align-items: start;
 }
 
 .info-item {
@@ -951,6 +960,10 @@ body {
 .info-item span {
     color: #1f2937;
     font-size: 1rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+    max-width: 100%;
 }
 
 /* Record Tabs */
@@ -1645,4 +1658,132 @@ select:focus {
     background: #f8fafc;
     border-radius: 6px;
     font-size: 0.9rem;
+}
+
+/* ========== RESPONSIVE DESIGN FOR LARGE MODAL ========== */
+
+@media (max-width: 1200px) {
+    .large-modal {
+        width: 95%;
+        max-width: 1200px;
+    }
+    
+    .large-modal .modal-body {
+        padding: 2rem;
+    }
+    
+    .info-row {
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .large-modal {
+        width: 98%;
+        max-height: 85vh;
+        margin: 3vh auto;
+    }
+    
+    .large-modal .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .info-row {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .patient-header {
+        gap: 1rem;
+        padding: 1.5rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .record-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .record-tabs {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    
+    .tab-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .result-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .sub-service-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .sub-service-details {
+        align-items: flex-start;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .large-modal {
+        width: 100%;
+        height: 95vh;
+        max-height: 95vh;
+        margin: 2.5vh auto 0;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .large-modal .modal-body {
+        padding: 1rem;
+    }
+    
+    .patient-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .patient-details h4 {
+        font-size: 1.2rem;
+    }
+    
+    .info-item span {
+        font-size: 0.9rem;
+    }
+    
+    .booking-info,
+    .medical-record-info,
+    .booking-steps,
+    .drug-prescription {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .record-section {
+        margin-bottom: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 0.75rem;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary,
+    .btn-secondary,
+    .btn-print {
+        width: 100%;
+        justify-content: center;
+    }
 }
