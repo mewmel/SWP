@@ -1127,35 +1127,31 @@ document.addEventListener('DOMContentLoaded', function () {
     // setInterval(testNotification, 10000); // Thêm notification mới mỗi 10 giây
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // ...existing code...
+    // Xử lý popup lịch hẹn
+    const appointmentLink = document.getElementById('appointmentLink');
+    const appointmentModal = document.getElementById('appointmentModal');
+    const closeAppointmentBtn = document.querySelector('.close-appointment-modal');
 
-        // Xử lý popup lịch hẹn
-        const appointmentLink = document.getElementById('appointmentLink');
-        const appointmentModal = document.getElementById('appointmentModal');
-        const closeAppointmentBtn = document.querySelector('.close-appointment-modal');
-
-        // Mở popup khi click vào link lịch hẹn
-        if (appointmentLink) {
-            appointmentLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                appointmentModal.style.display = 'block';
-            });
-        }
-
-        // Đóng popup khi click vào nút close
-        if (closeAppointmentBtn) {
-            closeAppointmentBtn.addEventListener('click', function () {
-                appointmentModal.style.display = 'none';
-            });
-        }
-
-        // Đóng popup khi click ra ngoài
-        window.addEventListener('click', function (e) {
-            if (e.target == appointmentModal) {
-                appointmentModal.style.display = 'none';
-            }
+    // Mở popup khi click vào link lịch hẹn
+    if (appointmentLink) {
+        appointmentLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            appointmentModal.style.display = 'block';
         });
+    }
+
+    // Đóng popup khi click vào nút close
+    if (closeAppointmentBtn) {
+        closeAppointmentBtn.addEventListener('click', function () {
+            appointmentModal.style.display = 'none';
+        });
+    }
+
+    // Đóng popup khi click ra ngoài
+    window.addEventListener('click', function (e) {
+        if (e.target == appointmentModal) {
+            appointmentModal.style.display = 'none';
+        }
     });
 
     // ============= DOCTORS SLIDER NAVIGATION =============
@@ -1182,7 +1178,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Event listeners cho navigation buttons
-        nextBtn.addEventListener('click', function() {
+        nextBtn.addEventListener('click', function () {
             if (currentIndex < maxIndex) {
                 currentIndex++;
                 moveSlider();
@@ -1190,7 +1186,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        prevBtn.addEventListener('click', function() {
+        prevBtn.addEventListener('click', function () {
             if (currentIndex > 0) {
                 currentIndex--;
                 moveSlider();
@@ -1201,42 +1197,196 @@ document.addEventListener('DOMContentLoaded', function () {
         // Khởi tạo trạng thái ban đầu
         updateButtons();
     }
-});
-
-document.addEventListener('DOMContentLoaded', function() {
+    
     // Lấy email user đã đăng nhập
     const userEmail = localStorage.getItem('cusEmail');
-    if (!userEmail) return;
+    if (userEmail) {
+        fetch(`http://localhost:8080/api/customer/${encodeURIComponent(userEmail)}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('API data:', data); // DEBUG
+                if (data) {
+                    const nameInput = document.getElementById('fullName');
+                    const phoneInput = document.getElementById('phone');
+                    const emailInput = document.getElementById('email');
+                    const dobInput = document.getElementById('dob');
+                    const addressInput = document.getElementById('address');
+                    const occupationInput = document.getElementById('occupation');
 
-    fetch(`http://localhost:8080/api/customer/${encodeURIComponent(userEmail)}`)
-        .then(res => res.json())
-        .then(data => {
-            console.log('API data:', data); // DEBUG
-            if (data) {
-                const nameInput = document.getElementById('fullName');
-                const phoneInput = document.getElementById('phone');
-                const emailInput = document.getElementById('email');
-                const dobInput = document.getElementById('dob');
-                const addressInput = document.getElementById('address');
-                const occupationInput = document.getElementById('occupation');
-
-                if (nameInput) nameInput.value = data.cusFullName || '';
-                if (phoneInput) phoneInput.value = data.cusPhone || '';
-                if (emailInput) emailInput.value = data.cusEmail || '';
-                if (dobInput && data.cusDate) {
-                    let dateStr = data.cusDate;
-                    // Chuyển đổi nếu backend trả về dd/MM/yyyy hoặc dd-MM-yyyy
-                    if (/^\d{2}[/\-]\d{2}[/\-]\d{4}$/.test(dateStr)) {
-                        let [d, m, y] = dateStr.split(/[\/\-]/);
-                        dateStr = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                    if (nameInput) nameInput.value = data.cusFullName || '';
+                    if (phoneInput) phoneInput.value = data.cusPhone || '';
+                    if (emailInput) emailInput.value = data.cusEmail || '';
+                    if (dobInput && data.cusDate) {
+                        let dateStr = data.cusDate;
+                        // Chuyển đổi nếu backend trả về dd/MM/yyyy hoặc dd-MM-yyyy
+                        if (/^\d{2}[/\-]\d{2}[/\-]\d{4}$/.test(dateStr)) {
+                            let [d, m, y] = dateStr.split(/[\/\-]/);
+                            dateStr = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                        }
+                        dobInput.value = dateStr;
                     }
-                    dobInput.value = dateStr;
+                    if (addressInput) addressInput.value = data.cusAddress || '';
+                    if (occupationInput) occupationInput.value = data.cusOccupation || '';
                 }
-                if (addressInput) addressInput.value = data.cusAddress || '';
-                if (occupationInput) occupationInput.value = data.cusOccupation || '';
-            }
-        })
-        .catch(err => {
-            console.log('Không tự động lấy được dữ liệu user:', err);
+            })
+            .catch(err => {
+                console.log('Không tự động lấy được dữ liệu user:', err);
+            });
+    }
+
+    // ============= FORGOT PASSWORD MODAL FUNCTIONALITY =============
+    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+    const forgotPasswordLink = document.querySelector('.forgot-password');
+    const closeForgotModal = document.getElementById('closeForgotModal');
+
+    // Open forgot password modal
+    if (forgotPasswordLink && forgotPasswordModal) {
+        forgotPasswordLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            authModal.classList.remove('active');
+            forgotPasswordModal.style.display = 'block';
+            setTimeout(() => {
+                forgotPasswordModal.classList.add('active');
+            }, 50);
         });
+    }
+
+    // Close forgot password modal
+    if (closeForgotModal) {
+        closeForgotModal.addEventListener('click', function () {
+            closeForgotPasswordModal();
+        });
+    }
+
+    // Close modal when clicking outside
+    if (forgotPasswordModal) {
+        forgotPasswordModal.addEventListener('click', function (e) {
+            if (e.target === forgotPasswordModal) {
+                closeForgotPasswordModal();
+            }
+        });
+    }
+
+    function closeForgotPasswordModal() {
+        forgotPasswordModal.classList.remove('active');
+        setTimeout(() => {
+            forgotPasswordModal.style.display = 'none';
+            resetForgotPasswordModal();
+        }, 300);
+    }
+
+    function resetForgotPasswordModal() {
+        // Clear form
+        const form = document.getElementById('forgotPasswordForm');
+        if (form) {
+            form.reset();
+        }
+    }
+
+    // Navigation button
+    const backToLogin = document.getElementById('backToLogin');
+
+    if (backToLogin) {
+        backToLogin.addEventListener('click', function () {
+            closeForgotPasswordModal();
+            authModal.classList.add('active');
+        });
+    }
+
+    // Main forgot password form
+    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+    if (forgotPasswordForm) {
+        forgotPasswordForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value.trim();
+            const newPassword = document.getElementById('forgotNewPassword').value;
+            const confirmPassword = document.getElementById('forgotConfirmPassword').value;
+            const otp = document.getElementById('forgotOtp').value.trim();
+            const submitBtn = this.querySelector('button[type="submit"]');
+
+            // Validation
+            if (!email) {
+                showNotification('Vui lòng nhập email!', 'error');
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification('Email không hợp lệ!', 'error');
+                return;
+            }
+
+            if (!newPassword) {
+                showNotification('Vui lòng nhập mật khẩu mới!', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showNotification('Mật khẩu phải có ít nhất 6 ký tự!', 'error');
+                return;
+            }
+
+            if (!confirmPassword) {
+                showNotification('Vui lòng xác nhận mật khẩu mới!', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showNotification('Mật khẩu xác nhận không khớp!', 'error');
+                return;
+            }
+
+            if (!otp) {
+                showNotification('Vui lòng nhập mã OTP!', 'error');
+                return;
+            }
+
+            if (!/^\d{6}$/.test(otp)) {
+                showNotification('Mã OTP phải là 6 chữ số!', 'error');
+                return;
+            }
+
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+            submitBtn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                // For demo, accept any valid inputs
+                showNotification('Đặt lại mật khẩu thành công! Bạn có thể đăng nhập với mật khẩu mới.', 'success');
+
+                // Close forgot password modal and open login
+                closeForgotPasswordModal();
+                setTimeout(() => {
+                    authModal.classList.add('active');
+                }, 300);
+
+                submitBtn.innerHTML = '<span>Đặt lại mật khẩu</span><i class="fas fa-save"></i>';
+                submitBtn.disabled = false;
+            }, 2000);
+        });
+    }
+
+    // Auto-format OTP input
+    const otpInput = document.getElementById('forgotOtp');
+    if (otpInput) {
+        otpInput.addEventListener('input', function (e) {
+            // Only allow numbers
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        otpInput.addEventListener('keydown', function (e) {
+            // Allow backspace, delete, tab, escape, enter
+            if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                (e.keyCode === 65 && e.ctrlKey === true) ||
+                (e.keyCode === 67 && e.ctrlKey === true) ||
+                (e.keyCode === 86 && e.ctrlKey === true) ||
+                (e.keyCode === 88 && e.ctrlKey === true)) {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+    }
 });

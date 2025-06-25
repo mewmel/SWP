@@ -309,13 +309,6 @@ nav a.active {
     font-size: 0.7rem;
     color: #666;
 }
-
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-lg);
-}
-
 .trend-chart {
     background: white;
     border-radius: var(--border-radius-lg);
