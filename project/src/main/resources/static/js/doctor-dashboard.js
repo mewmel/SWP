@@ -31,18 +31,32 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-// Patient data storage
+// Patient data storage - Updated to match database schema
     const patientData = {
         mai: {
-            name: 'Nguyễn Thị Mai',
-            age: 28,
-            phone: '0123456789',
-            address: 'Hoàng Mai, Hà Nội',
+            cusId: 1,
+            name: 'Trần Anh Thư',
+            gender: 'Nữ',
+            birthDate: '26/09/2004',
+            email: 'thutase180353@fpt.edu.vn',
+            phone: '0352020737',
+            address: 'HCMC',
+            occupation: 'Con sen',
+            emergencyContact: 'Mơ',
+            status: 'active',
             medicalRecord: {
-                diagnosis: 'Hiếm muộn nguyên phát, chuẩn bị IVF chu kỳ 1',
-                symptoms: 'Không có thai sau 2 năm kết hôn, chu kỳ kinh đều',
-                treatment: 'Kích thích buồng trứng, theo dõi siêu âm định kỳ',
-                notes: 'Bệnh nhân hợp tác tốt, tuân thủ điều trị đầy đủ'
+                recordId: 'MR002',
+                diagnosis: 'Vô sinh nguyên phát, chuẩn bị điều trị IVF chu kỳ 1',
+                treatmentPlan: '1. Kích thích buồng trứng bằng thuốc FSH\n2. Theo dõi nang noãn bằng siêu âm\n3. Chọc hút trứng khi đủ tiêu chuẩn\n4. Thụ tinh trong ống nghiệm\n5. Chuyển phôi vào tử cung',
+                notes: 'Bệnh nhân hợp tác tốt, tuân thủ điều trị đầy đủ',
+                recordStatus: 'active',
+                dischargeDate: '2024-07-24'
+            },
+            currentBooking: {
+                bookType: 'follow-up',
+                bookStatus: 'confirmed',
+                note: 'Bệnh nhân đến đúng giờ hẹn',
+                serviceName: 'Liệu trình điều trị IVF'
             }
         },
         an: {
@@ -332,18 +346,22 @@ document.addEventListener('DOMContentLoaded', function () {
         printWindow.print();
     };
 
-    // Update viewPatientRecord function to work with new modal structure
+    // Update viewPatientRecord function to work with new database-matching structure
     window.viewPatientRecord = function(patientId) {
         const patient = patientData[patientId];
         if (!patient) return;
 
-        // Update basic info
+        // Update basic patient info
         document.getElementById('patientName').textContent = patient.name;
-        document.getElementById('patientId').textContent = 'BN' + patientId.toUpperCase();
-        document.getElementById('patientAge').textContent = patient.age + ' tuổi';
+        document.getElementById('patientId').textContent = 'BN' + String(patient.cusId).padStart(3, '0');
+        document.getElementById('patientGender').textContent = patient.gender;
+        document.getElementById('patientBirthDate').textContent = patient.birthDate;
         document.getElementById('patientPhone').textContent = patient.phone;
+        document.getElementById('patientEmail').textContent = patient.email;
         document.getElementById('patientAddress').textContent = patient.address;
-        document.getElementById('patientBirthDate').textContent = '15/03/1996'; // Sample date
+        document.getElementById('patientOccupation').textContent = patient.occupation;
+        document.getElementById('emergencyContact').textContent = patient.emergencyContact;
+        document.getElementById('patientStatus').textContent = patient.status === 'active' ? 'Hoạt động' : 'Không hoạt động';
         
         // Update current status
         const appointmentItem = document.querySelector(`[data-patient="${patientId}"]`);
@@ -353,16 +371,34 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('currentStatus').className = 'status-badge ' + 
             (currentStatus === 'Đã khám' ? 'completed' : 'waiting');
 
-        // Update medical record data with sample content
-        document.getElementById('visitReason').value = 'Khám định kỳ theo lịch hẹn';
-        document.getElementById('currentSymptoms').value = patient.medicalRecord.symptoms;
-        document.getElementById('diagnosis').value = patient.medicalRecord.diagnosis;
-        document.getElementById('bloodPressure').value = '120/80 mmHg';
-        document.getElementById('heartRate').value = '72 bpm';
-        document.getElementById('weight').value = '55 kg';
-        document.getElementById('prescription').value = '1. Folic Acid 5mg - 1 viên/ngày\n2. Vitamin E 400IU - 1 viên/ngày\n3. Duphaston 10mg - 2 viên/ngày';
-        document.getElementById('instructions').value = patient.medicalRecord.treatment;
-        document.getElementById('doctorNotes').value = patient.medicalRecord.notes;
+        // Update booking information
+        if (patient.currentBooking) {
+            document.getElementById('bookType').value = patient.currentBooking.bookType;
+            document.getElementById('bookStatus').value = patient.currentBooking.bookStatus;
+            document.getElementById('bookingNote').value = patient.currentBooking.note;
+        }
+
+        // Update medical record information
+        if (patient.medicalRecord) {
+            document.getElementById('recordStatus').value = patient.medicalRecord.recordStatus;
+            document.getElementById('recordCreatedDate').value = '2024-06-24';
+            document.getElementById('diagnosis').value = patient.medicalRecord.diagnosis;
+            document.getElementById('treatmentPlan').value = patient.medicalRecord.treatmentPlan;
+            document.getElementById('dischargeDate').value = patient.medicalRecord.dischargeDate;
+            document.getElementById('medicalNote').value = patient.medicalRecord.notes;
+        }
+
+        // Update booking step information (sample data)
+        document.getElementById('performedAt1').value = '2024-06-24T08:00';
+        document.getElementById('stepResult1').value = 'Tình trạng sức khỏe tổng thể tốt';
+        document.getElementById('stepNote1').value = 'Bệnh nhân có tiền sử sảy thai 1 lần';
+
+        // Update drug information (sample data)
+        document.getElementById('drugName1').value = 'Folic Acid';
+        document.getElementById('dosage1').value = '5mg';
+        document.getElementById('frequency1').value = '1 lần/ngày';
+        document.getElementById('duration1').value = '30 ngày';
+        document.getElementById('drugNote1').value = 'Uống sau bữa ăn';
 
         // Reset to first tab
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -386,11 +422,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!patient) return;
 
-        // Update patient record with current tab data
-        patient.medicalRecord.diagnosis = document.getElementById('diagnosis').value;
-        patient.medicalRecord.symptoms = document.getElementById('currentSymptoms').value;
-        patient.medicalRecord.treatment = document.getElementById('instructions').value;
-        patient.medicalRecord.notes = document.getElementById('doctorNotes').value;
+        // Update booking information
+        if (patient.currentBooking) {
+            patient.currentBooking.bookType = document.getElementById('bookType').value;
+            patient.currentBooking.bookStatus = document.getElementById('bookStatus').value;
+            patient.currentBooking.note = document.getElementById('bookingNote').value;
+        }
+
+        // Update medical record information
+        if (patient.medicalRecord) {
+            patient.medicalRecord.recordStatus = document.getElementById('recordStatus').value;
+            patient.medicalRecord.diagnosis = document.getElementById('diagnosis').value;
+            patient.medicalRecord.treatmentPlan = document.getElementById('treatmentPlan').value;
+            patient.medicalRecord.dischargeDate = document.getElementById('dischargeDate').value;
+            patient.medicalRecord.notes = document.getElementById('medicalNote').value;
+        }
+
+        // Here you would typically save booking steps and drugs to database
+        // For now, we'll just show success message
 
         // Show success message
         if (typeof showNotification === 'function') {
@@ -412,6 +461,99 @@ document.addEventListener('DOMContentLoaded', function () {
     window.openReports = function() {
         if (typeof showNotification === 'function') {
             showNotification('Tính năng báo cáo thống kê đang được phát triển', 'info');
+        }
+    };
+
+    // ========== NEW FUNCTIONS FOR DATABASE MATCHING ========== 
+
+    // Add new booking step
+    window.addBookingStep = function() {
+        const stepsList = document.getElementById('bookingStepsList');
+        const stepCount = stepsList.children.length + 1;
+        
+        const newStep = document.createElement('div');
+        newStep.className = 'step-item';
+        newStep.innerHTML = `
+            <div class="step-header">
+                <strong>Bước ${stepCount}: </strong>
+                <input type="text" placeholder="Tên bước..." style="flex: 1; margin: 0 1rem;">
+                <span class="step-status completed">Đang thực hiện</span>
+            </div>
+            <div class="step-content">
+                <div class="record-grid">
+                    <div class="record-section">
+                        <label>Ngày thực hiện:</label>
+                        <input type="datetime-local" value="${new Date().toISOString().slice(0, 16)}">
+                    </div>
+                    <div class="record-section">
+                        <label>Kết quả:</label>
+                        <textarea rows="2" placeholder="Kết quả thực hiện..."></textarea>
+                    </div>
+                </div>
+                <div class="record-section">
+                    <label>Ghi chú bước này:</label>
+                    <textarea rows="2" placeholder="Ghi chú của bác sĩ..."></textarea>
+                </div>
+                <button type="button" class="btn-remove-drug" onclick="removeBookingStep(this)">
+                    <i class="fas fa-trash"></i> Xóa bước
+                </button>
+            </div>
+        `;
+        
+        stepsList.appendChild(newStep);
+    };
+
+    // Remove booking step
+    window.removeBookingStep = function(button) {
+        if (confirm('Bạn có chắc chắn muốn xóa bước này?')) {
+            button.closest('.step-item').remove();
+        }
+    };
+
+    // Add new drug
+    window.addDrug = function() {
+        const drugsList = document.getElementById('drugsList');
+        const drugCount = drugsList.children.length + 1;
+        
+        const newDrug = document.createElement('div');
+        newDrug.className = 'drug-item';
+        newDrug.innerHTML = `
+            <div class="record-grid">
+                <div class="record-section">
+                    <label>Tên thuốc:</label>
+                    <input type="text" placeholder="Tên thuốc...">
+                </div>
+                <div class="record-section">
+                    <label>Liều dùng:</label>
+                    <input type="text" placeholder="Liều dùng...">
+                </div>
+            </div>
+            <div class="record-grid">
+                <div class="record-section">
+                    <label>Tần suất:</label>
+                    <input type="text" placeholder="Tần suất sử dụng...">
+                </div>
+                <div class="record-section">
+                    <label>Thời gian dùng:</label>
+                    <input type="text" placeholder="Thời gian dùng...">
+                </div>
+            </div>
+            <div class="record-section">
+                <label>Ghi chú thuốc:</label>
+                <textarea rows="2" placeholder="Hướng dẫn sử dụng..."></textarea>
+            </div>
+            <button type="button" class="btn-remove-drug" onclick="removeDrug(this)">
+                <i class="fas fa-trash"></i> Xóa
+            </button>
+        `;
+        
+        drugsList.appendChild(newDrug);
+    };
+
+    // Remove drug
+    window.removeDrug = function(button) {
+        if (confirm('Bạn có chắc chắn muốn xóa thuốc này?')) {
+            button.closest('.drug-item').remove();
         }
     };
 
