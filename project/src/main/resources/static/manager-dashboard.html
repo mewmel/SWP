@@ -31,15 +31,48 @@
     </style>
 </head>
 <body>
+<!-- Header Navigation -->
 <header class="doctor-header">
     <div class="doctor-header-container">
         <nav class="doctor-nav">
-            <a href="#" class="nav-link active">Quản lý bác sĩ</a>
-            <a href="sap-xep-lich-bac-si.html" class="nav-link">Sắp xếp lịch làm</a>
-            <a href="#" class="nav-link">Thống kê</a>
+            <a href="manager-dashboard.html" class="nav-link active">Quản lý bác sĩ</a>
+            <a href="sap-xep-lich-bac-si.html" class="nav-link ">Sắp xếp lịch</a>
+            <a href="#" class="nav-link">Báo cáo thông kê</a>
+            <a href="#" class="nav-link">Hồ sơ cá nhân</a>
         </nav>
+
+        <div class="doctor-header-right">
+            <div class="doctor-search-box">
+                <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
+                <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </div>
+
+            <div class="notification-wrapper" style="position: relative;">
+                <button class="doctor-notification-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="doctor-notification-badge">3</span>
+                </button>
+            </div>
+
+            <div class="user-menu">
+                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+                <button class="logout-btn"
+                        style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
+            </div>
+
+            <button class="doctor-mobile-menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
     </div>
-    
 </header>
 <div class="dashboard-container">
     <div class="dashboard-header">
@@ -211,54 +244,6 @@
     </div>
 </div>
 <script>
-// Demo: Render lịch làm việc tuần này dạng mini
-function renderMiniCalendar() {
-    const container = document.getElementById('calendarMini');
-    if (!container) return;
-    const days = ['T2','T3','T4','T5','T6','T7','CN'];
-    let html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;">';
-    for(let i=0;i<7;i++) {
-        html += `<div style="background:#f9fafb;border-radius:8px;padding:10px 0;text-align:center;font-weight:500;">${days[i]}<br><span style="font-size:0.95em;color:#2176bd;">08:00-12:00</span><br><span style="font-size:0.95em;color:#2176bd;">14:00-17:00</span></div>`;
-    }
-    html += '</div>';
-    container.innerHTML = html;
-}
-document.addEventListener('DOMContentLoaded', renderMiniCalendar);
-
-// Xử lý sự kiện mở modal sắp xếp lịch
-document.querySelectorAll('.arrange-schedule-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const doctorName = this.closest('tr').querySelector('td:nth-child(3)').innerText;
-        document.getElementById('modalDoctorName').innerText = doctorName;
-        document.getElementById('arrangeScheduleModal').style.display = 'block';
-
-        // TODO: Tải và hiển thị lịch hiện tại của bác sĩ lên grid trong modal
-    });
-});
-
-// Đóng modal khi nhấn nút đóng hoặc ngoài vùng modal
-document.getElementById('closeArrangeModal').addEventListener('click', function() {
-    document.getElementById('arrangeScheduleModal').style.display = 'none';
-});
-window.addEventListener('click', function(event) {
-    const modal = document.getElementById('arrangeScheduleModal');
-    if (event.target == modal) {
-        modal.style.display = 'none';
-    }
-});
-
-// Hủy bỏ sắp xếp lịch
-document.getElementById('cancelArrangeBtn').addEventListener('click', function() {
-    document.getElementById('arrangeScheduleModal').style.display = 'none';
-});
-
-// Lưu lịch sắp xếp
-document.getElementById('saveArrangeBtn').addEventListener('click', function() {
-    // TODO: Lưu lịch làm việc mới cho bác sĩ
-
-    alert('Lịch làm việc đã được lưu!');
-    document.getElementById('arrangeScheduleModal').style.display = 'none';
-});
 
 // Dữ liệu demo bằng cấp chuyên môn
 const doctorDegrees = {
@@ -327,6 +312,7 @@ function openDegreeModal(doctorId) {
     document.getElementById('degreeModal').style.display = 'block';
 }
 document.addEventListener('DOMContentLoaded', function() {
+    // Gắn sự kiện cho nút xem bằng cấp
     document.querySelectorAll('.view-degree-btn').forEach(btn => {
         btn.onclick = function() {
             try {
@@ -349,40 +335,49 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.style.display = 'none';
         }
     });
-});
 
-// Xử lý nút sửa bằng cấp chuyên môn
-let currentEditDoctorId = null;
-document.querySelectorAll('button[title="Sửa"]:not(.edit-degree-initialized)').forEach(btn => {
-    btn.classList.add('edit-degree-initialized');
-    btn.addEventListener('click', function() {
-        const doctorId = this.closest('tr').querySelector('.view-degree-btn').getAttribute('data-doctor');
-        currentEditDoctorId = doctorId;
-        const data = doctorDegrees[doctorId];
-        if (!data) return;
-        document.getElementById('editDegreeDoctorName').innerText = data.name;
-        // Render degree list
-        const degreeList = document.getElementById('editDegreeList');
-        degreeList.innerHTML = '';
-        data.degrees.forEach((deg, idx) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<input type="text" value="${deg}" data-idx="${idx}" style="width:75%;padding:3px;"> <button type="button" class="btn-danger btn-sm remove-degree-btn" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
-            degreeList.appendChild(li);
+    // Gắn sự kiện cho nút sửa bằng cấp chuyên môn
+    let currentEditDoctorId = null;
+    document.querySelectorAll('button[title="Sửa"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const doctorId = this.closest('tr').querySelector('.view-degree-btn').getAttribute('data-doctor');
+            currentEditDoctorId = doctorId;
+            const data = doctorDegrees[doctorId];
+            if (!data) return;
+            document.getElementById('editDegreeDoctorName').innerText = data.name;
+            // Render degree list
+            const degreeList = document.getElementById('editDegreeList');
+            degreeList.innerHTML = '';
+            data.degrees.forEach((deg, idx) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<input type="text" value="${deg}" data-idx="${idx}" style="width:75%;padding:3px;"> <button type="button" class="btn-danger btn-sm remove-degree-btn" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
+                degreeList.appendChild(li);
+            });
+            // Render specialty list
+            const specialtyList = document.getElementById('editSpecialtyList');
+            specialtyList.innerHTML = '';
+            data.specialties.forEach((sp, idx) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<input type="text" value="${sp}" data-idx="${idx}" style="width:75%;padding:3px;"> <button type="button" class="btn-danger btn-sm remove-specialty-btn" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
+                specialtyList.appendChild(li);
+            });
+            document.getElementById('editDegreeModal').style.display = 'block';
         });
-        // Render specialty list
-        const specialtyList = document.getElementById('editSpecialtyList');
-        specialtyList.innerHTML = '';
-        data.specialties.forEach((sp, idx) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<input type="text" value="${sp}" data-idx="${idx}" style="width:75%;padding:3px;"> <button type="button" class="btn-danger btn-sm remove-specialty-btn" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
-            specialtyList.appendChild(li);
-        });
-        document.getElementById('editDegreeModal').style.display = 'block';
     });
-});
-// Thêm bằng cấp
-if (!window.editDegreeModalInit) {
-    window.editDegreeModalInit = true;
+    // Đóng modal sửa bằng cấp
+    document.getElementById('closeEditDegreeModal').onclick = function() {
+        document.getElementById('editDegreeModal').style.display = 'none';
+    };
+    document.getElementById('cancelEditDegreeBtn').onclick = function() {
+        document.getElementById('editDegreeModal').style.display = 'none';
+    };
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('editDegreeModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+    // Thêm bằng cấp
     document.getElementById('addDegreeBtn').onclick = function() {
         const val = document.getElementById('newDegreeInput').value.trim();
         if (val) {
@@ -413,19 +408,6 @@ if (!window.editDegreeModalInit) {
             e.target.closest('li').remove();
         }
     });
-    // Đóng modal
-    document.getElementById('closeEditDegreeModal').onclick = function() {
-        document.getElementById('editDegreeModal').style.display = 'none';
-    };
-    document.getElementById('cancelEditDegreeBtn').onclick = function() {
-        document.getElementById('editDegreeModal').style.display = 'none';
-    };
-    window.addEventListener('click', function(event) {
-        const modal = document.getElementById('editDegreeModal');
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    });
     // Lưu thay đổi
     document.getElementById('saveEditDegreeBtn').onclick = function() {
         if (!currentEditDoctorId) return;
@@ -438,21 +420,8 @@ if (!window.editDegreeModalInit) {
         document.getElementById('editDegreeModal').style.display = 'none';
         alert('Đã lưu thay đổi bằng cấp & chuyên môn!');
     };
-}
-
-// Gắn lại sự kiện cho nút xem bằng cấp
-// Đảm bảo chỉ gắn 1 lần duy nhất sau khi DOM đã sẵn sàng
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.view-degree-btn').forEach(btn => {
-        btn.onclick = function() {
-            try {
-                openDegreeModal(this.getAttribute('data-doctor'));
-            } catch (e) {
-                alert('Lỗi khi mở modal bằng cấp: ' + e.message);
-            }
-        };
-    });
 });
 </script>
+<script src="js/manager.js"></script>
 </body>
 </html>
