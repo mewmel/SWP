@@ -3,7 +3,6 @@ package com.example.project.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -40,12 +39,6 @@ public class BookingService {
     private DoctorRepository doctorRepo;
     @Autowired
     private ServiceRepository serviceRepo;
-    @Autowired
-    private BookingRepository bookingRepository;
-    @Autowired
-    private com.example.project.repository.SubServiceRepository subServiceRepo;
-    @Autowired
-    private com.example.project.repository.BookingStepRepository bookingStepRepo;
 
     public boolean createBookingAndAccount(BookingRequest req) {
         // Tìm Customer theo email và provider = 'local'
@@ -126,7 +119,7 @@ public class BookingService {
         booking.setSerId(req.getSerId());
         booking.setBookType(req.getBookType());
         booking.setBookStatus("pending");
-        booking.setCreatedAt(LocalDateTime.now());
+        booking.setCreatedAt(LocalDateTime.of(workDate, startTime));
         booking.setNote(req.getNote());
 
         // Chỉ gửi mail khi booking save thành công
@@ -183,32 +176,5 @@ public class BookingService {
         sb.append("Ghi chú: ").append(req.getNote() == null ? "" : req.getNote()).append("\n");
         return sb.toString();
     }
-    public void createBookingStepsForConfirmedBooking(Integer bookId) {
-        Booking booking = bookingRepo.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
 
-        if (!"confirmed".equalsIgnoreCase(booking.getBookStatus())) {
-            throw new IllegalStateException("Booking chưa ở trạng thái confirmed.");
-        }
-
-        WorkSlot slot = workSlotRepo.findById(booking.getSlotId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy khung giờ khám"));
-        LocalDate startDate = slot.getWorkDate();
-
-        java.util.List<com.example.project.entity.SubService> subServices = subServiceRepo.findBySerId(booking.getSerId());
-
-        for (com.example.project.entity.SubService ss : subServices) {
-            int offset = ss.getEstimatedDayOffset() != null ? ss.getEstimatedDayOffset() : 1;
-            LocalDate performedDate = startDate.plusDays(offset - 1);
-
-            com.example.project.entity.BookingStep step = new com.example.project.entity.BookingStep();
-            step.setBookId(booking.getBookId());
-            step.setSubId(ss.getSubId());
-            step.setPerformedAt(performedDate.atStartOfDay());
-            bookingStepRepo.save(step);
-        }
-    }
-    public List<Booking> getBookingsByCustomer(Integer cusId) {
-        return bookingRepository.findByCusIdOrderByCreatedAt(cusId);
-    }
 }

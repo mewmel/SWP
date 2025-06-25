@@ -24,4 +24,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     // Đếm số booking theo trạng thái
     long countByDocIdAndBookStatus(Integer docId, String bookStatus);
 
+    List<Booking> findByCusIdOrderByCreatedAtDesc(Integer cusId);
+
 }
