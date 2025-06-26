@@ -60,117 +60,130 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
         an: {
+            cusId: 2,
             name: 'Trần Văn An',
-            age: 35,
+            gender: 'Nam',
+            birthDate: '15/03/1989',
+            email: 'tranan@gmail.com',
             phone: '0987654321',
             address: 'Cầu Giấy, Hà Nội',
+            occupation: 'Kỹ sư',
+            emergencyContact: 'Vợ - Nguyễn Thị Lan',
+            status: 'active',
             medicalRecord: {
+                recordId: 'MR003',
                 diagnosis: 'Tư vấn hiếm muộn lần đầu',
-                symptoms: 'Vợ chồng chưa có con sau 18 tháng kết hôn',
-                treatment: 'Tư vấn chế độ sinh hoạt, dinh dưỡng. Hẹn khám lại sau 3 tháng',
-                notes: 'Cần theo dõi thêm, có thể cần làm thêm xét nghiệm'
+                treatmentPlan: 'Tư vấn chế độ sinh hoạt, dinh dưỡng. Hẹn khám lại sau 3 tháng',
+                notes: 'Cần theo dõi thêm, có thể cần làm thêm xét nghiệm',
+                recordStatus: 'active',
+                dischargeDate: '2024-09-24'
+            },
+            currentBooking: {
+                bookType: 'initial',
+                bookStatus: 'confirmed',
+                note: 'Lần đầu tư vấn',
+                serviceName: 'Tư vấn hiếm muộn'
             }
         },
         hoa: {
+            cusId: 3,
             name: 'Phạm Thị Hoa',
-            age: 30,
+            gender: 'Nữ',
+            birthDate: '20/07/1994',
+            email: 'phamhoa@gmail.com',
             phone: '0456789123',
             address: 'Thanh Xuân, Hà Nội',
+            occupation: 'Giáo viên',
+            emergencyContact: 'Chồng - Lê Văn Minh',
+            status: 'active',
             medicalRecord: {
+                recordId: 'MR004',
                 diagnosis: 'IVF - theo dõi kích thích buồng trứng',
-                symptoms: 'Đang trong quá trình kích thích buồng trứng chu kỳ 2',
-                treatment: 'Tiêm Gonal-F 225UI/ngày, siêu âm theo dõi',
-                notes: 'Phản ứng tốt với thuốc kích thích, dự kiến chọc hút sau 2 ngày'
+                treatmentPlan: 'Tiêm Gonal-F 225UI/ngày, siêu âm theo dõi',
+                notes: 'Phản ứng tốt với thuốc kích thích, dự kiến chọc hút sau 2 ngày',
+                recordStatus: 'active',
+                dischargeDate: '2024-08-15'
+            },
+            currentBooking: {
+                bookType: 'follow-up',
+                bookStatus: 'confirmed',
+                note: 'Theo dõi kích thích buồng trứng',
+                serviceName: 'Liệu trình điều trị IVF'
             }
         },
         lan: {
+            cusId: 4,
             name: 'Lê Thị Lan',
-            age: 33,
+            gender: 'Nữ',
+            birthDate: '10/12/1991',
+            email: 'lethilan@gmail.com',
             phone: '0789123456',
             address: 'Đống Đa, Hà Nội',
+            occupation: 'Kế toán',
+            emergencyContact: 'Chồng - Trần Văn Hùng',
+            status: 'active',
             medicalRecord: {
+                recordId: 'MR005',
                 diagnosis: 'IVF chu kỳ 2 - chuẩn bị chuyển phôi',
-                symptoms: 'Đã có 3 phôi chất lượng tốt được đông lạnh',
-                treatment: 'Chuẩn bị nội mạc tử cung, hẹn chuyển phôi',
-                notes: 'Nội mạc tử cung dày 9mm, phù hợp chuyển phôi'
+                treatmentPlan: 'Chuẩn bị nội mạc tử cung, hẹn chuyển phôi',
+                notes: 'Nội mạc tử cung dày 9mm, phù hợp chuyển phôi',
+                recordStatus: 'active',
+                dischargeDate: '2024-08-20'
+            },
+            currentBooking: {
+                bookType: 'follow-up',
+                bookStatus: 'confirmed',
+                note: 'Chuẩn bị chuyển phôi',
+                serviceName: 'Liệu trình điều trị IVF'
             }
         },
         thu: {
+            cusId: 5,
             name: 'Hoàng Thị Thu',
-            age: 29,
+            gender: 'Nữ',
+            birthDate: '25/04/1995',
+            email: 'hoangthu@gmail.com',
             phone: '0345678901',
             address: 'Ba Đình, Hà Nội',
+            occupation: 'Y tá',
+            emergencyContact: 'Chồng - Nguyễn Văn Dũng',
+            status: 'active',
             medicalRecord: {
+                recordId: 'MR006',
                 diagnosis: 'Theo dõi sau phẫu thuật nội soi',
-                symptoms: 'Đã phẫu thuật cắt u xơ tử cung 1 tháng trước',
-                treatment: 'Theo dõi lành vết thương, tư vấn thời gian có thai',
-                notes: 'Vết thương lành tốt, có thể chuẩn bị có thai sau 3 tháng'
+                treatmentPlan: 'Theo dõi lành vết thương, tư vấn thời gian có thai',
+                notes: 'Vết thương lành tốt, có thể chuẩn bị có thai sau 3 tháng',
+                recordStatus: 'active',
+                dischargeDate: '2024-09-14'
+            },
+            currentBooking: {
+                bookType: 'follow-up',
+                bookStatus: 'confirmed',
+                note: 'Kiểm tra sau phẫu thuật',
+                serviceName: 'Khám theo dõi sau phẫu thuật'
             }
         }
     };
 
-// Modal functions
-    function viewPatientRecord(patientId) {
-        const patient = patientData[patientId];
-        if (!patient) return;
-
-        document.getElementById('patientName').textContent = patient.name;
-        document.getElementById('patientAge').textContent = patient.age;
-        document.getElementById('patientPhone').textContent = patient.phone;
-        document.getElementById('patientAddress').textContent = patient.address;
-
-        document.getElementById('diagnosis').value = patient.medicalRecord.diagnosis;
-        document.getElementById('symptoms').value = patient.medicalRecord.symptoms;
-        document.getElementById('treatment').value = patient.medicalRecord.treatment;
-        document.getElementById('notes').value = patient.medicalRecord.notes;
-
-        document.getElementById('patientModal').style.display = 'block';
-
-        // Store current patient ID for saving
-        document.getElementById('patientModal').dataset.patientId = patientId;
-    }
-
-    function closeModal() {
-        document.getElementById('patientModal').style.display = 'none';
-    }
-
-    function savePatientRecord() {
-        const patientId = document.getElementById('patientModal').dataset.patientId;
-        const patient = patientData[patientId];
-
-        if (!patient) return;
-
-        // Update patient record
-        patient.medicalRecord.diagnosis = document.getElementById('diagnosis').value;
-        patient.medicalRecord.symptoms = document.getElementById('symptoms').value;
-        patient.medicalRecord.treatment = document.getElementById('treatment').value;
-        patient.medicalRecord.notes = document.getElementById('notes').value;
-
-        // Show success message - use the notification function from script.js
-        if (typeof showNotification === 'function') {
-            showNotification('Đã lưu thay đổi bệnh án thành công!', 'success');
-        }
-
-        closeModal();
-    }
+// Remove old modal functions - will be redefined later to match database structure
 
 
 
 // Patient List Modal functions
-    function openPatientList() {
+    window.openPatientList = function() {
         document.getElementById('patientListModal').style.display = 'block';
-    }
+    };
 
-    function closePatientListModal() {
+    window.closePatientListModal = function() {
         document.getElementById('patientListModal').style.display = 'none';
-    }
+    };
 
-    function editPatientFromList(patientId) {
-        closePatientListModal();
-        viewPatientRecord(patientId);
-    }
+    window.editPatientFromList = function(patientId) {
+        window.closePatientListModal();
+        window.viewPatientRecord(patientId);
+    };
 
-    function searchPatients() {
+    window.searchPatients = function() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const tableBody = document.getElementById('patientTableBody');
         const rows = tableBody.getElementsByTagName('tr');
@@ -183,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 rows[i].style.display = 'none';
             }
         }
-    }
+    };
 
 
 
@@ -193,10 +206,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const patientListModal = document.getElementById('patientListModal');
 
         if (event.target === patientModal) {
-            closeModal();
+            window.closeModal();
         }
         if (event.target === patientListModal) {
-            closePatientListModal();
+            window.closePatientListModal();
         }
     }
 
@@ -244,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update action button
         const actionDiv = appointmentItem.querySelector('.appointment-actions');
         actionDiv.innerHTML = `
-            <button class="btn-record" onclick="viewPatientRecord('${patientId}')">
+            <button class="btn-record" onclick="window.viewPatientRecord('${patientId}')">
                 <i class="fas fa-file-medical"></i> Xem hồ sơ
             </button>
         `;
@@ -438,25 +451,25 @@ document.addEventListener('DOMContentLoaded', function () {
             patient.medicalRecord.notes = document.getElementById('medicalNote').value;
         }
 
+        // Save all test results
+        window.saveAllTestResults();
+
         // Here you would typically save booking steps and drugs to database
         // For now, we'll just show success message
 
         // Show success message
         if (typeof showNotification === 'function') {
-            showNotification('Đã lưu thay đổi hồ sơ bệnh án thành công!', 'success');
+            showNotification('Đã lưu thay đổi hồ sơ bệnh án và kết quả xét nghiệm!', 'success');
         } else {
-            alert('Đã lưu thay đổi hồ sơ bệnh án thành công!');
+            alert('Đã lưu thay đổi hồ sơ bệnh án và kết quả xét nghiệm!');
         }
 
-        closeModal();
+        window.closeModal();
     };
 
     // Additional utility functions for sidebar
-    window.openScheduleManager = function() {
-        if (typeof showNotification === 'function') {
-            showNotification('Tính năng quản lý lịch hẹn đang được phát triển', 'info');
-        }
-    };
+    // openScheduleManager function is already defined in doctor-common.js
+    // Removed duplicate definition to avoid conflicts
 
     window.openReports = function() {
         if (typeof showNotification === 'function') {
@@ -556,5 +569,168 @@ document.addEventListener('DOMContentLoaded', function () {
             button.closest('.drug-item').remove();
         }
     };
+
+    // ========== EDITABLE TEST RESULTS FUNCTIONS ==========
+
+    // Add new test item
+    window.addNewTestItem = function() {
+        const testContainer = document.querySelector('.booking-steps-results');
+        const testCount = testContainer.children.length + 1;
+        
+        const newTestItem = document.createElement('div');
+        newTestItem.className = 'step-result-item';
+        newTestItem.innerHTML = `
+            <div class="step-result-header">
+                <div class="step-info">
+                    <h6 contenteditable="true" class="editable-title">Xét nghiệm mới ${testCount}</h6>
+                    <input type="datetime-local" class="editable-date" value="${new Date().toISOString().slice(0, 16)}">
+                </div>
+                <select class="step-status-select">
+                    <option value="pending" selected>Đang chờ</option>
+                    <option value="completed">Hoàn thành</option>
+                    <option value="cancelled">Đã hủy</option>
+                </select>
+            </div>
+            <div class="step-result-content">
+                <div class="result-grid">
+                    <div class="result-item">
+                        <input type="text" class="editable-label" value="Chỉ số 1" placeholder="Tên chỉ số">:
+                        <input type="text" class="editable-result" value="" placeholder="Giá trị">
+                        <select class="unit-select">
+                            <option value="mg/ml">mg/ml</option>
+                            <option value="mIU/ml">mIU/ml</option>
+                            <option value="ng/ml">ng/ml</option>
+                            <option value="pg/ml">pg/ml</option>
+                            <option value="triệu/ml">triệu/ml</option>
+                            <option value="%">%</option>
+                        </select>
+                        <select class="status-select">
+                            <option value="Bình thường" selected>Bình thường</option>
+                            <option value="Cao">Cao</option>
+                            <option value="Thấp">Thấp</option>
+                            <option value="Bất thường">Bất thường</option>
+                        </select>
+                        <button type="button" class="remove-test-item-btn" onclick="removeTestResultItem(this)">
+                            <i class="fas fa-trash"></i> Xóa
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="add-test-item-btn" onclick="addTestResultRow(this)" style="margin-top: 8px; padding: 8px 16px; font-size: 0.8rem;">
+                    <i class="fas fa-plus"></i> Thêm chỉ số
+                </button>
+                <div class="result-note">
+                    <strong>Ghi chú:</strong> 
+                    <textarea class="editable-note" placeholder="Nhập ghi chú..."></textarea>
+                </div>
+                <button type="button" class="remove-test-item-btn" onclick="removeTestItem(this)" style="margin-top: 16px;">
+                    <i class="fas fa-trash"></i> Xóa toàn bộ xét nghiệm
+                </button>
+            </div>
+        `;
+        
+        testContainer.appendChild(newTestItem);
+        
+        // Show notification
+        if (typeof showNotification === 'function') {
+            showNotification('Đã thêm xét nghiệm mới!', 'success');
+        }
+    };
+
+    // Add test result row to existing test
+    window.addTestResultRow = function(button) {
+        const resultGrid = button.parentElement.querySelector('.result-grid');
+        
+        const newResultItem = document.createElement('div');
+        newResultItem.className = 'result-item';
+        newResultItem.innerHTML = `
+            <input type="text" class="editable-label" value="Chỉ số mới" placeholder="Tên chỉ số">:
+            <input type="text" class="editable-result" value="" placeholder="Giá trị">
+            <select class="unit-select">
+                <option value="mg/ml">mg/ml</option>
+                <option value="mIU/ml">mIU/ml</option>
+                <option value="ng/ml">ng/ml</option>
+                <option value="pg/ml">pg/ml</option>
+                <option value="triệu/ml">triệu/ml</option>
+                <option value="%">%</option>
+            </select>
+            <select class="status-select">
+                <option value="Bình thường" selected>Bình thường</option>
+                <option value="Cao">Cao</option>
+                <option value="Thấp">Thấp</option>
+                <option value="Bất thường">Bất thường</option>
+            </select>
+            <button type="button" class="remove-test-item-btn" onclick="removeTestResultItem(this)">
+                <i class="fas fa-trash"></i> Xóa
+            </button>
+        `;
+        
+        resultGrid.appendChild(newResultItem);
+    };
+
+    // Remove individual test result item
+    window.removeTestResultItem = function(button) {
+        if (confirm('Bạn có chắc chắn muốn xóa chỉ số này?')) {
+            button.closest('.result-item').remove();
+        }
+    };
+
+    // Remove entire test item
+    window.removeTestItem = function(button) {
+        if (confirm('Bạn có chắc chắn muốn xóa toàn bộ xét nghiệm này?')) {
+            button.closest('.step-result-item').remove();
+            if (typeof showNotification === 'function') {
+                showNotification('Đã xóa xét nghiệm!', 'info');
+            }
+        }
+    };
+
+    // Save all test results
+    window.saveAllTestResults = function() {
+        const testItems = document.querySelectorAll('.step-result-item');
+        const results = [];
+        
+        testItems.forEach(item => {
+            const title = item.querySelector('.editable-title').textContent;
+            const date = item.querySelector('.editable-date').value;
+            const status = item.querySelector('.step-status-select').value;
+            const note = item.querySelector('.editable-note').value;
+            
+            const resultItems = [];
+            item.querySelectorAll('.result-item').forEach(resultItem => {
+                const label = resultItem.querySelector('.editable-label').value;
+                const value = resultItem.querySelector('.editable-result').value;
+                const unit = resultItem.querySelector('.unit-select').value;
+                const resultStatus = resultItem.querySelector('.status-select').value;
+                
+                resultItems.push({ label, value, unit, status: resultStatus });
+            });
+            
+            results.push({ title, date, status, note, results: resultItems });
+        });
+        
+        console.log('Saving test results:', results);
+        
+        // Here you would send data to backend
+        // Example: saveTestResultsToAPI(results);
+        
+        if (typeof showNotification === 'function') {
+            showNotification('Đã lưu tất cả kết quả xét nghiệm!', 'success');
+        } else {
+            alert('Đã lưu tất cả kết quả xét nghiệm!');
+        }
+    };
+
+    // Auto-save functionality
+    let saveTimeout;
+    document.addEventListener('input', function(e) {
+        if (e.target.matches('.editable-title, .editable-date, .editable-result, .editable-label, .editable-note, .step-status-select, .unit-select, .status-select, .result-value-select, .editable-detailed-result')) {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                // Auto-save after 2 seconds of no input
+                console.log('Auto-saving changes...');
+                // You can implement auto-save to backend here
+            }, 2000);
+        }
+    });
 
 });
