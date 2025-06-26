@@ -89,10 +89,6 @@ public class BookingController {
                 return ResponseEntity.badRequest().body("Status must be 'confirmed' or 'rejected'");
             }
 
-            // Nếu reject thì bắt buộc phải có doctorNote
-            if ("rejected".equals(status) && (note == null || note.trim().isEmpty())) {
-                return ResponseEntity.badRequest().body("Doctor note is required for rejection");
-            }
 
             // Update trạng thái
             booking.setBookStatus(status);
