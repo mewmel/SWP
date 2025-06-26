@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Kiểm tra đăng nhập
     const docId = localStorage.getItem('docId');
     const docFullName = localStorage.getItem('docFullName');
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Xử lý đăng xuất
     const logoutBtn = document.querySelector('.logout-btn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
+        logoutBtn.addEventListener('click', function (e) {
             e.preventDefault();
             localStorage.clear();
             window.location.href = 'index.html';
@@ -328,7 +328,7 @@ function showError(message) {
 }
 
 // Close modal when clicking outside
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modal = document.getElementById('appointmentDetailModal');
     if (event.target === modal) {
         closeDetailModal();
