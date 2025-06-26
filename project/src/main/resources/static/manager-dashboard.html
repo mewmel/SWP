@@ -414,11 +414,11 @@
         <div class="modal-header degree-modal-header">
             <div class="header-icon">
                 <i class="fas fa-user-graduate"></i>
-            </div>
+        </div>
             <div class="header-text">
                 <h3>Bằng cấp & Chuyên môn</h3>
                 <span class="doctor-name-subtitle" id="degreeDoctorName"></span>
-            </div>
+        </div>
             <button class="close modern-close" id="closeDegreeModal">
                 <i class="fas fa-times"></i>
             </button>
@@ -429,9 +429,9 @@
                     <div class="section-header">
                         <div class="section-icon">
                             <i class="fas fa-graduation-cap"></i>
-                        </div>
+    </div>
                         <h4>Bằng cấp</h4>
-                    </div>
+</div>
                     <div class="degree-list" id="degreeList">
                         <!-- Sẽ được render bằng JavaScript -->
                     </div>
@@ -924,7 +924,7 @@ function openDegreeModal(doctorId) {
 
 // Function đóng modal
 function closeDegreeModal() {
-    document.getElementById('degreeModal').style.display = 'none';
+        document.getElementById('degreeModal').style.display = 'none';
 }
 
 // Function xem chi tiết bác sĩ
@@ -1080,8 +1080,8 @@ function showRatingModal(doctorId) {
 // Function đóng modal chung
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.style.display = 'none';
-}
+            modal.style.display = 'none';
+        }
 
 // Tab functionality
 function switchTab(tabName) {
@@ -1157,7 +1157,7 @@ function submitRating() {
 document.addEventListener('DOMContentLoaded', function() {
     // Gắn sự kiện cho nút xem bằng cấp
     document.querySelectorAll('.view-degree-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+    btn.addEventListener('click', function() {
             const doctorId = this.getAttribute('data-doctor');
             openDegreeModal(doctorId);
         });
@@ -1256,5 +1256,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
   <script src="js/manager-dashboard.js"></script>
-  </body>
-  </html>
+</body>
+</html>

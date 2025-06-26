@@ -1,3 +1,4 @@
+
 /* Dashboard specific styles */
 
 /* Main dashboard container - account for fixed header */
@@ -426,5 +427,4 @@
     .timeline-week {
         grid-template-columns: repeat(3, 1fr);
     }
-
 }

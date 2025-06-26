@@ -200,17 +200,6 @@ body {
     box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
-.btn-examining {
-    background: #7c3aed;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
 .btn-secondary {
     background: #6b7280;
     color: white;
@@ -765,7 +754,1333 @@ body {
     position: sticky;
     bottom: 0;
     background: white;
-    z-index: 1;
-    padding: 15px 20px;
-    border-top: 1px solid #ddd;
+    z-index: 10;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
+}
+
+/* ========== PATIENT STATUS & ACTION STYLES ========== */
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.5rem;
+}
+
+.status-badge.waiting {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+}
+
+.status-badge.completed {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+}
+
+/* Appointment Actions */
+.appointment-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-waiting {
+    background: #f59e0b;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-waiting:hover {
+    background: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.btn-record {
+    background: #059669;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-record:hover {
+    background: #047857;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+.btn-print {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-print:hover {
+    background: #4b5563;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+}
+
+/* ========== ENHANCED MODAL STYLES ========== */
+
+.large-modal {
+    max-width: 1400px;
+    width: 98%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin: 2vh auto;
+    position: relative;
+    top: 0;
+}
+
+.large-modal .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2.5rem 2.5rem 3rem 2.5rem;
+}
+
+/* Patient Info Section */
+.patient-info-section {
+    margin-bottom: 2rem;
+}
+
+.patient-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+}
+
+.patient-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.patient-details h4 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.patient-id {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.patient-status {
+    margin-left: auto;
+}
+
+.info-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 1.5rem;
+    align-items: start;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #4b5563;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-item label i {
+    color: #3b82f6;
+    width: 16px;
+}
+
+.info-item span {
+    color: #1f2937;
+    font-size: 1rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+    max-width: 100%;
+}
+
+/* Record Tabs */
+.record-tabs {
+    display: flex;
+    border-bottom: 2px solid #e5e7eb;
+    margin: 2rem 0 1rem 0;
+    gap: 0.5rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: #6b7280;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tab-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.tab-btn.active {
+    color: #3b82f6;
+    background: #eff6ff;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #3b82f6;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Record Grid */
+.record-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.record-section {
+    margin-bottom: 1.5rem;
+}
+
+.record-section label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.record-section textarea,
+.record-section input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+}
+
+.record-section textarea:focus,
+.record-section input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Vital Signs */
+.vital-signs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.vital-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.vital-item label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.vital-item input {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* History Styles */
+.history-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-left: 3px solid #e5e7eb;
+    margin-bottom: 1rem;
+    background: #f9fafb;
+    border-radius: 0 8px 8px 0;
+}
+
+.history-date {
+    font-weight: 600;
+    color: #3b82f6;
+    min-width: 100px;
+    font-size: 0.9rem;
+}
+
+.history-content p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Treatment Plan */
+.treatment-phase {
+    background: #f0f9ff;
+    border: 1px solid #0ea5e9;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.treatment-phase h5 {
+    color: #0c4a6e;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.phase-details p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Test Results */
+.test-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.test-name {
+    font-weight: 600;
+    color: #374151;
+}
+
+.test-value {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.test-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.test-status.normal {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.test-status.abnormal {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* ========== NEW DATABASE-MATCHING STYLES ========== */
+
+/* Status Styles */
+.status-active {
+    color: #10b981;
+    font-weight: 600;
+}
+
+/* Booking Info Styles */
+.booking-info,
+.medical-record-info,
+.booking-steps,
+.drug-prescription {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.booking-info h5,
+.medical-record-info h5,
+.booking-steps h5,
+.drug-prescription h5 {
+    color: #1e293b;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Select Styling */
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease;
+    background: white;
+}
+
+select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Booking Steps Styles */
+.step-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.step-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.step-status.completed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.step-content {
+    padding: 1rem;
+}
+
+/* Button Styles */
+.btn-add-step,
+.btn-add-drug {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-add-step:hover,
+.btn-add-drug:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.btn-remove-drug {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-remove-drug:hover {
+    background: #dc2626;
+}
+
+/* Drug Item Styles */
+.drug-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* History Tab Styles */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.history-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.history-status.active {
+    background: #ddd6fe;
+    color: #5b21b6;
+}
+
+.history-status.closed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.history-info,
+.history-details,
+.history-notes {
+    margin-bottom: 1rem;
+}
+
+.history-info p,
+.history-details p,
+.history-notes p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Booking History */
+.booking-history {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.booking-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.booking-date {
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+.booking-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.booking-status.confirmed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.booking-details p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Treatment Tab Styles */
+.current-service {
+    margin-bottom: 2rem;
+}
+
+.service-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.service-card h6 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.service-description {
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.service-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.service-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.service-duration {
+    opacity: 0.8;
+}
+
+/* Sub Services */
+.sub-service-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}
+
+.sub-service-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.sub-service-item.completed .step-number {
+    background: #10b981;
+    color: white;
+}
+
+.sub-service-item.current .step-number {
+    background: #3b82f6;
+    color: white;
+}
+
+.sub-service-info {
+    flex: 1;
+}
+
+.sub-service-info h6 {
+    margin-bottom: 0.25rem;
+    color: #1e293b;
+}
+
+.sub-service-info p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.sub-service-details {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 0.25rem;
+}
+
+.estimated-day {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.sub-price {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.status-icon {
+    font-size: 1.2rem;
+}
+
+.status-icon.completed {
+    color: #10b981;
+}
+
+.status-icon.current {
+    color: #3b82f6;
+}
+
+.status-icon.pending {
+    color: #d1d5db;
+}
+
+/* Treatment Summary */
+.treatment-summary {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.summary-item {
+    text-align: center;
+}
+
+.summary-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+}
+
+.summary-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    transition: width 0.3s ease;
+}
+
+/* Tests Tab Styles */
+.step-result-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.step-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.step-info h6 {
+    margin-bottom: 0.25rem;
+    color: #1e293b;
+}
+
+.step-date {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.step-result-content {
+    padding: 1rem;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 6px;
+}
+
+.result-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+.result-value {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.result-note {
+    background: #f0f9ff;
+    border: 1px solid #0ea5e9;
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+}
+
+/* Test Summary */
+.test-summary {
+    margin-top: 2rem;
+}
+
+.summary-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.summary-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.summary-status.success {
+    color: #10b981;
+}
+
+.summary-status i {
+    font-size: 1.2rem;
+}
+
+.summary-recommendation,
+.next-step {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* ========== RESPONSIVE DESIGN FOR LARGE MODAL ========== */
+
+@media (max-width: 1200px) {
+    .large-modal {
+        width: 95%;
+        max-width: 1200px;
+    }
+    
+    .large-modal .modal-body {
+        padding: 2rem;
+    }
+    
+    .info-row {
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .large-modal {
+        width: 98%;
+        max-height: 85vh;
+        margin: 3vh auto;
+    }
+    
+    .large-modal .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .info-row {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .patient-header {
+        gap: 1rem;
+        padding: 1.5rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .record-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .record-tabs {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    
+    .tab-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .result-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .sub-service-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .sub-service-details {
+        align-items: flex-start;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .large-modal {
+        width: 100%;
+        height: 95vh;
+        max-height: 95vh;
+        margin: 2.5vh auto 0;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .large-modal .modal-body {
+        padding: 1rem;
+    }
+    
+    .patient-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .patient-details h4 {
+        font-size: 1.2rem;
+    }
+    
+    .info-item span {
+        font-size: 0.9rem;
+    }
+    
+    .booking-info,
+    .medical-record-info,
+    .booking-steps,
+    .drug-prescription {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .record-section {
+        margin-bottom: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 0.75rem;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary,
+    .btn-secondary,
+    .btn-print {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ========== EDITABLE TEST RESULTS STYLES ========== */
+
+.editable-title {
+    background: transparent;
+    border: 2px dashed transparent;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    outline: none;
+    cursor: text;
+}
+
+.editable-title:hover, .editable-title:focus {
+    border-color: #4a90e2;
+    background: rgba(74, 144, 226, 0.05);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.editable-date {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: #5a6c7d;
+    transition: all 0.3s ease;
+    outline: none;
+    cursor: pointer;
+}
+
+.editable-date:hover, .editable-date:focus {
+    border-color: #4a90e2;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.step-status-select {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.step-status-select:hover {
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+    transform: translateY(-2px);
+}
+
+.step-status-select option {
+    background: white;
+    color: #333;
+    padding: 8px;
+    font-weight: normal;
+    text-transform: none;
+}
+
+.editable-result {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+    width: 80px;
+    text-align: center;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.editable-result:hover, .editable-result:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.editable-label {
+    background: transparent;
+    border: 2px dashed transparent;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #5a6c7d;
+    transition: all 0.3s ease;
+    outline: none;
+    min-width: 100px;
+    cursor: text;
+}
+
+.editable-label:hover, .editable-label:focus {
+    border-color: #4a90e2;
+    background: rgba(74, 144, 226, 0.05);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.unit-select, .status-select, .result-value-select {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    color: #5a6c7d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    margin: 0 4px;
+    min-width: 80px;
+}
+
+.unit-select:hover, .unit-select:focus,
+.status-select:hover, .status-select:focus,
+.result-value-select:hover, .result-value-select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.result-bracket {
+    color: #6c757d;
+    font-weight: 500;
+    margin: 0 4px;
+    font-size: 0.9rem;
+}
+
+.editable-note {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.9rem;
+    color: #5a6c7d;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 80px;
+    width: 100%;
+    transition: all 0.3s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.editable-note:hover, .editable-note:focus {
+    border-color: #4a90e2;
+    border-style: solid;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.editable-detailed-result {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 100px;
+    width: 100%;
+    transition: all 0.3s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.editable-detailed-result:hover, .editable-detailed-result:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Enhanced Result Grid for Editable Fields */
+.result-grid .result-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: rgba(248, 249, 250, 0.7);
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.result-grid .result-item:hover {
+    background: rgba(74, 144, 226, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: rgba(74, 144, 226, 0.2);
+}
+
+/* Status Color Coding for Select Options */
+.status-select option[value="Bình thường"] {
+    color: #27ae60;
+    background: #d1fae5;
+}
+
+.status-select option[value="Cao"],
+.status-select option[value="Thấp"],
+.status-select option[value="Bất thường"] {
+    color: #e74c3c;
+    background: #fee2e2;
+}
+
+.status-select option[value="Cần theo dõi"] {
+    color: #f39c12;
+    background: #fef3c7;
+}
+
+/* Add New Test Item Button */
+.add-test-item-btn {
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
+}
+
+.add-test-item-btn:hover {
+    background: linear-gradient(135deg, #357abd 0%, #2968a3 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+}
+
+.add-test-item-btn i {
+    font-size: 0.9rem;
+}
+
+/* Remove Test Item Button */
+.remove-test-item-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.remove-test-item-btn:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+/* Mobile Responsive for Editable Elements */
+@media (max-width: 768px) {
+    .result-grid .result-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .editable-result {
+        width: 100%;
+    }
+
+    .unit-select, .status-select, .result-value-select {
+        margin: 4px 0;
+        min-width: auto;
+        width: 100%;
+    }
+
+    .editable-label {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .step-status-select {
+        min-width: auto;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .editable-note, .editable-detailed-result {
+        min-height: 60px;
+    }
 }
