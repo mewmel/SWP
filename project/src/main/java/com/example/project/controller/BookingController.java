@@ -1,5 +1,6 @@
 package com.example.project.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.BookingRequest;
+import com.example.project.dto.BookingWithSlot;
 import com.example.project.entity.Booking;
 import com.example.project.repository.BookingRepository;
 import com.example.project.service.BookingService;
+
 
 
 @RestController
@@ -30,6 +33,7 @@ public class BookingController {
 
     @Autowired
     private BookingRepository bookingRepository;
+
 
     @PostMapping("/booking")
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest req) {
@@ -140,6 +144,15 @@ public class BookingController {
         List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAt(cusId);
         return ResponseEntity.ok(bookings);
     }
+
+    @GetMapping("/booking/doctor/{docId}/confirmed-today")
+public ResponseEntity<List<BookingWithSlot>> getTodayConfirmedBookings(
+        @PathVariable Integer docId) {
+    LocalDate today = LocalDate.now(); // hoặc nhận từ FE nếu cần
+    List<BookingWithSlot> list = bookingRepository.findBookingWithSlotByDocIdAndBookStatusAndWorkDate(docId, "confirmed", today);
+    return ResponseEntity.ok(list);
+}
+
 
 
 }

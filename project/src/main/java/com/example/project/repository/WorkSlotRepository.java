@@ -26,4 +26,7 @@ public interface WorkSlotRepository extends JpaRepository<WorkSlot, Integer> {
             @Param("startTime") String startTime,
             @Param("endTime") String endTime
     );
+
+
+
 }

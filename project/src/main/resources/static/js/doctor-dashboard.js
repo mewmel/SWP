@@ -31,6 +31,73 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+async function loadTodayConfirmedBookings() {
+    const docId = localStorage.getItem('docId');
+    if (!docId) return;
+
+    try {
+        // 1. Gọi API mới, đã trả sẵn booking hôm nay
+        const response = await fetch(`/api/booking/doctor/${docId}/confirmed-today`);
+        if (!response.ok) throw new Error('Network error');
+        const bookings = await response.json();
+
+        // 2. Render vào mini-schedule (sidebar)
+        const miniSchedule = document.querySelector('.mini-schedule');
+        if (miniSchedule) {
+            miniSchedule.innerHTML = '';
+            if (bookings.length === 0) {
+                miniSchedule.innerHTML = '<div class="mini-appointment">Không có lịch hẹn hôm nay.</div>';
+            } else {
+                bookings.forEach(b => {
+                    miniSchedule.innerHTML += `
+                        <div class="mini-appointment">
+                            <span class="mini-time">${b.startTime ? b.startTime.slice(0,5) : '--:--'}</span>
+                            <span class="mini-info">${b.serviceName || 'Dịch vụ'} - BN ${b.patientName || 'Ẩn danh'}</span>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        // 3. Render vào schedule-list (main)
+        const scheduleList = document.querySelector('.schedule-list');
+        if (scheduleList) {
+            scheduleList.innerHTML = '';
+            if (bookings.length === 0) {
+                scheduleList.innerHTML = '<div style="padding: 1rem; color: #888;">Không có lịch hẹn hôm nay.</div>';
+            } else {
+                bookings.forEach(b => {
+                    scheduleList.innerHTML += `
+                        <div class="appointment-item" data-patient="${b.cusId}" data-status="${b.bookStatus}">
+                            <div class="time">${b.startTime ? b.startTime.slice(0,5) : '--:--'}</div>
+                            <div class="appointment-info">
+                                <h3>BN: ${b.patientName || 'Ẩn danh'}</h3>
+                                <p>${b.serviceName || 'Dịch vụ'}</p>
+                                <span class="status-badge ${b.bookStatus === 'confirmed' ? 'waiting' : 'completed'}">
+                                    ${b.bookStatus === 'confirmed' ? 'Đang chờ khám' : 'Đã khám'}
+                                </span>
+                            </div>
+                            <div class="appointment-actions">
+                                <button class="btn-record" onclick="window.viewPatientRecord('${b.cusId}')">
+                                    <i class="fas fa-file-medical"></i> Xem hồ sơ
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+    } catch (err) {
+        console.error('Lỗi tải booking:', err);
+    }
+}
+    // Cập nhật thời gian hiện tại  
+    updateCurrentTime();
+
+
+    // Cập nhật lịch hẹn hôm nay khi trang được tải 
+loadTodayConfirmedBookings();
+
 // Patient data storage - Updated to match database schema
     const patientData = {
         mai: {

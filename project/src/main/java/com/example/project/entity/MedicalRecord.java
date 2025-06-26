@@ -33,7 +33,7 @@ public class MedicalRecord {
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
-    @Column(name = "recordStatus", length = 50, nullable = false)
+    @Column(name = "recordStatus", length = 20, nullable = false)
     private String recordStatus;
 
     @Column(name = "note", length = 1000)
