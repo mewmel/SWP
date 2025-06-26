@@ -36,57 +36,78 @@ async function loadTodayConfirmedBookings() {
     if (!docId) return;
 
     try {
-        // 1. Gọi API mới, đã trả sẵn booking hôm nay
         const response = await fetch(`/api/booking/doctor/${docId}/confirmed-today`);
         if (!response.ok) throw new Error('Network error');
         const bookings = await response.json();
 
-        // 2. Render vào mini-schedule (sidebar)
-        const miniSchedule = document.querySelector('.mini-schedule');
-        if (miniSchedule) {
-            miniSchedule.innerHTML = '';
-            if (bookings.length === 0) {
-                miniSchedule.innerHTML = '<div class="mini-appointment">Không có lịch hẹn hôm nay.</div>';
-            } else {
-                bookings.forEach(b => {
-                    miniSchedule.innerHTML += `
-                        <div class="mini-appointment">
-                            <span class="mini-time">${b.startTime ? b.startTime.slice(0,5) : '--:--'}</span>
-                            <span class="mini-info">${b.serviceName || 'Dịch vụ'} - BN ${b.patientName || 'Ẩn danh'}</span>
-                        </div>
-                    `;
-                });
-            }
+        const scheduleList = document.querySelector('.schedule-list');
+        if (!scheduleList) return;
+
+        // Lấy node mẫu
+        const sample = scheduleList.querySelector('.appointment-item');
+        if (!sample) return;
+
+        // Xóa hết cũ, chỉ giữ lại node mẫu (ẩn đi)
+        scheduleList.innerHTML = '';
+        // scheduleList.appendChild(sample); // KHÔNG giữ lại mẫu, chỉ clone luôn (vì mỗi lần load lại render mới hết)
+
+        if (bookings.length === 0) {
+            scheduleList.innerHTML = '<div style="padding: 1rem; color: #888;">Không có lịch hẹn hôm nay.</div>';
+            return;
         }
 
-        // 3. Render vào schedule-list (main)
-        const scheduleList = document.querySelector('.schedule-list');
-        if (scheduleList) {
-            scheduleList.innerHTML = '';
-            if (bookings.length === 0) {
-                scheduleList.innerHTML = '<div style="padding: 1rem; color: #888;">Không có lịch hẹn hôm nay.</div>';
+        bookings.forEach(b => {
+            // Clone node mẫu
+            const clone = sample.cloneNode(true);
+
+            // Set data
+            clone.dataset.patient = b.cusId || '';
+            clone.dataset.status = b.bookStatus || '';
+
+            // Time
+            clone.querySelector('.time').textContent = b.startTime ? b.startTime.slice(0,5) : '--:--';
+
+            // Tên BN
+            clone.querySelector('.patient-name').textContent = b.cusFullName || 'Ẩn danh';
+
+            // Tên dịch vụ
+            clone.querySelector('.service-name').textContent = b.serviceName || 'Dịch vụ';
+
+            // Trạng thái + badge
+            const badge = clone.querySelector('.status-badge');
+            if (b.bookStatus === 'confirmed') {
+                badge.textContent = 'Đang chờ khám';
+                badge.className = 'status-badge waiting';
+            } else if (b.bookStatus === 'ongoing') {
+                badge.textContent = 'Đang khám';
+                badge.className = 'status-badge ongoing';
+            } else if (b.bookStatus === 'completed') {
+                badge.textContent = 'Đã khám';
+                badge.className = 'status-badge completed';
             } else {
-                bookings.forEach(b => {
-                    scheduleList.innerHTML += `
-                        <div class="appointment-item" data-patient="${b.cusId}" data-status="${b.bookStatus}">
-                            <div class="time">${b.startTime ? b.startTime.slice(0,5) : '--:--'}</div>
-                            <div class="appointment-info">
-                                <h3>BN: ${b.patientName || 'Ẩn danh'}</h3>
-                                <p>${b.serviceName || 'Dịch vụ'}</p>
-                                <span class="status-badge ${b.bookStatus === 'confirmed' ? 'waiting' : 'completed'}">
-                                    ${b.bookStatus === 'confirmed' ? 'Đang chờ khám' : 'Đã khám'}
-                                </span>
-                            </div>
-                            <div class="appointment-actions">
-                                <button class="btn-record" onclick="window.viewPatientRecord('${b.cusId}')">
-                                    <i class="fas fa-file-medical"></i> Xem hồ sơ
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
+                badge.textContent = 'Không rõ';
+                badge.className = 'status-badge';
             }
-        }
+
+            // Action button
+            const actions = clone.querySelector('.appointment-actions');
+            if (b.bookStatus === 'confirmed') {
+                actions.innerHTML = `<button class="btn-waiting" onclick="window.markAsExamined('${b.cusId}')">
+                    <i class="fas fa-check"></i> Đã khám
+                </button>`;
+            } else if (b.bookStatus === 'ongoing') {
+                actions.innerHTML = `<button class="btn-record" onclick="window.viewPatientRecord('${b.cusId}')">
+                    <i class="fas fa-file-medical"></i> Xem hồ sơ
+                </button>`;
+            } else if (b.bookStatus === 'completed') {
+                actions.innerHTML = `<span style="color:gray; font-size:0.9rem;">Đã hoàn tất</span>`;
+            } else {
+                actions.innerHTML = '';
+            }
+
+            // Thêm vào danh sách
+            scheduleList.appendChild(clone);
+        });
     } catch (err) {
         console.error('Lỗi tải booking:', err);
     }
@@ -126,110 +147,8 @@ loadTodayConfirmedBookings();
                 serviceName: 'Liệu trình điều trị IVF'
             }
         },
-        an: {
-            cusId: 2,
-            name: 'Trần Văn An',
-            gender: 'Nam',
-            birthDate: '15/03/1989',
-            email: 'tranan@gmail.com',
-            phone: '0987654321',
-            address: 'Cầu Giấy, Hà Nội',
-            occupation: 'Kỹ sư',
-            emergencyContact: 'Vợ - Nguyễn Thị Lan',
-            status: 'active',
-            medicalRecord: {
-                recordId: 'MR003',
-                diagnosis: 'Tư vấn hiếm muộn lần đầu',
-                treatmentPlan: 'Tư vấn chế độ sinh hoạt, dinh dưỡng. Hẹn khám lại sau 3 tháng',
-                notes: 'Cần theo dõi thêm, có thể cần làm thêm xét nghiệm',
-                recordStatus: 'active',
-                dischargeDate: '2024-09-24'
-            },
-            currentBooking: {
-                bookType: 'initial',
-                bookStatus: 'confirmed',
-                note: 'Lần đầu tư vấn',
-                serviceName: 'Tư vấn hiếm muộn'
-            }
-        },
-        hoa: {
-            cusId: 3,
-            name: 'Phạm Thị Hoa',
-            gender: 'Nữ',
-            birthDate: '20/07/1994',
-            email: 'phamhoa@gmail.com',
-            phone: '0456789123',
-            address: 'Thanh Xuân, Hà Nội',
-            occupation: 'Giáo viên',
-            emergencyContact: 'Chồng - Lê Văn Minh',
-            status: 'active',
-            medicalRecord: {
-                recordId: 'MR004',
-                diagnosis: 'IVF - theo dõi kích thích buồng trứng',
-                treatmentPlan: 'Tiêm Gonal-F 225UI/ngày, siêu âm theo dõi',
-                notes: 'Phản ứng tốt với thuốc kích thích, dự kiến chọc hút sau 2 ngày',
-                recordStatus: 'active',
-                dischargeDate: '2024-08-15'
-            },
-            currentBooking: {
-                bookType: 'follow-up',
-                bookStatus: 'confirmed',
-                note: 'Theo dõi kích thích buồng trứng',
-                serviceName: 'Liệu trình điều trị IVF'
-            }
-        },
-        lan: {
-            cusId: 4,
-            name: 'Lê Thị Lan',
-            gender: 'Nữ',
-            birthDate: '10/12/1991',
-            email: 'lethilan@gmail.com',
-            phone: '0789123456',
-            address: 'Đống Đa, Hà Nội',
-            occupation: 'Kế toán',
-            emergencyContact: 'Chồng - Trần Văn Hùng',
-            status: 'active',
-            medicalRecord: {
-                recordId: 'MR005',
-                diagnosis: 'IVF chu kỳ 2 - chuẩn bị chuyển phôi',
-                treatmentPlan: 'Chuẩn bị nội mạc tử cung, hẹn chuyển phôi',
-                notes: 'Nội mạc tử cung dày 9mm, phù hợp chuyển phôi',
-                recordStatus: 'active',
-                dischargeDate: '2024-08-20'
-            },
-            currentBooking: {
-                bookType: 'follow-up',
-                bookStatus: 'confirmed',
-                note: 'Chuẩn bị chuyển phôi',
-                serviceName: 'Liệu trình điều trị IVF'
-            }
-        },
-        thu: {
-            cusId: 5,
-            name: 'Hoàng Thị Thu',
-            gender: 'Nữ',
-            birthDate: '25/04/1995',
-            email: 'hoangthu@gmail.com',
-            phone: '0345678901',
-            address: 'Ba Đình, Hà Nội',
-            occupation: 'Y tá',
-            emergencyContact: 'Chồng - Nguyễn Văn Dũng',
-            status: 'active',
-            medicalRecord: {
-                recordId: 'MR006',
-                diagnosis: 'Theo dõi sau phẫu thuật nội soi',
-                treatmentPlan: 'Theo dõi lành vết thương, tư vấn thời gian có thai',
-                notes: 'Vết thương lành tốt, có thể chuẩn bị có thai sau 3 tháng',
-                recordStatus: 'active',
-                dischargeDate: '2024-09-14'
-            },
-            currentBooking: {
-                bookType: 'follow-up',
-                bookStatus: 'confirmed',
-                note: 'Kiểm tra sau phẫu thuật',
-                serviceName: 'Khám theo dõi sau phẫu thuật'
-            }
-        }
+        
+        
     };
 
 // Remove old modal functions - will be redefined later to match database structure
@@ -309,22 +228,22 @@ loadTodayConfirmedBookings();
     // ========== PATIENT STATUS MANAGEMENT ==========
     
     // Mark patient as examined
-    window.markAsExamined = function(patientId) {
-        const appointmentItem = document.querySelector(`[data-patient="${patientId}"]`);
+    window.markAsExamined = function(cusId) {
+        const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
         if (!appointmentItem) return;
         
         // Update status
-        appointmentItem.setAttribute('data-status', 'examined');
+        appointmentItem.setAttribute('data-status', 'ongoing');
         
         // Update status badge
         const statusBadge = appointmentItem.querySelector('.status-badge');
-        statusBadge.textContent = 'Đã khám';
-        statusBadge.className = 'status-badge completed';
+        statusBadge.textContent = 'Đang khám';
+        statusBadge.className = 'status-badge ongoing';
         
         // Update action button
         const actionDiv = appointmentItem.querySelector('.appointment-actions');
         actionDiv.innerHTML = `
-            <button class="btn-record" onclick="window.viewPatientRecord('${patientId}')">
+            <button class="btn-record" onclick="window.viewPatientRecord('${cusId}')">
                 <i class="fas fa-file-medical"></i> Xem hồ sơ
             </button>
         `;
@@ -359,7 +278,7 @@ loadTodayConfirmedBookings();
     // Print patient record
     window.printRecord = function() {
         const patientName = document.getElementById('patientName').textContent;
-        
+
         // Create printable content
         const printContent = `
             <html>
@@ -427,24 +346,24 @@ loadTodayConfirmedBookings();
     };
 
     // Update viewPatientRecord function to work with new database-matching structure
-    window.viewPatientRecord = function(patientId) {
-        const patient = patientData[patientId];
+    window.viewPatientRecord = function(cusId) {
+        const patient = patientData[cusId];
         if (!patient) return;
 
         // Update basic patient info
-        document.getElementById('patientName').textContent = patient.name;
-        document.getElementById('patientId').textContent = 'BN' + String(patient.cusId).padStart(3, '0');
-        document.getElementById('patientGender').textContent = patient.gender;
-        document.getElementById('patientBirthDate').textContent = patient.birthDate;
-        document.getElementById('patientPhone').textContent = patient.phone;
-        document.getElementById('patientEmail').textContent = patient.email;
-        document.getElementById('patientAddress').textContent = patient.address;
-        document.getElementById('patientOccupation').textContent = patient.occupation;
-        document.getElementById('emergencyContact').textContent = patient.emergencyContact;
-        document.getElementById('patientStatus').textContent = patient.status === 'active' ? 'Hoạt động' : 'Không hoạt động';
-        
+        document.getElementById('patientName').textContent = patient.cusFullName || 'Không rõ';
+        document.getElementById('cusId').textContent = 'BN' + String(patient.cusId).padStart(3, '0');
+        document.getElementById('patientGender').textContent = patient.cusGender || 'Không rõ';
+        document.getElementById('patientBirthDate').textContent = patient.cusDate || 'Không rõ';
+        document.getElementById('patientPhone').textContent = patient.cusPhone || 'Không rõ';
+        document.getElementById('patientEmail').textContent = patient.cusEmail || 'Không rõ';
+        document.getElementById('patientAddress').textContent = patient.cusAddress || 'Không rõ';
+        document.getElementById('patientOccupation').textContent = patient.cusOccupation || 'Không rõ';
+        document.getElementById('emergencyContact').textContent = patient.cusEmergencyContact || 'Không rõ';
+        document.getElementById('patientStatus').textContent = patient.cusStatus === 'active' ? 'Hoạt động' : 'Không hoạt động';
+
         // Update current status
-        const appointmentItem = document.querySelector(`[data-patient="${patientId}"]`);
+        const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
         const statusBadge = appointmentItem ? appointmentItem.querySelector('.status-badge') : null;
         const currentStatus = statusBadge ? statusBadge.textContent : 'Không xác định';
         document.getElementById('currentStatus').textContent = currentStatus;

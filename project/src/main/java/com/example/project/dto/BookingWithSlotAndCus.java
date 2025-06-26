@@ -4,15 +4,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 
-public class BookingWithSlot {
+public class BookingWithSlotAndCus {
     private Integer bookId;
     private Integer cusId;
+    private String cusFullName;
     private Integer docId;
     private String bookType;
     private String bookStatus;
@@ -21,5 +24,6 @@ public class BookingWithSlot {
     private LocalDate workDate;
     private LocalTime startTime;
     private LocalTime endTime;
+
 }
 
