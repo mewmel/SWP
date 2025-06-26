@@ -269,9 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===== LẤY DỮ LIỆU BOOKING STEP TỪ BACKEND VÀ VẼ LỊCH =====
 
     //Hàm load đồng thời nhiều bookingId và merge vào lịch
-    function loadMultipleBookingSteps(bookingIds) {
-        // Đầu tiên xóa sạch eventsData
-        Object.keys(eventsData).forEach(key => delete eventsData[key]);
+    function loadMultipleBookingSteps(bookingIds, callback) {
         let fetchDone = 0;
         bookingIds.forEach(bookingId => {
             fetch(`/api/booking-steps/by-booking/${bookingId}`)
@@ -298,20 +296,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     });
                     fetchDone++;
-                    // Khi đã load xong tất cả booking thì render calendar
                     if (fetchDone === bookingIds.length) {
-                        renderCalendar();
+                        if (typeof callback === "function") callback();
                     }
                 });
         });
     }
-    // THÊM HÀM NÀY để load lịch cho đúng khách hàng
+
+// THÊM HÀM NÀY để load lịch cho đúng khách hàng
     function loadScheduleForCustomer(cusId) {
+        // Chỉ xoá sạch eventsData ở đây!
+        Object.keys(eventsData).forEach(key => delete eventsData[key]);
         fetch(`/api/booking/by-customer/${cusId}`)
             .then(res => res.json())
             .then(bookings => {
-                // Xóa sạch eventsData trước khi nạp mới
-                Object.keys(eventsData).forEach(key => delete eventsData[key]);
                 const bookingIds = [];
                 bookings.forEach(b => {
                     if (b.bookStatus === 'pending' || b.bookStatus === 'rejected') {
@@ -334,9 +332,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         bookingIds.push(b.bookId);
                     }
                 });
-                // Nếu có booking confirmed thì load bước điều trị bình thường
                 if (bookingIds.length > 0) {
-                    loadMultipleBookingSteps(bookingIds);
+                    // Load step confirmed, rồi render cả lịch khi xong
+                    loadMultipleBookingSteps(bookingIds, function() {
+                        renderCalendar();
+                    });
                 } else {
                     // Không có booking confirmed, chỉ render lịch với pending/rejected
                     renderCalendar();
