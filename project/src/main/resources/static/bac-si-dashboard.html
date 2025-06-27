@@ -228,17 +228,21 @@
                                         <input type="date" id="recordCreatedDate" value="2024-06-24">
                                     </div>
                                 </div>
-
+                                
+                                <div class="record-section">
+                                    <label>Dịch vụ:</label>
+                                    <textarea id="serviceName" rows="3"
+                                        placeholder="Nhập tên dịch vụ..."></textarea>
+                                </div>
                                 <div class="record-section">
                                     <label>Chẩn đoán:</label>
-                                    <textarea id="diagnosis" rows="3"
+                                    <textarea id="diagnosis" rows="4"
                                         placeholder="Nhập chẩn đoán...">Vô sinh nguyên phát, chuẩn bị điều trị IVF chu kỳ 1</textarea>
                                 </div>
 
                                 <div class="record-section">
                                     <label>Kế hoạch điều trị:</label>
-                                    <textarea id="treatmentPlan" rows="4" placeholder="Mô tả kế hoạch điều trị...">1. Kích thích buồng trứng bằng thuốc FSH
-</textarea>
+                                    <textarea id="treatmentPlan" rows="5" placeholder="Mô tả kế hoạch điều trị...">1. Kích thích buồng trứng bằng thuốc FSH</textarea>
                                 </div>
 
                                 <div class="record-section">
@@ -252,18 +256,15 @@
                                         placeholder="Ghi chú chung về hồ sơ..."></textarea>
                                 </div>
                             </div>
-
                             <!-- Booking Steps -->
                             <div class="booking-steps">
-                            <h5><i class="fas fa-list-ol"></i> Quản lý các bước điều trị</h5>
-                           
+                            <h5><i class="fas fa-list-ol"></i> Quản lý các bước điều trị</h5>                          
                             <!-- Service Selection -->
                             <div class="service-selection">
                                 <div class="service-dropdown-container">
                                     <label for="serviceSelect"><i class="fas fa-medical-bag"></i> Chọn dịch vụ/bước cần thực hiện:</label>
                                     <select id="serviceSelect" class="service-dropdown">
                                         <option value="">-- Chọn dịch vụ --</option>
-                                        <option value="clinical-exam">Khám lâm sàng tổng quát</option>
                                     </select>
                                 </div>
                             </div>
@@ -281,13 +282,13 @@
                                             <input type="datetime-local" id="performedAt" class="form-control">
                                         </div>
                                         <div class="record-section">
-                                            <label>Trạng thái:</label>
+                                            <!-- <label>Trạng thái:</label>
                                             <select id="stepStatus" class="form-control">
                                                 <option value="in-progress">Đang thực hiện</option>
                                                 <option value="completed">Đã hoàn thành</option>
                                                 <option value="postponed">Hoãn lại</option>
                                                 <option value="cancelled">Hủy bỏ</option>
-                                            </select>
+                                            </select> -->
                                         </div>
                                     </div>
                                     <div class="record-section">
@@ -316,19 +317,19 @@
                                     <div class="step-item completed" data-step-id="1">
                                         <div class="step-header">
                                             <div class="step-info">
-                                                <strong>Khám lâm sàng tổng quát</strong>
-                                                <span class="step-time">24/06/2024 08:00</span>
+                                                <strong>tên của subservice</strong>
+                                                <span class="step-time"></span>
                                             </div>
                                             <div class="step-actions">
-                                                <span class="step-status completed">Đã hoàn thành</span>
+                                                <!-- <span class="step-status completed">Đã hoàn thành</span> -->
                                                 <button class="btn-edit-step" onclick="editStep(1)">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                             </div>
                                         </div>
                                         <div class="step-summary">
-                                            <p><strong>Kết quả:</strong> Tình trạng sức khỏe tổng thể tốt</p>
-                                            <p><strong>Ghi chú:</strong> Bệnh nhân có tiền sử sảy thai 1 lần</p>
+                                            <p><strong>Kết quả:</strong></p>
+                                            <p><strong>Ghi chú:</strong></p>
                                         </div>
                                     </div>
                                 </div>
@@ -339,7 +340,7 @@
                             </div>
                         </div>
 
-                            <!-- Drug Prescription -->
+                            <!-- Drug Prescription
                         <div class="drug-prescription">
                             <h5><i class="fas fa-pills"></i> Đơn thuốc</h5>
                             <div class="drugs-list" id="drugsList">
@@ -376,7 +377,7 @@
                             <button type="button" class="btn-add-drug" onclick="window.addDrug()">
                                 <i class="fas fa-plus"></i> Thêm thuốc
                             </button>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -626,7 +627,6 @@
                         </div>
                     </div>
                 </div>
-
 
                  <!-- Tests Tab -->
                 <div id="testsTab" class="tab-content">
@@ -951,9 +951,9 @@
                 <button class="btn-secondary" onclick="window.closeModal()">
                     <i class="fas fa-times"></i> Đóng
                 </button>
-                <button class="btn-print" onclick="window.printRecord()">
+                <!-- <button class="btn-print" onclick="window.printRecord()">
                     <i class="fas fa-print"></i> In hồ sơ
-                </button>
+                </button> -->
                 <button class="btn-primary" onclick="window.savePatientRecord()">
                     <i class="fas fa-save"></i> Lưu thay đổi
                 </button>

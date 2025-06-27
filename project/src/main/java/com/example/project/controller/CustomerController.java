@@ -1,5 +1,6 @@
 package com.example.project.controller;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -121,7 +122,7 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) 
         medicalRecordDTO.setRecordStatus(medicalRecord.getRecordStatus());
         // Xử lý LocalDate -> String nếu dischargeDate là LocalDate
         if (medicalRecord.getDischargeDate() != null) {
-            medicalRecordDTO.setDischargeDate(medicalRecord.getDischargeDate().toString());
+            medicalRecordDTO.setDischargeDate(medicalRecord.getDischargeDate());
         }
         dto.setCurrentMedicalRecord(medicalRecordDTO);
     }
@@ -129,6 +130,7 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) 
     // Booking
     if (booking != null) {
         CusFullRecord.CurrentBooking bookingDTO = new CusFullRecord.CurrentBooking();
+        bookingDTO.setBookId(booking.getBookId());
         bookingDTO.setBookType(booking.getBookType());
         bookingDTO.setBookStatus(booking.getBookStatus());
         bookingDTO.setNote(booking.getNote());
@@ -148,4 +150,54 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) 
       return ResponseEntity.status(500).build();
     }
 
-}}
+}
+
+@PutMapping("/update-full-record/{cusId}")
+public ResponseEntity<?> updateFullRecord(@PathVariable Integer cusId, @RequestBody CusFullRecord updateDto) {
+    try {
+        // 1. Update Booking (nếu có truyền currentBooking)
+        if (updateDto.getCurrentBooking() != null) {
+            CusFullRecord.CurrentBooking b = updateDto.getCurrentBooking();
+            if (b.getBookId() > 0) {
+                Optional<Booking> bookingOpt = bookingRepository.findById(b.getBookId());
+                if (bookingOpt.isPresent()) {
+                    Booking booking = bookingOpt.get();
+                    booking.setBookType(b.getBookType());
+                    booking.setBookStatus(b.getBookStatus());
+                    booking.setNote(b.getNote());
+                    // Nếu muốn cho sửa dịch vụ thì thêm setSerId() ở đây (cần truyền serId lên DTO)
+                    bookingRepository.save(booking);
+                }
+            }
+        }
+
+        // 2. Update MedicalRecord (nếu có truyền currentMedicalRecord)
+        if (updateDto.getCurrentMedicalRecord() != null) {
+            CusFullRecord.CurrentMedicalRecord mr = updateDto.getCurrentMedicalRecord();
+            if (mr.getRecordId() > 0) {
+                Optional<MedicalRecord> mrOpt = medicalRecordRepository.findById(mr.getRecordId());
+                if (mrOpt.isPresent()) {
+                    MedicalRecord medRec = mrOpt.get();
+                    medRec.setDiagnosis(mr.getDiagnosis());
+                    medRec.setTreatmentPlan(mr.getTreatmentPlan());
+                    medRec.setNote(mr.getMedicalNotes());
+                    medRec.setRecordStatus(mr.getRecordStatus());
+                    if (mr.getDischargeDate() != null && !mr.getDischargeDate().equals(null)) {
+                        medRec.setDischargeDate(mr.getDischargeDate());
+                    }
+                    medicalRecordRepository.save(medRec);
+                }
+            }
+        }
+        return ResponseEntity.ok("Cập nhật thành công!");
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        return ResponseEntity.status(500).body("Có lỗi xảy ra khi cập nhật hồ sơ.");
+    }
+}
+
+}
+
+
+
+

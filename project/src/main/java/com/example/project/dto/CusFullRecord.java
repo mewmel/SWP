@@ -1,5 +1,7 @@
 package com.example.project.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,12 +36,13 @@ public class CusFullRecord {
     private String treatmentPlan;
     private String medicalNotes;     // đổi tên notes cho rõ nghĩa
     private String recordStatus;
-    private String dischargeDate;
+    private LocalDateTime dischargeDate;
     }
 
     @Getter
     @Setter
     public static class CurrentBooking {
+    private int bookId;
     private String bookType;
     private String bookStatus;
     private String note;

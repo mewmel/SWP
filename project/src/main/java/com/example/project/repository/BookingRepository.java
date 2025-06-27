@@ -29,6 +29,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     // Đếm số booking theo trạng thái
     long countByDocIdAndBookStatus(Integer docId, String bookStatus);
 
+
+
 @Query("""
   SELECT b 
   FROM Booking b 
@@ -39,7 +41,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 Optional<Booking> findLatestBooking(
   @Param("cusId") Integer cusId,
   @Param("bookStatus") List<String> bookStatus
-//   Pageable pageable
 );
 
 @Query("SELECT new com.example.project.dto.BookingWithSlotAndCus(b.bookId, b.cusId, c.cusFullName, b.docId, b.bookType, b.bookStatus, b.createdAt, b.note, w.workDate, w.startTime, w.endTime) " +
