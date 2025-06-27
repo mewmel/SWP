@@ -457,6 +457,212 @@ nav a.active {
     }
 }
 
+/* Styles for new test results structure */
+.booking-steps-results {
+    padding: var(--spacing-md);
+}
+
+.step-result-item {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.step-result-item:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.step-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--spacing-lg);
+    background: var(--light-background);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.step-info h4 {
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.step-result-content {
+    padding: var(--spacing-lg);
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+    background: var(--light-background);
+    border-radius: var(--border-radius-md);
+    flex-wrap: wrap;
+}
+
+.result-label {
+    font-weight: 600;
+    color: var(--text-color);
+    min-width: fit-content;
+}
+
+.result-number {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.result-unit {
+    color: var(--light-text);
+    font-size: 0.9rem;
+}
+
+.result-status {
+    padding: 2px 8px;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: auto;
+}
+
+.result-status:contains("Bình thường"), .result-status:contains("Tốt") {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+}
+
+.result-status:contains("Thấp"), .result-status:contains("Cao"), .result-status:contains("Bất thường") {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.result-value {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.6;
+}
+
+.result-value strong {
+    color: var(--text-color);
+    display: inline-block;
+    margin-right: var(--spacing-sm);
+}
+
+.result-description {
+    color: var(--light-text);
+    line-height: 1.5;
+}
+
+.result-note {
+    background: rgba(74, 144, 226, 0.05);
+    border-left: 4px solid var(--primary-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    margin-top: var(--spacing-md);
+}
+
+.result-note strong {
+    color: var(--text-color);
+    display: inline-block;
+    margin-right: var(--spacing-sm);
+}
+
+.result-note span {
+    color: var(--light-text);
+    line-height: 1.5;
+}
+
+.result-pending {
+    color: #f39c12;
+    font-style: italic;
+    padding: var(--spacing-sm);
+    background: rgba(243, 156, 18, 0.1);
+    border-radius: var(--border-radius-sm);
+    display: inline-block;
+}
+
+.test-summary-section {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.test-summary-section h4 {
+    margin: 0 0 var(--spacing-lg) 0;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.summary-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+}
+
+.summary-status.success {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+}
+
+.summary-status.warning {
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+}
+
+.summary-status.error {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.summary-recommendation, .next-step {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.6;
+    color: var(--light-text);
+}
+
+.summary-recommendation strong, .next-step strong {
+    color: var(--text-color);
+    display: inline-block;
+    margin-right: var(--spacing-sm);
+}
+
+/* Status badges specific styling */
+.test-status.status-normal, 
+.test-status:contains("Hoàn thành") {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+}
+
+.test-status.status-abnormal,
+.test-status:contains("Cần chú ý") {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.test-status.status-pending,
+.test-status:contains("Đang chờ") {
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+}
+
 @media (max-width: 768px) {
     .results-filters {
         flex-direction: column;
@@ -471,7 +677,28 @@ nav a.active {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .result-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+
+    .result-status {
+        margin-left: 0;
+        align-self: flex-end;
+    }
+
     .page-header h1 {
         font-size: 2rem;
+    }
+
+    .step-result-header {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: flex-start;
     }
 } 

@@ -117,9 +117,9 @@
         <nav class="doctor-nav">
             <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
             <a href="blog.html" class="nav-link">Đăng Blog</a>
-            <a href="bac-si-dang-ki-lich-lam.html" class="nav-link">Đăng ký lịch làm</a>
+
             <a href="bac-si-lich-lam-viec.html" class="nav-link active">Xem lịch làm</a>
-            <a href="#" class="nav-link">Hồ sơ cá nhân</a>
+            <a href="bac-si-profile.html" class="nav-link">Hồ sơ cá nhân</a>
         </nav>
 
         <div class="doctor-header-right">
@@ -161,17 +161,188 @@
         <main class="main-content">
             <div class="page-header">
                 <h1><i class="fas fa-calendar-alt"></i> Lịch làm việc của tôi</h1>
-                <p>Xem các ca làm việc đã đăng ký trong tuần</p>
+                <p>Xem các ca làm việc đã đăng ký trong tuần và quản lý nghỉ phép</p>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                <button id="prevWeek" class="btn-secondary"><i class="fas fa-chevron-left"></i> Tuần trước</button>
-                <span id="weekRange" style="font-weight: bold; font-size: 1.1rem;"></span>
-                <button id="nextWeek" class="btn-secondary">Tuần sau <i class="fas fa-chevron-right"></i></button>
+
+            <!-- Schedule Summary -->
+            <div class="schedule-summary">
+                <h3>Tổng quan lịch làm việc</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <p class="stat-label">Tổng giờ làm việc</p>
+                            <p class="stat-value" id="totalHours">32 giờ</p>
+                            <p class="stat-subtext">Tuần này</p>
+                        </div>
+                        <div class="stat-icon blue">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12,6 12,12 16,14"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <p class="stat-label">Ca đã đăng ký</p>
+                            <p class="stat-value" id="totalShifts">8 ca</p>
+                            <p class="stat-subtext" id="shiftBreakdown">4 sáng, 4 chiều</p>
+                        </div>
+                        <div class="stat-icon green">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <p class="stat-label">Ngày nghỉ còn lại</p>
+                            <p class="stat-value">12 ngày</p>
+                            <p class="stat-subtext">Năm 2024</p>
+                        </div>
+                        <div class="stat-icon orange">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 6L9 17l-5-5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <p class="stat-label">Trạng thái</p>
+                            <p class="stat-value">Hoạt động</p>
+                            <p class="stat-subtext">Đã xác nhận</p>
+                        </div>
+                        <div class="stat-icon purple">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22,4 12,14.01 9,11.01"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="scheduleGrid" class="appointments-list" style="margin-top: 0;"></div>
+
+            <!-- Work Schedule Section -->
+            <div class="work-schedule-section">
+                <div class="schedule-header">
+                    <h2><i class="fas fa-calendar-week"></i> Lịch làm việc trong tuần</h2>
+                    <p>Xem chi tiết các ca làm việc đã được phân công</p>
+                </div>
+                
+                <div class="week-navigation">
+                    <button id="prevWeek" class="week-nav-btn">
+                        <i class="fas fa-chevron-left"></i> Tuần trước
+                    </button>
+                    <div class="week-display">
+                        <span id="weekRange"></span>
+                    </div>
+                    <button id="nextWeek" class="week-nav-btn">
+                        Tuần sau <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div id="scheduleGrid" class="schedule-display"></div>
+            </div>
+
+            <!-- Leave Request Section -->
+            <div class="leave-request-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-calendar-times"></i> Quản lý nghỉ phép</h3>
+                    <button class="btn btn-primary" id="requestLeaveBtn">
+                        <i class="fas fa-plus"></i> Đăng ký nghỉ phép
+                    </button>
+                </div>
+                
+                <div class="leave-requests-list">
+                    <div class="leave-request-item pending">
+                        <div class="leave-info">
+                            <div class="leave-dates">
+                                <strong>15/12/2024 - 16/12/2024</strong>
+                                <span class="leave-duration">(2 ngày)</span>
+                            </div>
+                            <div class="leave-reason">Lý do: Nghỉ phép cá nhân</div>
+                            <div class="leave-submitted">Đăng ký: 10/12/2024</div>
+                        </div>
+                        <div class="leave-status">
+                            <span class="status-badge pending">Chờ duyệt</span>
+                        </div>
+                    </div>
+                    
+                    <div class="leave-request-item approved">
+                        <div class="leave-info">
+                            <div class="leave-dates">
+                                <strong>08/12/2024 - 09/12/2024</strong>
+                                <span class="leave-duration">(2 ngày)</span>
+                            </div>
+                            <div class="leave-reason">Lý do: Nghỉ ốm</div>
+                            <div class="leave-submitted">Đăng ký: 05/12/2024</div>
+                        </div>
+                        <div class="leave-status">
+                            <span class="status-badge approved">Đã duyệt</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 </div>
+
+<!-- Leave Request Modal -->
+<div id="leaveRequestModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4><i class="fas fa-calendar-times"></i> Đăng ký nghỉ phép</h4>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="leaveRequestForm">
+                <div class="form-group">
+                    <label for="leaveType">Loại nghỉ phép</label>
+                    <select id="leaveType" class="form-control" required>
+                        <option value="">Chọn loại nghỉ phép</option>
+                        <option value="annual">Nghỉ phép năm</option>
+                        <option value="sick">Nghỉ ốm</option>
+                        <option value="personal">Nghỉ phép cá nhân</option>
+                        <option value="emergency">Nghỉ khẩn cấp</option>
+                        <option value="maternity">Nghỉ thai sản</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="startDate">Ngày bắt đầu</label>
+                    <input type="date" id="startDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="endDate">Ngày kết thúc</label>
+                    <input type="date" id="endDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reason">Lý do nghỉ phép</label>
+                    <textarea id="reason" class="form-control" rows="3" placeholder="Nhập lý do nghỉ phép..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="attachment">Đính kèm giấy tờ (nếu có)</label>
+                    <input type="file" id="attachment" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                    <small style="color: #6c757d; font-size: 0.85rem; margin-top: 4px; display: block;">
+                        Chấp nhận: PDF, JPG, PNG, DOC, DOCX (tối đa 5MB)
+                    </small>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="cancelLeaveBtn">Hủy</button>
+            <button type="submit" form="leaveRequestForm" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Gửi đăng ký
+            </button>
+        </div>
+    </div>
+</div>
+
 <script src="js/doctor-view-schedule.js"></script>
 <script src="js/doctor-common.js"></script>
 </body>

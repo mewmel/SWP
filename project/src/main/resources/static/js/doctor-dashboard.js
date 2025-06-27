@@ -1,4 +1,87 @@
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('Doctor dashboard script loaded successfully');
+    
+    // Test buttons và modal availability
+    setTimeout(() => {
+        const testViewBtn = document.querySelector('.btn-record');
+        const testSaveBtn = document.querySelector('.btn-primary[onclick*="savePatientRecord"]');
+        const testModal = document.getElementById('patientModal');
+        
+        console.log('🔍 Test results:');
+        console.log('- .btn-record (Xem hồ sơ) found:', !!testViewBtn);
+        console.log('- .btn-primary (Lưu thay đổi) found:', !!testSaveBtn);
+        console.log('- #patientModal found:', !!testModal);
+        console.log('- viewPatientRecord function exists:', typeof window.viewPatientRecord);
+        console.log('- savePatientRecord function exists:', typeof window.savePatientRecord);
+        
+        // Test patient data
+        console.log('- Patient data available:', Object.keys(patientData).length + ' patients');
+        console.log('- Available patient IDs:', Object.keys(patientData));
+        
+        // Check localStorage
+        const savedKeys = Object.keys(localStorage).filter(key => key.startsWith('patientData_'));
+        console.log('- Saved patient data in localStorage:', savedKeys.length);
+        if (savedKeys.length > 0) {
+            console.log('- Saved patient keys:', savedKeys);
+        }
+        console.log('💡 Tip: Dùng clearPatientData() để xóa dữ liệu test');
+    }, 1000);
+    
+    // Đảm bảo các nút hoạt động
+    document.addEventListener('click', function(e) {
+        // Nút "Xem hồ sơ"
+        if (e.target.closest('.btn-record')) {
+            e.preventDefault();
+            const button = e.target.closest('.btn-record');
+            const onclick = button.getAttribute('onclick');
+            console.log('Btn-record clicked with onclick:', onclick);
+            
+            // Extract patient ID from onclick attribute
+            const match = onclick.match(/viewPatientRecord\('(.+?)'\)/);
+            if (match) {
+                const patientId = match[1];
+                console.log('Extracted patient ID:', patientId);
+                window.viewPatientRecord(patientId);
+            }
+        }
+        
+        // Nút "Lưu thay đổi"
+        if (e.target.closest('.btn-primary') && e.target.closest('.btn-primary').onclick) {
+            const button = e.target.closest('.btn-primary');
+            const onclick = button.getAttribute('onclick');
+            
+            if (onclick && onclick.includes('savePatientRecord')) {
+                e.preventDefault();
+                console.log('Save button clicked');
+                window.savePatientRecord();
+            }
+        }
+        
+        // Nút "Đóng" modal
+        if (e.target.closest('.btn-secondary') && e.target.closest('.btn-secondary').onclick) {
+            const button = e.target.closest('.btn-secondary');
+            const onclick = button.getAttribute('onclick');
+            
+            if (onclick && onclick.includes('closeModal')) {
+                e.preventDefault();
+                console.log('Close button clicked');
+                window.closeModal();
+            }
+        }
+        
+        // Nút "In hồ sơ"
+        if (e.target.closest('.btn-print') && e.target.closest('.btn-print').onclick) {
+            const button = e.target.closest('.btn-print');
+            const onclick = button.getAttribute('onclick');
+            
+            if (onclick && onclick.includes('printRecord')) {
+                e.preventDefault();
+                console.log('Print button clicked');
+                window.printRecord();
+            }
+        }
+    });
+    
     // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
     const authButtons = document.querySelector('.auth-buttons');
     const userMenu = document.querySelector('.user-menu');
@@ -35,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const patientData = {
         mai: {
             cusId: 1,
-            name: 'Trần Anh Thư',
+            name: 'Nguyễn Thị Mai',
             gender: 'Nữ',
             birthDate: '26/09/2004',
             email: 'thutase180353@fpt.edu.vn',
@@ -361,20 +444,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Update viewPatientRecord function to work with new database-matching structure
     window.viewPatientRecord = function(patientId) {
-        const patient = patientData[patientId];
-        if (!patient) return;
+        console.log('👀 Mở hồ sơ bệnh nhân ID:', patientId);
+        
+        let patient = patientData[patientId];
+        
+        if (!patient) {
+            console.error('Patient not found with ID:', patientId);
+            alert('Không tìm thấy thông tin bệnh nhân!');
+            return;
+        }
+        
+        // Load dữ liệu đã lưu từ localStorage nếu có
+        const savedData = loadPatientDataFromStorage(patientId);
+        if (savedData) {
+            console.log('📂 Sử dụng dữ liệu đã lưu');
+            patient = savedData;
+            // Cập nhật lại patientData với dữ liệu mới
+            patientData[patientId] = patient;
+        }
+        
+        console.log('Patient data:', patient);
 
-        // Update basic patient info
-        document.getElementById('patientName').textContent = patient.name;
-        document.getElementById('patientId').textContent = 'BN' + String(patient.cusId).padStart(3, '0');
-        document.getElementById('patientGender').textContent = patient.gender;
-        document.getElementById('patientBirthDate').textContent = patient.birthDate;
-        document.getElementById('patientPhone').textContent = patient.phone;
-        document.getElementById('patientEmail').textContent = patient.email;
-        document.getElementById('patientAddress').textContent = patient.address;
-        document.getElementById('patientOccupation').textContent = patient.occupation;
-        document.getElementById('emergencyContact').textContent = patient.emergencyContact;
-        document.getElementById('patientStatus').textContent = patient.status === 'active' ? 'Hoạt động' : 'Không hoạt động';
+        // Update basic patient info - safely check if elements exist
+        const patientNameEl = document.getElementById('patientName');
+        const patientIdEl = document.getElementById('patientId');
+        const patientGenderEl = document.getElementById('patientGender');
+        const patientBirthDateEl = document.getElementById('patientBirthDate');
+        const patientPhoneEl = document.getElementById('patientPhone');
+        const patientEmailEl = document.getElementById('patientEmail');
+        const patientAddressEl = document.getElementById('patientAddress');
+        const patientOccupationEl = document.getElementById('patientOccupation');
+        const emergencyContactEl = document.getElementById('emergencyContact');
+        const patientStatusEl = document.getElementById('patientStatus');
+        
+        if (patientNameEl) patientNameEl.textContent = patient.name;
+        if (patientIdEl) patientIdEl.textContent = 'BN' + String(patient.cusId).padStart(3, '0');
+        if (patientGenderEl) patientGenderEl.textContent = patient.gender;
+        if (patientBirthDateEl) patientBirthDateEl.textContent = patient.birthDate;
+        if (patientPhoneEl) patientPhoneEl.textContent = patient.phone;
+        if (patientEmailEl) patientEmailEl.textContent = patient.email;
+        if (patientAddressEl) patientAddressEl.textContent = patient.address;
+        if (patientOccupationEl) patientOccupationEl.textContent = patient.occupation;
+        if (emergencyContactEl) emergencyContactEl.textContent = patient.emergencyContact;
+        if (patientStatusEl) patientStatusEl.textContent = patient.status === 'active' ? 'Hoạt động' : 'Không hoạt động';
         
         // Update current status
         const appointmentItem = document.querySelector(`[data-patient="${patientId}"]`);
@@ -401,17 +513,27 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('medicalNote').value = patient.medicalRecord.notes;
         }
 
-        // Update booking step information (sample data)
-        document.getElementById('performedAt1').value = '2024-06-24T08:00';
-        document.getElementById('stepResult1').value = 'Tình trạng sức khỏe tổng thể tốt';
-        document.getElementById('stepNote1').value = 'Bệnh nhân có tiền sử sảy thai 1 lần';
+        // Update booking step information (sample data) - only if elements exist
+        const performedAt1 = document.getElementById('performedAt1');
+        const stepResult1 = document.getElementById('stepResult1');
+        const stepNote1 = document.getElementById('stepNote1');
+        
+        if (performedAt1) performedAt1.value = '2024-06-24T08:00';
+        if (stepResult1) stepResult1.value = 'Tình trạng sức khỏe tổng thể tốt';
+        if (stepNote1) stepNote1.value = 'Bệnh nhân có tiền sử sảy thai 1 lần';
 
-        // Update drug information (sample data)
-        document.getElementById('drugName1').value = 'Folic Acid';
-        document.getElementById('dosage1').value = '5mg';
-        document.getElementById('frequency1').value = '1 lần/ngày';
-        document.getElementById('duration1').value = '30 ngày';
-        document.getElementById('drugNote1').value = 'Uống sau bữa ăn';
+        // Update drug information (sample data) - only if elements exist
+        const drugName1 = document.getElementById('drugName1');
+        const dosage1 = document.getElementById('dosage1');
+        const frequency1 = document.getElementById('frequency1');
+        const duration1 = document.getElementById('duration1');
+        const drugNote1 = document.getElementById('drugNote1');
+        
+        if (drugName1) drugName1.value = 'Folic Acid';
+        if (dosage1) dosage1.value = '5mg';
+        if (frequency1) frequency1.value = '1 lần/ngày';
+        if (duration1) duration1.value = '30 ngày';
+        if (drugNote1) drugNote1.value = 'Uống sau bữa ăn';
 
         // Reset to first tab
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -420,8 +542,15 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('currentTab').classList.add('active');
 
         // Show modal
-        document.getElementById('patientModal').style.display = 'block';
-        document.getElementById('patientModal').dataset.patientId = patientId;
+        const patientModal = document.getElementById('patientModal');
+        if (patientModal) {
+            patientModal.style.display = 'block';
+            patientModal.dataset.patientId = patientId;
+            console.log('Modal shown successfully');
+        } else {
+            console.error('Patient modal not found!');
+            alert('Không thể hiển thị modal bệnh nhân!');
+        }
     };
 
     // Update close modal functions
@@ -430,41 +559,143 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     
     window.savePatientRecord = function() {
-        const patientId = document.getElementById('patientModal').dataset.patientId;
+        console.log('💾 Lưu hồ sơ bệnh nhân (tĩnh)');
+        
+        const patientModal = document.getElementById('patientModal');
+        if (!patientModal) {
+            alert('Không tìm thấy modal bệnh nhân!');
+            return;
+        }
+        
+        const patientId = patientModal.dataset.patientId;
         const patient = patientData[patientId];
-
-        if (!patient) return;
-
-        // Update booking information
-        if (patient.currentBooking) {
-            patient.currentBooking.bookType = document.getElementById('bookType').value;
-            patient.currentBooking.bookStatus = document.getElementById('bookStatus').value;
-            patient.currentBooking.note = document.getElementById('bookingNote').value;
+        
+        if (!patient) {
+            alert('Không tìm thấy thông tin bệnh nhân!');
+            return;
         }
 
-        // Update medical record information
-        if (patient.medicalRecord) {
-            patient.medicalRecord.recordStatus = document.getElementById('recordStatus').value;
-            patient.medicalRecord.diagnosis = document.getElementById('diagnosis').value;
-            patient.medicalRecord.treatmentPlan = document.getElementById('treatmentPlan').value;
-            patient.medicalRecord.dischargeDate = document.getElementById('dischargeDate').value;
-            patient.medicalRecord.notes = document.getElementById('medicalNote').value;
+        try {
+            // Update booking information
+            const bookType = document.getElementById('bookType');
+            const bookStatus = document.getElementById('bookStatus');
+            const bookingNote = document.getElementById('bookingNote');
+            
+            if (patient.currentBooking) {
+                if (bookType) patient.currentBooking.bookType = bookType.value;
+                if (bookStatus) patient.currentBooking.bookStatus = bookStatus.value;
+                if (bookingNote) patient.currentBooking.note = bookingNote.value;
+            }
+
+            // Update medical record information
+            const recordStatus = document.getElementById('recordStatus');
+            const diagnosis = document.getElementById('diagnosis');
+            const treatmentPlan = document.getElementById('treatmentPlan');
+            const dischargeDate = document.getElementById('dischargeDate');
+            const medicalNote = document.getElementById('medicalNote');
+            
+            if (patient.medicalRecord) {
+                if (recordStatus) patient.medicalRecord.recordStatus = recordStatus.value;
+                if (diagnosis) patient.medicalRecord.diagnosis = diagnosis.value;
+                if (treatmentPlan) patient.medicalRecord.treatmentPlan = treatmentPlan.value;
+                if (dischargeDate) patient.medicalRecord.dischargeDate = dischargeDate.value;
+                if (medicalNote) patient.medicalRecord.notes = medicalNote.value;
+            }
+
+            // Save booking steps 
+            const completedSteps = [];
+            const stepItems = document.querySelectorAll('#completedStepsList .step-item');
+            stepItems.forEach(item => {
+                const stepName = item.querySelector('.step-info strong').textContent;
+                const stepTime = item.querySelector('.step-time').textContent;
+                const stepStatus = item.querySelector('.step-status').textContent;
+                const stepResult = item.querySelector('.step-summary p:first-child').textContent.replace('Kết quả: ', '');
+                const stepNote = item.querySelector('.step-summary p:last-child').textContent.replace('Ghi chú: ', '');
+                
+                completedSteps.push({
+                    name: stepName,
+                    time: stepTime,
+                    status: stepStatus,
+                    result: stepResult,
+                    note: stepNote
+                });
+            });
+
+            // Save drug information
+            const drugs = [];
+            const drugItems = document.querySelectorAll('#drugsList .drug-item');
+            drugItems.forEach((item, index) => {
+                const drugNameInput = item.querySelector('input[placeholder*="Tên thuốc"], #drugName' + (index + 1));
+                const dosageInput = item.querySelector('input[placeholder*="Liều"], #dosage' + (index + 1));
+                const frequencyInput = item.querySelector('input[placeholder*="Tần suất"], #frequency' + (index + 1));
+                const durationInput = item.querySelector('input[placeholder*="Thời gian"], #duration' + (index + 1));
+                const noteTextarea = item.querySelector('textarea, #drugNote' + (index + 1));
+                
+                drugs.push({
+                    name: drugNameInput ? drugNameInput.value : '',
+                    dosage: dosageInput ? dosageInput.value : '',
+                    frequency: frequencyInput ? frequencyInput.value : '',
+                    duration: durationInput ? durationInput.value : '',
+                    note: noteTextarea ? noteTextarea.value : ''
+                });
+            });
+
+            // Update patient data trong memory
+            patient.lastUpdated = new Date().toISOString();
+            patient.bookingSteps = completedSteps;
+            patient.drugs = drugs;
+
+            // Lưu vào localStorage để persist
+            localStorage.setItem('patientData_' + patientId, JSON.stringify(patient));
+            
+            console.log('✅ Đã lưu thành công:', {
+                patient: patient.name,
+                steps: completedSteps.length,
+                drugs: drugs.length,
+                time: new Date().toLocaleString('vi-VN')
+            });
+
+            // Hiển thị thông báo đơn giản
+            alert(`✅ Đã lưu hồ sơ của ${patient.name}!\n📋 ${completedSteps.length} bước điều trị\n💊 ${drugs.length} loại thuốc`);
+            
+            // Đóng modal
+            window.closeModal();
+
+        } catch (error) {
+            console.error('❌ Lỗi khi lưu:', error);
+            alert('❌ Có lỗi khi lưu dữ liệu: ' + error.message);
         }
+    };
 
-        // Save all test results
-        window.saveAllTestResults();
+    // Thêm function để load dữ liệu từ localStorage khi cần
+    function loadPatientDataFromStorage(patientId) {
+        const savedData = localStorage.getItem('patientData_' + patientId);
+        if (savedData) {
+            try {
+                const parsedData = JSON.parse(savedData);
+                console.log('📂 Loaded patient data from localStorage:', parsedData);
+                return parsedData;
+            } catch (error) {
+                console.error('❌ Error parsing saved data:', error);
+            }
+        }
+        return null;
+    }
 
-        // Here you would typically save booking steps and drugs to database
-        // For now, we'll just show success message
-
-        // Show success message
-        if (typeof showNotification === 'function') {
-            showNotification('Đã lưu thay đổi hồ sơ bệnh án và kết quả xét nghiệm!', 'success');
+    // Function để clear dữ liệu test (có thể gọi từ console)
+    window.clearPatientData = function(patientId) {
+        if (patientId) {
+            localStorage.removeItem('patientData_' + patientId);
+            console.log('🗑️ Đã xóa dữ liệu của bệnh nhân:', patientId);
         } else {
-            alert('Đã lưu thay đổi hồ sơ bệnh án và kết quả xét nghiệm!');
+            // Clear tất cả patient data
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('patientData_')) {
+                    localStorage.removeItem(key);
+                }
+            });
+            console.log('🗑️ Đã xóa tất cả dữ liệu bệnh nhân');
         }
-
-        window.closeModal();
     };
 
     // Additional utility functions for sidebar
@@ -732,5 +963,155 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 2000);
         }
     });
+
+    // Service Selection and Step Form Functions
+    const serviceSelect = document.getElementById('serviceSelect');
+    const stepForm = document.getElementById('stepForm');
+    const selectedServiceTitle = document.getElementById('selectedServiceTitle');
+
+    const serviceNames = {
+        'clinical-exam': 'Khám lâm sàng tổng quát',
+        'blood-test': 'Xét nghiệm máu',
+        'hormone-test': 'Xét nghiệm nội tiết tố',
+        'ultrasound': 'Siêu âm',
+        'egg-retrieval': 'Chọc hút trứng',
+        'embryo-transfer': 'Chuyển phôi',
+        'pregnancy-test': 'Xét nghiệm thai',
+        'consultation': 'Tư vấn và theo dõi',
+        'medication': 'Kê đơn thuốc',
+        'follow-up': 'Tái khám'
+    };
+
+    if (serviceSelect) {
+        serviceSelect.addEventListener('change', function() {
+            const selectedService = this.value;
+            
+            if (selectedService) {
+                const serviceName = serviceNames[selectedService];
+                selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${serviceName}`;
+                stepForm.style.display = 'block';
+                
+                // Set current datetime
+                const now = new Date();
+                const currentDateTime = now.toISOString().slice(0, 16);
+                document.getElementById('performedAt').value = currentDateTime;
+                
+                // Clear form
+                document.getElementById('stepResult').value = '';
+                document.getElementById('stepNote').value = '';
+                document.getElementById('stepStatus').value = 'in-progress';
+            } else {
+                stepForm.style.display = 'none';
+            }
+        });
+    }
+
+    window.saveBookingStep = function() {
+        const serviceSelect = document.getElementById('serviceSelect');
+        const performedAt = document.getElementById('performedAt').value;
+        const stepStatus = document.getElementById('stepStatus').value;
+        const stepResult = document.getElementById('stepResult').value;
+        const stepNote = document.getElementById('stepNote').value;
+        
+        if (!serviceSelect.value || !performedAt || !stepResult) {
+            alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+            return;
+        }
+        
+        const serviceName = serviceNames[serviceSelect.value];
+        const dateTime = new Date(performedAt);
+        const formattedDateTime = `${dateTime.getDate().toString().padStart(2, '0')}/${(dateTime.getMonth() + 1).toString().padStart(2, '0')}/${dateTime.getFullYear()} ${dateTime.getHours().toString().padStart(2, '0')}:${dateTime.getMinutes().toString().padStart(2, '0')}`;
+        
+        const statusClass = stepStatus === 'completed' ? 'completed' : 'pending';
+        const statusText = {
+            'in-progress': 'Đang thực hiện',
+            'completed': 'Đã hoàn thành',
+            'postponed': 'Hoãn lại',
+            'cancelled': 'Hủy bỏ'
+        }[stepStatus];
+        
+        // Create new step item
+        const stepsList = document.getElementById('completedStepsList');
+        const newStepId = Date.now(); // Use timestamp as ID
+        
+        // Remove existing step if editing
+        if (window.currentEditingStepId) {
+            const oldStepItem = document.querySelector(`[data-step-id="${window.currentEditingStepId}"]`);
+            if (oldStepItem) {
+                oldStepItem.remove();
+            }
+            window.currentEditingStepId = null;
+        }
+        
+        const newStepItem = document.createElement('div');
+        newStepItem.className = `step-item ${statusClass}`;
+        newStepItem.setAttribute('data-step-id', newStepId);
+        
+        newStepItem.innerHTML = `
+            <div class="step-header">
+                <div class="step-info">
+                    <strong>${serviceName}</strong>
+                    <span class="step-time">${formattedDateTime}</span>
+                </div>
+                <div class="step-actions">
+                    <span class="step-status ${statusClass}">${statusText}</span>
+                    <button class="btn-edit-step" onclick="editStep(${newStepId})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="step-summary">
+                <p><strong>Kết quả:</strong> ${stepResult}</p>
+                <p><strong>Ghi chú:</strong> ${stepNote}</p>
+            </div>
+        `;
+        
+        // Insert at the beginning of the list
+        stepsList.insertBefore(newStepItem, stepsList.firstChild);
+        
+        // Clear and hide form
+        cancelStepForm();
+        
+        alert('Đã lưu bước thực hiện thành công!');
+    };
+
+    window.cancelStepForm = function() {
+        stepForm.style.display = 'none';
+        serviceSelect.value = '';
+        document.getElementById('stepResult').value = '';
+        document.getElementById('stepNote').value = '';
+        document.getElementById('stepStatus').value = 'in-progress';
+        window.currentEditingStepId = null;
+    };
+
+    window.editStep = function(stepId) {
+        const stepItem = document.querySelector(`[data-step-id="${stepId}"]`);
+        if (stepItem) {
+            const stepInfo = stepItem.querySelector('.step-info strong').textContent;
+            const stepResult = stepItem.querySelector('.step-summary p:first-child').textContent.replace('Kết quả: ', '');
+            const stepNote = stepItem.querySelector('.step-summary p:last-child').textContent.replace('Ghi chú: ', '');
+            
+            // Find the service key by name
+            let serviceKey = '';
+            for (const [key, name] of Object.entries(serviceNames)) {
+                if (name === stepInfo) {
+                    serviceKey = key;
+                    break;
+                }
+            }
+            
+            // Populate form with existing data
+            serviceSelect.value = serviceKey;
+            selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Chỉnh sửa: ${stepInfo}`;
+            document.getElementById('stepResult').value = stepResult;
+            document.getElementById('stepNote').value = stepNote;
+            
+            // Show form
+            stepForm.style.display = 'block';
+            
+            // Store editing step ID for later removal
+            window.currentEditingStepId = stepId;
+        }
+    };
 
 });
