@@ -3,6 +3,8 @@ package com.example.project.controller;
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,10 +24,12 @@ import com.example.project.repository.BookingRepository;
 import com.example.project.repository.CustomerRepository;
 import com.example.project.repository.MedicalRecordRepository;
 import com.example.project.repository.ServiceRepository;
+    
 @RestController
 @RequestMapping("/api/customer")
 @CrossOrigin // Cho phép truy cập từ front-end
 public class CustomerController {
+    private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -72,6 +76,7 @@ public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @Reques
 
     @GetMapping("/full-record/{cusId}")
 public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) {
+    try {
     // 1. Tìm customer
     Optional<Customer> optional = customerRepository.findById(cusId);
     if (!optional.isPresent()) {
@@ -79,7 +84,7 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) 
     }
     Customer customer = optional.get();
 
-    // 2. Lấy booking hiện tại (ví dụ lấy booking có status = 'confirmed' hoặc 'ongoing', mới nhất)
+    // 2. Lấy booking hiện tại (ví dụ lấy booking có status = 'confirmed' hoặc 'ongoing', mới nhất)//sửa lại thành ongoing
     Booking booking = bookingRepository
         .findLatestBooking(
             cusId, Arrays.asList("confirmed", "ongoing")
@@ -137,6 +142,10 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) 
     }
 
     return ResponseEntity.ok(dto);
-}
 
-}
+} catch (Exception ex) {
+      log.error("Lỗi khi lấy full-record cho cusId={}", cusId, ex);
+      return ResponseEntity.status(500).build();
+    }
+
+}}

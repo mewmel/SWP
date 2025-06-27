@@ -119,37 +119,7 @@ async function loadTodayConfirmedBookings() {
     // Cập nhật lịch hẹn hôm nay khi trang được tải 
 loadTodayConfirmedBookings();
 
-// Patient data storage - Updated to match database schema
-    const patientData = {
-        mai: {
-            cusId: 1,
-            name: 'Trần Anh Thư',
-            gender: 'Nữ',
-            birthDate: '26/09/2004',
-            email: 'thutase180353@fpt.edu.vn',
-            phone: '0352020737',
-            address: 'HCMC',
-            occupation: 'Con sen',
-            emergencyContact: 'Mơ',
-            status: 'active',
-            currentMedicalRecord: {
-                recordId: 'MR002',
-                diagnosis: 'Vô sinh nguyên phát, chuẩn bị điều trị IVF chu kỳ 1',
-                treatmentPlan: '1. Kích thích buồng trứng bằng thuốc FSH\n2. Theo dõi nang noãn bằng siêu âm\n3. Chọc hút trứng khi đủ tiêu chuẩn\n4. Thụ tinh trong ống nghiệm\n5. Chuyển phôi vào tử cung',
-                notes: 'Bệnh nhân hợp tác tốt, tuân thủ điều trị đầy đủ',
-                recordStatus: 'active',
-                dischargeDate: '2024-07-24'
-            },
-            currentBooking: {
-                bookType: 'follow-up',
-                bookStatus: 'confirmed',
-                note: 'Bệnh nhân đến đúng giờ hẹn',
-                serviceName: 'Liệu trình điều trị IVF'
-            }
-        },
-        
-        
-    };
+
 
 // Remove old modal functions - will be redefined later to match database structure
 
@@ -344,71 +314,103 @@ loadTodayConfirmedBookings();
         printWindow.document.close();
         printWindow.print();
     };
-
-    // Update viewPatientRecord function to work with new database-matching structure
-    window.viewPatientRecord = function(cusId) {
-        const patient = patientData[cusId];
-        if (!patient) return;
-
-        // Update basic patient info
-        document.getElementById('patientName').textContent = patient.cusFullName || 'Không rõ';
-        document.getElementById('cusId').textContent = 'BN' + String(patient.cusId).padStart(3, '0');
-        document.getElementById('patientGender').textContent = patient.cusGender || 'Không rõ';
-        document.getElementById('patientBirthDate').textContent = patient.cusDate || 'Không rõ';
-        document.getElementById('patientPhone').textContent = patient.cusPhone || 'Không rõ';
-        document.getElementById('patientEmail').textContent = patient.cusEmail || 'Không rõ';
-        document.getElementById('patientAddress').textContent = patient.cusAddress || 'Không rõ';
-        document.getElementById('patientOccupation').textContent = patient.cusOccupation || 'Không rõ';
-        document.getElementById('emergencyContact').textContent = patient.cusEmergencyContact || 'Không rõ';
-        document.getElementById('patientStatus').textContent = patient.cusStatus === 'active' ? 'Hoạt động' : 'Không hoạt động';
-
-        // Update current status
-        const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
-        const statusBadge = appointmentItem ? appointmentItem.querySelector('.status-badge') : null;
-        const currentStatus = statusBadge ? statusBadge.textContent : 'Không xác định';
-        document.getElementById('currentStatus').textContent = currentStatus;
-        document.getElementById('currentStatus').className = 'status-badge ' + 
-            (currentStatus === 'Đã khám' ? 'completed' : 'waiting');
-
-        // Update booking information
-        if (patient.currentBooking) {
-            document.getElementById('bookType').value = patient.currentBooking.bookType;
-            document.getElementById('bookStatus').value = patient.currentBooking.bookStatus;
-            document.getElementById('bookingNote').value = patient.currentBooking.note;
-        }
-
-        // Update medical record information
-        if (patient.medicalRecord) {
-            document.getElementById('recordStatus').value = patient.medicalRecord.recordStatus;
-            document.getElementById('recordCreatedDate').value = '2024-06-24';
-            document.getElementById('diagnosis').value = patient.medicalRecord.diagnosis;
-            document.getElementById('treatmentPlan').value = patient.medicalRecord.treatmentPlan;
-            document.getElementById('dischargeDate').value = patient.medicalRecord.dischargeDate;
-            document.getElementById('medicalNote').value = patient.medicalRecord.notes;
-        }
-
-        // Update booking step information (sample data)
-        document.getElementById('performedAt1').value = '2024-06-24T08:00';
-        document.getElementById('stepResult1').value = 'Tình trạng sức khỏe tổng thể tốt';
-        document.getElementById('stepNote1').value = 'Bệnh nhân có tiền sử sảy thai 1 lần';
-
-        // Update drug information (sample data)
-        document.getElementById('drugName1').value = 'Folic Acid';
-        document.getElementById('dosage1').value = '5mg';
-        document.getElementById('frequency1').value = '1 lần/ngày';
-        document.getElementById('duration1').value = '30 ngày';
-        document.getElementById('drugNote1').value = 'Uống sau bữa ăn';
-
-        // Reset to first tab
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        document.querySelector('.tab-btn').classList.add('active');
-        document.getElementById('currentTab').classList.add('active');
-
-        // Show modal
-        document.getElementById('patientModal').style.display = 'block';
-        document.getElementById('patientModal').dataset.patientId = patientId;
+// Patient data storage - Updated to match database schema
+    const patientData = {
+        mai: {
+            cusId: 1,
+            name: 'Trần Anh Thư',
+            gender: 'Nữ',
+            birthDate: '26/09/2004',
+            email: 'thutase180353@fpt.edu.vn',
+            phone: '0352020737',
+            address: 'HCMC',
+            occupation: 'Con sen',
+            emergencyContact: 'Mơ',
+            status: 'active',
+            currentMedicalRecord: {
+                recordId: 'MR002',
+                diagnosis: 'Vô sinh nguyên phát, chuẩn bị điều trị IVF chu kỳ 1',
+                treatmentPlan: '1. Kích thích buồng trứng bằng thuốc FSH\n2. Theo dõi nang noãn bằng siêu âm\n3. Chọc hút trứng khi đủ tiêu chuẩn\n4. Thụ tinh trong ống nghiệm\n5. Chuyển phôi vào tử cung',
+                notes: 'Bệnh nhân hợp tác tốt, tuân thủ điều trị đầy đủ',
+                recordStatus: 'active',
+                dischargeDate: '2024-07-24'
+            },
+            currentBooking: {
+                bookType: 'follow-up',
+                bookStatus: 'confirmed',
+                note: 'Bệnh nhân đến đúng giờ hẹn',
+                serviceName: 'Liệu trình điều trị IVF'
+            }
+        },
+        
+        
     };
+    // Update viewPatientRecord function to work with new database-matching structure
+    window.viewPatientRecord = async function(cusId) {
+  try {
+    // 1. Gọi API
+    const res = await fetch(`/api/customer/full-record/${cusId}`);
+    if (!res.ok) {
+      return alert("Không thể tải dữ liệu bệnh nhân!");
+    }
+    const patient = await res.json();
+
+    // 2. Thông tin cơ bản
+    document.getElementById('patientName').textContent      = patient.cusFullName || 'Không rõ';
+    document.getElementById('cusId').textContent            = 'BN' + String(patient.cusId).padStart(3, '0');
+    document.getElementById('patientGender').textContent    = patient.cusGender || 'Không rõ';
+    document.getElementById('patientBirthDate').textContent = patient.cusDate || 'Không rõ';
+    document.getElementById('patientPhone').textContent     = patient.cusPhone || 'Không rõ';
+    document.getElementById('patientEmail').textContent     = patient.cusEmail || 'Không rõ';
+    document.getElementById('patientAddress').textContent   = patient.cusAddress || 'Không rõ';
+    document.getElementById('patientOccupation').textContent= patient.cusOccupation || 'Không rõ';
+    document.getElementById('emergencyContact').textContent = patient.emergencyContact || 'Không rõ';
+    document.getElementById('patientStatus').textContent    = (patient.cusStatus === 'active'
+      ? 'Hoạt động' : 'Không hoạt động');
+
+    // 3. Booking hiện tại
+    if (patient.currentBooking) {
+      document.getElementById('bookType').value    = patient.currentBooking.bookType || '';
+      document.getElementById('bookStatus').value  = patient.currentBooking.bookStatus || '';
+      document.getElementById('bookingNote').value = patient.currentBooking.note || '';
+      // nếu bạn có field serviceName, đổi dòng trên thành .serviceName
+      // document.getElementById('bookingService').value = patient.currentBooking.serName || '';
+    }
+
+    // 4. Hồ sơ y tế hiện tại
+    if (patient.currentMedicalRecord) {
+      const mr = patient.currentMedicalRecord;
+      document.getElementById('recordStatus').value      = mr.recordStatus || '';
+      document.getElementById('recordCreatedDate').value = mr.dischargeDate ? mr.dischargeDate : ''; 
+      document.getElementById('diagnosis').value         = mr.diagnosis || '';
+      document.getElementById('treatmentPlan').value     = mr.treatmentPlan || '';
+      document.getElementById('dischargeDate').value     = mr.dischargeDate || '';
+      document.getElementById('medicalNote').value       = mr.medicalNotes || '';
+    }
+
+    // 5. (Ví dụ) Cập nhật UI badge trạng thái cuộc hẹn
+    const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
+    const statusBadge = appointmentItem?.querySelector('.status-badge');
+    const curStatus = statusBadge?.textContent || 'Không xác định';
+    document.getElementById('currentStatus').textContent = curStatus;
+    document.getElementById('currentStatus').className =
+      'status-badge ' + (curStatus === 'Đã khám' ? 'completed' : 'waiting');
+
+    // 6. Reset tab và show modal
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelector('.tab-btn').classList.add('active');
+    document.getElementById('currentTab').classList.add('active');
+
+    const modal = document.getElementById('patientModal');
+    modal.style.display = 'block';
+    modal.dataset.patientId = cusId;
+  } catch (err) {
+    console.error(err);
+    alert("Lỗi khi lấy dữ liệu bệnh nhân!");
+  }
+};
+
 
     // Update close modal functions
     window.closeModal = function() {

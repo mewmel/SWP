@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.example.project.dto.BookingWithSlotAndCus;
 import com.example.project.entity.Booking;
 
+
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findByCusIdOrderByCreatedAt(Integer cusId);
@@ -32,12 +33,13 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
   SELECT b 
   FROM Booking b 
   WHERE b.cusId = :cusId 
-    AND b.bookStatus IN :statuses 
+    AND b.bookStatus IN :bookStatus 
   ORDER BY b.createdAt DESC
 """)
 Optional<Booking> findLatestBooking(
   @Param("cusId") Integer cusId,
-  @Param("statuses") List<String> statuses
+  @Param("bookStatus") List<String> bookStatus
+//   Pageable pageable
 );
 
 @Query("SELECT new com.example.project.dto.BookingWithSlotAndCus(b.bookId, b.cusId, c.cusFullName, b.docId, b.bookType, b.bookStatus, b.createdAt, b.note, w.workDate, w.startTime, w.endTime) " +
