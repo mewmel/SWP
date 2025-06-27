@@ -44,41 +44,40 @@ public class PatientProfileController {
 
     @GetMapping("/steps/{cusId}")
     public List<BookingStepDto> getBookingSteps(@PathVariable Integer cusId) {
-        // Lấy booking mới nhất
         List<Booking> bookings = bookingRepo.findByCusIdOrderByCreatedAtDesc(cusId);
         if (bookings.isEmpty()) return List.of();
         Booking latestBooking = bookings.get(0);
 
-        // Lấy các bước
         List<BookingStep> steps = bookingStepRepo.findByBookId(latestBooking.getBookId());
         return steps.stream()
                 .map(step -> new BookingStepDto(
                         step.getPerformedAt(),
                         subServiceRepo.findById(step.getSubId())
                                 .map(SubService::getSubName)
-                                .orElse("Khác")
+                                .orElse("Khác"),
+                        step.getStepStatus()                  // Thêm dòng này!
                 ))
                 .toList();
     }
 
     @GetMapping("/all-steps/{cusId}")
     public List<BookingStepDto> getSteps(@PathVariable Integer cusId) {
-        // Lấy booking mới nhất của bệnh nhân
         List<Booking> bookings = bookingRepo.findByCusIdOrderByCreatedAtDesc(cusId);
         if (bookings.isEmpty()) return List.of();
         Booking latestBooking = bookings.get(0);
 
-        // Lấy các bước điều trị của booking này
         List<BookingStep> steps = bookingStepRepo.findByBookId(latestBooking.getBookId());
-
-        // Map sang DTO
         return steps.stream().map(step -> {
             String subName = "";
             if (step.getSubId() != null) {
                 Optional<SubService> subOpt = subServiceRepo.findById(step.getSubId());
                 subName = subOpt.map(SubService::getSubName).orElse("");
             }
-            return new BookingStepDto(step.getPerformedAt(), subName);
+            return new BookingStepDto(
+                    step.getPerformedAt(),
+                    subName,
+                    step.getStepStatus()        // Thêm dòng này!
+            );
         }).collect(Collectors.toList());
     }
 }

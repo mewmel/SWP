@@ -139,6 +139,7 @@ public class BookingService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(customer.getCusEmail());
         msg.setSubject("Tạo tài khoản & Đặt lịch thành công trên FertilityEHR");
+
         StringBuilder body = new StringBuilder();
         body.append("Bạn đã được tạo tài khoản tự động trên hệ thống phòng khám FertilityEHR.\n")
                 .append("Tên đăng nhập: ").append(customer.getCusEmail()).append("\n")

@@ -42,29 +42,30 @@ public class PatientProfileService {
         Integer latestBookingId = latestBooking.getBookId();
         List<BookingStep> stepsOfLatestBooking = bookingStepRepository.findByBookId(latestBookingId);
 
-        // Chỉ tính các bước đã đến ngày (performedAt <= hiện tại)
         LocalDateTime now = LocalDateTime.now();
-        long chuKyHienTai = stepsOfLatestBooking.stream()
-                .filter(step -> step.getPerformedAt() != null && !step.getPerformedAt().isAfter(now))
+        long completedCount = stepsOfLatestBooking.stream()
+                .filter(step -> step.getPerformedAt() != null
+                        && !step.getPerformedAt().isAfter(now)
+                        && "Completed".equalsIgnoreCase(step.getStepStatus()))
                 .count();
+
+        int chuKyHienTai = (int) completedCount + 1; // Mặc định bắt đầu từ 1
 
         return new PatientProfileDto(
                 cusId,
                 ngayDangKy,
                 bacSiPhuTrach,
-                (int) chuKyHienTai
+                chuKyHienTai
         );
     }
 
     public PatientDashboardDto getPatientDashboard(Integer cusId) {
-        // 1. Lấy booking mới nhất của bệnh nhân
         List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAtDesc(cusId);
         if (bookings.isEmpty()) {
             return new PatientDashboardDto(null, null, null, null);
         }
         Booking latestBooking = bookings.get(0);
 
-        // 2. Lấy tên dịch vụ từ entity Service (dùng tên đầy đủ để tránh trùng với annotation)
         String treatmentName = null;
         if (latestBooking.getSerId() != null) {
             Optional<com.example.project.entity.Service> serviceOpt = serviceRepository.findById(latestBooking.getSerId());
@@ -73,19 +74,17 @@ public class PatientProfileService {
             }
         }
 
-        // 3. Lấy các bước (BookingStep) của booking hiện tại
         List<BookingStep> steps = bookingStepRepository.findByBookId(latestBooking.getBookId());
 
-        // 4. Lọc các bước đã đến ngày (performedAt <= hiện tại)
         LocalDateTime now = LocalDateTime.now();
-        long arrivedStepCount = steps.stream()
-                .filter(step -> step.getPerformedAt() != null && !step.getPerformedAt().isAfter(now))
+        long completedCount = steps.stream()
+                .filter(step -> step.getPerformedAt() != null
+                        && !step.getPerformedAt().isAfter(now)
+                        && "Completed".equalsIgnoreCase(step.getStepStatus()))
                 .count();
 
-        // Nếu chưa có bước nào đến ngày, thì giai đoạn = 0
-        String treatmentStage = "Giai đoạn " + arrivedStepCount;
+        String treatmentStage = "Giai đoạn " + (completedCount + 1);
 
-        // 5. Tìm step tiếp theo (performedAt > hiện tại, gần nhất)
         Optional<BookingStep> nextStepOpt = steps.stream()
                 .filter(step -> step.getPerformedAt() != null && step.getPerformedAt().isAfter(now))
                 .sorted((a, b) -> a.getPerformedAt().compareTo(b.getPerformedAt()))
@@ -97,7 +96,6 @@ public class PatientProfileService {
             BookingStep nextStep = nextStepOpt.get();
             nextEventDate = nextStep.getPerformedAt().format(DateTimeFormatter.ofPattern("dd/MM"));
 
-            // Lấy tên dịch vụ phụ từ SubService dựa vào subId
             if (nextStep.getSubId() != null) {
                 Optional<SubService> subServiceOpt = subServiceRepository.findById(nextStep.getSubId());
                 if (subServiceOpt.isPresent()) {

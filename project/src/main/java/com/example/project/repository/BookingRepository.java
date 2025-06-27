@@ -26,4 +26,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     List<Booking> findByCusIdOrderByCreatedAtDesc(Integer cusId);
 
+
+
 }
