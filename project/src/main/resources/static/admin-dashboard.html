@@ -188,10 +188,6 @@
                     <h1>Quản lý bệnh nhân</h1>
                     <p>Danh sách và thông tin bệnh nhân đã đăng ký</p>
                 </div>
-                <button class="btn btn-primary" onclick="openPatientModal()">
-                    <i class="fas fa-user-plus"></i>
-                    Thêm bệnh nhân
-                </button>
             </div>
 
             <!-- Filters -->
@@ -397,39 +393,7 @@
         </div>
     </main>
 
-    <!-- Patient Modal -->
-    <div class="modal" id="patientModal" style="display: center">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="patientModalTitle">Thêm bệnh nhân mới</h3>
-                <button class="modal-close" onclick="closePatientModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="patientForm" class="modal-body">
-                <div class="form-group">
-                    <label for="patientName">Họ và tên *</label>
-                    <input type="text" id="patientName" required>
-                </div>
-                <div class="form-group">
-                    <label for="patientEmail">Email *</label>
-                    <input type="email" id="patientEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="patientPhone">Số điện thoại *</label>
-                    <input type="tel" id="patientPhone" required>
-                </div>
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" id="patientHasService">
-                    <label for="patientHasService">Đã đăng ký dịch vụ</label>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closePatientModal()">Hủy</button>
-                    <button type="submit" class="btn btn-primary" id="patientSubmitBtn">Thêm mới</button>
-                </div>
-            </form>
-        </div>
-    </div>
+
 
     <!-- Service Modal -->
     <div class="modal" id="serviceModal">
@@ -507,13 +471,46 @@
 
     <script src="js/admin.js"></script>
     <script>
-    // Đảm bảo modal thêm bệnh nhân hoạt động
-    function openPatientModal() {
-        document.getElementById('patientModal').style.display = 'block';
+    function openServiceModal() {
+        const modal = document.getElementById('serviceModal');
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        setTimeout(() => modal.classList.add('show'), 10);
     }
-    function closePatientModal() {
-        document.getElementById('patientModal').style.display = 'none';
+    
+    function closeServiceModal() {
+        const modal = document.getElementById('serviceModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
     }
+    
+    function closePatientDetailModal() {
+        const modal = document.getElementById('patientDetailModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
+    }
+    
+    // Đóng modal khi click vào background
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                if (this.id === 'serviceModal') closeServiceModal();
+                else if (this.id === 'patientDetailModal') closePatientDetailModal();
+            }
+        });
+    });
+    
+    // Đóng modal khi nhấn ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const openModal = document.querySelector('.modal.show');
+            if (openModal) {
+                if (openModal.id === 'serviceModal') closeServiceModal();
+                else if (openModal.id === 'patientDetailModal') closePatientDetailModal();
+            }
+        }
+    });
     </script>
 </body>
 </html>

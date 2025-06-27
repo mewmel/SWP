@@ -145,7 +145,6 @@ const mockAppointments = [
 // Global Variables
 let patients = JSON.parse(localStorage.getItem('patients')) || mockPatients;
 let services = JSON.parse(localStorage.getItem('services')) || mockServices;
-let currentEditingPatient = null;
 let currentEditingService = null;
 let filteredPatients = [...patients];
 let filteredServices = [...services];
@@ -315,9 +314,6 @@ function renderPatientsTable() {
                     <button class="action-btn view" onclick="viewPatient('${patient.id}')" title="Xem chi tiết">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="action-btn edit" onclick="editPatient('${patient.id}')" title="Chỉnh sửa">
-                        <i class="fas fa-edit"></i>
-                    </button>
                     <button class="action-btn delete" onclick="deletePatient('${patient.id}')" title="Xóa">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -370,40 +366,7 @@ function filterPatients() {
     updatePatientsSummary();
 }
 
-function openPatientModal(patientId = null) {
-    const modal = document.getElementById('patientModal');
-    const title = document.getElementById('patientModalTitle');
-    const submitBtn = document.getElementById('patientSubmitBtn');
-    
-    currentEditingPatient = patientId ? patients.find(p => p.id === patientId) : null;
-    
-    if (currentEditingPatient) {
-        title.textContent = 'Chỉnh sửa bệnh nhân';
-        submitBtn.textContent = 'Cập nhật';
-        // Fill form with patient data
-        document.getElementById('patientName').value = currentEditingPatient.name;
-        document.getElementById('patientEmail').value = currentEditingPatient.email;
-        document.getElementById('patientPhone').value = currentEditingPatient.phone;
-        // Đã xóa trường trạng thái, không set patientStatus nữa
-        document.getElementById('patientHasService').checked = currentEditingPatient.hasService;
-    } else {
-        title.textContent = 'Thêm bệnh nhân mới';
-        submitBtn.textContent = 'Thêm mới';
-        
-    }
-    
-    modal.classList.add('show');
-}
 
-function closePatientModal() {
-    const modal = document.getElementById('patientModal');
-    modal.classList.remove('show');
-    currentEditingPatient = null;
-}
-
-function editPatient(patientId) {
-    openPatientModal(patientId);
-}
 
 function viewPatient(patientId) {
     const patient = patients.find(p => p.id === patientId);
@@ -938,41 +901,6 @@ function generateFinancialReport() {
 
 // Form Handlers
 function initForms() {
-    // Patient Form
-    const patientForm = document.getElementById('patientForm');
-    if (patientForm) {
-        patientForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const formData = {
-                name: document.getElementById('patientName').value,
-                email: document.getElementById('patientEmail').value,
-                phone: document.getElementById('patientPhone').value,
-                status: document.getElementById('patientStatus').value,
-                hasService: document.getElementById('patientHasService').checked
-            };
-            
-            if (currentEditingPatient) {
-                // Update existing patient
-                const index = patients.findIndex(p => p.id === currentEditingPatient.id);
-                patients[index] = { ...currentEditingPatient, ...formData };
-                showToast('Đã cập nhật bệnh nhân thành công');
-            } else {
-                // Add new patient
-                const newPatient = {
-                    id: Date.now().toString(),
-                    ...formData,
-                    registeredDate: new Date().toISOString().split('T')[0]
-                };
-                patients.push(newPatient);
-                showToast('Đã thêm bệnh nhân mới thành công');
-            }
-            
-            saveToLocalStorage();
-            filterPatients();
-            closePatientModal();
-        });
-    }
     
     // Service Form
     const serviceForm = document.getElementById('serviceForm');
@@ -1058,9 +986,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Export functions for global access
-window.openPatientModal = openPatientModal;
-window.closePatientModal = closePatientModal;
-window.editPatient = editPatient;
 window.viewPatient = viewPatient;
 window.deletePatient = deletePatient;
 window.closePatientDetailModal = closePatientDetailModal;
