@@ -15,9 +15,9 @@
         <nav class="doctor-nav">
             <a href="bac-si-dashboard.html" class="nav-link active">Trang cá nhân</a>
             <a href="blog.html" class="nav-link">Đăng Blog</a>
-            <a href="bac-si-dang-ki-lich-lam.html" class="nav-link">Đăng ký lịch làm</a>
+
             <a href="bac-si-lich-lam-viec.html" class="nav-link">Xem lịch làm</a>
-            <a href="index.html" class="nav-link">Hồ sơ cá nhân</a>
+            <a href="bac-si-profile.html" class="nav-link">Hồ sơ cá nhân</a>
             
         </nav>
 
@@ -333,34 +333,97 @@
 
                         <!-- Booking Steps -->
                         <div class="booking-steps">
-                            <h5><i class="fas fa-list-ol"></i> Các bước thực hiện hôm nay</h5>
-                            <div class="steps-list" id="bookingStepsList">
-                                <div class="step-item">
-                                    <div class="step-header">
-                                        <strong>Bước 1: Khám lâm sàng tổng quát</strong>
-                                        <span class="step-status completed">Đã hoàn thành</span>
-                                    </div>
-                                    <div class="step-content">
-                                        <div class="record-grid">
-                                            <div class="record-section">
-                                                <label>Ngày thực hiện:</label>
-                                                <input type="datetime-local" value="2024-06-24T08:00" id="performedAt1">
-                                            </div>
-                                            <div class="record-section">
-                                                <label>Kết quả:</label>
-                                                <textarea rows="2" placeholder="Kết quả thực hiện..." id="stepResult1">Tình trạng sức khỏe tổng thể tốt</textarea>
-                                            </div>
+                            <h5><i class="fas fa-list-ol"></i> Quản lý các bước điều trị</h5>
+                            
+                            <!-- Service Selection -->
+                            <div class="service-selection">
+                                <div class="service-dropdown-container">
+                                    <label for="serviceSelect"><i class="fas fa-medical-bag"></i> Chọn dịch vụ/bước cần thực hiện:</label>
+                                    <select id="serviceSelect" class="service-dropdown">
+                                        <option value="">-- Chọn dịch vụ --</option>
+                                        <option value="clinical-exam">Khám lâm sàng tổng quát</option>
+                                        <option value="blood-test">Xét nghiệm máu</option>
+                                        <option value="hormone-test">Xét nghiệm nội tiết tố</option>
+                                        <option value="ultrasound">Siêu âm</option>
+                                        <option value="egg-retrieval">Chọc hút trứng</option>
+                                        <option value="embryo-transfer">Chuyển phôi</option>
+                                        <option value="pregnancy-test">Xét nghiệm thai</option>
+                                        <option value="consultation">Tư vấn và theo dõi</option>
+                                        <option value="medication">Kê đơn thuốc</option>
+                                        <option value="follow-up">Tái khám</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Step Form (Hidden by default) -->
+                            <div class="step-form" id="stepForm" style="display: none;">
+                                <div class="form-header">
+                                    <h6 id="selectedServiceTitle"><i class="fas fa-edit"></i> Thực hiện: </h6>
+                                    <span class="form-badge">Đang thực hiện</span>
+                                </div>
+                                <div class="step-form-content">
+                                    <div class="record-grid">
+                                        <div class="record-section">
+                                            <label>Ngày & giờ thực hiện:</label>
+                                            <input type="datetime-local" id="performedAt" class="form-control">
                                         </div>
                                         <div class="record-section">
-                                            <label>Ghi chú bước này:</label>
-                                            <textarea rows="2" placeholder="Ghi chú của bác sĩ..." id="stepNote1">Bệnh nhân có tiền sử sảy thai 1 lần</textarea>
+                                            <label>Trạng thái:</label>
+                                            <select id="stepStatus" class="form-control">
+                                                <option value="in-progress">Đang thực hiện</option>
+                                                <option value="completed">Đã hoàn thành</option>
+                                                <option value="postponed">Hoãn lại</option>
+                                                <option value="cancelled">Hủy bỏ</option>
+                                            </select>
                                         </div>
+                                    </div>
+                                    <div class="record-section">
+                                        <label>Kết quả thực hiện:</label>
+                                        <textarea rows="3" placeholder="Mô tả kết quả, chỉ số, tình trạng..." id="stepResult" class="form-control"></textarea>
+                                    </div>
+                                    <div class="record-section">
+                                        <label>Ghi chú của bác sĩ:</label>
+                                        <textarea rows="2" placeholder="Lưu ý, khuyến nghị, hướng dẫn..." id="stepNote" class="form-control"></textarea>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn-save-step" onclick="saveBookingStep()">
+                                            <i class="fas fa-save"></i> Lưu bước này
+                                        </button>
+                                        <button type="button" class="btn-cancel-step" onclick="cancelStepForm()">
+                                            <i class="fas fa-times"></i> Hủy
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn-add-step" onclick="window.addBookingStep()">
-                                <i class="fas fa-plus"></i> Thêm bước mới
-                            </button>
+
+                            <!-- Completed Steps List -->
+                            <div class="completed-steps">
+                                <h6><i class="fas fa-check-circle"></i> Các bước đã thực hiện</h6>
+                                <div class="steps-list" id="completedStepsList">
+                                    <div class="step-item completed" data-step-id="1">
+                                        <div class="step-header">
+                                            <div class="step-info">
+                                                <strong>Khám lâm sàng tổng quát</strong>
+                                                <span class="step-time">24/06/2024 08:00</span>
+                                            </div>
+                                            <div class="step-actions">
+                                                <span class="step-status completed">Đã hoàn thành</span>
+                                                <button class="btn-edit-step" onclick="editStep(1)">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="step-summary">
+                                            <p><strong>Kết quả:</strong> Tình trạng sức khỏe tổng thể tốt</p>
+                                            <p><strong>Ghi chú:</strong> Bệnh nhân có tiền sử sảy thai 1 lần</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="empty-steps" id="emptySteps" style="display: none;">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    <p>Chưa có bước nào được thực hiện</p>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Drug Prescription -->

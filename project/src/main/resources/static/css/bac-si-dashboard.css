@@ -2084,3 +2084,191 @@ select:focus {
         min-height: 60px;
     }
 }
+
+/* New Service Selection and Step Form Styles */
+.service-selection {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e7ef;
+}
+
+.service-dropdown-container label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.service-dropdown {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.service-dropdown:focus {
+    outline: none;
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.service-dropdown:hover {
+    border-color: #4A90E2;
+}
+
+/* Step Form */
+.step-form {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e0e7ef;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.form-header h6 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.form-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.step-form-content {
+    padding: 20px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-save-step {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-save-step:hover {
+    background: #218838;
+}
+
+.btn-cancel-step {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-cancel-step:hover {
+    background: #545b62;
+}
+
+/* Enhanced completed steps styling */
+.completed-steps h6 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-item.completed {
+    border-left: 4px solid #28a745;
+}
+
+.step-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.step-time {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.step-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-edit-step {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 0.85rem;
+}
+
+.btn-edit-step:hover {
+    background: #0056b3;
+}
+
+.step-summary {
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.step-summary p {
+    margin: 4px 0;
+}
+
+.empty-steps {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.empty-steps i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
