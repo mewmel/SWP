@@ -200,8 +200,6 @@ body {
     box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
-
-
 .btn-secondary {
     background: #6b7280;
     color: white;
@@ -756,9 +754,14 @@ body {
     position: sticky;
     bottom: 0;
     background: white;
-    z-index: 1;
-    padding: 15px 20px;
-    border-top: 1px solid #ddd;
+    z-index: 10;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
 }
 
 /* ========== PATIENT STATUS & ACTION STYLES ========== */
@@ -780,8 +783,6 @@ body {
     color: #92400e;
     border: 1px solid #fbbf24;
 }
-
-
 
 .status-badge.completed {
     background: #d1fae5;
@@ -838,8 +839,6 @@ body {
     box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
 }
 
-
-
 .btn-print {
     background: #6b7280;
     color: white;
@@ -864,18 +863,21 @@ body {
 /* ========== ENHANCED MODAL STYLES ========== */
 
 .large-modal {
-    max-width: 1200px;
-    width: 95%;
+    max-width: 1400px;
+    width: 98%;
     max-height: 90vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    margin: 2vh auto;
+    position: relative;
+    top: 0;
 }
 
 .large-modal .modal-body {
     flex: 1;
     overflow-y: auto;
-    padding: 2rem;
+    padding: 2.5rem 2.5rem 3rem 2.5rem;
 }
 
 /* Patient Info Section */
@@ -886,9 +888,9 @@ body {
 .patient-header {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-    padding: 1.5rem;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 2rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 12px;
     color: white;
@@ -924,8 +926,9 @@ body {
 .info-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 1rem;
+    gap: 2.5rem;
+    margin-bottom: 1.5rem;
+    align-items: start;
 }
 
 .info-item {
@@ -951,6 +954,10 @@ body {
 .info-item span {
     color: #1f2937;
     font-size: 1rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+    max-width: 100%;
 }
 
 /* Record Tabs */
@@ -1645,4 +1652,435 @@ select:focus {
     background: #f8fafc;
     border-radius: 6px;
     font-size: 0.9rem;
+}
+
+/* ========== RESPONSIVE DESIGN FOR LARGE MODAL ========== */
+
+@media (max-width: 1200px) {
+    .large-modal {
+        width: 95%;
+        max-width: 1200px;
+    }
+    
+    .large-modal .modal-body {
+        padding: 2rem;
+    }
+    
+    .info-row {
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .large-modal {
+        width: 98%;
+        max-height: 85vh;
+        margin: 3vh auto;
+    }
+    
+    .large-modal .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .info-row {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .patient-header {
+        gap: 1rem;
+        padding: 1.5rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .record-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .record-tabs {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    
+    .tab-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .result-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .sub-service-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .sub-service-details {
+        align-items: flex-start;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .large-modal {
+        width: 100%;
+        height: 95vh;
+        max-height: 95vh;
+        margin: 2.5vh auto 0;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .large-modal .modal-body {
+        padding: 1rem;
+    }
+    
+    .patient-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .patient-details h4 {
+        font-size: 1.2rem;
+    }
+    
+    .info-item span {
+        font-size: 0.9rem;
+    }
+    
+    .booking-info,
+    .medical-record-info,
+    .booking-steps,
+    .drug-prescription {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .record-section {
+        margin-bottom: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 0.75rem;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary,
+    .btn-secondary,
+    .btn-print {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ========== EDITABLE TEST RESULTS STYLES ========== */
+
+.editable-title {
+    background: transparent;
+    border: 2px dashed transparent;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    outline: none;
+    cursor: text;
+}
+
+.editable-title:hover, .editable-title:focus {
+    border-color: #4a90e2;
+    background: rgba(74, 144, 226, 0.05);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.editable-date {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: #5a6c7d;
+    transition: all 0.3s ease;
+    outline: none;
+    cursor: pointer;
+}
+
+.editable-date:hover, .editable-date:focus {
+    border-color: #4a90e2;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.step-status-select {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.step-status-select:hover {
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+    transform: translateY(-2px);
+}
+
+.step-status-select option {
+    background: white;
+    color: #333;
+    padding: 8px;
+    font-weight: normal;
+    text-transform: none;
+}
+
+.editable-result {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+    width: 80px;
+    text-align: center;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.editable-result:hover, .editable-result:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.editable-label {
+    background: transparent;
+    border: 2px dashed transparent;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #5a6c7d;
+    transition: all 0.3s ease;
+    outline: none;
+    min-width: 100px;
+    cursor: text;
+}
+
+.editable-label:hover, .editable-label:focus {
+    border-color: #4a90e2;
+    background: rgba(74, 144, 226, 0.05);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.unit-select, .status-select, .result-value-select {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    color: #5a6c7d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    margin: 0 4px;
+    min-width: 80px;
+}
+
+.unit-select:hover, .unit-select:focus,
+.status-select:hover, .status-select:focus,
+.result-value-select:hover, .result-value-select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.result-bracket {
+    color: #6c757d;
+    font-weight: 500;
+    margin: 0 4px;
+    font-size: 0.9rem;
+}
+
+.editable-note {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.9rem;
+    color: #5a6c7d;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 80px;
+    width: 100%;
+    transition: all 0.3s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.editable-note:hover, .editable-note:focus {
+    border-color: #4a90e2;
+    border-style: solid;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.editable-detailed-result {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 100px;
+    width: 100%;
+    transition: all 0.3s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.editable-detailed-result:hover, .editable-detailed-result:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Enhanced Result Grid for Editable Fields */
+.result-grid .result-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: rgba(248, 249, 250, 0.7);
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.result-grid .result-item:hover {
+    background: rgba(74, 144, 226, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: rgba(74, 144, 226, 0.2);
+}
+
+/* Status Color Coding for Select Options */
+.status-select option[value="Bình thường"] {
+    color: #27ae60;
+    background: #d1fae5;
+}
+
+.status-select option[value="Cao"],
+.status-select option[value="Thấp"],
+.status-select option[value="Bất thường"] {
+    color: #e74c3c;
+    background: #fee2e2;
+}
+
+.status-select option[value="Cần theo dõi"] {
+    color: #f39c12;
+    background: #fef3c7;
+}
+
+/* Add New Test Item Button */
+.add-test-item-btn {
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
+}
+
+.add-test-item-btn:hover {
+    background: linear-gradient(135deg, #357abd 0%, #2968a3 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+}
+
+.add-test-item-btn i {
+    font-size: 0.9rem;
+}
+
+/* Remove Test Item Button */
+.remove-test-item-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.remove-test-item-btn:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+/* Mobile Responsive for Editable Elements */
+@media (max-width: 768px) {
+    .result-grid .result-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .editable-result {
+        width: 100%;
+    }
+
+    .unit-select, .status-select, .result-value-select {
+        margin: 4px 0;
+        min-width: auto;
+        width: 100%;
+    }
+
+    .editable-label {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .step-status-select {
+        min-width: auto;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .editable-note, .editable-detailed-result {
+        min-height: 60px;
+    }
 }
