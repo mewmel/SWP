@@ -3,11 +3,17 @@ document.addEventListener('DOMContentLoaded', function() {
     function getIconClass(subName) {
         if (!subName) return '';
         const lower = subName.toLowerCase();
+        if (lower.includes('khám')) return 'event-appointment';
+        if (lower.includes('xét nghiệm') || lower.includes('thử')) return 'event-test';
+        if (lower.includes('siêu âm')) return 'event-ultrasound';
         if (lower.includes('tiêm')) return 'event-injection';
-        else if (lower.includes('xét')) return 'event-test';
-        else if (lower.includes('khám')) return 'event-appointment';
-        else if (lower.includes('siêu âm')) return 'event-ultrasound';
-        return 'event-other'; // xám cho bước khác
+        if (lower.includes('tư vấn')) return 'event-consult';
+        if (lower.includes('chọc hút')) return 'event-puncture';
+        if (lower.includes('chuyển phôi')) return 'event-transfer';
+        if (lower.includes('lấy tinh trùng')) return 'event-sperm';
+        if (lower.includes('tạo phôi') || lower.includes('nuôi phôi')) return 'event-embryo';
+        if (lower.includes('bơm tinh trùng')) return 'event-iui';
+        return 'event-other';
     }
 
     const cusId = localStorage.getItem('cusId');
@@ -133,10 +139,15 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('timeline-week').innerHTML = timelineHTML;
 
             // Progress bar: Giai đoạn hiện tại
+            // ... code fetch steps ...
             const now = new Date();
-            const currentStage = steps.filter(s => new Date(s.performedAt) <= now).length;
+            const completedSteps = steps.filter(s =>
+                new Date(s.performedAt) <= now &&
+                s.stepStatus && s.stepStatus.toLowerCase() === "completed"
+            );
+            const currentStage = completedSteps.length + 1;
             const totalStage = steps.length;
-            const stageName = (currentStage > 0) ? steps[currentStage-1].subName : '';
+            const stageName = (currentStage > 0 && currentStage <= steps.length) ? steps[currentStage-1].subName : '';
             document.getElementById('progress-text').textContent =
                 `Giai đoạn ${currentStage}/${totalStage} - ${stageName}`;
         })
@@ -205,17 +216,21 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="timeline-day${isToday ? " today" : ""}${events.length ? " has-event" : ""}">
                 <div class="day-number">${dayStr}</div>
                 <div class="day-events">${eventsHtml}</div>
-                <small>${events.map(ev => ev.subName).join('<br>')}</small>
                 <small>${weekday}</small>
             </div>`;
             }
             document.getElementById('timeline-week').innerHTML = timelineHTML;
 
             // Progress bar: Giai đoạn hiện tại
+            // ... code fetch steps ...
             const now = new Date();
-            const currentStage = steps.filter(s => new Date(s.performedAt) <= now).length;
+            const completedSteps = steps.filter(s =>
+                new Date(s.performedAt) <= now &&
+                s.stepStatus && s.stepStatus.toLowerCase() === "completed"
+            );
+            const currentStage = completedSteps.length + 1;
             const totalStage = steps.length;
-            const stageName = (currentStage > 0) ? steps[currentStage-1].subName : '';
+            const stageName = (currentStage > 0 && currentStage <= steps.length) ? steps[currentStage-1].subName : '';
             document.getElementById('progress-text').textContent =
                 `Giai đoạn ${currentStage}/${totalStage} - ${stageName}`;
 

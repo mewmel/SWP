@@ -429,22 +429,32 @@
 
 }
 /*Dot Dashboard*/
-  .event-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-      margin: 2px 2px 0 2px;
-  }
-.event-injection { background: #FF4D4F; }    /* Đỏ cho Tiêm */
-.event-test { background: #1890FF; }         /* Xanh dương cho Xét nghiệm */
-.event-appointment { background: #52C41A; }  /* Xanh lá cho Khám */
-.event-ultrasound { background: #A020F0; }   /* Tím cho Siêu âm */
-.event-other { background: #bdbdbd; }        /* Xám cho bước khác */
+.event-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 2px 2px 0 2px;
+    border: 1px solid #e0e0e0;
+}
+
+/* Màu cho từng loại dịch vụ phụ */
+.event-injection   { background: #FF4D4F; }   /* Đỏ cho Tiêm */
+.event-test        { background: #1890FF; }   /* Xanh dương cho Xét nghiệm */
+.event-appointment { background: #52C41A; }   /* Xanh lá cho Khám */
+.event-ultrasound  { background: #A020F0; }   /* Tím cho Siêu âm */
+.event-consult     { background: #e91e63; }   /* Hồng cho Tư vấn */
+.event-puncture    { background: #f44336; }   /* Đỏ tươi cho Chọc hút trứng */
+.event-transfer    { background: #00bcd4; }   /* Xanh teal cho Chuyển phôi */
+.event-sperm       { background: #ffc107; }   /* Vàng cho Lấy tinh trùng */
+.event-embryo      { background: #8bc34a; }   /* Xanh lục cho Tạo/nuôi phôi */
+.event-iui         { background: #3f51b5; }   /* Xanh navy cho IUI */
+.event-other       { background: #bdbdbd; }   /* Xám cho bước khác */
+
 .day-events {
     display: flex;
-    justify-content: center;   /* Căn giữa theo chiều ngang */
-    align-items: center;       /* Căn giữa theo chiều dọc nếu cần */
-    min-height: 18px;          /* Đảm bảo đủ cao để thấy dot */
-    margin-bottom: 2px;        /* Có thể điều chỉnh nếu muốn dot sát số ngày hơn */
+    justify-content: center;
+    align-items: center;
+    min-height: 18px;
+    margin-bottom: 2px;
 }
