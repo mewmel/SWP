@@ -71,7 +71,7 @@
                     <li><a href="index.html#blog">Blog</a></li>
                     <li><a href="bang-gia.html" class="active">Bảng giá</a></li>
                     <li><a href="#footer">Liên hệ</a></li>
-                    <li><a href="dat-lich.html">Đặt lịch khám</a></li>
+                    <li><a href="dat-lich.html">Đặt lịch</a></li>
 
                     <li>
                         <div class="notification-wrapper" style="position: relative; display: none">
@@ -407,72 +407,171 @@
     <div class="social-sidebar">
         <a href="#"><i class="fab fa-facebook-f"></i></a>
         <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fas fa-envelope"></i></a>
+        <a href="" id="gmail-link"><i class="fas fa-envelope"></i></a>
     </div>
     <main>
         <div class="pricing-table-container">
             <div class="pricing-table-title">Bảng giá dịch vụ hiếm muộn</div>
             <div class="pricing-table-desc">Tham khảo chi phí các dịch vụ hỗ trợ sinh sản, khám và điều trị hiếm muộn tại phòng khám FertilityEHR.</div>
+            <div style="margin-bottom: 18px; text-align: right;">
+                <label for="categoryFilter" style="font-weight: 500; color: #1976d2; margin-right: 8px;">Lọc theo danh mục:</label>
+                <select id="categoryFilter" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #b0bec5;">
+                    <option value="">Tất cả</option>
+                    <option value="Khám">Khám</option>
+                    <option value="Xét nghiệm">Xét nghiệm</option>
+                    <option value="Tư vấn">Tư vấn</option>
+                    <option value="IVF">IVF</option>
+                    <option value="IUI">IUI</option>
+                </select>
+            </div>
             <table class="pricing-table">
                 <thead>
                     <tr>
                         <th>Tên dịch vụ</th>
                         <th>Danh mục</th>
-                        <th>Thời gian</th>
                         <th>Giá (VNĐ)</th>
                         <th>Mô tả</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="subservice-table-body">
                     <tr>
-                        <td>Tư vấn hiếm muộn</td>
-                        <td>Tư vấn</td>
-                        <td>30 phút</td>
-                        <td>300.000</td>
-                        <td>Khám, tư vấn nguyên nhân và hướng điều trị hiếm muộn.</td>
-                    </tr>
-                    <tr>
-                        <td>Khám tiền hôn nhân</td>
-                        <td>Khám</td>
-                        <td>40 phút</td>
-                        <td>500.000</td>
-                        <td>Khám tổng quát, xét nghiệm cơ bản cho cặp đôi chuẩn bị kết hôn.</td>
-                    </tr>
-                    <tr>
-                        <td>Thụ tinh trong ống nghiệm (IVF)</td>
-                        <td>IVF</td>
-                        <td>120 phút</td>
-                        <td>60.000.000</td>
-                        <td>Quy trình hỗ trợ sinh sản hiện đại, tỷ lệ thành công cao.</td>
-                    </tr>
-                    <tr>
-                        <td>Thụ tinh nhân tạo (IUI)</td>
-                        <td>IUI</td>
-                        <td>60 phút</td>
-                        <td>10.000.000</td>
-                        <td>Phương pháp bơm tinh trùng vào buồng tử cung hỗ trợ thụ thai.</td>
-                    </tr>
-                    <tr>
-                        <td>Xét nghiệm nội tiết sinh sản</td>
-                        <td>Xét nghiệm</td>
-                        <td>20 phút</td>
-                        <td>800.000</td>
-                        <td>Đánh giá hormone sinh sản, hỗ trợ chẩn đoán hiếm muộn.</td>
-                    </tr>
-                    <tr>
-                        <td>Siêu âm chuyên khoa</td>
-                        <td>Chuyên khoa</td>
-                        <td>20 phút</td>
-                        <td>400.000</td>
-                        <td>Siêu âm tử cung, buồng trứng, đánh giá khả năng sinh sản.</td>
-                    </tr>
-                    <tr>
-                        <td>Điều trị nội tiết</td>
-                        <td>Điều trị</td>
-                        <td>30 phút</td>
-                        <td>1.200.000</td>
-                        <td>Điều chỉnh nội tiết tố, hỗ trợ quá trình thụ thai.</td>
-                    </tr>
+            <td>Khám lâm sàng tổng quát</td>
+            <td>Khám</td>
+            <td>200.000</td>
+            <td>Đánh giá sức khỏe sinh sản tổng thể cho vợ/chồng</td>
+        </tr>
+        <tr>
+            <td>Khám chuyên khoa nam/nữ</td>
+            <td>Khám</td>
+            <td>250.000</td>
+            <td>Khám chi tiết bộ phận sinh dục nam hoặc nữ</td>
+        </tr>
+        <tr>
+            <td>Xét nghiệm AMH (dự trữ buồng trứng)</td>
+            <td>Xét nghiệm</td>
+            <td>500.000</td>
+            <td>Đánh giá dự trữ buồng trứng ở nữ</td>
+        </tr>
+        <tr>
+            <td>Xét nghiệm nội tiết tố nữ (FSH, LH, E2)</td>
+            <td>Xét nghiệm</td>
+            <td>300.000</td>
+            <td>Kiểm tra hormone sinh sản nữ</td>
+        </tr>
+        <tr>
+            <td>Xét nghiệm tinh dịch đồ</td>
+            <td>Xét nghiệm</td>
+            <td>300.000</td>
+            <td>Đánh giá chất lượng tinh trùng nam</td>
+        </tr>
+        <tr>
+            <td>Siêu âm tử cung, buồng trứng</td>
+            <td>Chuyên khoa</td>
+            <td>250.000</td>
+            <td>Kiểm tra cấu trúc tử cung và dự trữ noãn</td>
+        </tr>
+        <tr>
+            <td>Chụp HSG/siêu âm vòi trứng</td>
+            <td>Chuyên khoa</td>
+            <td>700.000</td>
+            <td>Kiểm tra thông vòi trứng ở nữ</td>
+        </tr>
+        <tr>
+            <td>Tư vấn kết quả, định hướng điều trị</td>
+            <td>Tư vấn</td>
+            <td>200.000</td>
+            <td>Tư vấn phác đồ IVF/IUI hoặc hướng điều trị khác</td>
+        </tr>
+        <tr>
+            <td>Kích thích buồng trứng (IVF)</td>
+            <td>IVF</td>
+            <td>600.000</td>
+            <td>Tiêm thuốc, theo dõi nang noãn</td>
+        </tr>
+        <tr>
+            <td>Siêu âm noãn (IVF)</td>
+            <td>IVF</td>
+            <td>250.000</td>
+            <td>Theo dõi nang noãn phát triển</td>
+        </tr>
+        <tr>
+            <td>Tiêm hCG (IVF)</td>
+            <td>IVF</td>
+            <td>300.000</td>
+            <td>Kích thích trưởng thành noãn, chuẩn bị chọc trứng</td>
+        </tr>
+        <tr>
+            <td>Chọc hút trứng</td>
+            <td>IVF</td>
+            <td>7.000.000</td>
+            <td>Lấy trứng ra khỏi buồng trứng</td>
+        </tr>
+        <tr>
+            <td>Lấy tinh trùng (IVF)</td>
+            <td>IVF</td>
+            <td>1.000.000</td>
+            <td>Lấy mẫu tinh trùng vào ngày chọc trứng</td>
+        </tr>
+        <tr>
+            <td>Tạo phôi, nuôi phôi trong lab</td>
+            <td>IVF</td>
+            <td>5.000.000</td>
+            <td>Nuôi cấy và chọn lọc phôi</td>
+        </tr>
+        <tr>
+            <td>Chuyển phôi</td>
+            <td>IVF</td>
+            <td>6.000.000</td>
+            <td>Đưa phôi vào buồng tử cung</td>
+        </tr>
+        <tr>
+            <td>Thử β-hCG (IVF)</td>
+            <td>IVF</td>
+            <td>200.000</td>
+            <td>Xét nghiệm kiểm tra thai sau chuyển phôi</td>
+        </tr>
+        <tr>
+            <td>Siêu âm tim thai (IVF)</td>
+            <td>IVF</td>
+            <td>350.000</td>
+            <td>Theo dõi sự phát triển của thai (nếu có)</td>
+        </tr>
+        <tr>
+            <td>Kích thích buồng trứng nhẹ (IUI)</td>
+            <td>IUI</td>
+            <td>400.000</td>
+            <td>Tiêm thuốc nhẹ, theo dõi nang noãn</td>
+        </tr>
+        <tr>
+            <td>Siêu âm noãn (IUI)</td>
+            <td>IUI</td>
+            <td>200.000</td>
+            <td>Theo dõi sự phát triển của nang noãn</td>
+        </tr>
+        <tr>
+            <td>Tiêm hCG (IUI)</td>
+            <td>IUI</td>
+            <td>200.000</td>
+            <td>Định ngày rụng trứng</td>
+        </tr>
+        <tr>
+            <td>Bơm tinh trùng vào buồng tử cung (IUI)</td>
+            <td>IUI</td>
+            <td>2.500.000</td>
+            <td>Thực hiện thủ thuật IUI</td>
+        </tr>
+        <tr>
+            <td>Thử β-hCG (IUI)</td>
+            <td>IUI</td>
+            <td>200.000</td>
+            <td>Xét nghiệm kiểm tra thai sau IUI</td>
+        </tr>
+        <tr>
+            <td>Siêu âm túi thai (IUI)</td>
+            <td>IUI</td>
+            <td>250.000</td>
+            <td>Theo dõi sự phát triển của thai (nếu có)</td>
+        </tr>
                 </tbody>
             </table>
         </div>

@@ -1491,4 +1491,45 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+    // ====== Lọc dịch vụ theo danh mục cho bảng giá (fix: chỉ chạy trên trang bảng giá) ======
+    (function() {
+        // Chỉ chạy nếu có phần tử filter và tbody
+        const filter = document.getElementById('categoryFilter');
+        const tbody = document.getElementById('subservice-table-body');
+        if (!filter || !tbody) return;
+
+        // Lưu lại HTML gốc của tbody
+        const originalHTML = tbody.innerHTML;
+
+        filter.addEventListener('change', function() {
+            const selected = filter.value;
+            tbody.innerHTML = originalHTML;
+            if (!selected) return;
+            // Lọc các dòng theo danh mục
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            rows.forEach(row => {
+                const category = row.children[1]?.textContent.trim();
+                if (category !== selected) {
+                    row.style.display = 'none';
+                } else {
+                    row.style.display = '';
+                }
+            });
+        });
+    })();
 });
+// Mở Gmail web khi bấm icon mail
+    document.addEventListener('DOMContentLoaded', function() {
+        var gmailBtn = document.getElementById('gmail-link');
+        if (gmailBtn) {
+            gmailBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var email = 'fertilityehr@gmail.com';
+                var subject = encodeURIComponent('Liên hệ FertilityEHR');
+                var body = encodeURIComponent('Xin chào FertilityEHR,\n\n');
+                var gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+                window.open(gmailUrl, '_blank');
+            });
+        }
+    });
