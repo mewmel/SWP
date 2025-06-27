@@ -2,6 +2,7 @@ package com.example.project.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +28,17 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     // Đếm số booking theo trạng thái
     long countByDocIdAndBookStatus(Integer docId, String bookStatus);
 
+@Query("""
+  SELECT b 
+  FROM Booking b 
+  WHERE b.cusId = :cusId 
+    AND b.bookStatus IN :statuses 
+  ORDER BY b.createdAt DESC
+""")
+Optional<Booking> findLatestBooking(
+  @Param("cusId") Integer cusId,
+  @Param("statuses") List<String> statuses
+);
 
 @Query("SELECT new com.example.project.dto.BookingWithSlotAndCus(b.bookId, b.cusId, c.cusFullName, b.docId, b.bookType, b.bookStatus, b.createdAt, b.note, w.workDate, w.startTime, w.endTime) " +
        "FROM Booking b " +

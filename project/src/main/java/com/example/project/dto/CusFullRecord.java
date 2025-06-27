@@ -2,10 +2,12 @@ package com.example.project.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 
 public class CusFullRecord {
 
@@ -19,15 +21,15 @@ public class CusFullRecord {
     private String cusOccupation;
     private String emergencyContact;
     private String cusStatus;
-    private MedicalRecord medicalRecord;
+    private CurrentMedicalRecord currentMedicalRecord;
     private CurrentBooking currentBooking;
 
     
 
     @Getter
     @Setter
-    public static class MedicalRecord {
-    private String recordId;
+    public static class CurrentMedicalRecord {
+    private int recordId;
     private String diagnosis;
     private String treatmentPlan;
     private String medicalNotes;     // đổi tên notes cho rõ nghĩa

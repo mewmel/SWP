@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.project.dto.CusFullRecord;
-import com.example.project.dto.CurrentBooking;
-import com.example.project.dto.MedicalRecord;
-import com.example.project.repository.BookingRepository;    
 
+import com.example.project.dto.CusFullRecord;
 import com.example.project.entity.Booking;
 import com.example.project.entity.Customer;
+import com.example.project.entity.MedicalRecord;
+import com.example.project.entity.Service;
+import com.example.project.repository.BookingRepository;
 import com.example.project.repository.CustomerRepository;
 import com.example.project.repository.MedicalRecordRepository;
-
+import com.example.project.repository.ServiceRepository;
 @RestController
 @RequestMapping("/api/customer")
 @CrossOrigin // Cho phép truy cập từ front-end
@@ -35,6 +35,10 @@ public class CustomerController {
 
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
+    
+
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     // API lấy thông tin theo email (bổ sung)
     @GetMapping("/{email}")
@@ -65,66 +69,74 @@ public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @Reques
     return ResponseEntity.ok(saved);
 }
 
-@Autowired
-    private MedicalRecordRepository medicalRecordRepository;
 
     @GetMapping("/full-record/{cusId}")
-    public ResponseEntity<PatientFullRecordDTO> getFullRecord(@PathVariable Integer cusId) {
-        // 1. Tìm customer
-        Optional<Customer> optional = customerRepository.findById(cusId);
-        if (!optional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        Customer customer = optional.get();
-
-        // 2. Lấy booking hiện tại (ví dụ lấy booking có status = 'confirmed' hoặc 'ongoing', mới nhất)
-        Booking booking = bookingRepository
-            .findTopByCusIdAndBookStatusInOrderByBookDateDesc(
-                cusId, Arrays.asList("confirmed", "ongoing")
-            )
-            .orElse(null);
-
-        // 3. Lấy hồ sơ bệnh án mới nhất
-        MedicalRecord medicalRecord = medicalRecordRepository
-            .findTopByCusIdOrderByCreatedAtDesc(cusId)
-            .orElse(null);
-
-        // 4. Map sang DTO
-        CusFullRecord dto = new CusFullRecord();
-        dto.setCusId(customer.getCusId());
-        dto.setCusFullName(customer.getCusFullName());
-        dto.setCusGender(customer.getCusGender());
-        dto.setCusDate(customer.getCusDate());
-        dto.setCusEmail(customer.getCusEmail());
-        dto.setCusPhone(customer.getCusPhone());
-        dto.setCusAddress(customer.getCusAddress());
-        dto.setCusOccupation(customer.getCusOccupation());
-        dto.setEmergencyContact(customer.getEmergencyContact());
-        dto.setCusStatus(customer.getCusStatus());
-
-        // MedicalRecord
-        if (medicalRecord != null) {
-            MedicalRecord medicalRecordDTO = new MedicalRecord();
-            medicalRecordDTO.setRecordId(medicalRecord.getRecordId());
-            medicalRecordDTO.setDiagnosis(medicalRecord.getDiagnosis());
-            medicalRecordDTO.setTreatmentPlan(medicalRecord.getTreatmentPlan());
-            medicalRecordDTO.setNotes(medicalRecord.getNotes());
-            medicalRecordDTO.setRecordStatus(medicalRecord.getRecordStatus());
-            medicalRecordDTO.setDischargeDate(medicalRecord.getDischargeDate());
-            dto.setMedicalRecord(medicalRecordDTO);
-        }
-
-        // Booking
-        if (booking != null) {
-            CurrentBooking bookingDTO = new CurrentBooking();
-            bookingDTO.setBookType(booking.getBookType());
-            bookingDTO.setBookStatus(booking.getBookStatus());
-            bookingDTO.setNote(booking.getNote());
-            bookingDTO.setSerName(booking.getSerName());
-            dto.setCurrentBooking(bookingDTO);
-        }
-
-        return ResponseEntity.ok(dto);
+public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) {
+    // 1. Tìm customer
+    Optional<Customer> optional = customerRepository.findById(cusId);
+    if (!optional.isPresent()) {
+        return ResponseEntity.notFound().build();
     }
+    Customer customer = optional.get();
+
+    // 2. Lấy booking hiện tại (ví dụ lấy booking có status = 'confirmed' hoặc 'ongoing', mới nhất)
+    Booking booking = bookingRepository
+        .findLatestBooking(
+            cusId, Arrays.asList("confirmed", "ongoing")
+        )
+        .orElse(null);
+
+    // 3. Lấy hồ sơ bệnh án mới nhất
+    MedicalRecord medicalRecord = medicalRecordRepository
+        .findTopByCusIdOrderByCreatedAtDesc(cusId)
+        .orElse(null);
+
+    // 4. Map sang DTO
+    CusFullRecord dto = new CusFullRecord();
+    dto.setCusId(customer.getCusId());
+    dto.setCusFullName(customer.getCusFullName());
+    dto.setCusGender(customer.getCusGender());
+
+    // Xử lý LocalDate sang String (yyyy-MM-dd)
+    dto.setCusDate(customer.getCusDate() == null ? null : customer.getCusDate().toString());
+    dto.setCusEmail(customer.getCusEmail());
+    dto.setCusPhone(customer.getCusPhone());
+    dto.setCusAddress(customer.getCusAddress());
+    dto.setCusOccupation(customer.getCusOccupation());
+    dto.setEmergencyContact(customer.getEmergencyContact());
+    dto.setCusStatus(customer.getCusStatus());
+
+    // MedicalRecord
+    if (medicalRecord != null) {
+        CusFullRecord.CurrentMedicalRecord medicalRecordDTO = new CusFullRecord.CurrentMedicalRecord();
+        medicalRecordDTO.setRecordId(medicalRecord.getRecordId());
+        medicalRecordDTO.setDiagnosis(medicalRecord.getDiagnosis());
+        medicalRecordDTO.setTreatmentPlan(medicalRecord.getTreatmentPlan());
+        medicalRecordDTO.setMedicalNotes(medicalRecord.getNote());
+        medicalRecordDTO.setRecordStatus(medicalRecord.getRecordStatus());
+        // Xử lý LocalDate -> String nếu dischargeDate là LocalDate
+        if (medicalRecord.getDischargeDate() != null) {
+            medicalRecordDTO.setDischargeDate(medicalRecord.getDischargeDate().toString());
+        }
+        dto.setCurrentMedicalRecord(medicalRecordDTO);
+    }
+
+    // Booking
+    if (booking != null) {
+        CusFullRecord.CurrentBooking bookingDTO = new CusFullRecord.CurrentBooking();
+        bookingDTO.setBookType(booking.getBookType());
+        bookingDTO.setBookStatus(booking.getBookStatus());
+        bookingDTO.setNote(booking.getNote());
+         // Lấy tên dịch vụ
+    Service service = null;
+    if (booking.getSerId() != null) {
+        service = serviceRepository.findById(booking.getSerId()).orElse(null);
+    }
+    bookingDTO.setSerName(service != null ? service.getSerName() : null);
+        dto.setCurrentBooking(bookingDTO);
+    }
+
+    return ResponseEntity.ok(dto);
+}
 
 }

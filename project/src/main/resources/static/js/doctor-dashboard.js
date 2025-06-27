@@ -132,7 +132,7 @@ loadTodayConfirmedBookings();
             occupation: 'Con sen',
             emergencyContact: 'Mơ',
             status: 'active',
-            medicalRecord: {
+            currentMedicalRecord: {
                 recordId: 'MR002',
                 diagnosis: 'Vô sinh nguyên phát, chuẩn bị điều trị IVF chu kỳ 1',
                 treatmentPlan: '1. Kích thích buồng trứng bằng thuốc FSH\n2. Theo dõi nang noãn bằng siêu âm\n3. Chọc hút trứng khi đủ tiêu chuẩn\n4. Thụ tinh trong ống nghiệm\n5. Chuyển phôi vào tử cung',
