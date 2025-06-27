@@ -27,9 +27,9 @@
     --border-radius-xl: 30px;
 
     /* Biến đổ bóng */
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
-    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* Reset CSS */
@@ -96,16 +96,19 @@ header .container {
 .logo {
     display: flex;
     align-items: center;
-    height: 100px; /* hoặc chiều cao header của bạn */
+    height: 100px;
+    /* hoặc chiều cao header của bạn */
 }
 
 .logo img {
-    height: 100px;      /* hoặc 40-56px tùy ý */
+    height: 100px;
+    /* hoặc 40-56px tùy ý */
     width: auto;
     max-height: 100%;
     display: block;
     object-fit: contain;
-    margin-right: 12px; /* nếu muốn cách các thành phần khác */
+    margin-right: 12px;
+    /* nếu muốn cách các thành phần khác */
 }
 
 
@@ -270,7 +273,8 @@ table {
     min-width: 600px;
 }
 
-th, td {
+th,
+td {
     padding: var(--spacing-md);
     text-align: left;
     border-bottom: 1px solid var(--border-color);
@@ -379,7 +383,8 @@ tr:nth-child(even) {
 }
 
 /* Buttons */
-.btn-primary, .btn-secondary {
+.btn-primary,
+.btn-secondary {
     display: inline-block;
     padding: var(--spacing-md) var(--spacing-lg);
     border-radius: var(--border-radius-md);
@@ -664,7 +669,8 @@ footer::before {
         justify-content: center;
     }
 
-    .btn-primary, .btn-secondary {
+    .btn-primary,
+    .btn-secondary {
         width: 100%;
     }
 }
@@ -675,13 +681,15 @@ footer::before {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-.hero-content, .method-card {
+.hero-content,
+.method-card {
     animation: fadeIn 0.6s ease-out forwards;
 }
 
@@ -692,7 +700,8 @@ footer::before {
     align-items: center;
 }
 
-.btn-login, .btn-register {
+.btn-login,
+.btn-register {
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--border-radius-md);
     font-weight: 500;
@@ -757,7 +766,8 @@ footer::before {
 }
 
 /* Add ripple effect - thêm hiệu ứng gợn sóng cho nút đăng ký */
-.btn-login::after, .btn-register::after {
+.btn-login::after,
+.btn-register::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -771,7 +781,8 @@ footer::before {
     transform-origin: 50% 50%;
 }
 
-.btn-login:active::after, .btn-register:active::after {
+.btn-login:active::after,
+.btn-register:active::after {
     animation: ripple 0.6s ease-out;
 }
 
@@ -780,6 +791,7 @@ footer::before {
         transform: scale(0, 0);
         opacity: 0.5;
     }
+
     100% {
         transform: scale(20, 20);
         opacity: 0;
@@ -877,11 +889,11 @@ footer::before {
 }
 
 .auth-modal-right {
-        flex: 1;
-        padding: var(--spacing-xl);
-        position: relative;
-        overflow-y: auto;
-        background: white;
+    flex: 1;
+    padding: var(--spacing-xl);
+    position: relative;
+    overflow-y: auto;
+    background: white;
 }
 
 .close-modal {
@@ -958,7 +970,8 @@ footer::before {
 .auth-form {
     display: none;
     width: 100%;
-    height: 500px; /* Đặt chiều cao cố định cho cả 2 form */
+    height: 500px;
+    /* Đặt chiều cao cố định cho cả 2 form */
     padding: 2rem;
 }
 
@@ -1043,7 +1056,7 @@ footer::before {
     background: white;
 }
 
-.input-group input:focus + i {
+.input-group input:focus+i {
     color: var(--primary-color);
 }
 
@@ -1175,12 +1188,12 @@ footer::before {
     background: var(--light-background);
 }
 
-.checkbox-container input:checked + .checkmark {
+.checkbox-container input:checked+.checkmark {
     background: var(--primary-color);
     border-color: var(--primary-color);
 }
 
-.checkbox-container input:checked + .checkmark::after {
+.checkbox-container input:checked+.checkmark::after {
     content: '✓';
     position: absolute;
     top: 50%;
@@ -1301,7 +1314,7 @@ footer::before {
     color: white;
 }
 
-.role-option > p {
+.role-option>p {
     position: relative;
     z-index: 2;
     color: var(--light-text);
@@ -1310,7 +1323,7 @@ footer::before {
     transition: color 0.3s ease;
 }
 
-.role-option.selected > p {
+.role-option.selected>p {
     color: rgba(255, 255, 255, 0.9);
 }
 
@@ -1402,23 +1415,23 @@ footer::before {
         grid-template-columns: 1fr;
         gap: 15px;
     }
-    
+
     .role-option {
         padding: 25px 15px;
     }
-    
+
     .role-icon i {
         font-size: 2.5rem;
     }
-    
+
     .role-option h3 {
         font-size: 1.2rem;
     }
-    
+
     .role-option ul li {
         font-size: 0.8rem;
     }
-    
+
     .auth-header {
         flex-direction: column;
         gap: 15px;
@@ -1741,189 +1754,200 @@ footer::before {
 
 /* About FertilityCare Section - Flex 2 cột text trái, hình phải */
 .about-fertilitycare-flex {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
 }
 
 .about-fertilitycare-left {
-  flex: 1 1 50%;
-  max-width: 50%;
-  min-width: 300px;
-  padding-right: 32px;
-  box-sizing: border-box;
+    flex: 1 1 50%;
+    max-width: 50%;
+    min-width: 300px;
+    padding-right: 32px;
+    box-sizing: border-box;
 }
 
 .about-fertilitycare-right {
-  flex: 1 1 50%;
-  max-width: 50%;
-  min-width: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-left: 32px;
-  box-sizing: border-box;
+    flex: 1 1 50%;
+    max-width: 50%;
+    min-width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 32px;
+    box-sizing: border-box;
 }
 
 @media (max-width: 991px) {
-  .about-fertilitycare-flex {
-    flex-direction: column;
-    gap: 24px;
-  }
-  .about-fertilitycare-left,
-  .about-fertilitycare-right {
-    max-width: 100%;
-    width: 100%;
-    padding: 0;
-  }
+    .about-fertilitycare-flex {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .about-fertilitycare-left,
+    .about-fertilitycare-right {
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+    }
 }
 
 /* Xóa các rule flex cũ liên quan col-lg-6 */
 .about-fertilitycare-section .col-lg-6.mb-4,
 .about-fertilitycare-section .col-lg-6.text-center,
 .about-fertilitycare-section .col-lg-6.mb-4.mb-lg-0 {
-  flex: unset !important;
-  max-width: unset !important;
-  min-width: unset !important;
-  padding: unset !important;
-  display: unset !important;
-  justify-content: unset !important;
-  align-items: unset !important;
-  box-sizing: unset !important;
+    flex: unset !important;
+    max-width: unset !important;
+    min-width: unset !important;
+    padding: unset !important;
+    display: unset !important;
+    justify-content: unset !important;
+    align-items: unset !important;
+    box-sizing: unset !important;
 }
 
 /* About FertilityCare Section (Custom) - Đẹp, hiện đại, đồng bộ */
 .about-fertilitycare-section {
-  background: var(--background);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
-  margin: var(--spacing-xl) 0;
-  padding: var(--spacing-xl) 0;
-  position: relative;
-  overflow: hidden;
+    background: var(--background);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    margin: var(--spacing-xl) 0;
+    padding: var(--spacing-xl) 0;
+    position: relative;
+    overflow: hidden;
 }
 
 .about-fertilitycare-section .container {
-  max-width: 1100px;
+    max-width: 1100px;
 }
 
 .about-fertilitycare-section .section-title {
-  font-size: 2.3rem;
-  font-weight: 800;
-  color: var(--primary-color);
-  margin-bottom: var(--spacing-md);
-  letter-spacing: -1px;
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: -1px;
 }
 
 .about-fertilitycare-section .lead {
-  font-size: 1.15rem;
-  color: var(--light-text);
-  margin-bottom: var(--spacing-lg);
+    font-size: 1.15rem;
+    color: var(--light-text);
+    margin-bottom: var(--spacing-lg);
 }
 
 .about-fertilitycare-section h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin-bottom: var(--spacing-md);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
 }
 
 .about-fertilitycare-section p {
-  color: var(--text-color);
-  font-size: 1rem;
+    color: var(--text-color);
+    font-size: 1rem;
 }
 
 .about-fertilitycare-section .row.text-center {
-  margin-top: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
 }
 
 .about-fertilitycare-section .display-5 {
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin-bottom: 0.25rem;
-  line-height: 1.1;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    line-height: 1.1;
 }
 
 .about-fertilitycare-section .col-4 .display-5 {
-  color: var(--accent-color);
+    color: var(--accent-color);
 }
 
 .about-fertilitycare-section .col-4:nth-child(2) .display-5 {
-  color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 .about-fertilitycare-section .small {
-  color: var(--light-text);
-  font-size: 1rem;
+    color: var(--light-text);
+    font-size: 1rem;
 }
 
 .about-fertilitycare-section img {
-  max-width: 100%;
-  max-height: 350px;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
-  object-fit: cover;
-  margin-top: var(--spacing-lg);
+    max-width: 100%;
+    max-height: 350px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    object-fit: cover;
+    margin-top: var(--spacing-lg);
 }
 
 @media (max-width: 991px) {
-  .about-fertilitycare-section {
-    padding: var(--spacing-lg) 0;
-  }
-  .about-fertilitycare-section .section-title {
-    font-size: 1.7rem;
-  }
-  .about-fertilitycare-section .display-5 {
-    font-size: 1.5rem;
-  }
+    .about-fertilitycare-section {
+        padding: var(--spacing-lg) 0;
+    }
+
+    .about-fertilitycare-section .section-title {
+        font-size: 1.7rem;
+    }
+
+    .about-fertilitycare-section .display-5 {
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 767px) {
-  .about-fertilitycare-section {
-    padding: var(--spacing-md) 0;
-    margin: var(--spacing-lg) 0;
-  }
-  .about-fertilitycare-section .section-title {
-    font-size: 1.2rem;
-  }
-  .about-fertilitycare-section .display-5 {
-    font-size: 1.1rem;
-  }
-  .about-fertilitycare-section img {
-    max-height: 200px;
-  }
+    .about-fertilitycare-section {
+        padding: var(--spacing-md) 0;
+        margin: var(--spacing-lg) 0;
+    }
+
+    .about-fertilitycare-section .section-title {
+        font-size: 1.2rem;
+    }
+
+    .about-fertilitycare-section .display-5 {
+        font-size: 1.1rem;
+    }
+
+    .about-fertilitycare-section img {
+        max-height: 200px;
+    }
 }
 
 .about-fertilitycare-header {
-  text-align: center;
-  margin-bottom: 48px;
-  margin-top: 0;
+    text-align: center;
+    margin-bottom: 48px;
+    margin-top: 0;
 }
+
 .about-fertilitycare-header h2 {
-  font-size: 2.8rem;
-  font-weight: 800;
-  color: #2C3E50;
-  margin-bottom: 1rem;
-  letter-spacing: -1px;
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #2C3E50;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
 }
+
 .about-fertilitycare-header p {
-  font-size: 1.25rem;
-  color: #6c757d;
-  font-weight: 500;
-  margin-bottom: 0;
+    font-size: 1.25rem;
+    color: #6c757d;
+    font-weight: 500;
+    margin-bottom: 0;
 }
+
 @media (max-width: 767px) {
-  .about-fertilitycare-header {
-    margin-bottom: 24px;
-  }
-  .about-fertilitycare-header h2 {
-    font-size: 1.5rem;
-  }
-  .about-fertilitycare-header p {
-    font-size: 1rem;
-  }
+    .about-fertilitycare-header {
+        margin-bottom: 24px;
+    }
+
+    .about-fertilitycare-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .about-fertilitycare-header p {
+        font-size: 1rem;
+    }
 }
 
 
@@ -1936,13 +1960,16 @@ nav ul {
     display: flex;
     align-items: center;
 }
+
 nav ul li {
     position: relative;
 }
+
 nav ul li .fas.fa-caret-down {
     margin-left: 5px;
     font-size: 0.9em;
 }
+
 nav ul li .dropdown-menu {
     display: none;
     position: absolute;
@@ -1951,14 +1978,16 @@ nav ul li .dropdown-menu {
     background: #fff;
     min-width: 260px;
     width: 300px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 6px;
     z-index: 100;
     padding: 10px 0;
 }
+
 nav ul li .dropdown-menu li {
     width: 100%;
 }
+
 nav ul li .dropdown-menu li a {
     color: #1a1f2c;
     padding: 10px 20px;
@@ -1966,14 +1995,17 @@ nav ul li .dropdown-menu li a {
     text-decoration: none;
     transition: background 0.2s;
 }
+
 nav ul li .dropdown-menu li a:hover {
     background: #d1e2f5a5;
-    color:#4A90E2;
+    color: #4A90E2;
 }
-nav ul li.dropdown:hover > .dropdown-menu {
+
+nav ul li.dropdown:hover>.dropdown-menu {
     display: block;
 }
-nav ul li.dropdown > a {
+
+nav ul li.dropdown>a {
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1985,31 +2017,31 @@ nav ul li .dropdown-menu li:not(:last-child) {
 
 /* Doctors Slider Section - Đội ngũ bác sĩ */
 .doctors-section {
-  padding: 60px 0;
-  background-color: #f9f9f9;
+    padding: 60px 0;
+    background-color: #f9f9f9;
 }
 
 .doctors-grid {
-  height: 90%;  
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: 0 20px;
+    height: 90%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .doctor-card {
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .doctor-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* .doctor-image {
@@ -2020,69 +2052,71 @@ nav ul li .dropdown-menu li:not(:last-child) {
 } */
 
 .doctor-image img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  transition: transform 0.3s;
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    transition: transform 0.3s;
 }
 
 
 .doctor-card:hover .doctor-overlay {
-  opacity: 1;
+    opacity: 1;
 }
 
 .doctor-social {
-  display: flex;
-  gap: 15px;
+    display: flex;
+    gap: 15px;
 }
 
 .doctor-social a {
-  color: white;
-  font-size: 1.5rem;
-  transition: transform 0.3s;
+    color: white;
+    font-size: 1.5rem;
+    transition: transform 0.3s;
 }
 
 .doctor-social a:hover {
-  transform: scale(1.2);
+    transform: scale(1.2);
 }
 
 .doctor-info {
-  padding: 25px;
-  text-align: center;
+    padding: 25px;
+    text-align: center;
 }
 
 .doctor-info h3 {
-  color: #2C3E50;
-  font-size: 1.4rem;
-  margin: 0 0 10px;
+    color: #2C3E50;
+    font-size: 1.4rem;
+    margin: 0 0 10px;
 }
 
 .doctor-title {
-  color: #666;
-  font-size: 1rem;
-  margin: 0 0 5px;
+    color: #666;
+    font-size: 1rem;
+    margin: 0 0 5px;
 }
 
 .doctor-specialty {
-  color: #4A90E2;
-  font-weight: bold;
-  margin: 0 0 15px;
+    color: #4A90E2;
+    font-weight: bold;
+    margin: 0 0 15px;
 }
 
 .doctor-profile {
-  display: inline-block;
-  color: #F5A623;;
-  text-decoration: none;
-  font-weight: bold;
-  padding: 8px 20px;
-  border: 2px solid #F5A623;;
-  border-radius: 25px;
-  transition: all 0.3s;
+    display: inline-block;
+    color: #F5A623;
+;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 20px;
+    border: 2px solid #F5A623;
+;
+    border-radius: 25px;
+    transition: all 0.3s;
 }
 
 .doctor-profile:hover {
-  background: #F5A623;
-  color: white;
+    background: #F5A623;
+    color: white;
 }
 
 .social-sidebar {
@@ -2101,20 +2135,21 @@ nav ul li .dropdown-menu li:not(:last-child) {
     justify-content: center;
     width: 100px;
     height: 100px;
-    background:  #c5dffda0;
-    color:  #4A90E2;
+    background: #c5dffda0;
+    color: #4A90E2;
     border-radius: 50%;
     font-size: 40px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     text-decoration: none;
 }
 
 .social-sidebar a:hover {
     background: #daeaf1;
-    color:  #4A90E2;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+    color: #4A90E2;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
 }
+
 @media (max-width: 700px) {
     .social-sidebar {
         right: 8px;
@@ -2132,6 +2167,7 @@ nav ul li .dropdown-menu li:not(:last-child) {
     margin-top: 50px;
     margin-bottom: 10px;
 }
+
 .introduction h4 {
     font-size: 1rem;
     font-weight: 500;
@@ -2161,7 +2197,7 @@ nav ul li .dropdown-menu li:not(:last-child) {
 .facility-card {
     background: #fff;
     border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     flex: 1 1 0;
     min-width: 320px;
@@ -2171,8 +2207,9 @@ nav ul li .dropdown-menu li:not(:last-child) {
     transition: box-shadow 0.2s;
     border: 1px solid #f0f0f0;
 }
+
 .facility-card:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13);
 }
 
 /* Ảnh banner trên cùng */
@@ -2193,6 +2230,7 @@ nav ul li .dropdown-menu li:not(:last-child) {
     background-position: center;
     background-color: #f6fafd;
 }
+
 /* Nội dung bên dưới */
 .facility-content {
     font-weight: 500;
@@ -2219,12 +2257,14 @@ nav ul li .dropdown-menu li:not(:last-child) {
     padding-left: 0;
     list-style: none;
 }
+
 .feature-list li {
     margin-bottom: 10px;
     position: relative;
     padding-left: 28px;
     font-size: 1rem;
 }
+
 .feature-list li::before {
     content: "✔";
     color: #4A90E2;
@@ -2246,6 +2286,7 @@ nav ul li .dropdown-menu li:not(:last-child) {
     transition: background 0.2s;
     margin-top: 18px;
 }
+
 .learn-more:hover {
     background: #228b22;
 }
@@ -2257,9 +2298,11 @@ nav ul li .dropdown-menu li:not(:last-child) {
         gap: 28px;
         align-items: center;
     }
+
     .facility-card {
         max-width: 100%;
     }
+
     .facility-iui-image {
         height: 160px;
     }
@@ -2271,25 +2314,30 @@ nav ul li .dropdown-menu li:not(:last-child) {
     align-items: flex-start;
     margin: 32px 100px;
 }
+
 .intro-content {
     flex: 2;
 }
+
 .img-kham-benh {
     flex: 1;
     display: flex;
     align-items: flex-start;
     justify-content: flex-end;
 }
+
 @media (max-width: 900px) {
     .intro-flex {
         flex-direction: column;
         margin: 24px 10px;
     }
+
     .img-kham-benh {
         justify-content: center;
         margin-top: 20px;
     }
 }
+
 .btn-secondary {
     pointer-events: auto !important;
     z-index: 10;
@@ -2305,23 +2353,27 @@ nav ul li .dropdown-menu li:not(:last-child) {
 /* Sidebar cá nhân */
 .sidebar {
     position: fixed;
-    top: 0; right: 0; bottom: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     width: 270px;
     background: #fff;
-    box-shadow: -2px 0 15px rgba(0,0,0,0.07);
+    box-shadow: -2px 0 15px rgba(0, 0, 0, 0.07);
     z-index: 4000;
     padding: 32px 20px 20px 20px;
     display: none;
     flex-direction: column;
     transform: translateX(100%);
     opacity: 0;
-    transition: transform 0.45s cubic-bezier(.77,0,.18,1), opacity 0.3s;
+    transition: transform 0.45s cubic-bezier(.77, 0, .18, 1), opacity 0.3s;
 }
+
 .sidebar.active {
     transform: translateX(0);
     opacity: 1;
     display: flex;
 }
+
 .sidebar .close-sidebar {
     background: none;
     border: none;
@@ -2331,6 +2383,7 @@ nav ul li .dropdown-menu li:not(:last-child) {
     right: 20px;
     cursor: pointer;
 }
+
 .sidebar a {
     display: block;
     padding: 10px 0;
@@ -2339,7 +2392,11 @@ nav ul li .dropdown-menu li:not(:last-child) {
     font-weight: 500;
     transition: color 0.2s;
 }
-.sidebar a:hover { color: #5a5fd4; }
+
+.sidebar a:hover {
+    color: #5a5fd4;
+}
+
 .sidebar-user {
     display: flex;
     align-items: center;
@@ -2348,26 +2405,32 @@ nav ul li .dropdown-menu li:not(:last-child) {
     margin-bottom: 30px;
     color: var(--primary-color);
 }
+
 .sidebar-user i {
     font-size: 2.2rem;
 }
+
 .sidebar-divider {
     border-top: 1px solid #eee;
     margin: 16px 0 5px 0;
 }
-.sidebar-account, .sidebar-logout {
+
+.sidebar-account,
+.sidebar-logout {
     color: #333;
     font-weight: 500;
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 /* Chỉ còn tên và nút menu */
 .user-menu {
     display: flex;
     align-items: center;
     gap: 10px;
 }
+
 .user-sidebar-btn {
     background: none;
     border: none;
@@ -2376,23 +2439,35 @@ nav ul li .dropdown-menu li:not(:last-child) {
     color: #333;
     cursor: pointer;
 }
-.sidebar-logout { color: #e74c3c; }
-.sidebar-account i, .sidebar-logout i { font-size: 1.1rem; }
+
+.sidebar-logout {
+    color: #e74c3c;
+}
+
+.sidebar-account i,
+.sidebar-logout i {
+    font-size: 1.1rem;
+}
 
 /* ...rest giữ nguyên... */
 nav ul {
     display: flex;
-    flex-wrap: nowrap;      /* Không cho xuống dòng */
-    align-items: center;    /* Căn giữa theo chiều dọc */
-    justify-content: center;/* Căn giữa theo chiều ngang nếu muốn */
-    gap: 32px;              /* Tăng khoảng cách giữa các mục, chỉnh theo ý */
+    flex-wrap: nowrap;
+    /* Không cho xuống dòng */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+    justify-content: center;
+    /* Căn giữa theo chiều ngang nếu muốn */
+    gap: 32px;
+    /* Tăng khoảng cách giữa các mục, chỉnh theo ý */
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
 nav ul li {
-    white-space: nowrap;    /* Không cho text tự động xuống dòng */
+    white-space: nowrap;
+    /* Không cho text tự động xuống dòng */
 }
 
 nav ul li a {
@@ -2413,6 +2488,7 @@ nav ul li a.active {
     position: relative;
     z-index: 1;
 }
+
 /* Hiển thị dropdown thông báo - giống như YouTube */
 .notification-dropdown {
     position: absolute;
@@ -2580,6 +2656,7 @@ nav ul li a.active {
         right: -80px;
     }
 }
+
 .notification-icon {
     position: relative;
     background: var(--light-background);
@@ -2631,13 +2708,13 @@ nav ul li a.active {
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
 }
 
 .blog-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
 }
 
 .blog-image {
@@ -2677,14 +2754,17 @@ nav ul li a.active {
     background: #F7B731;
     color: #fff;
 }
+
 .blog-card:nth-child(4) .blog-category {
     background: #E74C3C;
     color: #fff;
 }
+
 .blog-card:nth-child(6) .blog-category {
     background: palevioletred;
     color: #fff;
 }
+
 .blog-content {
     padding: 25px;
 }
@@ -2738,7 +2818,7 @@ nav ul li a.active {
 }
 
 .btn-secondary {
-       background: #4A90E2;
+    background: #4A90E2;
     color: #fff;
     padding: 12px 30px;
     border-radius: 25px;
@@ -2771,20 +2851,23 @@ nav ul li a.active {
 .dashboard-main {
     max-width: 1400px;
     margin: 0 auto;
-    padding: var(--spacing-lg);  
+    padding: var(--spacing-lg);
     padding-top: 110px;
     display: grid;
-    grid-template-columns: 1fr 300px;  /* Thay đổi thành 300px */
+    grid-template-columns: 1fr 300px;
+    /* Thay đổi thành 300px */
     gap: var(--spacing-xl);
     min-height: calc(100vh - 70px);
-    position: relative;  /* Thêm position relative */
+    position: relative;
+    /* Thêm position relative */
 }
 
 .dashboard-content {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
-    width: 100%;  /* Đảm bảo chiều rộng tối đa */
+    width: 100%;
+    /* Đảm bảo chiều rộng tối đa */
 }
 
 .dashboard-sidebar {
@@ -2795,15 +2878,21 @@ nav ul li a.active {
     top: 110px;
     height: fit-content;
     z-index: 1;
-    width: 300px;  /* Đặt chiều rộng cố định */
-}@media (max-width: 1200px) {
+    width: 300px;
+    /* Đặt chiều rộng cố định */
+}
+
+@media (max-width: 1200px) {
     .dashboard-main {
-        grid-template-columns: 1fr;  /* Chuyển về 1 cột khi màn hình nhỏ */
+        grid-template-columns: 1fr;
+        /* Chuyển về 1 cột khi màn hình nhỏ */
     }
-    
+
     .dashboard-sidebar {
-        width: 100%;  /* Chiều rộng 100% khi ở dưới */
-        position: relative;  /* Bỏ sticky khi ở dưới */
+        width: 100%;
+        /* Chiều rộng 100% khi ở dưới */
+        position: relative;
+        /* Bỏ sticky khi ở dưới */
         top: 0;
     }
 }
@@ -2836,7 +2925,7 @@ nav ul li a.active {
     z-index: 3000;
     max-width: 350px;
     word-wrap: break-word;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -2872,8 +2961,230 @@ nav ul li a.active {
         max-width: none;
         transform: translateY(-120%);
     }
-    
+
     .profile-notification.show {
         transform: translateY(0);
+    }
+}
+
+/* Forgot Password Modal Styles */
+#forgotPasswordModal {
+    display: none;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.3s ease;
+}
+
+#forgotPasswordModal.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Ensure forgot password form is visible */
+#forgotPasswordModal .auth-form,
+#forgotPasswordModal #forgotPasswordForm {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto !important;
+    padding: 20px !important;
+    width: 100% !important;
+}
+
+#forgotPasswordModal .form-group {
+    margin-bottom: 20px !important;
+    display: block !important;
+}
+
+#forgotPasswordModal .input-group {
+    display: flex !important;
+}
+
+#forgotPasswordModal .btn-primary {
+    width: 100% !important;
+    margin-top: 10px !important;
+}
+
+#forgotPasswordModal .auth-modal-right h2 {
+    text-align: center;
+    color: var(--text-color);
+}
+
+.back-to-login {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--light-text);
+    padding: 8px 15px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back-to-login:hover {
+    color: var(--primary-color);
+}
+
+.otp-note {
+    margin-top: 8px;
+}
+
+.otp-note small {
+    color: var(--light-text);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+/* OTP Input Styling */
+#forgotOtp {
+    text-align: center;
+    letter-spacing: 4px;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+/* Responsive adjustments for forgot password modal */
+@media (max-width: 768px) {
+    #forgotPasswordModal .auth-form {
+        padding: 0 10px;
+    }
+}
+
+
+
+/* Popup modal bác sĩ */
+.modal.doctor-modal {
+    display: none;
+    position: fixed;
+    z-index: 1200;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(30, 41, 59, 0.35);
+    backdrop-filter: blur(7px) saturate(140%);
+    -webkit-backdrop-filter: blur(7px) saturate(140%);
+    align-items: center; justify-content: center;
+    transition: background 0.3s;
+}
+.modal.doctor-modal.show {
+    display: flex !important;
+    animation: fadeInModal 0.35s cubic-bezier(.4,1.4,.6,1);
+}
+.modal-content.doctor-modal-content {
+    background: rgba(255,255,255,0.82);
+    border-radius: 28px;
+    box-shadow: 0 12px 48px 0 rgba(60, 72, 88, 0.22), 0 1.5px 0 0 #fff inset;
+    border: 1.5px solid rgba(74,144,226,0.13);
+    border-top: 3.5px solid #4A90E2;
+    border-bottom: 3.5px solid #50E3C2;
+    max-width: 420px;
+    width: 92vw;
+    padding: 44px 28px 32px 28px;
+    position: relative;
+    text-align: center;
+    animation: scaleUpModal 0.38s cubic-bezier(.4,1.4,.6,1);
+    transition: box-shadow 0.3s, background 0.3s;
+}
+@keyframes scaleUpModal {
+    from { transform: scale(0.92) translateY(60px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+.doctor-modal-avatar {
+    width: 108px; height: 108px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 18px auto;
+    box-shadow: 0 4px 24px 0 rgba(90, 90, 120, 0.18), 0 0 0 6px #e6f0fa, 0 0 0 12px rgba(80,227,194,0.08);
+    border: 4px solid #fff;
+    background: linear-gradient(135deg, #e0f7fa 0%, #f8fafc 100%);
+    transition: box-shadow 0.3s;
+}
+.doctor-modal-avatar:hover {
+    box-shadow: 0 8px 32px 0 #4A90E2, 0 0 0 8px #50E3C2, 0 0 0 16px rgba(80,227,194,0.13);
+}
+.doctor-modal-name {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #2d3a4a;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+.doctor-modal-title {
+    font-size: 1.08rem;
+    color: #4a90e2;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.doctor-modal-specialty {
+    font-size: 1.01rem;
+    color: #0f5b4bd2;
+    margin-bottom: 18px;
+    font-weight: 500;
+}
+.doctor-modal-degree {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    font-size: 1.08rem;
+    color: #3b82f6;
+    margin-bottom: 12px;
+    font-weight: 600;
+    background: linear-gradient(90deg, #e0f7fa 0%, #f8fafc 100%);
+    border-radius: 8px;
+    padding: 4px 12px;
+    box-shadow: 0 1px 4px rgba(80,227,194,0.07);
+}
+.doctor-modal-degree i {
+    color: #f59e42;
+    font-size: 1.18em;
+}
+.doctor-modal-profile {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 1.01rem;
+    color: #374151;
+    margin-bottom: 18px;
+    text-align: left;
+    justify-content: center;
+    background: rgba(255,255,255,0.7);
+    border-radius: 7px;
+    padding: 6px 10px;
+    box-shadow: 0 1px 4px rgba(74,144,226,0.06);
+}
+.doctor-modal-profile i {
+    color: #4a90e2;
+    margin-top: 2px;
+}
+.doctor-modal-close {
+    position: absolute;
+    top: 14px; right: 18px;
+    background: linear-gradient(135deg, #fff 60%, #e0f7fa 100%);
+    border: none;
+    font-size: 2.1rem;
+    color: #b0b8c9;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(80,227,194,0.08);
+    transition: color 0.2s, box-shadow 0.2s, background 0.2s;
+    z-index: 2;
+}
+.doctor-modal-close:hover {
+    color: #fff;
+    background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
+    box-shadow: 0 4px 16px #4A90E2;
+}
+@media (max-width: 600px) {
+    .modal-content.doctor-modal-content {
+        max-width: 99vw;
+        padding: 14vw 2vw 10vw 2vw;
+    }
+    .doctor-modal-avatar {
+        width: 72px; height: 72px;
+    }
+    .doctor-modal-close {
+        width: 38px; height: 38px; font-size: 1.5rem;
+        top: 8px; right: 8px;
     }
 }

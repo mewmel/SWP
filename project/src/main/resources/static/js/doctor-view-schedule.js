@@ -70,7 +70,7 @@ function renderSchedule() {
             <div class="shift-slot">
                 <label class="shift-label">Ca chiều</label>
                 ${day.isWeekend ?
-                    `<div class="unavailable-slot">
+            `<div class="unavailable-slot">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
                             <line x1="15" y1="9" x2="9" y2="15"/>
@@ -78,7 +78,7 @@ function renderSchedule() {
                         </svg>
                         <span>Không làm việc</span>
                     </div>` :
-                    `<button class="shift-button afternoon view-only ${registeredSlots.includes(day.date+'-afternoon') ? 'selected' : ''}" disabled>
+            `<button class="shift-button afternoon view-only ${registeredSlots.includes(day.date+'-afternoon') ? 'selected' : ''}" disabled>
                         <div class="shift-time">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"/>
@@ -87,7 +87,7 @@ function renderSchedule() {
                             <span>14:00 - 17:00</span>
                         </div>
                     </button>`
-                }
+        }
             </div>
         `;
         scheduleGrid.appendChild(card);
@@ -107,14 +107,155 @@ function updateWeekDisplay() {
     document.getElementById('weekRange').textContent = `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
 }
 
+// Leave Request Modal Management
+function initializeLeaveRequestModal() {
+    const modal = document.getElementById('leaveRequestModal');
+    const requestLeaveBtn = document.getElementById('requestLeaveBtn');
+    const closeBtn = document.querySelector('.close');
+    const cancelBtn = document.getElementById('cancelLeaveBtn');
+    const leaveForm = document.getElementById('leaveRequestForm');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+
+    if (!modal || !requestLeaveBtn) return; // Exit if elements don't exist
+
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    startDateInput.min = today;
+    endDateInput.min = today;
+
+    // Open modal
+    requestLeaveBtn.addEventListener('click', function() {
+        modal.style.display = 'block';
+    });
+
+    // Close modal functions
+    function closeModal() {
+        modal.style.display = 'none';
+        leaveForm.reset();
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Update end date minimum when start date changes
+    startDateInput.addEventListener('change', function() {
+        endDateInput.min = this.value;
+        if (endDateInput.value && endDateInput.value < this.value) {
+            endDateInput.value = this.value;
+        }
+    });
+
+    // Handle form submission
+    leaveForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const leaveData = {
+            type: document.getElementById('leaveType').value,
+            startDate: document.getElementById('startDate').value,
+            endDate: document.getElementById('endDate').value,
+            reason: document.getElementById('reason').value,
+            attachment: document.getElementById('attachment').files[0]
+        };
+
+        // Calculate duration
+        const start = new Date(leaveData.startDate);
+        const end = new Date(leaveData.endDate);
+        const duration = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+        // Validate dates
+        if (start > end) {
+            alert('Ngày kết thúc phải sau ngày bắt đầu!');
+            return;
+        }
+
+        // Simulate API call
+        console.log('Submitting leave request:', leaveData);
+
+        // Show success message
+        alert(`Đăng ký nghỉ phép thành công!\nThời gian: ${duration} ngày\nTrạng thái: Chờ duyệt`);
+
+        // Add new request to the list (simulation)
+        addLeaveRequestToList(leaveData, duration);
+
+        // Close modal
+        closeModal();
+    });
+
+    // Function to add new leave request to the list
+    function addLeaveRequestToList(data, duration) {
+        const leaveList = document.querySelector('.leave-requests-list');
+        if (!leaveList) return;
+
+        const newItem = document.createElement('div');
+        newItem.className = 'leave-request-item pending';
+
+        const startDate = new Date(data.startDate).toLocaleDateString('vi-VN');
+        const endDate = new Date(data.endDate).toLocaleDateString('vi-VN');
+        const today = new Date().toLocaleDateString('vi-VN');
+
+        newItem.innerHTML = `
+            <div class="leave-info">
+                <div class="leave-dates">
+                    <strong>${startDate} - ${endDate}</strong>
+                    <span class="leave-duration">(${duration} ngày)</span>
+                </div>
+                <div class="leave-reason">Lý do: ${data.reason}</div>
+                <div class="leave-submitted">Đăng ký: ${today}</div>
+            </div>
+            <div class="leave-status">
+                <span class="status-badge pending">Chờ duyệt</span>
+            </div>
+        `;
+
+        leaveList.insertBefore(newItem, leaveList.firstChild);
+    }
+
+    // File validation
+    const attachmentInput = document.getElementById('attachment');
+    if (attachmentInput) {
+        attachmentInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    alert('File quá lớn! Vui lòng chọn file nhỏ hơn 5MB.');
+                    this.value = '';
+                }
+            }
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     renderSchedule();
-    document.getElementById('prevWeek').addEventListener('click', () => {
-        currentWeek.setDate(currentWeek.getDate() - 7);
-        renderSchedule();
-    });
-    document.getElementById('nextWeek').addEventListener('click', () => {
-        currentWeek.setDate(currentWeek.getDate() + 7);
-        renderSchedule();
-    });
+
+    // Initialize schedule navigation
+    const prevWeekBtn = document.getElementById('prevWeek');
+    const nextWeekBtn = document.getElementById('nextWeek');
+
+    if (prevWeekBtn) {
+        prevWeekBtn.addEventListener('click', () => {
+            currentWeek.setDate(currentWeek.getDate() - 7);
+            renderSchedule();
+        });
+    }
+
+    if (nextWeekBtn) {
+        nextWeekBtn.addEventListener('click', () => {
+            currentWeek.setDate(currentWeek.getDate() + 7);
+            renderSchedule();
+        });
+    }
+
+    // Initialize leave request modal
+    initializeLeaveRequestModal();
 });

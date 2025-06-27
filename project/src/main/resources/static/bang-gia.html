@@ -3,9 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FertilityEHR bởi Meditab</title>
+    <title>Bảng giá dịch vụ hiếm muộn - FertilityEHR</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dat-lich.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .pricing-table-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 32px 24px;
+        }
+        .pricing-table-title {
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 2rem;
+            color: #1976d2;
+            font-weight: 700;
+        }
+        .pricing-table-desc {
+            text-align: center;
+            color: #607d8b;
+            margin-bottom: 32px;
+        }
+        table.pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+        table.pricing-table th, table.pricing-table td {
+            padding: 14px 10px;
+            border-bottom: 1px solid #e3e3e3;
+            text-align: left;
+        }
+        table.pricing-table th {
+            background: #e3f2fd;
+            color: #1976d2;
+            font-weight: 600;
+        }
+        table.pricing-table tr:last-child td {
+            border-bottom: none;
+        }
+        @media (max-width: 700px) {
+            .pricing-table-container { padding: 12px 2px; }
+            table.pricing-table th, table.pricing-table td { font-size: 0.95rem; padding: 8px 4px; }
+        }
+    </style>
 </head>
 <body>
 <header>
@@ -15,19 +60,19 @@
         </div>
         <nav>
             <ul>
-                <li><a href="index.html#doctor">Đội ngũ bác sĩ</a></li>
+                <li><a href="index.html">Đội ngũ bác sĩ</a></li>
                 <li class="dropdown">
-                    <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
+                    <a href="#">Dịch vụ <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="kham-hiem-muon.html">Khám hiếm muộn/ tiền hôn nhân</a></li>
                         <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
                     </ul>
                 </li>
-                </li>
                 <li><a href="index.html#blog">Blog</a></li>
-                <li><a href="bang-gia.html">Bảng giá</a></li>
+                <li><a href="bang-gia.html" class="active">Bảng giá</a></li>
                 <li><a href="#footer">Liên hệ</a></li>
-                <li><a href="dat-lich.html">Đặt lịch</a></li>
+                <li><a href="dat-lich.html">Đặt lịch khám</a></li>
+
                 <li>
                     <div class="notification-wrapper" style="position: relative; display: none">
                         <button class="notification-icon" id="notificationBtn">
@@ -35,7 +80,7 @@
                             <span class="notification-badge">9</span>
                         </button>
 
-                        <!-- Dropdown Notification -->
+                        <!-- Hiển thị dropdown thông báo -->
                         <div class="notification-dropdown" id="notificationDropdown">
                             <div class="notification-dropdown-header">
                                 <h3>Thông báo</h3>
@@ -113,6 +158,7 @@
                 </li>
             </ul>
         </nav>
+        <!--hiển thị nút Đăng nhập và đăng kí-->
         <div class="auth-buttons">
             <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
             <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
@@ -128,31 +174,20 @@
         </button>
     </div>
 </header>
-
-<!-- SIDEBAR MENU CÁ NHÂN -->
-<aside class="sidebar" id="sidebar" style="display:none;">
-    <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
-    <div class="sidebar-user">
-        <i class="fas fa-user-circle"></i>
-        <span class="sidebar-username"></span>
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Bảng giá<br>Dịch vụ hiếm muộn</h1>
+            <h2>Tham khảo chi phí các dịch vụ hỗ trợ sinh sản, khám và điều trị hiếm muộn tại FertilityEHR</h2>
+            <p>Cam kết minh bạch, rõ ràng, không phát sinh chi phí ẩn. Đội ngũ chuyên gia đồng hành cùng bạn trên hành trình tìm kiếm hạnh phúc.</p>
+        </div>
     </div>
-    <a href="dashboard.html"><i class="fas fa-user"></i> Bệnh án</a>
-    <a href="lich-dieu-tri.html"><i class="fas fa-calendar-check"></i> Lịch điều trị</a>
-    <a href="index.html#blog"><i class="fas fa-book-open"></i> Blog</a>
-    <a href="dat-lich.html"><i class="fas fa-calendar-alt"></i> Đặt lịch</a>
-    <a href="ho-so-ca-nhan.html"><i class="fas fa-cog"></i> Cài đặt</a>
-    <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
-    <a href="bac-si-dashboard.html">Bác sĩ dashboard</a>
-    <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-</aside>
+</section>
 
-<!-- Auth Modal -->
+<!-- Modal trong phần Đăng nhập và Đăng ký -->
 <div class="auth-modal" id="authModal">
     <div class="auth-modal-content">
         <div class="auth-modal-left">
-            <div class="auth-modal-image">
-                <img src="img/hero-image.png" alt="Medical">
-            </div>
             <div class="auth-modal-overlay">
                 <h2>Chào mừng bạn đến với FertilityEHR</h2>
                 <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
@@ -161,7 +196,7 @@
         <div class="auth-modal-right">
             <span class="close-modal">&times;</span>
 
-            <!-- Role Selection Step -->
+            <!-- Bước chọn role -->
             <div class="role-selection" id="roleSelection">
                 <h2>Chọn vai trò của bạn</h2>
                 <p>Vui lòng chọn loại tài khoản để tiếp tục</p>
@@ -183,7 +218,7 @@
                         <div class="role-icon">
                             <i class="fas fa-user-md"></i>
                         </div>
-                        <h3>Bác sĩ</h3>
+                        <h3>Nhân viên</h3>
                         <p>Đội ngũ y tế chuyên khoa</p>
                         <ul>
                             <li>Quản lý bệnh nhân</li>
@@ -368,90 +403,80 @@
         </div>
     </div>
 </div>
-
-
-<section class="hero">
-    <div class="container">
-        <div class="hero-content">
-            <h1>Phương pháp hỗ trợ sinh sản</h1>
-            <h2>Hệ thống điều trị và theo dõi chuyên biệt cho phòng khám hiếm muộn</h2>
-            <p>Giải pháp hiện đại cho các cặp vợ chồng hiếm muộn</p>
-        </div>
-    </div>
-</section>
-
-<div class="container">
-    <!-- Introduction Section -->
-    <section class="introduction">
-        <h2>Các phương pháp hỗ trợ sinh sản</h2>
-        <h4>Trung tâm hỗ trợ sinh sản Hạnh Phúc cung cấp các phương pháp hỗ trợ sinh sản hiện đại, an toàn và hiệu quả. Dưới đây là thông tin về hai phương pháp chính:</h4>
-    </section>
-
-    <!-- Methods Overview -->
-    <section class="methods-overview">
-        <div class="facilities-iui-grid">
-            <div class="facilities-iui-row">
-                <div class="facility-card">
-                    <div class="facility-ivf-image" style="background-image: url('img/ivf-banner.jpg');"></div>
-                    <div class="facility-content">
-                        <h3 class="facility-title">IUI - Bơm tinh trùng vào buồng tử cung</h3>
-                        <p>IUI (Intrauterine Insemination) là phương pháp hỗ trợ sinh sản đơn giản, ít xâm lấn và chi phí thấp hơn so với IVF.</p>
-                        <ul class="feature-list">
-                            <li>Phù hợp với các trường hợp hiếm muộn nhẹ</li>
-                            <li>Thời gian điều trị ngắn</li>
-                            <li>Chi phí hợp lý</li>
-                            <li>Tỷ lệ thành công: 15-20% mỗi chu kỳ</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="facility-card">
-                    <div class="facility-iui-image" style="background-image: url('img/iui-banner.jpg');"></div>
-                    <div class="facility-content">
-                        <h3 class="facility-title">IVF - Thụ tinh ống nghiệm</h3>
-                        <p>IVF (In Vitro Fertilization) là phương pháp hỗ trợ sinh sản tiên tiến nhất hiện nay, được áp dụng cho các trường hợp hiếm muộn phức tạp.</p>
-                        <ul class="feature-list">
-                            <li>Phù hợp với các trường hợp hiếm muộn nặng</li>
-                            <li>Được kiểm soát chặt chẽ trong phòng thí nghiệm</li>
-                            <li>Có thể kết hợp với các kỹ thuật hỗ trợ khác</li>
-                            <li>Tỷ lệ thành công: 40-50% mỗi chu kỳ</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section
-    <section class="cta">
-        <div class="container">
-            <h2>Sẵn sàng hành trình làm cha mẹ cùng chúng tôi chứ ?</h2>
-            <p>Tham gia cùng hàng trăm phòng khám hiếm muộn đang tin tưởng FertilityEHR</p>
-            <div class="cta-buttons">
-                <a href="dat-lich.html" class="btn-secondary">Đặt lịch khám ngay</a>
-            </div>
-        </div>
-    </section> -->
-</div>
-
 <!-- Social sidebar fixed bên phải -->
 <div class="social-sidebar">
     <a href="#"><i class="fab fa-facebook-f"></i></a>
     <a href="#"><i class="fab fa-instagram"></i></a>
     <a href="#"><i class="fas fa-envelope"></i></a>
 </div>
-
-<!-- CTA Section -->
-<section class="cta">
-    <div class="container">
-        <h2>Sẵn sàng hành trình làm cha mẹ cùng chúng tôi chứ ?</h2>
-        <p>Tham gia cùng hàng trăm phòng khám hiếm muộn đang tin tưởng FertilityEHR</p>
-        <div class="cta-buttons">
-            <a href="dat-lich.html" class="btn-secondary">Đặt lịch khám ngay</a>
-        </div>
+<main>
+    <div class="pricing-table-container">
+        <div class="pricing-table-title">Bảng giá dịch vụ hiếm muộn</div>
+        <div class="pricing-table-desc">Tham khảo chi phí các dịch vụ hỗ trợ sinh sản, khám và điều trị hiếm muộn tại phòng khám FertilityEHR.</div>
+        <table class="pricing-table">
+            <thead>
+            <tr>
+                <th>Tên dịch vụ</th>
+                <th>Danh mục</th>
+                <th>Thời gian</th>
+                <th>Giá (VNĐ)</th>
+                <th>Mô tả</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Tư vấn hiếm muộn</td>
+                <td>Tư vấn</td>
+                <td>30 phút</td>
+                <td>300.000</td>
+                <td>Khám, tư vấn nguyên nhân và hướng điều trị hiếm muộn.</td>
+            </tr>
+            <tr>
+                <td>Khám tiền hôn nhân</td>
+                <td>Khám</td>
+                <td>40 phút</td>
+                <td>500.000</td>
+                <td>Khám tổng quát, xét nghiệm cơ bản cho cặp đôi chuẩn bị kết hôn.</td>
+            </tr>
+            <tr>
+                <td>Thụ tinh trong ống nghiệm (IVF)</td>
+                <td>IVF</td>
+                <td>120 phút</td>
+                <td>60.000.000</td>
+                <td>Quy trình hỗ trợ sinh sản hiện đại, tỷ lệ thành công cao.</td>
+            </tr>
+            <tr>
+                <td>Thụ tinh nhân tạo (IUI)</td>
+                <td>IUI</td>
+                <td>60 phút</td>
+                <td>10.000.000</td>
+                <td>Phương pháp bơm tinh trùng vào buồng tử cung hỗ trợ thụ thai.</td>
+            </tr>
+            <tr>
+                <td>Xét nghiệm nội tiết sinh sản</td>
+                <td>Xét nghiệm</td>
+                <td>20 phút</td>
+                <td>800.000</td>
+                <td>Đánh giá hormone sinh sản, hỗ trợ chẩn đoán hiếm muộn.</td>
+            </tr>
+            <tr>
+                <td>Siêu âm chuyên khoa</td>
+                <td>Chuyên khoa</td>
+                <td>20 phút</td>
+                <td>400.000</td>
+                <td>Siêu âm tử cung, buồng trứng, đánh giá khả năng sinh sản.</td>
+            </tr>
+            <tr>
+                <td>Điều trị nội tiết</td>
+                <td>Điều trị</td>
+                <td>30 phút</td>
+                <td>1.200.000</td>
+                <td>Điều chỉnh nội tiết tố, hỗ trợ quá trình thụ thai.</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-</section>
-
+</main>
 <footer id="footer">
     <div class="container">
         <div class="footer-columns">
@@ -486,7 +511,6 @@
         </div>
     </div>
 </footer>
-
 <script src="js/script.js"></script>
 </body>
 </html>
