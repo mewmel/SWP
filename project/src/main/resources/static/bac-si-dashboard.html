@@ -207,7 +207,7 @@
                                 <div class="record-section">
                                     <label>Ghi chú lịch hẹn:</label>
                                     <textarea id="bookingNote" rows="2"
-                                        placeholder="Ghi chú về lịch hẹn...">Bệnh nhân đến đúng giờ hẹn</textarea>
+                                        placeholder="Ghi chú về lịch hẹn..."></textarea>
                                 </div>
                             </div>
 
@@ -238,10 +238,7 @@
                                 <div class="record-section">
                                     <label>Kế hoạch điều trị:</label>
                                     <textarea id="treatmentPlan" rows="4" placeholder="Mô tả kế hoạch điều trị...">1. Kích thích buồng trứng bằng thuốc FSH
-2. Theo dõi nang noãn bằng siêu âm
-3. Chọc hút trứng khi đủ tiêu chuẩn
-4. Thụ tinh trong ống nghiệm
-5. Chuyển phôi vào tử cung</textarea>
+</textarea>
                                 </div>
 
                                 <div class="record-section">
@@ -252,7 +249,7 @@
                                 <div class="record-section">
                                     <label>Ghi chú hồ sơ:</label>
                                     <textarea id="medicalNote" rows="3"
-                                        placeholder="Ghi chú chung về hồ sơ...">Bệnh nhân hợp tác tốt, tuân thủ điều trị đầy đủ</textarea>
+                                        placeholder="Ghi chú chung về hồ sơ..."></textarea>
                                 </div>
                             </div>
 
@@ -267,15 +264,6 @@
                                     <select id="serviceSelect" class="service-dropdown">
                                         <option value="">-- Chọn dịch vụ --</option>
                                         <option value="clinical-exam">Khám lâm sàng tổng quát</option>
-                                        <option value="blood-test">Xét nghiệm máu</option>
-                                        <option value="hormone-test">Xét nghiệm nội tiết tố</option>
-                                        <option value="ultrasound">Siêu âm</option>
-                                        <option value="egg-retrieval">Chọc hút trứng</option>
-                                        <option value="embryo-transfer">Chuyển phôi</option>
-                                        <option value="pregnancy-test">Xét nghiệm thai</option>
-                                        <option value="consultation">Tư vấn và theo dõi</option>
-                                        <option value="medication">Kê đơn thuốc</option>
-                                        <option value="follow-up">Tái khám</option>
                                     </select>
                                 </div>
                             </div>
@@ -395,13 +383,12 @@
                     <!-- Medical History Tab -->
                 <div id="historyTab" class="tab-content">
                     <div class="history-list">
-                        <h4><i class="fas fa-history"></i> Lịch sử bệnh án</h4>
-                        
+                        <h4><i class="fas fa-history"></i> Lịch sử bệnh án</h4>                       
                         <!-- Medical Record 1 -->
                         <div class="history-item">
                             <div class="history-header">
-                                <div class="history-date">20/06/2024</div>
-                                <div class="history-status active">Đang điều trị</div>
+                                <div class="history-date"></div>
+                                <div class="history-status active"></div>
                             </div>
                             <div class="history-content">
                                 <div class="history-info">
@@ -410,35 +397,12 @@
                                     <p><strong>Bác sĩ điều trị:</strong> BS. Nguyễn Ngọc Khánh Linh</p>
                                 </div>
                                 <div class="history-details">
-                                    <p><strong>Chẩn đoán:</strong> Vô sinh nguyên phát, chuẩn bị điều trị IVF chu kỳ 1</p>
-                                    <p><strong>Kế hoạch điều trị:</strong> Kích thích buồng trứng, theo dõi nang noãn, chọc hút trứng, thụ tinh trong ống nghiệm</p>
-                                    <p><strong>Ngày dự kiến kết thúc:</strong> 24/07/2024</p>
+                                    <p><strong>Chẩn đoán:</strong></p>
+                                    <p><strong>Kế hoạch điều trị:</strong></p>
+                                    <p><strong>Ngày dự kiến kết thúc:</strong></p>
                                 </div>
                                 <div class="history-notes">
-                                    <p><strong>Ghi chú:</strong> Bệnh nhân hợp tác tốt, tuân thủ điều trị đầy đủ</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Medical Record 2 -->
-                        <div class="history-item">
-                            <div class="history-header">
-                                <div class="history-date">15/06/2024</div>
-                                <div class="history-status closed">Đã kết thúc</div>
-                            </div>
-                            <div class="history-content">
-                                <div class="history-info">
-                                    <p><strong>Mã hồ sơ:</strong> MR001</p>
-                                    <p><strong>Dịch vụ:</strong> Khám tiền đăng ký điều trị (IVF/IUI)</p>
-                                    <p><strong>Bác sĩ điều trị:</strong> BS. Nguyễn Ngọc Khánh Linh</p>
-                                </div>
-                                <div class="history-details">
-                                    <p><strong>Chẩn đoán:</strong> Vô sinh nguyên phát</p>
-                                    <p><strong>Kế hoạch điều trị:</strong> Khám tổng quát, xét nghiệm hormone, siêu âm tử cung buồng trứng</p>
-                                    <p><strong>Ngày kết thúc:</strong> 18/06/2024</p>
-                                </div>
-                                <div class="history-notes">
-                                    <p><strong>Ghi chú:</strong> Hoàn thành đầy đủ các xét nghiệm. Bệnh nhân đủ điều kiện điều trị IVF</p>
+                                    <p><strong>Ghi chú:</strong></p>
                                 </div>
                             </div>
                         </div>
@@ -956,7 +920,6 @@
                                 </div>
                             </div>
                         </div>
-
                            <!-- Add New Test Button -->
                         <div class="add-new-test-section">
                             <button type="button" class="add-test-item-btn" onclick="window.addNewTestItem()">
@@ -974,18 +937,16 @@
                                     <span>Tất cả xét nghiệm đều bình thường</span>
                                 </div>
                                 <div class="summary-recommendation">
-                                    <strong>Kết luận:</strong> Bệnh nhân đủ điều kiện để tiến hành điều trị IVF. 
-                                    Dự báo thành công tích cực dựa trên các chỉ số xét nghiệm.
+                                    <strong>Kết luận:</strong>
                                 </div>
                                 <div class="next-step">
-                                    <strong>Bước tiếp theo:</strong> Bắt đầu kích thích buồng trứng theo phác đồ được thiết lập.
+                                    <strong>Bước tiếp theo:</strong>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
+            </div>            
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="window.closeModal()">
                     <i class="fas fa-times"></i> Đóng
@@ -1025,39 +986,12 @@
                         </thead>
                         <tbody id="patientTableBody">
                         <tr>
-                            <td>Nguyễn Thị Mai</td>
-                            <td>28</td>
-                            <td>0123456789</td>
-                            <td>22/06/2024</td>
-                            <td>
-                                <button class="btn-small" onclick="window.editPatientFromList('mai')">Sửa bệnh án</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Trần Văn An</td>
-                            <td>35</td>
-                            <td>0987654321</td>
-                            <td>20/06/2024</td>
-                            <td>
-                                <button class="btn-small" onclick="window.editPatientFromList('an')">Sửa bệnh án</button>
-                            </td>
-                        </tr>
-                        <tr>
                             <td>Phạm Thị Hoa</td>
                             <td>30</td>
                             <td>0456789123</td>
                             <td>24/06/2024</td>
                             <td>
                                 <button class="btn-small" onclick="window.editPatientFromList('hoa')">Sửa bệnh án</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Lê Thị Lan</td>
-                            <td>33</td>
-                            <td>0789123456</td>
-                            <td>18/06/2024</td>
-                            <td>
-                                <button class="btn-small" onclick="window.editPatientFromList('lan')">Sửa bệnh án</button>
                             </td>
                         </tr>
                         </tbody>
