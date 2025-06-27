@@ -309,11 +309,7 @@ function renderPatientsTable() {
                     ${patient.lastVisit ? `<div style="font-size: 12px; color: #64748b; margin-top: 2px;">Khám cuối: ${formatDate(patient.lastVisit)}</div>` : ''}
                 </div>
             </td>
-            <td>
-                <span class="status-badge ${patient.status}">
-                    ${patient.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
-                </span>
-            </td>
+            
             <td>
                 <div class="action-buttons">
                     <button class="action-btn view" onclick="viewPatient('${patient.id}')" title="Xem chi tiết">
@@ -384,20 +380,16 @@ function openPatientModal(patientId = null) {
     if (currentEditingPatient) {
         title.textContent = 'Chỉnh sửa bệnh nhân';
         submitBtn.textContent = 'Cập nhật';
-        
         // Fill form with patient data
         document.getElementById('patientName').value = currentEditingPatient.name;
         document.getElementById('patientEmail').value = currentEditingPatient.email;
         document.getElementById('patientPhone').value = currentEditingPatient.phone;
-        document.getElementById('patientStatus').value = currentEditingPatient.status;
+        // Đã xóa trường trạng thái, không set patientStatus nữa
         document.getElementById('patientHasService').checked = currentEditingPatient.hasService;
     } else {
         title.textContent = 'Thêm bệnh nhân mới';
         submitBtn.textContent = 'Thêm mới';
         
-        // Clear form
-        document.getElementById('patientForm').reset();
-        document.getElementById('patientStatus').value = 'active';
     }
     
     modal.classList.add('show');
