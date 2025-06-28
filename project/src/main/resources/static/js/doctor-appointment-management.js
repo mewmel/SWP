@@ -150,8 +150,7 @@ async function showBookingDetail(bookId) {
 
 
         document.getElementById('detailAppointmentDate').textContent = formatDate(booking.bookDate);
-        document.getElementById('detailAppointmentTime').textContent = booking.bookTime;
-        document.getElementById('detailService').textContent = `Service ID: ${booking.serviceId || 'N/A'}`;
+        document.getElementById('detailService').textContent = `Service ID: ${booking.serId || 'N/A'}`;
 
         const statusElement = document.getElementById('detailStatus');
         statusElement.textContent = getStatusText(booking.bookStatus);
@@ -194,6 +193,8 @@ async function confirmBooking() {
         // 2. Sau khi xác nhận thành công, mới tạo booking step
         await createBookingStep(currentBookId);
 
+        await createMedicalRecord(booking.cusId, booking.docId, booking.serId);
+
         showSuccess('Đã xác nhận booking và tạo bước điều trị thành công!');
         closeDetailModal();
         loadBookings();
@@ -219,6 +220,31 @@ async function createBookingStep(bookId) {
         console.error('Error creating booking step:', error);
     }
 }
+
+// Tạo hồ sơ bệnh án bằng API riêng (gọi sau khi xác nhận booking)
+
+
+async function createMedicalRecord(cusId, docId, serId) {
+    try {
+        const resp = await fetch(`/api/medical-records/create/${serId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cusId,
+                docId,
+                serId,
+                recordStatus: 'closed'
+            })
+        });
+        if (!resp.ok) {
+            const msg = await resp.text();
+            throw new Error(msg || 'Không tạo được hồ sơ bệnh án');
+        }
+    } catch (error) {
+        console.error('Error creating medical record:', error);
+    }
+}
+
 
 
 // Quick actions
@@ -260,7 +286,7 @@ function filterBookings() {
 
     if (dateFilter) {
         filtered = filtered.filter(booking => {
-            const bookingDate = new Date(booking.creatAt).toISOString().split('T')[0];
+            const bookingDate = new Date(booking.createdAt).toISOString().split('T')[0];
             return bookingDate === dateFilter;
         });
     }

@@ -1,6 +1,5 @@
 package com.example.project.controller;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -88,7 +87,7 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) 
     // 2. Lấy booking hiện tại (ví dụ lấy booking có status = 'confirmed' hoặc 'ongoing', mới nhất)//sửa lại thành ongoing
     Booking booking = bookingRepository
         .findLatestBooking(
-            cusId, Arrays.asList("confirmed", "ongoing")
+            cusId, Arrays.asList("confirmed")
         )
         .orElse(null);
 

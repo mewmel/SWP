@@ -32,8 +32,8 @@ public class BookingStepController {
 
     // Trả về danh sách BookingStep kèm tên bước cho 1 bookingId
     @GetMapping("/by-booking/{bookingId}")
-    public List<Map<String, Object>> getStepsByBooking(@PathVariable Integer bookingId) {
-        List<BookingStep> steps = bookingStepRepo.findByBookId(bookingId);
+    public List<Map<String, Object>> getStepsByBooking(@PathVariable Integer bookId) {
+        List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
         List<Map<String, Object>> result = new ArrayList<>();
         for (BookingStep step : steps) {
             SubService sub = subServiceRepo.findById(step.getSubId()).orElse(null);
@@ -65,12 +65,12 @@ public class BookingStepController {
 
 
     // Endpoint tạo BookingStep cho booking đã xác nhận
-    @PostMapping("/create/{bookingId}")
-    public Map<String, Object> createStepForBooking(@PathVariable Integer bookingId) {
-        bookingStepService.createStepForConfirmedBooking(bookingId);
+    @PostMapping("/create/{bookId}")
+    public Map<String, Object> createStepForBooking(@PathVariable Integer bookId) {
+        bookingStepService.createStepForConfirmedBooking(bookId);
         Map<String, Object> resp = new HashMap<>();
         resp.put("status", "success");
-        resp.put("message", "Đã tạo bước điều trị cho booking " + bookingId);
+        resp.put("message", "Đã tạo bước điều trị cho booking " + bookId);
         return resp;
     }
 

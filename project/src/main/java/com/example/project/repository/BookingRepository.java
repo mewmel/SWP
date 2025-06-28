@@ -36,7 +36,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
   FROM Booking b 
   WHERE b.cusId = :cusId 
     AND b.bookStatus IN :bookStatus 
-  ORDER BY b.createdAt DESC
+  ORDER BY b.bookId DESC
 """)
 Optional<Booking> findLatestBooking(
   @Param("cusId") Integer cusId,

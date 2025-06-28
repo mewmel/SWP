@@ -1,0 +1,343 @@
+/* ========== Booking Loading Overlay ========== */
+.booking-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.booking-loading-overlay.show {
+    display: flex;
+}
+
+.booking-loading-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: scaleIn 0.4s ease-out;
+}
+
+/* ========== Loading State ========== */
+.booking-loading-content {
+    display: block;
+}
+
+.loading-icon {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #e3f2fd;
+    border-top: 4px solid #4A90E2;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    animation: spin 1s linear infinite;
+}
+
+.loading-icon i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #4A90E2;
+    margin-top: -10px;
+}
+
+.loading-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.loading-message {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+.loading-progress {
+    margin-top: 30px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #e3f2fd;
+    border-radius: 3px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4A90E2, #2196f3);
+    border-radius: 3px;
+    width: 0%;
+    animation: progressFill 3s ease-in-out infinite;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.progress-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.4;
+    transition: all 0.3s ease;
+}
+
+.progress-step.active {
+    opacity: 1;
+}
+
+.progress-step.completed {
+    opacity: 1;
+    color: #4CAF50;
+}
+
+.progress-step i {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e3f2fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #4A90E2;
+    transition: all 0.3s ease;
+}
+
+.progress-step.active i {
+    background: #4A90E2;
+    color: white;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.progress-step.completed i {
+    background: #4CAF50;
+    color: white;
+}
+
+.progress-step span {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+
+/* ========== Success State ========== */
+.booking-success-content {
+    display: none;
+}
+
+.success-icon i {
+    font-size: 60px;
+    color: #4CAF50;
+    margin-bottom: 20px;
+    animation: successBounce 0.6s ease-out;
+}
+
+.success-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #4CAF50;
+    margin-bottom: 15px;
+}
+
+.success-message {
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.success-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ========== Error State ========== */
+.booking-error-content {
+    display: none;
+}
+
+.error-icon i {
+    font-size: 60px;
+    color: #f44336;
+    margin-bottom: 20px;
+    animation: errorShake 0.6s ease-out;
+}
+
+.error-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #f44336;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.error-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ========== Action Buttons ========== */
+.success-actions .btn-primary,
+.success-actions .btn-secondary,
+.error-actions .btn-primary,
+.error-actions .btn-secondary {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.success-actions .btn-primary,
+.error-actions .btn-primary {
+    background: #4A90E2;
+    color: white;
+}
+
+.success-actions .btn-primary:hover,
+.error-actions .btn-primary:hover {
+    background: #357abd;
+    transform: translateY(-2px);
+}
+
+.success-actions .btn-secondary,
+.error-actions .btn-secondary {
+    background: #f8f9fa;
+    color: #666;
+    border: 2px solid #e3e8ed;
+}
+
+.success-actions .btn-secondary:hover,
+.error-actions .btn-secondary:hover {
+    background: #e3e8ed;
+    transform: translateY(-2px);
+}
+
+/* ========== Animations ========== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes progressFill {
+    0% { width: 0%; }
+    33% { width: 33%; }
+    66% { width: 66%; }
+    100% { width: 100%; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes successBounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+    .booking-loading-container {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+
+    .loading-title, .success-title, .error-title {
+        font-size: 22px;
+    }
+
+    .loading-message, .success-message, .error-message {
+        font-size: 14px;
+    }
+
+    .progress-steps {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .progress-step {
+        flex-direction: row;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .success-actions, .error-actions {
+        flex-direction: column;
+    }
+
+    .success-actions .btn-primary,
+    .success-actions .btn-secondary,
+    .error-actions .btn-primary,
+    .error-actions .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+} 
