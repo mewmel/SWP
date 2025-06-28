@@ -67,8 +67,8 @@ public class BookingStepService {
             step.setSubId(sub.getSubId());
             step.setPerformedAt(performedAt);
             // result, note, drugId để null
-            // Set stepStatus mặc định là "Inactive" đúng với DB
-            step.setStepStatus("Inactive");
+            // Set stepStatus mặc định là "inactive" đúng với DB
+            step.setStepStatus("inactive");
 
             bookingStepRepo.save(step);
         }

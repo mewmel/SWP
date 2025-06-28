@@ -15,13 +15,13 @@ import com.example.project.entity.Booking;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
-    List<Booking> findByCusIdOrderByCreatedAt(Integer cusId);
+    List<Booking> findByCusIdOrderByBookIdDesc(Integer cusId);
 
     // Lấy booking theo bác sĩ, sắp xếp theo ngày và giờ
     List<Booking> findByDocIdOrderByCreatedAt(Integer docId);
 
     // Lấy booking theo bác sĩ và trạng thái
-    List<Booking> findByDocIdAndBookStatusOrderByCreatedAt(Integer docId, String bookStatus);
+    List<Booking> findByDocIdAndBookStatusOrderByBookId(Integer docId, String bookStatus);
 
     // Lấy booking theo bác sĩ và ngày
     List<Booking> findByDocIdAndCreatedAt(Integer docId, LocalDate createdAt);
@@ -53,8 +53,6 @@ Optional<Booking> findLatestBooking(
                 @Param("status") String status,
                 @Param("today") LocalDate today
 );
-    List<Booking> findByCusIdOrderByCreatedAtDesc(Integer cusId);
-
-
+    List<Booking> findByCusIdOrderByBookIdAsc(Integer cusId);
 
 }
