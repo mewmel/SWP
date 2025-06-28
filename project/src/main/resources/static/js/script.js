@@ -29,69 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 100);
     }
 
-    // // ========== ĐĂNG NHẬP ==========
-    // document.getElementById('loginForm').addEventListener('submit', function (e) {
-    //     e.preventDefault();
-    //     const submitBtn = this.querySelector('button[type="submit"]');
-    //     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
-    //     submitBtn.disabled = true;
-
-    //     const cusEmail = document.getElementById('loginEmail').value;
-    //     const cusPassword = document.getElementById('loginPassword').value;
-
-    //     fetch('/api/auth/login', {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify({ cusEmail, cusPassword })
-    //     })
-    //         .then(async response => {
-    //             if (!response.ok) {
-    //                 const errText = await response.text();
-    //                 throw new Error(errText || 'Đăng nhập thất bại');
-    //             }
-    //             return response.json();
-    //         })
-    //         .then(data => {
-    //             // Lưu tất cả trường từ data vào localStorage
-    //             if (data && typeof data === 'object') {
-    //                 Object.keys(data).forEach(key => {
-    //                     if (data[key] !== undefined && data[key] !== null) {
-    //                         localStorage.setItem(key, data[key]);
-    //                     }
-    //                 });
-    //             }
-
-    //             // Hiển thị giao diện đã đăng nhập
-    //             if (authButtons) authButtons.style.display = 'none';
-    //             if (userMenu) userMenu.style.display = 'flex';
-    //             if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-    //             if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
-    //             if (notificationWrapper) notificationWrapper.style.display = 'block';
-    //             showNotification('Đăng nhập thành công!', 'success');
-    //             const closeModal = document.querySelector('.close-modal');
-    //             if (closeModal) closeModal.click();
-
-    //             // Lưu role vào localStorage nếu có
-    //             if (typeof selectedRole !== 'undefined' && selectedRole) {
-    //                 localStorage.setItem('userRole', selectedRole);
-    //             }
-
-    //             window.location.href = "dashboard.html";
-    //         })
-    //         .catch((err) => {
-    //             showNotification(
-    //                 (err.message && err.message.startsWith('Invalid'))
-    //                     ? err.message
-    //                     : 'Email hoặc mật khẩu không đúng hoặc tài khoản chưa kích hoạt!',
-    //                 'error'
-    //             );
-    //         })
-    //         .finally(() => {
-    //             submitBtn.innerHTML = '<span>Đăng nhập</span><i class="fas fa-arrow-right"></i>';
-    //             submitBtn.disabled = false;
-    //         });
-    // });
-
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', function (e) {
@@ -1389,4 +1326,106 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // ============= Xem chi tiết bác sĩ =============
+    (function() {
+        function createDoctorDetailModal() {
+            if (!document.getElementById('doctorDetailModal')) {
+                const modal = document.createElement('div');
+                modal.id = 'doctorDetailModal';
+                modal.className = 'modal doctor-modal';
+                modal.innerHTML = `
+                    <div class="modal-content doctor-modal-content">
+                        <button class="doctor-modal-close" onclick="closeDoctorDetailModal()" aria-label="Đóng"><i class="fas fa-times"></i></button>
+                        <div id="doctorDetailContent"></div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+        }
+        window.closeDoctorDetailModal = function() {
+            document.getElementById('doctorDetailModal').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        function attachDoctorDetailEvents() {
+            document.querySelectorAll('.doctor-profile').forEach(btn => {
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    const card = btn.closest('.doctor-card');
+                    if (!card) return;
+                    const name = card.querySelector('h3')?.textContent.trim() || '';
+                    const imgSrc = card.querySelector('img')?.getAttribute('src') || 'img/doctor1.png';
+                    const title = card.querySelector('.doctor-title')?.textContent || '';
+                    const specialty = card.querySelector('.doctor-specialty')?.textContent || '';
+                    const doctorData = {
+                        'Bác sĩ Trương Quốc Lập': {
+                            degree: 'Bác sĩ Chuyên khoa I Sản Phụ khoa',
+                            profileDescription: 'Bác sĩ Trương Quốc Lập có 8 năm kinh nghiệm trong lĩnh vực IUI, đã hỗ trợ thành công nhiều cặp vợ chồng trên toàn quốc.'
+                        },
+                        'Bác sĩ Nguyễn N. Kh. Linh': {
+                            degree: 'Tiến sĩ Sản Phụ khoa',
+                            profileDescription: 'Tiến sĩ Nguyễn Ngọc Khánh Linh là chuyên gia về kiểm soát chất lượng phôi và thụ tinh trong ống nghiệm, với hơn 12 năm công tác tại các trung tâm sinh sản hàng đầu.'
+                        },
+                        'Bác sĩ Tất Vĩnh Hùng': {
+                            degree: 'Thạc sĩ Sản Phụ khoa',
+                            profileDescription: 'Bác sĩ Tất Vĩnh Hùng có hơn 10 năm kinh nghiệm điều trị vô sinh – hiếm muộn, chuyên sâu về IVF tại các trung tâm hàng đầu.'
+                        },
+                        'Bác sĩ Phạm Thị Hồng Anh': {
+                            degree: 'Bác sĩ Chuyên khoa II Sản Phụ khoa',
+                            profileDescription: 'Bác sĩ Phạm Thị Hồng Anh là chuyên gia về thụ tinh trong ống nghiệm và hỗ trợ sinh sản, với 7 năm kinh nghiệm tại các trung tâm hỗ trợ sinh sản uy tín.'
+                        },
+                        'Bác sĩ Lê Minh Đức': {
+                            degree: 'Thạc sĩ Sản Phụ khoa',
+                            profileDescription: 'Bác sĩ Lê Minh Đức chuyên sâu về điều trị vô sinh – hiếm muộn và hỗ trợ sinh sản, với 5 năm kinh nghiệm làm việc tại các bệnh viện đầu ngành.'
+                        },
+                        'Bác sĩ Trần Thị Tú': {
+                            degree: 'Tiến sĩ Sinh học Phôi',
+                            profileDescription: 'Bác sĩ Trần Thị Tú là chuyên gia về kiểm soát chất lượng phôi và thụ tinh trong ống nghiệm, với hơn 8 năm kinh nghiệm tại các trung tâm hàng đầu.'
+                        }
+                    };
+                    const info = doctorData[name] || { degree: 'Đang cập nhật', profileDescription: 'Đang cập nhật...' };
+                    document.getElementById('doctorDetailContent').innerHTML = `
+                        <img class="doctor-modal-avatar" src="${imgSrc}" alt="${name}">
+                        <div class="doctor-modal-name">${name}</div>
+                        <div class="doctor-modal-title"><i class="fas fa-user-md"></i> ${title}</div>
+                        <div class="doctor-modal-specialty"><i class="fas fa-stethoscope"></i> ${specialty}</div>
+                        <div class="doctor-modal-degree"><i class="fas fa-graduation-cap"></i> ${info.degree}</div>
+                        <div class="doctor-modal-profile"><i class="fas fa-info-circle"></i> ${info.profileDescription}</div>
+                    `;
+                    document.getElementById('doctorDetailModal').classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        }
+        function initDoctorModalFeature() {
+            createDoctorDetailModal();
+            attachDoctorDetailEvents();
+
+            // Đóng popup khi bấm ra ngoài modal-content
+            const modal = document.getElementById('doctorDetailModal');
+            if (modal) {
+                modal.addEventListener('mousedown', function(e) {
+                    if (e.target === modal) {
+                        closeDoctorDetailModal();
+                    }
+                });
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDoctorModalFeature);
+        } else {
+            initDoctorModalFeature();
+        }
+    })();
+
+    // ======= BLOG: Chuyển sang trang chi tiết khi bấm Đọc thêm =======
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.read-more').forEach(function(btn, idx) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Mặc định demo: id bài viết là idx+1 (nếu bạn có id thực tế thì lấy từ data)
+                window.location.href = 'blog-detail.html?id=' + (idx+1);
+            });
+        });
+    });
 });

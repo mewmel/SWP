@@ -53,6 +53,7 @@ Optional<Booking> findLatestBooking(
                 @Param("status") String status,
                 @Param("today") LocalDate today
 );
+    List<Booking> findByCusIdOrderByCreatedAtDesc(Integer cusId);
 
 
 

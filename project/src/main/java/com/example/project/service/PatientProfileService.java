@@ -34,7 +34,7 @@ public class PatientProfileService {
     private SubServiceRepository subServiceRepository;
 
     public PatientProfileDto getPatientProfile(Integer cusId) {
-        List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAt(cusId);
+        List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAtDesc(cusId);
         if (bookings.isEmpty()) throw new RuntimeException("Không có booking nào!");
 
         Booking latestBooking = bookings.get(0);
@@ -65,7 +65,7 @@ public class PatientProfileService {
     }
 
     public PatientDashboardDto getPatientDashboard(Integer cusId) {
-        List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAt(cusId);
+        List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAtDesc(cusId);
         if (bookings.isEmpty()) {
             return new PatientDashboardDto(null, null, null, null);
         }

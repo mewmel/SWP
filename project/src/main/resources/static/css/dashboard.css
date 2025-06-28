@@ -453,7 +453,7 @@
 
 .day-events {
     display: flex;
-        justify-content: center;
+    justify-content: center;
     align-items: center;
     min-height: 18px;
     margin-bottom: 2px;

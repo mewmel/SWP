@@ -180,7 +180,7 @@ function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     const icon = toast.querySelector('.toast-icon');
     const messageEl = toast.querySelector('.toast-message');
-    
+
     // Set icon based on type
     const icons = {
         success: 'fas fa-check-circle',
@@ -188,11 +188,11 @@ function showToast(message, type = 'success') {
         warning: 'fas fa-exclamation-triangle',
         info: 'fas fa-info-circle'
     };
-    
+
     icon.className = `toast-icon ${icons[type]}`;
     messageEl.textContent = message;
     toast.className = `toast ${type} show`;
-    
+
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
@@ -202,25 +202,25 @@ function showToast(message, type = 'success') {
 function initNavigation() {
     const navItems = document.querySelectorAll('.nav-item');
     const tabContents = document.querySelectorAll('.tab-content');
-    
+
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const tabId = item.getAttribute('data-tab');
-            
+
             // Update active nav item
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
-            
+
             // Update active tab content
             tabContents.forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            
+
             // Load tab-specific content
             loadTabContent(tabId);
         });
     });
-    
+
     // Load initial content
     loadTabContent('dashboard');
 }
@@ -250,7 +250,7 @@ function loadDashboard() {
 function loadSchedule() {
     const scheduleList = document.getElementById('scheduleList');
     if (!scheduleList) return;
-    
+
     scheduleList.innerHTML = mockAppointments.map(appointment => `
         <div class="schedule-item ${appointment.status}">
             <div class="schedule-info">
@@ -262,7 +262,7 @@ function loadSchedule() {
             </div>
             <div class="schedule-status ${appointment.status}">
                 ${appointment.status === 'completed' ? 'Hoàn thành' :
-                  appointment.status === 'cancelled' ? 'Đã hủy' : 'Đã lên lịch'}
+        appointment.status === 'cancelled' ? 'Đã hủy' : 'Đã lên lịch'}
             </div>
         </div>
     `).join('');
@@ -278,7 +278,7 @@ function loadPatients() {
 function renderPatientsTable() {
     const tbody = document.getElementById('patientsTableBody');
     if (!tbody) return;
-    
+
     tbody.innerHTML = filteredPatients.map(patient => `
         <tr>
             <td>
@@ -309,11 +309,7 @@ function renderPatientsTable() {
                     ${patient.lastVisit ? `<div style="font-size: 12px; color: #64748b; margin-top: 2px;">Khám cuối: ${formatDate(patient.lastVisit)}</div>` : ''}
                 </div>
             </td>
-            <td>
-                <span class="status-badge ${patient.status}">
-                    ${patient.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
-                </span>
-            </td>
+            
             <td>
                 <div class="action-buttons">
                     <button class="action-btn view" onclick="viewPatient('${patient.id}')" title="Xem chi tiết">
@@ -342,7 +338,7 @@ function initPatientFilters() {
     const searchInput = document.getElementById('patientSearch');
     const statusFilter = document.getElementById('statusFilter');
     const serviceFilter = document.getElementById('serviceFilter');
-    
+
     if (searchInput) {
         searchInput.addEventListener('input', filterPatients);
     }
@@ -358,18 +354,18 @@ function filterPatients() {
     const searchTerm = document.getElementById('patientSearch')?.value.toLowerCase() || '';
     const statusFilter = document.getElementById('statusFilter')?.value || 'all';
     const serviceFilter = document.getElementById('serviceFilter')?.value || 'all';
-    
+
     filteredPatients = patients.filter(patient => {
         const matchesSearch = patient.name.toLowerCase().includes(searchTerm) ||
-                             patient.email.toLowerCase().includes(searchTerm);
+            patient.email.toLowerCase().includes(searchTerm);
         const matchesStatus = statusFilter === 'all' || patient.status === statusFilter;
         const matchesService = serviceFilter === 'all' ||
-                              (serviceFilter === 'withService' && patient.hasService) ||
-                              (serviceFilter === 'withoutService' && !patient.hasService);
-        
+            (serviceFilter === 'withService' && patient.hasService) ||
+            (serviceFilter === 'withoutService' && !patient.hasService);
+
         return matchesSearch && matchesStatus && matchesService;
     });
-    
+
     renderPatientsTable();
     updatePatientsSummary();
 }
@@ -378,28 +374,24 @@ function openPatientModal(patientId = null) {
     const modal = document.getElementById('patientModal');
     const title = document.getElementById('patientModalTitle');
     const submitBtn = document.getElementById('patientSubmitBtn');
-    
+
     currentEditingPatient = patientId ? patients.find(p => p.id === patientId) : null;
-    
+
     if (currentEditingPatient) {
         title.textContent = 'Chỉnh sửa bệnh nhân';
         submitBtn.textContent = 'Cập nhật';
-        
         // Fill form with patient data
         document.getElementById('patientName').value = currentEditingPatient.name;
         document.getElementById('patientEmail').value = currentEditingPatient.email;
         document.getElementById('patientPhone').value = currentEditingPatient.phone;
-        document.getElementById('patientStatus').value = currentEditingPatient.status;
+        // Đã xóa trường trạng thái, không set patientStatus nữa
         document.getElementById('patientHasService').checked = currentEditingPatient.hasService;
     } else {
         title.textContent = 'Thêm bệnh nhân mới';
         submitBtn.textContent = 'Thêm mới';
-        
-        // Clear form
-        document.getElementById('patientForm').reset();
-        document.getElementById('patientStatus').value = 'active';
+
     }
-    
+
     modal.classList.add('show');
 }
 
@@ -416,10 +408,10 @@ function editPatient(patientId) {
 function viewPatient(patientId) {
     const patient = patients.find(p => p.id === patientId);
     if (!patient) return;
-    
+
     const modal = document.getElementById('patientDetailModal');
     const content = document.getElementById('patientDetailContent');
-    
+
     content.innerHTML = `
         <div class="patient-detail-grid">
             <div class="detail-item">
@@ -462,7 +454,7 @@ function viewPatient(patientId) {
             ` : ''}
         </div>
     `;
-    
+
     modal.classList.add('show');
 }
 
@@ -490,7 +482,7 @@ function loadServices() {
 function renderServicesTable() {
     const tbody = document.getElementById('servicesTableBody');
     if (!tbody) return;
-    
+
     tbody.innerHTML = filteredServices.map(service => `
         <tr>
             <td>
@@ -521,10 +513,10 @@ function renderServicesTable() {
 
 function updateServicesSummary() {
     const categories = [...new Set(filteredServices.map(s => s.category))];
-    const averagePrice = filteredServices.length > 0 
-        ? filteredServices.reduce((sum, s) => sum + s.price, 0) / filteredServices.length 
+    const averagePrice = filteredServices.length > 0
+        ? filteredServices.reduce((sum, s) => sum + s.price, 0) / filteredServices.length
         : 0;
-    
+
     document.getElementById('totalServicesCount').textContent = filteredServices.length;
     document.getElementById('activeServicesCount').textContent = filteredServices.filter(s => s.isActive).length;
     document.getElementById('categoriesCount').textContent = categories.length;
@@ -535,7 +527,7 @@ function initServiceFilters() {
     const searchInput = document.getElementById('serviceSearch');
     const categoryFilter = document.getElementById('categoryFilter');
     const statusFilter = document.getElementById('serviceStatusFilter');
-    
+
     if (searchInput) {
         searchInput.addEventListener('input', filterServices);
     }
@@ -551,18 +543,18 @@ function filterServices() {
     const searchTerm = document.getElementById('serviceSearch')?.value.toLowerCase() || '';
     const categoryFilter = document.getElementById('categoryFilter')?.value || 'all';
     const statusFilter = document.getElementById('serviceStatusFilter')?.value || 'all';
-    
+
     filteredServices = services.filter(service => {
         const matchesSearch = service.name.toLowerCase().includes(searchTerm) ||
-                             service.description.toLowerCase().includes(searchTerm);
+            service.description.toLowerCase().includes(searchTerm);
         const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
         const matchesStatus = statusFilter === 'all' ||
-                             (statusFilter === 'active' && service.isActive) ||
-                             (statusFilter === 'inactive' && !service.isActive);
-        
+            (statusFilter === 'active' && service.isActive) ||
+            (statusFilter === 'inactive' && !service.isActive);
+
         return matchesSearch && matchesCategory && matchesStatus;
     });
-    
+
     renderServicesTable();
     updateServicesSummary();
 }
@@ -571,13 +563,13 @@ function openServiceModal(serviceId = null) {
     const modal = document.getElementById('serviceModal');
     const title = document.getElementById('serviceModalTitle');
     const submitBtn = document.getElementById('serviceSubmitBtn');
-    
+
     currentEditingService = serviceId ? services.find(s => s.id === serviceId) : null;
-    
+
     if (currentEditingService) {
         title.textContent = 'Chỉnh sửa dịch vụ';
         submitBtn.textContent = 'Cập nhật';
-        
+
         // Fill form with service data
         document.getElementById('serviceName').value = currentEditingService.name;
         document.getElementById('serviceDescription').value = currentEditingService.description;
@@ -588,12 +580,12 @@ function openServiceModal(serviceId = null) {
     } else {
         title.textContent = 'Thêm dịch vụ mới';
         submitBtn.textContent = 'Thêm mới';
-        
+
         // Clear form
         document.getElementById('serviceForm').reset();
         document.getElementById('serviceIsActive').checked = true;
     }
-    
+
     modal.classList.add('show');
 }
 
@@ -634,15 +626,15 @@ function loadReports() {
 
 function initReportTabs() {
     const reportTabs = document.querySelectorAll('.report-tab');
-    
+
     reportTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const reportType = tab.getAttribute('data-report');
-            
+
             // Update active tab
             reportTabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-            
+
             // Load report content
             loadReportContent(reportType);
         });
@@ -652,7 +644,7 @@ function initReportTabs() {
 function loadReportContent(reportType) {
     const content = document.getElementById('reportContent');
     if (!content) return;
-    
+
     switch(reportType) {
         case 'overview':
             content.innerHTML = generateOverviewReport();
@@ -675,7 +667,7 @@ function generateOverviewReport() {
     const totalAppointments = mockAppointments.length;
     const completedAppointments = mockAppointments.filter(a => a.status === 'completed').length;
     const totalRevenue = completedAppointments * 450000;
-    
+
     return `
         <div class="stats-grid">
             <div class="stat-card blue">
@@ -750,7 +742,7 @@ function generateMonthlyTrend() {
         { month: 'T5', patients: 19, appointments: 55, revenue: 24750000 },
         { month: 'T6', patients: 25, appointments: 68, revenue: 30600000 }
     ];
-    
+
     return monthlyData.map(data => `
         <div style="display: flex; align-items: center; gap: 16px;">
             <div style="width: 32px; font-weight: 600; color: #64748b;">${data.month}</div>
@@ -772,7 +764,7 @@ function generatePatientsReport() {
     const totalPatients = patients.length;
     const activePatients = patients.filter(p => p.status === 'active').length;
     const patientsWithService = patients.filter(p => p.hasService).length;
-    
+
     return `
         <div class="stats-grid">
             <div class="stat-card blue">
@@ -849,7 +841,7 @@ function generateServicesReport() {
             revenue: appointmentCount * service.price
         };
     }).sort((a, b) => b.appointmentCount - a.appointmentCount);
-    
+
     return `
         <div class="card">
             <div class="card-header">
@@ -861,10 +853,10 @@ function generateServicesReport() {
                         <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: #f8fafc; border-radius: 8px;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <div style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; background: ${
-                                    index === 0 ? '#f59e0b' :
-                                    index === 1 ? '#9ca3af' :
-                                    index === 2 ? '#f97316' : '#3b82f6'
-                                };">
+        index === 0 ? '#f59e0b' :
+            index === 1 ? '#9ca3af' :
+                index === 2 ? '#f97316' : '#3b82f6'
+    };">
                                     ${index + 1}
                                 </div>
                                 <div>
@@ -888,7 +880,7 @@ function generateFinancialReport() {
     const totalRevenue = mockAppointments.filter(a => a.status === 'completed').length * 450000;
     const totalAppointments = mockAppointments.length;
     const completedAppointments = mockAppointments.filter(a => a.status === 'completed').length;
-    
+
     const serviceStats = services.map(service => {
         const appointmentCount = mockAppointments.filter(a => a.serviceName === service.name).length;
         return {
@@ -896,7 +888,7 @@ function generateFinancialReport() {
             revenue: appointmentCount * service.price
         };
     }).sort((a, b) => b.revenue - a.revenue);
-    
+
     return `
         <div class="dashboard-row">
             <div class="card">
@@ -951,7 +943,7 @@ function initForms() {
     if (patientForm) {
         patientForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
+
             const formData = {
                 name: document.getElementById('patientName').value,
                 email: document.getElementById('patientEmail').value,
@@ -959,7 +951,7 @@ function initForms() {
                 status: document.getElementById('patientStatus').value,
                 hasService: document.getElementById('patientHasService').checked
             };
-            
+
             if (currentEditingPatient) {
                 // Update existing patient
                 const index = patients.findIndex(p => p.id === currentEditingPatient.id);
@@ -975,19 +967,19 @@ function initForms() {
                 patients.push(newPatient);
                 showToast('Đã thêm bệnh nhân mới thành công');
             }
-            
+
             saveToLocalStorage();
             filterPatients();
             closePatientModal();
         });
     }
-    
+
     // Service Form
     const serviceForm = document.getElementById('serviceForm');
     if (serviceForm) {
         serviceForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
+
             const formData = {
                 name: document.getElementById('serviceName').value,
                 description: document.getElementById('serviceDescription').value,
@@ -996,7 +988,7 @@ function initForms() {
                 category: document.getElementById('serviceCategory').value,
                 isActive: document.getElementById('serviceIsActive').checked
             };
-            
+
             if (currentEditingService) {
                 // Update existing service
                 const index = services.findIndex(s => s.id === currentEditingService.id);
@@ -1012,7 +1004,7 @@ function initForms() {
                 services.push(newService);
                 showToast('Đã thêm dịch vụ mới thành công');
             }
-            
+
             saveToLocalStorage();
             filterServices();
             closeServiceModal();
@@ -1024,16 +1016,16 @@ function initForms() {
 function initSidebar() {
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebar = document.getElementById('sidebar');
-    
+
     if (sidebarToggle && sidebar) {
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('open');
         });
-        
+
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 1024 && 
-                !sidebar.contains(e.target) && 
+            if (window.innerWidth <= 1024 &&
+                !sidebar.contains(e.target) &&
                 !sidebarToggle.contains(e.target)) {
                 sidebar.classList.remove('open');
             }
@@ -1044,7 +1036,7 @@ function initSidebar() {
 // Modal Click Outside to Close
 function initModals() {
     const modals = document.querySelectorAll('.modal');
-    
+
     modals.forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -1060,7 +1052,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initForms();
     initSidebar();
     initModals();
-    
+
     // Load initial data
     saveToLocalStorage();
 });

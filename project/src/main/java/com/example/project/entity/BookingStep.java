@@ -39,6 +39,6 @@ public class BookingStep {
     @Column(name = "drugId")
     private Integer drugId;
 
-    @Column(name = "stepStatus", length = 20, nullable = false)
+    @Column(name = "stepStatus", nullable = false, length = 20)
     private String stepStatus;
 }

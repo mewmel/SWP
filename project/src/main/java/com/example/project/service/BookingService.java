@@ -39,12 +39,6 @@ public class BookingService {
     private DoctorRepository doctorRepo;
     @Autowired
     private ServiceRepository serviceRepo;
-    @Autowired
-    private BookingRepository bookingRepository;
-    @Autowired
-    private com.example.project.repository.SubServiceRepository subServiceRepo;
-    @Autowired
-    private com.example.project.repository.BookingStepRepository bookingStepRepo;
 
     public boolean createBookingAndAccount(BookingRequest req) {
         // Tìm Customer theo email và provider = 'local'
@@ -147,6 +141,7 @@ public class BookingService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(customer.getCusEmail());
         msg.setSubject("Tạo tài khoản & Đặt lịch thành công trên FertilityEHR");
+
         StringBuilder body = new StringBuilder();
         body.append("Bạn đã được tạo tài khoản tự động trên hệ thống phòng khám FertilityEHR.\n")
                 .append("Tên đăng nhập: ").append(customer.getCusEmail()).append("\n")

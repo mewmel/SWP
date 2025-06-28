@@ -1,7 +1,7 @@
 // Simplified modal functions
 function showDoctorDetail(doctorId) {
     console.log('Showing doctor detail for:', doctorId);
-    
+
     // Sample data
     const doctorData = {
         'BS001': { name: 'BS. Nguyễn Văn A', department: 'Sản phụ khoa', experience: '12 năm', rating: 4.9 },
@@ -11,13 +11,13 @@ function showDoctorDetail(doctorId) {
         'BS005': { name: 'BS. Hoàng Văn E', department: 'Ngoại khoa', experience: '7 năm', rating: 4.8 },
         'BS006': { name: 'BS. Đặng Thị F', department: 'Da liễu', experience: '6 năm', rating: 4.3 }
     };
-    
+
     const doctor = doctorData[doctorId];
     if (!doctor) {
         alert('Không tìm thấy thông tin bác sĩ!');
         return;
     }
-    
+
     // Update modal content
     document.getElementById('detailDoctorName').textContent = doctor.name;
     document.getElementById('detailDoctorId').textContent = doctorId;
@@ -27,7 +27,7 @@ function showDoctorDetail(doctorId) {
     document.getElementById('totalPatients').textContent = '1250';
     document.getElementById('successRate').textContent = '95%';
     document.getElementById('avgRating').textContent = doctor.rating;
-    
+
     // Sample activities
     document.getElementById('doctorActivities').innerHTML = `
         <div class="activity-item">
@@ -45,7 +45,7 @@ function showDoctorDetail(doctorId) {
             </div>
         </div>
     `;
-    
+
     // Sample schedule
     document.getElementById('doctorWeeklySchedule').innerHTML = `
         <div class="schedule-grid">
@@ -86,7 +86,7 @@ function showDoctorDetail(doctorId) {
             </div>
         </div>
     `;
-    
+
     // Sample reviews
     document.getElementById('recentReviews').innerHTML = `
         <div class="review-item">
@@ -106,7 +106,7 @@ function showDoctorDetail(doctorId) {
             <div class="review-content">Thời gian chờ hơi lâu nhưng bác sĩ khám rất kỹ.</div>
         </div>
     `;
-    
+
     // Show modal
     const modal = document.getElementById('doctorDetailModal');
     modal.style.display = 'flex';
@@ -115,19 +115,19 @@ function showDoctorDetail(doctorId) {
 
 function showRatingModal(doctorId) {
     console.log('Showing rating modal for:', doctorId);
-    
+
     // Sample data
     const doctorData = {
         'BS001': 'BS. Nguyễn Văn A',
-        'BS002': 'BS. Trần Thị B', 
+        'BS002': 'BS. Trần Thị B',
         'BS003': 'BS. Lê Văn C',
         'BS004': 'BS. Phạm Thị D',
         'BS005': 'BS. Hoàng Văn E',
         'BS006': 'BS. Đặng Thị F'
     };
-    
+
     document.getElementById('rateDoctorName').textContent = doctorData[doctorId];
-    
+
     // Reset form
     document.querySelectorAll('.rating-star').forEach(star => {
         star.textContent = '☆';
@@ -140,7 +140,7 @@ function showRatingModal(doctorId) {
     document.getElementById('ratingText').textContent = 'Chưa chọn đánh giá';
     document.getElementById('ratingComment').value = '';
     document.getElementById('submitRatingBtn').disabled = true;
-    
+
     // Show modal
     const modal = document.getElementById('rateDoctorModal');
     modal.style.display = 'flex';
@@ -161,7 +161,7 @@ function switchTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    
+
     // Show selected tab
     document.getElementById(tabName + 'Tab').classList.add('active');
     event.target.classList.add('active');
@@ -174,7 +174,7 @@ let criteriaRatings = { expertise: 0, attitude: 0, effectiveness: 0 };
 function setRating(rating) {
     selectedRating = rating;
     const ratingTexts = ['', 'Rất tệ', 'Tệ', 'Bình thường', 'Tốt', 'Rất tốt'];
-    
+
     // Update stars
     document.querySelectorAll('.rating-star').forEach((star, index) => {
         if (index < rating) {
@@ -185,14 +185,14 @@ function setRating(rating) {
             star.classList.remove('selected');
         }
     });
-    
+
     document.getElementById('ratingText').textContent = ratingTexts[rating];
     document.getElementById('submitRatingBtn').disabled = rating === 0;
 }
 
 function setCriteriaRating(criteria, rating) {
     criteriaRatings[criteria] = rating;
-    
+
     // Update stars for this criteria
     document.querySelectorAll(`[data-criteria="${criteria}"]`).forEach((star, index) => {
         if (index < rating) {
@@ -210,14 +210,14 @@ function submitRating() {
         alert('Vui lòng chọn mức đánh giá!');
         return;
     }
-    
+
     const comment = document.getElementById('ratingComment').value;
     console.log('Rating submitted:', {
         rating: selectedRating,
         criteria: criteriaRatings,
         comment: comment
     });
-    
+
     alert('Đánh giá đã được gửi thành công!');
     closeModal('rateDoctorModal');
 }
@@ -225,7 +225,7 @@ function submitRating() {
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Page loaded');
-    
+
     // Tab functionality
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -233,14 +233,14 @@ document.addEventListener('DOMContentLoaded', function() {
             switchTab(tabName);
         });
     });
-    
+
     // Rating stars
     document.querySelectorAll('.rating-star').forEach((star, index) => {
         star.addEventListener('click', function() {
             setRating(index + 1);
         });
     });
-    
+
     // Criteria stars
     document.querySelectorAll('.criteria-star').forEach(star => {
         star.addEventListener('click', function() {
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setCriteriaRating(criteria, rating);
         });
     });
-    
+
     // Close modal when clicking outside
     window.addEventListener('click', function(event) {
         if (event.target.classList.contains('modal')) {
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeRateDoctorModal = document.getElementById('closeRateDoctorModal');
     const cancelRatingBtn = document.getElementById('cancelRatingBtn');
     const submitRatingBtn = document.getElementById('submitRatingBtn');
-    
+
     if (closeDoctorDetailModal) {
         closeDoctorDetailModal.onclick = () => closeModal('doctorDetailModal');
     }
@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Event listeners cho các nút modal mới
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded - initializing...');
-    
+
     // Đợi một chút để đảm bảo tất cả elements đã được render
     setTimeout(function() {
         initializeModalEvents();
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
     });
-    
+
     // Đóng modal bằng cấp
     document.getElementById('closeDegreeModal').onclick = function() {
         document.getElementById('degreeModal').style.display = 'none';
@@ -440,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('newDegreeInput').value = '';
         }
     };
-    
+
     // Thêm chuyên môn
     document.getElementById('addSpecialtyBtn').onclick = function() {
         const val = document.getElementById('newSpecialtyInput').value.trim();
@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('newSpecialtyInput').value = '';
         }
     };
-    
+
     // Xóa bằng cấp/chuyên môn
     document.getElementById('editDegreeList').addEventListener('click', function(e) {
         if (e.target.closest('.remove-degree-btn')) {

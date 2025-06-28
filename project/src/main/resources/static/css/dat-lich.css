@@ -369,3 +369,16 @@
     height: 16px;
     cursor: pointer;
 }
+
+.event-item.pending {
+    background: #ffd600;
+    color: #333;
+    border-radius: 5px;
+    padding: 2px 6px;
+}
+.event-item.rejected {
+    background: #e57373;
+    color: #fff;
+    border-radius: 5px;
+    padding: 2px 6px;
+}

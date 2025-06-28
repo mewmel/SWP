@@ -648,15 +648,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-
-
-
-
-
     // ========== EDITABLE TEST RESULTS FUNCTIONS ==========
 
     // Add new test item
-    window.addNewTestItem = function () {
+    window.addNewTestItem = function() {
         const testContainer = document.querySelector('.booking-steps-results');
         const testCount = testContainer.children.length + 1;
 
