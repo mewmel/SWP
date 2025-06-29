@@ -227,7 +227,7 @@
                                     </div>
                                     <div class="record-section">
                                         <label>Ngày tạo hồ sơ:</label>
-                                        <input type="date" id="recordCreatedDate" value="2024-06-24">
+                                        <input type="datetime-local" id="recordCreatedDate">
                                     </div>
                                 </div>
                                 
@@ -284,13 +284,12 @@
                                             <input type="datetime-local" id="performedAt" class="form-control">
                                         </div>
                                         <div class="record-section">
-                                            <!-- <label>Trạng thái:</label>
+                                            <label>Trạng thái:</label>
                                             <select id="stepStatus" class="form-control">
-                                                <option value="in-progress">Đang thực hiện</option>
+                                                <option value="pending">Đang thực hiện</option>
                                                 <option value="completed">Đã hoàn thành</option>
-                                                <option value="postponed">Hoãn lại</option>
-                                                <option value="cancelled">Hủy bỏ</option>
-                                            </select> -->
+                                                <option value="inactive">Không hoạt động</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="record-section">
@@ -342,7 +341,7 @@
                             </div>
                         </div>
 
-                            <!-- Drug Prescription
+                            <!-- Drug Prescription-->
                         <div class="drug-prescription">
                             <h5><i class="fas fa-pills"></i> Đơn thuốc</h5>
                             <div class="drugs-list" id="drugsList">
@@ -379,7 +378,7 @@
                             <button type="button" class="btn-add-drug" onclick="window.addDrug()">
                                 <i class="fas fa-plus"></i> Thêm thuốc
                             </button>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
 
@@ -633,129 +632,15 @@
                  <!-- Tests Tab -->
                 <div id="testsTab" class="tab-content">
                     <div class="test-results">
-                        <h4><i class="fas fa-flask"></i> Kết quả xét nghiệm & Kết quả bước điều trị</h4>
-                        
+                        <h4><i class="fas fa-flask"></i> Kết quả xét nghiệm </h4>                       
                         <!-- Booking Steps Results -->
                         <div class="booking-steps-results">
-                            <h5><i class="fas fa-vial"></i> Kết quả các bước đã thực hiện</h5>
-                            
+                            <h5><i class="fas fa-vial"></i> Kết quả các bước đã thực hiện</h5>                           
                             <div class="step-result-item">
                                 <div class="step-result-header">
                                     <div class="step-info">
                                         <h6 contenteditable="true" class="editable-title"></h6>
-                                        <input type="datetime-local" class="editable-date" value="2024-06-18T14:30">
-                                    </div>
-                                    <select class="step-status-select">
-                                        <option value="completed" selected>Hoàn thành</option>
-                                        <option value="pending">Đang chờ</option>
-                                        <option value="cancelled">Đã hủy</option>
-                                    </select>
-                                </div>
-                                <div class="step-result-content">
-                                    <div class="result-value">
-                                        <strong>Kết quả:</strong> 
-                                        <input type="text" class="editable-result" value="2.5" placeholder="Giá trị">
-                                        <select class="unit-select">
-                                            <option value="ng/ml" selected>ng/ml</option>
-                                            <option value="mIU/ml">mIU/ml</option>
-                                            <option value="pg/ml">pg/ml</option>
-                                            <option value="triệu/ml">triệu/ml</option>
-                                            <option value="%">%</option>
-                                        </select>
-                                        <span class="result-bracket">(</span>
-                                        <select class="status-select">
-                                            <option value="Bình thường" selected>Bình thường</option>
-                                            <option value="Cao">Cao</option>
-                                            <option value="Thấp">Thấp</option>
-                                            <option value="Bất thường">Bất thường</option>
-                                        </select>
-                                        <span class="result-bracket">)</span>
-                                    </div>
-                                    <div class="result-note">
-                                        <strong>Ghi chú:</strong> 
-                                        <textarea class="editable-note" placeholder="Nhập ghi chú...">Dự trữ buồng trứng ở mức tốt, phù hợp cho điều trị IVF</textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="step-result-item">
-                                <div class="step-result-header">
-                                    <div class="step-info">
-                                        <h6 contenteditable="true" class="editable-title">Xét nghiệm nội tiết tố nữ (FSH, LH, E2)</h6>
-                                        <input type="datetime-local" class="editable-date" value="2024-06-18T14:30">
-                                    </div>
-                                    <select class="step-status-select">
-                                        <option value="completed" selected>Hoàn thành</option>
-                                        <option value="pending">Đang chờ</option>
-                                        <option value="cancelled">Đã hủy</option>
-                                    </select>
-                                </div>
-                                <div class="step-result-content">
-                                    <div class="result-grid">
-                                        <div class="result-item">
-                                            <input type="text" class="editable-label" value="FSH" placeholder="Tên chỉ số">:
-                                            <input type="text" class="editable-result" value="8.2" placeholder="Giá trị">
-                                            <select class="unit-select">
-                                                <option value="mIU/ml" selected>mIU/ml</option>
-                                                <option value="ng/ml">ng/ml</option>
-                                                <option value="pg/ml">pg/ml</option>
-                                                <option value="triệu/ml">triệu/ml</option>
-                                                <option value="%">%</option>
-                                            </select>
-                                            <select class="status-select">
-                                                <option value="Bình thường" selected>Bình thường</option>
-                                                <option value="Cao">Cao</option>
-                                                <option value="Thấp">Thấp</option>
-                                                <option value="Bất thường">Bất thường</option>
-                                            </select>
-                                        </div>
-                                        <div class="result-item">
-                                            <input type="text" class="editable-label" value="LH" placeholder="Tên chỉ số">:
-                                            <input type="text" class="editable-result" value="5.1" placeholder="Giá trị">
-                                            <select class="unit-select">
-                                                <option value="mIU/ml" selected>mIU/ml</option>
-                                                <option value="ng/ml">ng/ml</option>
-                                                <option value="pg/ml">pg/ml</option>
-                                                <option value="triệu/ml">triệu/ml</option>
-                                                <option value="%">%</option>
-                                            </select>
-                                            <select class="status-select">
-                                                <option value="Bình thường" selected>Bình thường</option>
-                                                <option value="Cao">Cao</option>
-                                                <option value="Thấp">Thấp</option>
-                                                <option value="Bất thường">Bất thường</option>
-                                            </select>
-                                        </div>
-                                        <div class="result-item">
-                                            <input type="text" class="editable-label" value="E2" placeholder="Tên chỉ số">:
-                                            <input type="text" class="editable-result" value="45" placeholder="Giá trị">
-                                            <select class="unit-select">
-                                                <option value="pg/ml" selected>pg/ml</option>
-                                                <option value="mIU/ml">mIU/ml</option>
-                                                <option value="ng/ml">ng/ml</option>
-                                                <option value="triệu/ml">triệu/ml</option>
-                                                <option value="%">%</option>
-                                            </select>
-                                            <select class="status-select">
-                                                <option value="Bình thường" selected>Bình thường</option>
-                                                <option value="Cao">Cao</option>
-                                                <option value="Thấp">Thấp</option>
-                                                <option value="Bất thường">Bất thường</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="result-note">
-                                        <strong>Ghi chú:</strong> 
-                                        <textarea class="editable-note" placeholder="Nhập ghi chú...">Các chỉ số nội tiết trong giới hạn bình thường</textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="step-result-item">
-                                <div class="step-result-header">
-                                    <div class="step-info">
-                                        <h6 contenteditable="true" class="editable-title">Xét nghiệm tinh dịch đồ</h6>
-                                        <input type="datetime-local" class="editable-date" value="2024-06-18T16:00">
+                                        <input type="datetime-local" class="editable-date">
                                     </div>
                                     <select class="step-status-select">
                                         <option value="completed" selected>Hoàn thành</option>
@@ -820,104 +705,6 @@
                                     <div class="result-note">
                                         <strong>Ghi chú:</strong> 
                                         <textarea class="editable-note" placeholder="Nhập ghi chú...">Chất lượng tinh trùng tốt, phù hợp cho IVF</textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="step-result-item">
-                                <div class="step-result-header">
-                                    <div class="step-info">
-                                        <h6 contenteditable="true" class="editable-title">Siêu âm tử cung, buồng trứng</h6>
-                                        <input type="datetime-local" class="editable-date" value="2024-06-19T09:00">
-                                    </div>
-                                    <select class="step-status-select">
-                                        <option value="completed" selected>Hoàn thành</option>
-                                        <option value="pending">Đang chờ</option>
-                                        <option value="cancelled">Đã hủy</option>
-                                    </select>
-                                </div>
-                                <div class="step-result-content">
-                                    <div class="result-value">
-                                        <strong>Kết quả:</strong> 
-                                        <textarea class="editable-detailed-result" placeholder="Nhập kết quả chi tiết...">Tử cung bình thường, không có u xơ hay polyp. Buồng trứng có 12 nang noãn ở bên phải, 10 nang noãn ở bên trái.</textarea>
-                                    </div>
-                                    <div class="result-note">
-                                        <strong>Ghi chú:</strong> 
-                                        <textarea class="editable-note" placeholder="Nhập ghi chú...">Cấu trúc tử cung và buồng trứng bình thường, thuận lợi cho điều trị</textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="step-result-item">
-                                <div class="step-result-header">
-                                    <div class="step-info">
-                                        <h6 contenteditable="true" class="editable-title">Xét nghiệm máu, viêm gan, HIV, giang mai</h6>
-                                        <input type="datetime-local" class="editable-date" value="2024-06-19T10:30">
-                                    </div>
-                                    <select class="step-status-select">
-                                        <option value="completed" selected>Hoàn thành</option>
-                                        <option value="pending">Đang chờ</option>
-                                        <option value="cancelled">Đã hủy</option>
-                                    </select>
-                                </div>
-                                <div class="step-result-content">
-                                    <div class="result-grid">
-                                        <div class="result-item">
-                                            <input type="text" class="editable-label" value="HBsAg" placeholder="Tên chỉ số">:
-                                            <select class="result-value-select">
-                                                <option value="Âm tính" selected>Âm tính</option>
-                                                <option value="Dương tính">Dương tính</option>
-                                                <option value="Chưa xác định">Chưa xác định</option>
-                                            </select>
-                                            <select class="status-select">
-                                                <option value="Bình thường" selected>Bình thường</option>
-                                                <option value="Bất thường">Bất thường</option>
-                                                <option value="Cần theo dõi">Cần theo dõi</option>
-                                            </select>
-                                        </div>
-                                        <div class="result-item">
-                                            <input type="text" class="editable-label" value="Anti-HCV" placeholder="Tên chỉ số">:
-                                            <select class="result-value-select">
-                                                <option value="Âm tính" selected>Âm tính</option>
-                                                <option value="Dương tính">Dương tính</option>
-                                                <option value="Chưa xác định">Chưa xác định</option>
-                                            </select>
-                                            <select class="status-select">
-                                                <option value="Bình thường" selected>Bình thường</option>
-                                                <option value="Bất thường">Bất thường</option>
-                                                <option value="Cần theo dõi">Cần theo dõi</option>
-                                            </select>
-                                        </div>
-                                        <div class="result-item">
-                                            <input type="text" class="editable-label" value="Anti-HIV" placeholder="Tên chỉ số">:
-                                            <select class="result-value-select">
-                                                <option value="Âm tính" selected>Âm tính</option>
-                                                <option value="Dương tính">Dương tính</option>
-                                                <option value="Chưa xác định">Chưa xác định</option>
-                                            </select>
-                                            <select class="status-select">
-                                                <option value="Bình thường" selected>Bình thường</option>
-                                                <option value="Bất thường">Bất thường</option>
-                                                <option value="Cần theo dõi">Cần theo dõi</option>
-                                            </select>
-                                        </div>
-                                        <div class="result-item">
-                                            <input type="text" class="editable-label" value="VDRL" placeholder="Tên chỉ số">:
-                                            <select class="result-value-select">
-                                                <option value="Âm tính" selected>Âm tính</option>
-                                                <option value="Dương tính">Dương tính</option>
-                                                <option value="Chưa xác định">Chưa xác định</option>
-                                            </select>
-                                            <select class="status-select">
-                                                <option value="Bình thường" selected>Bình thường</option>
-                                                <option value="Bất thường">Bất thường</option>
-                                                <option value="Cần theo dõi">Cần theo dõi</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="result-note">
-                                        <strong>Ghi chú:</strong> 
-                                        <textarea class="editable-note" placeholder="Nhập ghi chú...">Không có bệnh truyền nhiễm, đủ điều kiện điều trị</textarea>
                                     </div>
                                 </div>
                             </div>

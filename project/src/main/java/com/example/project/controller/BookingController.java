@@ -1,10 +1,11 @@
 package com.example.project.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.project.dto.PatientProfileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.BookingRequest;
-import com.example.project.dto.BookingWithSlotAndCus;
 import com.example.project.entity.Booking;
 import com.example.project.repository.BookingRepository;
 import com.example.project.service.BookingService;
@@ -118,7 +118,7 @@ public class BookingController {
             @PathVariable Integer docId,
             @RequestParam String status) {
         try {
-            List<Booking> bookings = bookingRepository.findByDocIdAndBookStatusOrderByCreatedAt(docId, status);
+            List<Booking> bookings = bookingRepository.findByDocIdAndBookStatusOrderByBookId(docId, status);
             return ResponseEntity.ok(bookings);
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,17 +142,20 @@ public class BookingController {
 
     @GetMapping("/booking/by-customer/{cusId}")
     public ResponseEntity<List<Booking>> getBookingsByCustomer(@PathVariable Integer cusId) {
-        List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAt(cusId);
+        List<Booking> bookings = bookingRepository.findByCusIdOrderByBookIdDesc(cusId);
         return ResponseEntity.ok(bookings);
     }
 
-    @GetMapping("/booking/doctor/{docId}/confirmed-today")
-public ResponseEntity<List<BookingWithSlotAndCus>> getTodayConfirmedBookings(
-        @PathVariable Integer docId) {
-    LocalDate today = LocalDate.now(); // hoặc nhận từ FE nếu cần
-    List<BookingWithSlotAndCus> list = bookingRepository.findBookingWithSlotByDocIdAndBookStatusAndWorkDate(docId, "confirmed", today);
-    return ResponseEntity.ok(list);
+@GetMapping("/booking/doctor/{docId}/confirmed-today")
+public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Integer docId) {
+    LocalDate today = LocalDate.now();
+    LocalDateTime startOfDay = today.atStartOfDay();         // 00:00:00
+    LocalDateTime endOfDay = today.atTime(LocalTime.MAX);    // 23:59:59.999999999
+
+    List<Booking> bookings = bookingRepository.findConfirmedBookingsToday(docId, startOfDay, endOfDay);
+    return ResponseEntity.ok(bookings);
 }
+
 
 
 

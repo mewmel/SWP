@@ -89,10 +89,10 @@ function displayBookings(bookings) {
         card.id = `booking-${booking.bookId}`;
 
         // Fill data vào các element
-        card.querySelector('#patientName').textContent = `Booking #${booking.bookId}`;
-        card.querySelector('#appointmentTime').textContent = formatDateTime(booking.bookDate, booking.bookTime);
+        card.querySelector('#patientName').textContent = booking.cusId || 'N/A';
+        card.querySelector('#appointmentTime').textContent =(booking.createdAt);
         card.querySelector('#customerId').textContent = booking.cusId || 'N/A';
-        card.querySelector('#serviceId').textContent = booking.serviceId || 'N/A';
+        card.querySelector('#serviceId').textContent = booking.serId || 'N/A';
 
         const statusBadge = card.querySelector('#statusBadge');
         statusBadge.textContent = getStatusText(booking.bookStatus);
@@ -134,7 +134,7 @@ function displayBookings(bookings) {
         container.appendChild(card);
     });
 }
-
+let currentBookingDetail = null;
 // Hiển thị chi tiết booking
 async function showBookingDetail(bookId) {
     currentBookId = bookId;
@@ -144,12 +144,13 @@ async function showBookingDetail(bookId) {
         if (!response.ok) throw new Error('Không thể tải chi tiết booking');
 
         const booking = await response.json();
+        window.currentBookingDetail = booking; // lưu lại booking hiện tại
 
         // Fill dữ liệu vào modal
         document.getElementById('detailPatientName').textContent = `Customer ID: ${booking.cusId}`;
 
 
-        document.getElementById('detailAppointmentDate').textContent = formatDate(booking.bookDate);
+        document.getElementById('detailAppointmentDate').textContent = formatDate(booking.createdAt);
         document.getElementById('detailService').textContent = `Service ID: ${booking.serId || 'N/A'}`;
 
         const statusElement = document.getElementById('detailStatus');
@@ -181,7 +182,7 @@ async function confirmBooking() {
 
     try {
         // 1. Đổi trạng thái booking
-        const response = await fetch(`/api/booking/${currentBookId}/status?status=confirmed}`, {
+        const response = await fetch(`/api/booking/${currentBookId}/status?status=confirmed`, {
             method: 'PUT'
         });
 
@@ -190,10 +191,8 @@ async function confirmBooking() {
             throw new Error(errorText || 'Không thể xác nhận booking');
         }
 
-        // 2. Sau khi xác nhận thành công, mới tạo booking step
+        // 2. Tạo booking step và medical record
         await createBookingStep(currentBookId);
-
-        await createMedicalRecord(booking.cusId, booking.docId, booking.serId);
 
         showSuccess('Đã xác nhận booking và tạo bước điều trị thành công!');
         closeDetailModal();
@@ -204,6 +203,7 @@ async function confirmBooking() {
         showError('Không thể xác nhận booking hoặc tạo bước điều trị. Vui lòng thử lại.');
     }
 }
+
 
 // Tạo booking step bằng API riêng (gọi sau khi xác nhận booking)
 async function createBookingStep(bookId) {
@@ -218,30 +218,6 @@ async function createBookingStep(bookId) {
     } catch (error) {
         // Có thể log hoặc hiển thị lỗi riêng nếu muốn
         console.error('Error creating booking step:', error);
-    }
-}
-
-// Tạo hồ sơ bệnh án bằng API riêng (gọi sau khi xác nhận booking)
-
-
-async function createMedicalRecord(cusId, docId, serId) {
-    try {
-        const resp = await fetch(`/api/medical-records/create/${serId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                cusId,
-                docId,
-                serId,
-                recordStatus: 'closed'
-            })
-        });
-        if (!resp.ok) {
-            const msg = await resp.text();
-            throw new Error(msg || 'Không tạo được hồ sơ bệnh án');
-        }
-    } catch (error) {
-        console.error('Error creating medical record:', error);
     }
 }
 

@@ -1,6 +1,7 @@
 package com.example.project.repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.example.project.dto.BookingWithSlotAndCus;
 import com.example.project.entity.Booking;
 
 
@@ -43,16 +43,16 @@ Optional<Booking> findLatestBooking(
   @Param("bookStatus") List<String> bookStatus
 );
 
-@Query("SELECT new com.example.project.dto.BookingWithSlotAndCus(b.bookId, b.cusId, c.cusFullName, b.docId, b.bookType, b.bookStatus, b.createdAt, b.note, w.workDate, w.startTime, w.endTime) " +
-       "FROM Booking b " +
-       "JOIN WorkSlot w ON b.slotId = w.slotId " +
-       "JOIN Customer c ON b.cusId = c.cusId " +
-       "WHERE b.docId = :docId AND b.bookStatus = :status AND w.workDate = :today")
-        List<BookingWithSlotAndCus> findBookingWithSlotByDocIdAndBookStatusAndWorkDate(
-                @Param("docId") Integer docId,
-                @Param("status") String status,
-                @Param("today") LocalDate today
+@Query("SELECT b FROM Booking b " +
+       "WHERE b.docId = :docId " +
+       "AND b.bookStatus = 'confirmed' " +
+       "AND b.createdAt BETWEEN :startOfDay AND :endOfDay")
+List<Booking> findConfirmedBookingsToday(
+    @Param("docId") Integer docId,
+    @Param("startOfDay") LocalDateTime startOfDay,
+    @Param("endOfDay") LocalDateTime endOfDay
 );
+
     List<Booking> findByCusIdOrderByBookIdAsc(Integer cusId);
 
 }

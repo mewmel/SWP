@@ -1,16 +1,23 @@
 package com.example.project.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.project.dto.VisitSubService;
 import com.example.project.entity.Booking;
 import com.example.project.entity.BookingStep;
 import com.example.project.entity.SubService;
 import com.example.project.repository.BookingRepository;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.time.LocalDateTime;
 
 @Service
 public class BookingStepService {
@@ -72,5 +79,45 @@ public class BookingStepService {
 
             bookingStepRepo.save(step);
         }
+
     }
+
+public VisitSubService getSubServicesForBooking(Integer bookId) {
+    // 1. Lấy booking để biết customer
+    Booking booking = bookingRepo.findById(bookId)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID = " + bookId));
+
+    // 2. Tính "lần khám thứ mấy" dựa trên thứ tự bookId tăng dần
+    List<Booking> customerBookings = bookingRepo.findByCusIdOrderByBookIdAsc(booking.getCusId());
+    int visitNumber = IntStream.range(0, customerBookings.size())
+            .filter(i -> customerBookings.get(i).getBookId().equals(bookId))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy booking trong danh sách của customer")) + 1;
+
+    // 3. Lấy danh sách BookingStep (KHÔNG join)
+    List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
+
+    // 4. Lấy tất cả subId
+    List<Integer> subIds = steps.stream().map(BookingStep::getSubId).collect(Collectors.toList());
+
+    // 5. Lấy tất cả SubService theo subIds (1 lần query)
+    List<SubService> subServices = subServiceRepo.findAllById(subIds);
+
+    // 6. Map subId -> SubService
+    Map<Integer, SubService> subServiceMap = subServices.stream()
+            .collect(Collectors.toMap(SubService::getSubId, ss -> ss));
+
+    // 7. Group lại theo estimatedDayOffset
+    Map<Integer, List<SubService>> subServicesGrouped = steps.stream()
+            .map(step -> subServiceMap.get(step.getSubId()))
+            .filter(java.util.Objects::nonNull)
+            .collect(Collectors.groupingBy(
+                    SubService::getEstimatedDayOffset,
+                    TreeMap::new,
+                    Collectors.toList()
+            ));
+
+    return new VisitSubService(bookId, visitNumber, subServicesGrouped);
+}
+
 }

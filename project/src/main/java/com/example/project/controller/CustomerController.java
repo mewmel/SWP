@@ -119,10 +119,14 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) 
         medicalRecordDTO.setTreatmentPlan(medicalRecord.getTreatmentPlan());
         medicalRecordDTO.setMedicalNotes(medicalRecord.getNote());
         medicalRecordDTO.setRecordStatus(medicalRecord.getRecordStatus());
-        // Xử lý LocalDate -> String nếu dischargeDate là LocalDate
-        if (medicalRecord.getDischargeDate() != null) {
+        // Xử lý LocalDate -> String nếu là LocalDate
+                if (medicalRecord.getCreatedAt() != null) {
+            medicalRecordDTO.setCreatedAt(medicalRecord.getCreatedAt());
+        }
+                if (medicalRecord.getDischargeDate() != null) {
             medicalRecordDTO.setDischargeDate(medicalRecord.getDischargeDate());
         }
+
         dto.setCurrentMedicalRecord(medicalRecordDTO);
     }
 

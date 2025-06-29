@@ -16,12 +16,6 @@ public interface BookingStepRepository extends JpaRepository<BookingStep, Intege
         "WHERE bs.bookId = :bookId AND bs.stepStatus = 'inactive'", nativeQuery = true)
 List<Object[]> findInactiveStepDTOByBookId(@Param("bookId") Integer bookId);
 
-  @Query("""
-    SELECT bs 
-      FROM BookingStep bs
-      JOIN FETCH bs.subService ss
-     WHERE bs.bookId = :bookId
-    """)
-  List<BookingStep> findWithSubServiceByBookingId(@Param("bookId") Integer bookId);
+
 
 }

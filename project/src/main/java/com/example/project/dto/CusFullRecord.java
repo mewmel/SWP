@@ -36,6 +36,7 @@ public class CusFullRecord {
     private String treatmentPlan;
     private String medicalNotes;     // đổi tên notes cho rõ nghĩa
     private String recordStatus;
+    private LocalDateTime createdAt;
     private LocalDateTime dischargeDate;
     }
 

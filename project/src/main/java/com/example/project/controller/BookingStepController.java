@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.BookingStepInfo;
+import com.example.project.dto.VisitSubService;
 import com.example.project.entity.BookingStep;
 import com.example.project.entity.SubService;
 import com.example.project.repository.BookingStepRepository;
@@ -31,7 +32,7 @@ public class BookingStepController {
     private BookingStepService bookingStepService; // Thêm dòng này
 
     // Trả về danh sách BookingStep kèm tên bước cho 1 bookingId
-    @GetMapping("/by-booking/{bookingId}")
+    @GetMapping("/by-booking/{bookId}")
     public List<Map<String, Object>> getStepsByBooking(@PathVariable Integer bookId) {
         List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
         List<Map<String, Object>> result = new ArrayList<>();
@@ -47,7 +48,7 @@ public class BookingStepController {
         }
         return result;
     }
-    // Trả về danh sách BookingStep theo bookingId bên doctor dashboard
+    // Trả về danh sách BookingStep theo bookingId bên doctor dashboard- để hiện bên xác nhận lịch
 @GetMapping("/{bookId}")
     public List<BookingStepInfo> getBookingStepsByBooking(@PathVariable Integer bookId) {
         List<Object[]> rows = bookingStepRepo.findInactiveStepDTOByBookId(bookId);
@@ -74,7 +75,16 @@ public class BookingStepController {
         return resp;
     }
 
-   
+@GetMapping("/{bookId}/subservice-of-visit")
+public List<SubService> getSubServiceOfVisit(@PathVariable Integer bookId) {
+    VisitSubService dto = bookingStepService.getSubServicesForBooking(bookId);
+
+    // Lấy group theo visitNumber (lần khám hiện tại)
+    List<SubService> currentVisitSubs = dto.getSubServicesGrouped().get(dto.getVisitNumber());
+
+    // Nếu chưa có (ví dụ chưa thực hiện lần khám này), trả về empty list
+    return currentVisitSubs != null ? currentVisitSubs : List.of();
+}
 
 
 }
