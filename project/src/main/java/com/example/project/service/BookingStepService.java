@@ -120,4 +120,17 @@ public VisitSubService getSubServicesForBooking(Integer bookId) {
     return new VisitSubService(bookId, visitNumber, subServicesGrouped);
 }
 
+    public boolean updateBookingStepWithBooking(String subName, BookingStep req) {
+        BookingStep existingStep = bookingStepRepo.findBySubName(subName);
+        if (existingStep == null) return false;
+
+        existingStep.setPerformedAt(req.getPerformedAt());
+        existingStep.setResult(req.getResult());
+        existingStep.setNote(req.getNote());
+        existingStep.setStepStatus(req.getStepStatus());
+
+        bookingStepRepo.save(existingStep);
+        return true;
+    }
+
 }

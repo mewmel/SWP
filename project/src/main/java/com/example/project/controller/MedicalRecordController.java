@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.entity.MedicalRecord;
 import com.example.project.repository.MedicalRecordRepository;
+import com.example.project.service.MedicalRecordService;
 
 @RestController
 @RequestMapping("/api/medical-records")
@@ -21,6 +24,8 @@ public class MedicalRecordController {
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
+    @Autowired
+    private MedicalRecordService medicalRecordService;
 
         @GetMapping("/exist")
     public Map<String, Object> checkMedicalRecordExist(
@@ -51,6 +56,14 @@ public Map<String, Object> createMedicalRecord(@PathVariable Integer serId, @Req
     return resp;
 }
 
+    // PUT /api/medical-records/update-with-booking/{recordId}
+    @PutMapping("/update-with-booking/{recordId}")
+    public ResponseEntity<?> updateMedicalRecord(
+            @PathVariable Integer recordId, @RequestBody MedicalRecord req) {
+        boolean ok = medicalRecordService.updateMedicalRecord(recordId, req);
+        if (ok) return ResponseEntity.ok().build();
+        return ResponseEntity.status(404).body("Medical record not found");
+    }
 
 
 }

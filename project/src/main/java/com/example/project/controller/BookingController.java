@@ -156,6 +156,14 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
     return ResponseEntity.ok(bookings);
 }
 
+    // PUT /api/booking/note-status/{bookId}
+    @PutMapping("/update-note-status/{bookId}")
+    public ResponseEntity<?> updateBookingNoteStatus(@PathVariable Integer bookId, @RequestBody Booking bookingUpdate) {
+        boolean ok = bookingService.updateNoteAndStatus(bookId, bookingUpdate.getBookStatus(), bookingUpdate.getNote());
+        if (ok) return ResponseEntity.ok().build();
+        return ResponseEntity.status(404).body("Booking not found");
+    }
+
 
 
 

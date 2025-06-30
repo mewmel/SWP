@@ -7,9 +7,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +23,8 @@ import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.BookingStepService;
 
+
+
 @RestController
 @RequestMapping("/api/booking-steps")
 public class BookingStepController {
@@ -29,7 +33,7 @@ public class BookingStepController {
     @Autowired
     private SubServiceRepository subServiceRepo;
     @Autowired
-    private BookingStepService bookingStepService; // Thêm dòng này
+    private BookingStepService bookingStepService;
 
     // Trả về danh sách BookingStep kèm tên bước cho 1 bookingId
     @GetMapping("/by-booking/{bookId}")
@@ -85,6 +89,17 @@ public List<SubService> getSubServiceOfVisit(@PathVariable Integer bookId) {
     // Nếu chưa có (ví dụ chưa thực hiện lần khám này), trả về empty list
     return currentVisitSubs != null ? currentVisitSubs : List.of();
 }
+
+    // Cập nhật BookingStep với bookingId
+    @PutMapping("/update-with-booking/{subName}")
+    public ResponseEntity<?> updateBookingStepWithBooking(@PathVariable String subName, BookingStep req) {
+        boolean updated = bookingStepService.updateBookingStepWithBooking(subName, req);
+        if (updated) {
+            return ResponseEntity.ok().body("Cập nhật thành công bước " + subName);
+        } else {
+            return ResponseEntity.badRequest().body("Không tìm thấy bước " + subName + " để cập nhật");
+        }
+    }
 
 
 }

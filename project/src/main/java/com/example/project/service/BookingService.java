@@ -181,4 +181,17 @@ public class BookingService {
         return sb.toString();
     }
 
+    // Cập nhật ghi chú và trạng thái booking
+    public boolean updateNoteAndStatus(Integer bookId, String status, String note) {
+        Optional<Booking> optBooking = bookingRepo.findById(bookId);
+        if (optBooking.isPresent()) {
+            Booking booking = optBooking.get();
+            booking.setBookStatus(status);
+            booking.setNote(note);
+            bookingRepo.save(booking);
+            return true;
+        }
+        return false;
+    }
+
 }

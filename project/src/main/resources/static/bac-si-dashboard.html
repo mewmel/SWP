@@ -194,15 +194,14 @@
                                         <label>Loại đặt lịch:</label>
                                         <select id="bookType">
                                             <option value="initial">Khám lần đầu</option>
-                                            <option value="follow-up" selected>Tái khám</option>
+                                            <option value="follow-up">Tái khám</option>
                                         </select>
                                     </div>
                                     <div class="record-section">
                                         <label>Trạng thái lịch hẹn:</label>
                                         <select id="bookStatus">
-                                            <option value="pending">Chờ xác nhận</option>
-                                            <option value="confirmed" selected>Đã xác nhận</option>
-                                            <option value="rejected">Đã từ chối</option>
+                                            <option value="confirmed" >Đã đến khám</option>
+                                            <option value="pending">Chưa đến khám</option>
                                         </select>
                                     </div>
                                 </div>
@@ -233,8 +232,7 @@
                                 
                                 <div class="record-section">
                                     <label>Dịch vụ:</label>
-                                    <textarea id="serviceName" rows="3"
-                                        placeholder="Nhập tên dịch vụ..."></textarea>
+                                    <span id="serviceName" rows="3"></span>
                                 </div>
                                 <div class="record-section">
                                     <label>Chẩn đoán:</label>
