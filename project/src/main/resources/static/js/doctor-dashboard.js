@@ -89,10 +89,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Action button
                 const actions = clone.querySelector('.appointment-actions');
                 if (b.bookStatus === 'confirmed') {
-                    actions.innerHTML = `<button class="btn-waiting" onclick="window.markAsExamined('${b.cusId}','${b.serId}','${b.docId}')">
+                    actions.innerHTML = `<button class="btn-waiting" onclick="window.markAsExamined('${b.cusId}','${b.serId}','${b.docId}','${b.bookId}')">
     <i class="fas fa-check"></i> Đang khám
 </button>`;
-                } else if (b.bookStatus === 'ongoing') {
+                } else if (b.bookStatus === 'completed') {
                     actions.innerHTML = `<button class="btn-record" onclick="window.viewPatientRecord('${b.cusId}')">
                     <i class="fas fa-file-medical"></i> Xem hồ sơ
                 </button>`;
@@ -209,13 +209,26 @@ document.addEventListener('DOMContentLoaded', function () {
     // ========== PATIENT STATUS MANAGEMENT ==========
 
     // Mark patient as examined
-    window.markAsExamined = async function (cusId, serId, docId) {
+    window.markAsExamined = async function (cusId, serId, docId, bookId) {
         const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
         if (!appointmentItem) return;
 
         // 1. Đổi trạng thái UI
         appointmentItem.setAttribute('data-status', 'completed');
+        // Ở ngay sau khi đổi trạng thái UI (hoặc trước khi tạo hồ sơ)
+        await fetch(`/api/booking/update-status/${bookId}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                bookStatus: 'completed',
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        // Cập nhật lịch hẹn hôm nay
+    await loadTodayConfirmedBookings();  
 
+
+
+        
         // Update status badge
         const statusBadge = appointmentItem.querySelector('.status-badge');
         statusBadge.textContent = 'Đang khám';
@@ -451,127 +464,130 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('patientModal').style.display = 'none';
     };
 
-window.savePatientRecord = async function () {
-    const modal = document.getElementById('patientModal');
-    const patientId = modal.dataset.patientId;
-    if (!patientId) {
-        alert('Không xác định được bệnh nhân!');
-        return;
-    }
+    window.savePatientRecord = async function () {
+        const modal = document.getElementById('patientModal');
+        const patientId = modal.dataset.patientId;
+        if (!patientId) {
+            alert('Không xác định được bệnh nhân!');
+            return;
+        }
 
-    // 1. Lấy loại đặt lịch và trạng thái lịch hẹn từ DOM
-    const bookType = document.getElementById('bookType').value;       
-    const bookStatus = document.getElementById('bookStatus').value;   
-    const bookingNote = document.getElementById('bookingNote').value || '';
-    const bookId = localStorage.getItem('bookId') || '';
-    const recordId = localStorage.getItem('recordId') || '';
-
-    // Nếu là "Khám lần đầu" mà KHÔNG đến khám → XÓA medical record nếu có (nếu có API xóa)
-    if (bookType === 'initial' && bookStatus !== 'pending') {
-        // Nếu có recordId thì lấy ra rồi xóa (nếu backend cho xóa, bạn tùy biến ở đây)
-        // await fetch(`/api/medical-records/${recordId}`, { method: 'DELETE' });
-        alert("Không tạo hồ sơ bệnh án vì bệnh nhân không đến khám!");
-        return;
-    }
-
-    // 2. Nếu đã đến khám → Lưu lần lượt 4 bảng
-    if (bookStatus !== 'follow-up' && bookStatus !== 'pending') {
-        alert("Không thể lưu hồ sơ bệnh án vì bệnh nhân chưa đến khám!");
-        return;
-    }
+        // 1. Lấy loại đặt lịch và trạng thái lịch hẹn từ DOM
+        const bookType = document.getElementById('bookType').value;
+        const bookStatus = document.getElementById('bookStatus').value;
+        const bookingNote = document.getElementById('bookingNote').value || '';
+        const bookId = localStorage.getItem('bookId') || '';
+        const recordId = localStorage.getItem('recordId') || '';
 
 
-    // (2) Lấy dữ liệu MedicalRecord
-    localStorage.getItem('recordId', recordId);
-    const recordStatus = document.getElementById('recordStatus').value;
-    const createdDate = document.getElementById('recordCreatedDate').value;
-    const diagnosis = document.getElementById('diagnosis').value || '';
-    const treatmentPlan = document.getElementById('treatmentPlan').value || '';
-    const dischargeDate = document.getElementById('dischargeDate').value || '';
-    const note = document.getElementById('medicalNote').value || '';
 
 
-    // (3) Lấy danh sách các bước đã hoàn thành
-    const stepsArr = Array.from(document.querySelectorAll('#completedStepsList .step-item')).map(stepDiv => {
-        return {
-            subName: stepDiv.querySelector('.step-info strong').textContent.trim(),
-            stepStatus: stepDiv.querySelector('.step-status')?.textContent.trim() || 'Đang thực hiện',
-            //nếu stepStatus là hoàn thành thì lấy thêm thông tin
-            ...(stepStatus === 'completed' && {
-                performedAt: stepDiv.querySelector('.stepPerformedAt')?.value || '',
-                result: stepDiv.querySelector('.stepResult')?.textContent.trim() || '',
-                note: stepDiv.querySelector('.stepNote')?.textContent.trim() || '',
-            })
+        // Nếu là "Khám lần đầu" mà KHÔNG đến khám → XÓA medical record nếu có (nếu có API xóa)
+        if (bookType === 'initial' && bookStatus !== 'completed') {
+            // Nếu có recordId thì lấy ra rồi xóa (nếu backend cho xóa, bạn tùy biến ở đây)
+            // await fetch(`/api/medical-records/${recordId}`, { method: 'DELETE' });
+            alert("Không tạo hồ sơ bệnh án vì bệnh nhân không đến khám!");
+            return;
+        }
 
-        };
-    });
+        // 2. Nếu đã đến khám → Lưu lần lượt 4 bảng
+        if (bookStatus !== 'completed') {
+            alert("Không thể lưu hồ sơ bệnh án vì bệnh nhân chưa đến khám!");
+            return;
+        }
 
-    // (4) Lấy danh sách đơn thuốc
-    const drugsArr = Array.from(document.querySelectorAll('.drug-item')).map(drugDiv => {
-        return {
-            bookId: bookId,
-            docId: localStorage.getItem('docId') || '',
-            cusId: patientId,
-            drugName: drugDiv.querySelector('input[placeholder="Tên thuốc..."]').value,
-            dosage: drugDiv.querySelector('input[placeholder="Liều dùng..."]').value,
-            frequency: drugDiv.querySelector('input[placeholder="Tần suất sử dụng..."]').value,
-            duration: drugDiv.querySelector('input[placeholder="Thời gian dùng..."]').value,
-            note: drugDiv.querySelector('textarea').value,
-        };
-    });
 
-    try {
-        // (1) Gọi API insert Booking 
-        await fetch(`/api/booking/update-note-status/${bookId}`, {
-            method: 'PUT',
-            body: JSON.stringify({
+        // (2) Lấy dữ liệu MedicalRecord
+        localStorage.getItem('recordId', recordId);
+        const recordStatus = document.getElementById('recordStatus').value;
+        const createdDate = document.getElementById('recordCreatedDate').value;
+        const diagnosis = document.getElementById('diagnosis').value || '';
+        const treatmentPlan = document.getElementById('treatmentPlan').value || '';
+        const dischargeDate = document.getElementById('dischargeDate').value || '';
+        const note = document.getElementById('medicalNote').value || '';
+
+
+        // (3) Lấy danh sách các bước đã hoàn thành
+        const stepsArr = Array.from(document.querySelectorAll('#completedStepsList .step-item')).map(stepDiv => {
+            return {
+                subName: stepDiv.querySelector('.step-info strong').textContent.trim(),
+                stepStatus: stepDiv.querySelector('.step-status')?.textContent.trim() || 'Đang thực hiện',
+                //nếu stepStatus là hoàn thành thì lấy thêm thông tin
+                ...(stepStatus === 'completed' && {
+                    performedAt: stepDiv.querySelector('.stepPerformedAt')?.value || '',
+                    result: stepDiv.querySelector('.stepResult')?.textContent.trim() || '',
+                    note: stepDiv.querySelector('.stepNote')?.textContent.trim() || '',
+                })
+
+            };
+        });
+
+        // (4) Lấy danh sách đơn thuốc
+        const drugsArr = Array.from(document.querySelectorAll('.drug-item')).map(drugDiv => {
+            return {
                 bookId: bookId,
-                bookStatus: bookStatus,
-                note: bookingNote,
-            }),
-            headers: { 'Content-Type': 'application/json' }
+                docId: localStorage.getItem('docId') || '',
+                cusId: patientId,
+                drugName: drugDiv.querySelector('input[placeholder="Tên thuốc..."]').value,
+                dosage: drugDiv.querySelector('input[placeholder="Liều dùng..."]').value,
+                frequency: drugDiv.querySelector('input[placeholder="Tần suất sử dụng..."]').value,
+                duration: drugDiv.querySelector('input[placeholder="Thời gian dùng..."]').value,
+                note: drugDiv.querySelector('textarea').value,
+            };
         });
 
-        // (2) Gọi API insert MedicalRecord
-        await fetch(`/api/medical-records/update-with-booking/${recordId}`, {
-            method: 'PUT',
-            body: JSON.stringify({
-                recordStatus: recordStatus,
-                createdAt: createdDate,
-                diagnosis: diagnosis,
-                treatmentPlan: treatmentPlan,
-                dischargeDate: dischargeDate,
-                medicalNotes: note,
-        }),
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        // (3) Gọi API insert BookingStep cho từng bước
-        for (let step of stepsArr) {
-            await fetch(`/api/booking-steps/update-with-booking/${step.subName}`, {
+        try {
+            // (1) Gọi API insert Booking 
+            await fetch(`/api/booking/update-note-status/${bookId}`, {
                 method: 'PUT',
-                body: JSON.stringify(step),
+                body: JSON.stringify({
+                    bookId: bookId,
+                    bookStatus: bookStatus,
+                    note: bookingNote,
+                }),
                 headers: { 'Content-Type': 'application/json' }
             });
-        }
 
-        // (4) Gọi API insert Drug cho từng thuốc
-        for (let drug of drugsArr) {
-            await fetch(`/api/drugs/update-with-booking/${drug.bookId}`, {
+            // (2) Gọi API insert MedicalRecord
+            await fetch(`/api/medical-records/update-with-booking/${recordId}`, {
                 method: 'PUT',
-                body: JSON.stringify(drug),
+                body: JSON.stringify({
+                    recordStatus: recordStatus,
+                    createdAt: createdDate,
+                    diagnosis: diagnosis,
+                    treatmentPlan: treatmentPlan,
+                    dischargeDate: dischargeDate,
+                    medicalNotes: note,
+                }),
                 headers: { 'Content-Type': 'application/json' }
             });
-        }
 
-        alert('Đã lưu hồ sơ bệnh án thành công!');
-        // Có thể gọi thêm showNotification() nếu có
-        window.closeModal();
-    } catch (err) {
-        console.error('Lỗi khi lưu hồ sơ bệnh án:', err);
-        alert('Lỗi khi lưu hồ sơ bệnh án!');
-    }
-};
+            // (3) Gọi API insert BookingStep cho từng bước
+            for (let step of stepsArr) {
+                await fetch(`/api/booking-steps/update-with-booking/${bookId},${step.subName}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(step),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            }
+
+            // (4) Gọi API insert Drug cho từng thuốc
+            for (let drug of drugsArr) {
+                await fetch(`/api/drugs/update-with-booking/${bookId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(drug),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            }
+
+            alert('Đã lưu hồ sơ bệnh án thành công!');
+            // Có thể gọi thêm showNotification() nếu có
+            window.closeModal();
+        } catch (err) {
+            console.error('Lỗi khi lưu hồ sơ bệnh án:', err);
+            alert('Lỗi khi lưu hồ sơ bệnh án!');
+        }
+    };
 
 
     // Additional utility functions for sidebar

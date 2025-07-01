@@ -3,6 +3,7 @@ package com.example.project.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -120,16 +121,16 @@ public VisitSubService getSubServicesForBooking(Integer bookId) {
     return new VisitSubService(bookId, visitNumber, subServicesGrouped);
 }
 
-    public boolean updateBookingStepWithBooking(String subName, BookingStep req) {
-        BookingStep existingStep = bookingStepRepo.findBySubName(subName);
-        if (existingStep == null) return false;
+    public boolean updateBookingStepWithBooking(Integer bookId, String subName, BookingStep req) {
+        Optional<BookingStep> existingStep = bookingStepRepo.findByBookIdAndSubName(bookId, subName);
+        if (!existingStep.isPresent()) return false;
 
-        existingStep.setPerformedAt(req.getPerformedAt());
-        existingStep.setResult(req.getResult());
-        existingStep.setNote(req.getNote());
-        existingStep.setStepStatus(req.getStepStatus());
+        existingStep.get().setPerformedAt(req.getPerformedAt());
+        existingStep.get().setResult(req.getResult());
+        existingStep.get().setNote(req.getNote());
+        existingStep.get().setStepStatus(req.getStepStatus());
 
-        bookingStepRepo.save(existingStep);
+        bookingStepRepo.save(existingStep.get());
         return true;
     }
 

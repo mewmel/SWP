@@ -21,22 +21,25 @@ public class Drug {
     @Column(name = "drugId")
     private Integer drugId;
 
+    @Column(name = "bookId", nullable = false)
+    private Integer bookId;
+
     @Column(name = "docId", nullable = false)
     private Integer docId;
 
     @Column(name = "cusId", nullable = false)
     private Integer cusId;
 
-    @Column(name = "drugName", length = 100, nullable = false)
+    @Column(name = "drugName", length = 100)
     private String drugName;
 
-    @Column(name = "dosage", length = 50, nullable = false)
+    @Column(name = "dosage", length = 50)
     private String dosage;
 
-    @Column(name = "frequency", length = 50, nullable = false)
+    @Column(name = "frequency", length = 50)
     private String frequency;
 
-    @Column(name = "duration", length = 50, nullable = false)
+    @Column(name = "duration", length = 50)
     private String duration;
 
     @Column(name = "note", length = 200)

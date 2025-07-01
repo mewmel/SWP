@@ -194,4 +194,18 @@ public class BookingService {
         return false;
     }
 
+    // Cập nhật trạng thái booking
+    public boolean updateStatus(Integer bookId, String status) {
+        Optional<Booking> optBooking = bookingRepo.findById(bookId);
+        if (optBooking.isPresent()) {
+            Booking booking = optBooking.get();
+            // Chỉ cho phép chuyển từ pending sang confirmed/rejected
+            // Validate status value
+            booking.setBookStatus(status);
+            bookingRepo.save(booking);
+            return true;
+        }
+        return false; // Booking không tồn tại
+    }
+
 }

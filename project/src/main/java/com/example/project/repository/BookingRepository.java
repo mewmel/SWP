@@ -45,7 +45,7 @@ Optional<Booking> findLatestBooking(
 
 @Query("SELECT b FROM Booking b " +
        "WHERE b.docId = :docId " +
-       "AND b.bookStatus = 'confirmed' " +
+       "AND b.bookStatus IN ('confirmed', 'completed') " +
        "AND b.createdAt BETWEEN :startOfDay AND :endOfDay")
 List<Booking> findConfirmedBookingsToday(
     @Param("docId") Integer docId,

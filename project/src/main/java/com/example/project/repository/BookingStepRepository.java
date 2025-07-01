@@ -1,6 +1,7 @@
 package com.example.project.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,8 +17,12 @@ public interface BookingStepRepository extends JpaRepository<BookingStep, Intege
         "WHERE bs.bookId = :bookId AND bs.stepStatus = 'inactive'", nativeQuery = true)
 List<Object[]> findInactiveStepDTOByBookId(@Param("bookId") Integer bookId);
 
-// An toàn nhất (tìm đúng 1 bước cụ thể)
-Optional<BookingStep> findByBookIdAndSubService_SubName(Integer bookId, String subName);
-
+@Query(
+  value = "SELECT bs.* FROM BookingStep bs " +
+          "JOIN SubService ss ON bs.subId = ss.subId " +
+          "WHERE bs.bookId = :bookId AND ss.subName = :subName",
+  nativeQuery = true
+)
+Optional<BookingStep> findByBookIdAndSubName(@Param("bookId") Integer bookId, @Param("subName") String subName);
 
 }

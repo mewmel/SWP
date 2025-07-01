@@ -156,6 +156,7 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
     return ResponseEntity.ok(bookings);
 }
 
+    // dùng để update khi đã khám xong
     // PUT /api/booking/note-status/{bookId}
     @PutMapping("/update-note-status/{bookId}")
     public ResponseEntity<?> updateBookingNoteStatus(@PathVariable Integer bookId, @RequestBody Booking bookingUpdate) {
@@ -166,5 +167,13 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
 
 
 
+// dùng để update khi có đến khám
+    // PUT /api/booking/update-status/{bookId}
+    @PutMapping("/booking/update-status/{bookId}")
+    public ResponseEntity<?> updateBookingStatus(@PathVariable Integer bookId, @RequestBody Booking bookingUpdate) {
+        boolean ok = bookingService.updateStatus(bookId, bookingUpdate.getBookStatus());
+        if (ok) return ResponseEntity.ok().build();
+        return ResponseEntity.status(404).body("Booking not found");
+    }
 
 }

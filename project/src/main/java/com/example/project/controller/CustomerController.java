@@ -87,7 +87,7 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) 
     // 2. Lấy booking hiện tại (ví dụ lấy booking có status = 'confirmed' hoặc 'ongoing', mới nhất)//sửa lại thành ongoing
     Booking booking = bookingRepository
         .findLatestBooking(
-            cusId, Arrays.asList("confirmed")
+            cusId, Arrays.asList("confirmed", "completed") // Chỉ lấy các trạng thái này
         )
         .orElse(null);
 
