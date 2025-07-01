@@ -7,6 +7,582 @@
     <link rel="stylesheet" href="css/doctor-appointment.css">
     <link rel="stylesheet" href="css/doctor-common.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Enhanced Appointment Card Styles */
+        .appointment-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .appointment-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .appointment-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .patient-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .patient-name {
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .booking-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            max-width: fit-content;
+        }
+
+        .booking-type-badge.initial {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .booking-type-badge.follow-up {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .appointment-time {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .appointment-time i {
+            color: #3b82f6;
+        }
+
+        .service-info {
+            background: #f8fafc;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .service-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .service-name i {
+            color: #10b981;
+        }
+        .appointment-details {
+            padding: 20px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-label i {
+            font-size: 10px;
+        }
+
+        .detail-value {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.confirmed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .follow-up-info {
+            background: #fffbeb;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 0 20px 16px 20px;
+        }
+
+        .follow-up-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #92400e;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .follow-up-badge i {
+            color: #f59e0b;
+        }
+
+        .previous-visit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #78716c;
+            font-size: 14px;
+        }
+
+        .previous-visit i {
+            color: #a3a3a3;
+        }
+
+        .appointment-note {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 0 20px 16px 20px;
+        }
+
+        .note-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .note-label {
+            color: #475569;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .note-header i {
+            color: #64748b;
+        }
+
+        .note-text {
+            color: #334155;
+            line-height: 1.6;
+            font-style: italic;
+            background: #fff;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .appointment-actions {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-view {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-view:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-confirm {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #059669;
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #dc2626;
+        }
+
+        /* Filter Section Enhancement */
+        .filter-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-group label {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .btn-refresh {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            align-self: flex-end;
+        }
+
+        .btn-refresh:hover {
+            background: #2563eb;
+        }
+
+        .appointments-header {
+            margin-bottom: 20px;
+        }
+
+        .pending-count {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+            border-left: 4px solid #f59e0b;
+        }
+
+        /* Modal Enhancement */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: calc(90vh - 160px);
+            overflow-y: auto;
+        }
+
+        .patient-info-section,
+        .appointment-info-section,
+        .note-section {
+            margin-bottom: 24px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .patient-info-section h4,
+        .appointment-info-section h4,
+        .note-section h4 {
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-item label {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item span {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .note-content {
+            background: #fff;
+            padding: 16px;
+            border-radius: 6px;
+            color: #334155;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .modal-footer {
+            background: #f8fafc;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .appointment-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .service-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .appointment-actions {
+                flex-direction: column;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10px auto;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -14,10 +590,10 @@
 <header class="doctor-header">
     <div class="doctor-header-container">
         <nav class="doctor-nav">
-            <a href="bac-si-dashboard.html" class="nav-link active">Trang cá nhân</a>
+            <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
             <a href="blog.html" class="nav-link">Đăng Blog</a>
-            <a href="bac-si-lich-lam-viec.html" class="nav-link">Lịch làm việc</a>
-            <a href="index.html" class="nav-link">Hồ sơ cá nhân</a>
+            <a href="bac-si-lich-lam-viec.html" class="nav-link">Xem lịch làm</a>
+            <a href="bac-si-profile.html" class="nav-link">Hồ sơ cá nhân</a>
         </nav>
 
         <div class="doctor-header-right">
@@ -91,32 +667,73 @@
                     <!-- Template cho mỗi booking card - THÊM VÀO ĐÂY -->
                     <div class="appointment-card template" id="bookingTemplate" style="display: none;">
                         <div class="appointment-header">
-                            <h3 class="patient-name" id="patientName">Booking #</h3>
+                            <div class="patient-info">
+                                <h3 class="patient-name" id="patientName">Booking #</h3>
+                                <div class="booking-type-badge" id="bookingTypeBadge">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span id="bookingType">Khám lần đầu</span>
+                                </div>
+                            </div>
                             <div class="appointment-time">
                                 <i class="fas fa-clock"></i>
                                 <span id="appointmentTime">--/--/---- --:--</span>
                             </div>
                         </div>
 
+                        <div class="service-info" id="serviceInfo">
+                            <div class="service-name">
+                                <i class="fas fa-medical-bag"></i>
+                                <span id="serviceName">Tên dịch vụ</span>
+                            </div>
+                        </div>
+
                         <div class="appointment-details">
-                            <div class="detail-item">
-                                <span class="detail-label">Customer ID</span>
-                                <span class="detail-value" id="customerId">N/A</span>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        <i class="fas fa-user"></i> Mã bệnh nhân
+                                    </span>
+                                    <span class="detail-value" id="customerId">N/A</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        <i class="fas fa-phone"></i> Số điện thoại
+                                    </span>
+                                    <span class="detail-value" id="customerPhone">N/A</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        <i class="fas fa-info-circle"></i> Trạng thái
+                                    </span>
+                                    <span class="detail-value">
+                                        <span class="status-badge" id="statusBadge">--</span>
+                                    </span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        <i class="fas fa-calendar-plus"></i> Ngày tạo
+                                    </span>
+                                    <span class="detail-value" id="createdAt">N/A</span>
+                                </div>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Service ID</span>
-                                <span class="detail-value" id="serviceId">N/A</span>
+                        </div>
+
+                        <div class="follow-up-info" id="followUpInfo" style="display: none;">
+                            <div class="follow-up-badge">
+                                <i class="fas fa-redo-alt"></i>
+                                <span>Tái khám dịch vụ: <strong id="followUpService">Tên dịch vụ</strong></span>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Trạng thái</span>
-                                <span class="detail-value">
-                        <span class="status-badge" id="statusBadge">--</span>
-                    </span>
+                            <div class="previous-visit">
+                                <i class="fas fa-history"></i>
+                                <span>Lần khám trước: <span id="previousVisit">--/--/----</span></span>
                             </div>
                         </div>
 
                         <div class="appointment-note" id="appointmentNote" style="display: none;">
-                            <div class="note-label">Ghi chú từ bệnh nhân:</div>
+                            <div class="note-header">
+                                <i class="fas fa-sticky-note"></i>
+                                <span class="note-label">Ghi chú từ bệnh nhân:</span>
+                            </div>
                             <div class="note-text" id="noteText"></div>
                         </div>
 
@@ -233,5 +850,215 @@
 <script src="js/script.js"></script>
 <script src="js/doctor-common.js"></script>
 <script src="js/doctor-appointment-management.js"></script>
+
+<script>
+// Demo function để hiển thị thông tin mẫu
+function createSampleAppointment(isFollowUp = false) {
+    const template = document.getElementById('bookingTemplate');
+    const appointmentCard = template.cloneNode(true);
+    appointmentCard.id = 'appointment-' + Date.now();
+    appointmentCard.style.display = 'block';
+    appointmentCard.classList.remove('template');
+
+    // Thông tin cơ bản
+    appointmentCard.querySelector('#patientName').textContent = isFollowUp ? 'Nguyễn Thị Mai (BN #12345)' : 'Trần Văn An (BN #12346)';
+    appointmentCard.querySelector('#appointmentTime').textContent = isFollowUp ? '24/06/2024 14:00' : '25/06/2024 09:00';
+    
+    // Booking type
+    const bookingTypeBadge = appointmentCard.querySelector('#bookingTypeBadge');
+    const bookingType = appointmentCard.querySelector('#bookingType');
+    
+    if (isFollowUp) {
+        bookingTypeBadge.classList.add('follow-up');
+        bookingType.innerHTML = '<i class="fas fa-redo-alt"></i> Tái khám';
+    } else {
+        bookingTypeBadge.classList.add('initial');
+        bookingType.innerHTML = '<i class="fas fa-user-plus"></i> Khám lần đầu';
+    }
+
+    // Service info
+    if (isFollowUp) {
+        appointmentCard.querySelector('#serviceName').textContent = 'Liệu trình điều trị IVF';
+    } else {
+        appointmentCard.querySelector('#serviceName').textContent = 'Khám tiền đăng ký điều trị (IVF/IUI)';
+    }
+
+    // Detail info
+    appointmentCard.querySelector('#customerId').textContent = isFollowUp ? 'BN #12345' : 'BN #12346';
+    appointmentCard.querySelector('#customerPhone').textContent = isFollowUp ? '0352020737' : '0987654321';
+    appointmentCard.querySelector('#createdAt').textContent = isFollowUp ? '20/06/2024' : '23/06/2024';
+    
+    // Status
+    const statusBadge = appointmentCard.querySelector('#statusBadge');
+    statusBadge.textContent = 'Chờ xác nhận';
+    statusBadge.classList.add('pending');
+
+    // Follow-up info (chỉ hiển thị cho tái khám)
+    const followUpInfo = appointmentCard.querySelector('#followUpInfo');
+    if (isFollowUp) {
+        followUpInfo.style.display = 'block';
+        appointmentCard.querySelector('#followUpService').textContent = 'Liệu trình điều trị IVF';
+        appointmentCard.querySelector('#previousVisit').textContent = '20/06/2024';
+    }
+
+    // Note
+    const appointmentNote = appointmentCard.querySelector('#appointmentNote');
+    if (isFollowUp) {
+        appointmentNote.style.display = 'block';
+        appointmentCard.querySelector('#noteText').textContent = 'Xin hẹn lại để kiểm tra kết quả xét nghiệm hormone và tiến độ điều trị IVF.';
+    } else {
+        appointmentNote.style.display = 'block';
+        appointmentCard.querySelector('#noteText').textContent = 'Muốn được tư vấn về phương pháp điều trị hiếm muộn phù hợp.';
+    }
+
+    // Show confirm/reject buttons for pending appointments
+    appointmentCard.querySelector('#btnConfirm').style.display = 'inline-flex';
+    appointmentCard.querySelector('#btnReject').style.display = 'inline-flex';
+
+    return appointmentCard;
+}
+
+// Demo function để load appointments mẫu
+function loadSampleAppointments() {
+    const appointmentsList = document.getElementById('appointmentsList');
+    
+    // Clear existing appointments (except template)
+    const existingAppointments = appointmentsList.querySelectorAll('.appointment-card:not(.template)');
+    existingAppointments.forEach(card => card.remove());
+
+    // Add sample appointments
+    const followUpAppointment = createSampleAppointment(true);
+    const initialAppointment = createSampleAppointment(false);
+    
+    appointmentsList.appendChild(followUpAppointment);
+    appointmentsList.appendChild(initialAppointment);
+
+    // Update pending count
+    document.getElementById('pendingCount').textContent = '2';
+}
+
+// Load sample data when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadSampleAppointments();
+});
+
+// Override existing loadBookings function with demo
+function loadBookings() {
+    loadSampleAppointments();
+}
+
+// Demo filter function
+function filterBookings() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
+    
+    const appointments = document.querySelectorAll('.appointment-card:not(.template)');
+    let visibleCount = 0;
+    
+    appointments.forEach(appointment => {
+        let shouldShow = true;
+        
+        if (statusFilter !== 'all') {
+            const statusBadge = appointment.querySelector('.status-badge');
+            const appointmentStatus = statusBadge.textContent.toLowerCase().includes('chờ') ? 'pending' : 
+                                     statusBadge.textContent.toLowerCase().includes('xác nhận') ? 'confirmed' : 'rejected';
+            
+            if (appointmentStatus !== statusFilter) {
+                shouldShow = false;
+            }
+        }
+        
+        if (dateFilter) {
+            const appointmentTime = appointment.querySelector('#appointmentTime').textContent;
+            const appointmentDate = appointmentTime.split(' ')[0];
+            const filterDate = new Date(dateFilter).toLocaleDateString('vi-VN');
+            
+            if (appointmentDate !== filterDate) {
+                shouldShow = false;
+            }
+        }
+        
+        appointment.style.display = shouldShow ? 'block' : 'none';
+        if (shouldShow) visibleCount++;
+    });
+    
+    document.getElementById('pendingCount').textContent = visibleCount;
+}
+
+// Enhance modal functionality
+function openDetailModal(appointmentData) {
+    const modal = document.getElementById('appointmentDetailModal');
+    
+    // Populate modal with data
+    if (appointmentData) {
+        document.getElementById('detailPatientName').textContent = appointmentData.patientName || 'N/A';
+        document.getElementById('detailPatientPhone').textContent = appointmentData.phone || 'N/A';
+        document.getElementById('detailPatientEmail').textContent = appointmentData.email || 'N/A';
+        document.getElementById('detailPatientAge').textContent = appointmentData.age || 'N/A';
+        document.getElementById('detailAppointmentDate').textContent = appointmentData.date || 'N/A';
+        document.getElementById('detailAppointmentTime').textContent = appointmentData.time || 'N/A';
+        document.getElementById('detailService').textContent = appointmentData.service || 'N/A';
+        document.getElementById('detailNote').textContent = appointmentData.note || 'Không có ghi chú';
+        
+        const statusBadge = document.getElementById('detailStatus');
+        statusBadge.textContent = appointmentData.status || 'N/A';
+        statusBadge.className = 'status-badge ' + (appointmentData.status === 'Chờ xác nhận' ? 'pending' : 'confirmed');
+    }
+    
+    // Show modal with animation
+    modal.style.display = 'flex';
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+}
+
+function closeDetailModal() {
+    const modal = document.getElementById('appointmentDetailModal');
+    modal.classList.remove('show');
+    
+    // Hide modal after animation completes
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+// Add click event to view buttons
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('btn-view') || e.target.parentElement.classList.contains('btn-view')) {
+        const appointmentCard = e.target.closest('.appointment-card');
+        const appointmentData = {
+            patientName: appointmentCard.querySelector('#patientName').textContent,
+            phone: appointmentCard.querySelector('#customerPhone').textContent,
+            email: 'patient@example.com',
+            age: '29 tuổi',
+            date: appointmentCard.querySelector('#appointmentTime').textContent.split(' ')[0],
+            time: appointmentCard.querySelector('#appointmentTime').textContent.split(' ')[1],
+            service: appointmentCard.querySelector('#serviceName').textContent,
+            status: appointmentCard.querySelector('#statusBadge').textContent,
+            note: appointmentCard.querySelector('#noteText') ? appointmentCard.querySelector('#noteText').textContent : 'Không có ghi chú'
+        };
+        
+        openDetailModal(appointmentData);
+    }
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('appointmentDetailModal');
+    if (event.target === modal) {
+        closeDetailModal();
+    }
+}
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('appointmentDetailModal');
+        if (modal.classList.contains('show')) {
+            closeDetailModal();
+        }
+    }
+});
+</script>
 </body>
 </html>

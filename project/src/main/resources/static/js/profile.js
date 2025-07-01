@@ -113,10 +113,10 @@ tabButtons.forEach(button => {
     // Bước 1: Xác thực mật khẩu hiện tại
     verifyBtn.addEventListener("click", async () => {
         const currentPassword = currentInput.value.trim();
-        if (!currentPassword) return alert("Vui lòng nhập mật khẩu hiện tại!");
+        if (!currentPassword) return showNotification("Vui lòng nhập mật khẩu hiện tại!", 'warning');
         // LẤY ID CUSTOMER
         const cusId = localStorage.getItem('cusId'); 
-        if (!cusId) return alert("Không tìm thấy thông tin người dùng!");
+        if (!cusId) return showNotification("Không tìm thấy thông tin người dùng!", 'error');
 
         try {
             const res = await fetch(`/api/auth/${cusId}/verify-cus-password`, {
@@ -129,13 +129,14 @@ tabButtons.forEach(button => {
                 currentPasswordCache = currentPassword;          // Lưu lại
                 document.getElementById("currentPasswordGroup").style.display = "none";
                 newGroup.style.display = "block";                // Mở form mới
+                showNotification("Mật khẩu đã được xác thực!", 'success');
             } else {
                 const errorMsg = await res.text();
-                alert(errorMsg || "Mật khẩu hiện tại không đúng!");
+                showNotification(errorMsg || "Mật khẩu hiện tại không đúng!", 'error');
             }
         } catch (err) {
             console.error(err);
-            alert("Không thể kết nối tới máy chủ!");
+            showNotification("Không thể kết nối tới máy chủ!", 'error');
         }
     });
 
@@ -144,12 +145,12 @@ tabButtons.forEach(button => {
         const newPassword = document.getElementById("newPassword").value.trim();
         const confirm = document.getElementById("changeConfirmPassword").value.trim();
 
-        if (!newPassword || !confirm) return alert("Vui lòng nhập đủ hai ô!");
-        if (newPassword !== confirm) return alert("Mật khẩu mới không khớp!");
+        if (!newPassword || !confirm) return showNotification("Vui lòng nhập đủ hai ô!", 'warning');
+        if (newPassword !== confirm) return showNotification("Mật khẩu mới không khớp!", 'warning');
 
         // LẤY ID CUSTOMER
         const cusId = localStorage.getItem('cusId');
-        if (!cusId) return alert("Không tìm thấy thông tin người dùng!");
+        if (!cusId) return showNotification("Không tìm thấy thông tin người dùng!", 'error');
 
         try {
             // SỬA: Thêm cusId vào đường dẫn
@@ -163,7 +164,7 @@ tabButtons.forEach(button => {
             });
             
             if (res.ok) {
-                alert("Đổi mật khẩu thành công!");
+                showNotification("Đổi mật khẩu thành công!", 'success');
                 // Reset form
                 document.getElementById("currentPasswordGroup").style.display = "block";
                 document.getElementById("newPasswordGroup").style.display = "none";
@@ -173,15 +174,15 @@ tabButtons.forEach(button => {
                 currentPasswordCache = "";
             } else {
                 const errorMsg = await res.text();
-                alert(errorMsg || "Đổi mật khẩu thất bại!");
+                showNotification(errorMsg || "Đổi mật khẩu thất bại!", 'error');
             }
         } catch (err) {
             console.error(err);
-            alert("Không thể kết nối tới máy chủ!");
+            showNotification("Không thể kết nối tới máy chủ!", 'error');
         }
     });
 
-
+    
     // --- UPDATE DỮ LIỆU KHI LƯU ---
     const saveBtn = document.querySelector('.btn.btn-primary');
     if (saveBtn) {
@@ -260,3 +261,69 @@ function showNotification(message, type = 'success') {
 }
 
 // CSS đã được chuyển sang styles.css
+// Add notification styles
+    const style = document.createElement('style');
+    style.textContent = `
+         .profile-notification {
+             position: fixed;
+             top: 20px;
+             right: 20px;
+             padding: 15px 25px;
+             border-radius: 8px;
+             color: white;
+             font-weight: 500;
+             opacity: 0;
+             transform: translateX(120%);
+             transition: all 0.3s ease;
+             z-index: 99999;
+             max-width: 350px;
+             word-wrap: break-word;
+             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+         }
+         .profile-notification.show {
+             opacity: 1;
+             transform: translateX(0);
+         }
+         .profile-notification.success {
+             background: linear-gradient(135deg, #2ecc71, #27ae60);
+         }
+         .profile-notification.error {
+             background: linear-gradient(135deg, #e74c3c, #c0392b);
+         }
+         .profile-notification.warning {
+             background: linear-gradient(135deg, #f39c12, #e67e22);
+         }
+         .profile-notification.info {
+             background: linear-gradient(135deg, #3498db, #2980b9);
+         }
+
+         /* Animation cho notification mới */
+         @keyframes slideInNotification {
+             0% {
+                 opacity: 0;
+                 transform: translateX(-20px) scale(0.9);
+             }
+             100% {
+                 opacity: 1;
+                 transform: translateX(0) scale(1);
+             }
+         }
+
+         /* Ripple effect cho buttons */
+         .ripple {
+             position: absolute;
+             border-radius: 50%;
+             background: rgba(255, 255, 255, 0.6);
+             transform: scale(0);
+             animation: ripple-animation 0.6s linear;
+             pointer-events: none;
+         }
+
+         @keyframes ripple-animation {
+             to {
+                 transform: scale(4);
+                 opacity: 0;
+             }
+         }
+     `;
+    document.head.appendChild(style);

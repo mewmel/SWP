@@ -1518,18 +1518,53 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     })();
-});
-// Mở Gmail web khi bấm icon mail
-    document.addEventListener('DOMContentLoaded', function() {
-        var gmailBtn = document.getElementById('gmail-link');
-        if (gmailBtn) {
-            gmailBtn.addEventListener('click', function(e) {
-                e.preventDefault();
+
+    // Mở Gmail web khi bấm icon mail
+    var gmailBtn = document.getElementById('gmail-link');
+    if (gmailBtn) {
+        gmailBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            try {
                 var email = 'fertilityehr@gmail.com';
                 var subject = encodeURIComponent('Liên hệ FertilityEHR');
                 var body = encodeURIComponent('Xin chào FertilityEHR,\n\n');
                 var gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
-                window.open(gmailUrl, '_blank');
-            });
-        }
-    });
+                
+                var newWindow = window.open(gmailUrl, '_blank');
+                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                    // Fallback nếu popup bị chặn
+                    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+                    showNotification('Đang mở ứng dụng email mặc định...', 'info');
+                } else {
+                    showNotification('Đang mở Gmail...', 'success');
+                }
+            } catch (error) {
+                console.error('Gmail error:', error);
+                showNotification('Không thể mở Gmail. Vui lòng thử lại!', 'error');
+            }
+        });
+    }
+    
+    // Mở Instagram web khi bấm icon Instagram
+    var instagramBtn = document.getElementById('instagram-link');
+    if (instagramBtn) {
+        instagramBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            try {
+                var instagramUrl = `https://www.instagram.com/fert.ilityehr?igsh=Nzk1bmRsa3hnNXh4&utm_source=qr`;
+                
+                var newWindow = window.open(instagramUrl, '_blank');
+                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                    // Fallback nếu popup bị chặn
+                    window.location.href = instagramUrl;
+                } else {
+                    showNotification('Đang mở Instagram...', 'success');
+                }
+            } catch (error) {
+                console.error('Instagram error:', error);
+                showNotification('Không thể mở Instagram. Vui lòng thử lại!', 'error');
+            }
+        });
+    }
+
+});
