@@ -6,7 +6,6 @@ USE [Healthcare_ServiceVer9]
 GO
 
 ----------------------------------------------------------------------------------------------------------
-
 CREATE TABLE Customer (
     cusId               INT             IDENTITY(1,1) CONSTRAINT PK_Customer PRIMARY KEY,
     cusFullName         NVARCHAR(100)   NULL,
@@ -32,7 +31,7 @@ CREATE TABLE Manager (
     maPhone     VARCHAR(20)     NULL,
     maPassword  NVARCHAR(100)   NOT NULL,
     position    NVARCHAR(50)    NULL,
-    roles       VARCHAR(20)     NOT NULL CONSTRAINT CK_Manager_Roles CHECK (roles IN ('admin','manager')),	
+    roles       VARCHAR(20)     NOT NULL CONSTRAINT CK_Manager_Roles CHECK (roles IN ('admin','manager'))
 );
 GO
 
@@ -45,11 +44,8 @@ CREATE TABLE Doctor (
 	docPassword			NVARCHAR(100)   NULL,
     expertise           NVARCHAR(100)   NULL, -- chuyen mon
     degree              NVARCHAR(500)   NULL,
-    profileDescription  NVARCHAR(1000)  NULL,
-	
+    profileDescription  NVARCHAR(1000)  NULL
 );
-
-
 
 -- 4. WorkSlot – khung gio lam viec cua bac si, moi slot 1 tieng, co 2 benh nhan
 CREATE TABLE WorkSlot (
@@ -125,15 +121,15 @@ CREATE TABLE Booking (
     bookType    NVARCHAR(20)    NOT NULL CONSTRAINT CK_Booking_Type CHECK (bookType IN ('initial','follow-up'))
                                          CONSTRAINT DF_Booking_Type DEFAULT 'initial',
 
-    bookStatus  NVARCHAR(20)    NOT NULL CONSTRAINT CK_Booking_Status CHECK (bookStatus IN ('pending','confirmed','completed'))
+    bookStatus  NVARCHAR(20)    NOT NULL CONSTRAINT CK_Booking_Status CHECK (bookStatus IN ('pending','confirmed','rejected'))
 										 CONSTRAINT DF_Booking_Status DEFAULT 'pending',
-    createdAt   DATETIME        NOT NULL DEFAULT GETDATE(),
+    createdAt   DATETIME        NOT NULL
+                            CONSTRAINT DF_Booking_CreatedAt DEFAULT GETDATE(),
     note        NVARCHAR(1000)  NULL,
 
 	serId      INT             NOT NULL		 CONSTRAINT FK_Booking_Service
 											 FOREIGN KEY (serId) 
-											 REFERENCES dbo.Service(serId), 
-	drugId			   INT			  NULL										 
+											 REFERENCES dbo.Service(serId),       
 );
 GO
 
@@ -152,9 +148,7 @@ CREATE TABLE BookingStep (
     performedAt        DATETIME       NULL,  -- Ngày bat dau thuc hien
     result             NVARCHAR(500)  NULL,  -- Ket qua xet nghiem
     note               NVARCHAR(500)  NULL,  -- Ghi chu cua bac si cho buoc nay
-	--drugId			   INT			  NULL,
-	stepStatus		   NVARCHAR(20)	  NOT NULL		CONSTRAINT CK_BookingStep_Status CHECK (stepStatus IN ('inactive','pending','completed'))
-													CONSTRAINT DF_BookingStep_Status DEFAULT 'inactive',
+	drugId			   INT			  NULL
 );
 GO
 
@@ -175,18 +169,15 @@ CREATE TABLE MedicalRecord (
 										 FOREIGN KEY (serId) 
 										 REFERENCES dbo.Service(serId),
 
-    createdAt       DATETIME			 DEFAULT GETDATE(),
-
-    recordStatus    NVARCHAR(20)   NOT NULL CONSTRAINT CK_MedicalRecord_Status CHECK (recordStatus IN ('active','closed','pending'))
-											CONSTRAINT DF_MedicalRecord_Status DEFAULT 'active',
-    note            NVARCHAR(1000) NULL,
+    createdAt       DATETIME  DEFAULT GETDATE(),
+    recordStatus    NVARCHAR(50)   NOT NULL CONSTRAINT CK_MedicalRecord_Status CHECK (recordStatus IN ('active','closed','pending')),
+    note            NVARCHAR(1000),
     diagnosis       NVARCHAR(500)  NULL,  -- chuan doan benh
     treatmentPlan   NVARCHAR(1000) NULL,  -- Ke hoach dieu tri
     dischargeDate   DATETIME       NULL  -- ngay ket thuc dieu tri
 
 );
 GO
-
 
 -- 10. Feedback cua khach hang sau khi dieu tri
 CREATE TABLE Feedback (
@@ -230,17 +221,17 @@ CREATE TABLE Post (
 GO
 CREATE TABLE Drug (
     drugId          INT             IDENTITY(1,1) PRIMARY KEY,  -- ID duy nhất cho mỗi đơn thuốc
-    bookId			INT             NOT NULL,                   -- Gắn với bước cụ thể của quá trình điều trị
+    bookingStepId   INT             NOT NULL,                   -- Gắn với bước cụ thể của quá trình điều trị
     docId           INT             NOT NULL,                   -- Bác sĩ kê thuốc
     cusId           INT             NOT NULL,                   -- Bệnh nhân được kê thuốc
-    drugName        NVARCHAR(100)   NULL,                   -- Tên thuốc
-    dosage          NVARCHAR(50)    NULL,                   -- Liều dùng, ví dụ: "2 viên/lần"
-    frequency       NVARCHAR(50)    NULL,                   -- Tần suất: "3 lần/ngày"
-    duration        NVARCHAR(50)    NULL,                   -- Thời gian dùng: "5 ngày"
+    drugName        NVARCHAR(100)   NOT NULL,                   -- Tên thuốc
+    dosage          NVARCHAR(50)    NOT NULL,                   -- Liều dùng, ví dụ: "2 viên/lần"
+    frequency       NVARCHAR(50)    NOT NULL,                   -- Tần suất: "3 lần/ngày"
+    duration        NVARCHAR(50)    NOT NULL,                   -- Thời gian dùng: "5 ngày"
     note            NVARCHAR(200)   NULL,                       -- Ghi chú thêm nếu có
     createdAt       DATETIME        DEFAULT GETDATE(),          -- Thời gian kê thuốc
 
-    CONSTRAINT FK_Drug_Booking     FOREIGN KEY (bookId)		   REFERENCES Booking(bookId),
+    CONSTRAINT FK_Drug_BookingStep FOREIGN KEY (bookingStepId) REFERENCES BookingStep(bookingStepId),
     CONSTRAINT FK_Drug_Doctor      FOREIGN KEY (docId)         REFERENCES Doctor(docId),
     CONSTRAINT FK_Drug_Customer    FOREIGN KEY (cusId)         REFERENCES Customer(cusId)
 );
@@ -268,7 +259,7 @@ INSERT INTO Manager ( maFullName, maEmail, maPassword, maPhone, position, roles)
 
 
 INSERT INTO Service (serName, serDescription, serPrice, duration)
-VALUES (N'Khám tiền đăng ký điều trị IVF/IUI', N'Tư vấn chuyên sâu và chẩn đoán tình trạng sinh sản, xác định phương án điều trị phù hợp cho cả nam và nữ', 3100000, 7),
+VALUES (N'Khám tiền đăng ký điều trị (IVF/IUI)', N'Tư vấn chuyên sâu và chẩn đoán tình trạng sinh sản, xác định phương án điều trị phù hợp cho cả nam và nữ', 3100000, 7),
 (N'Liệu trình điều trị IVF', N'Quy trình thụ tinh trong ống nghiệm: kích thích buồng trứng, chọc hút noãn, thụ tinh và chuyển phôi', 20700000, 30),
 (N'Liệu trình điều trị IUI', N'Quy trình bơm tinh trùng vào buồng tử cung, tối ưu tỉ lệ thụ thai tự nhiên', 3750000, 30);
 
@@ -332,44 +323,19 @@ VALUES
 
 
 
+--------------------------------------------------------------
 INSERT INTO WorkSlot (docId, maId, workDate, startTime, endTime, maxPatient, slotStatus) VALUES	
 
 
 --------------------------------------------------------
-
-(1, 1, '2025-07-1', '08:00', '09:00', 2, 'approved'),						
-(1, 1, '2025-07-1', '09:00', '10:00', 2, 'approved'),						
-(1, 1, '2025-07-1', '10:00', '11:00', 2, 'approved'),						
-(1, 1, '2025-07-1', '11:00', '12:00', 2, 'approved'),						
+(1, 1, '2025-06-24', '08:00', '09:00', 2, 'approved'),						
+(1, 1, '2025-06-24', '09:00', '10:00', 2, 'approved'),						
+(1, 1, '2025-06-24', '10:00', '11:00', 2, 'approved'),						
+(1, 1, '2025-06-24', '11:00', '12:00', 2, 'approved'),						
 						
-(2, 1, '2025-06-2', '14:00', '15:00', 2, 'approved'),						
-(2, 1, '2025-06-26', '15:00', '16:00', 2, 'approved'),						
-(2, 1, '2025-06-26', '16:00', '17:00', 2, 'approved');
---------------------------------------------------------
-
-
-----------------------------------------------------------				
-
-
+(2, 1, '2025-06-24', '14:00', '15:00', 2, 'approved'),						
+(2, 1, '2025-06-24', '15:00', '16:00', 2, 'approved'),						
+(2, 1, '2025-06-24', '16:00', '17:00', 2, 'approved');
 
 ----------------------------------------------------------
 
-
-USE [Healthcare_ServiceVer9]
-
-
-select * from WorkSlot
-
-select * from BookingStep
-
-select * from Booking
-
-select * from Customer
-
-select * from MedicalRecord
-
-select * from Service
-
-select * from SubService
-
-select * from Drug
