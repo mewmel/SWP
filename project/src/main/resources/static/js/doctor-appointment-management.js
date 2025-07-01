@@ -70,35 +70,44 @@ function displayBookings(bookings) {
     const noBookings = document.getElementById('noAppointments');
     const template = document.getElementById('bookingTemplate');
 
-    // Clear container trừ template
+    // Xóa các card cũ trừ template
     const existingCards = container.querySelectorAll('.appointment-card:not(.template)');
     existingCards.forEach(card => card.remove());
 
     if (!bookings || bookings.length === 0) {
-        noBookings.style.display = 'block';
+        if (noBookings) noBookings.style.display = 'block';
         return;
     }
+    if (noBookings) noBookings.style.display = 'none';
 
-    noBookings.style.display = 'none';
-
-    // Clone template cho mỗi booking
-    bookings.forEach(booking => {
+    bookings.forEach(async booking => {
         const card = template.cloneNode(true);
         card.classList.remove('template');
         card.style.display = 'block';
         card.id = `booking-${booking.bookId}`;
 
-        // Fill data vào các element
-        card.querySelector('#patientName').textContent = booking.cusId || 'N/A';
-        card.querySelector('#appointmentTime').textContent =(booking.createdAt);
+        // Lấy info bệnh nhân & dịch vụ
+        let info = { cusName: '', serName: '' };
+        try {
+            const res = await fetch(`/api/booking/patient-service/${booking.bookId}`);
+            if (res.ok) {
+                info = await res.json();
+            }
+        } catch (err) {
+            console.error('Lỗi lấy info patient/service:', err);
+        }
+
+        // Dùng .querySelector trên node card, KHÔNG dùng getElementById!
+        card.querySelector('#patientName').textContent = info.cusName || 'N/A';
+        card.querySelector('#serviceName').textContent = info.serName || 'N/A';
+        card.querySelector('#appointmentTime').textContent = (booking.createdAt || '').slice(0, 16).replace('T', ' ');
         card.querySelector('#customerId').textContent = booking.cusId || 'N/A';
-        card.querySelector('#serviceId').textContent = booking.serId || 'N/A';
 
         const statusBadge = card.querySelector('#statusBadge');
         statusBadge.textContent = getStatusText(booking.bookStatus);
-        statusBadge.className = `status-badge status-${booking.bookStatus.toLowerCase()}`;
+        statusBadge.className = `status-badge status-${(booking.bookStatus || '').toLowerCase()}`;
 
-        // Handle note
+        // Note
         const noteDiv = card.querySelector('#appointmentNote');
         if (booking.note) {
             noteDiv.style.display = 'block';
@@ -107,22 +116,18 @@ function displayBookings(bookings) {
             noteDiv.style.display = 'none';
         }
 
-        // Handle buttons
+        // Buttons
         const btnView = card.querySelector('#btnView');
         const btnConfirm = card.querySelector('#btnConfirm');
 
-        // Set unique IDs
-        btnView.id = `btnView-${booking.bookId}`;
-        btnConfirm.id = `btnConfirm-${booking.bookId}`;
-
-        // Add event listeners
-        btnView.onclick = () => showBookingDetail(booking.bookId);
+        btnView.onclick = e => {
+            e.stopPropagation();
+            showBookingDetail(booking.bookId);
+        };
         card.onclick = () => showBookingDetail(booking.bookId);
 
         if (booking.bookStatus === 'pending') {
             btnConfirm.style.display = 'inline-block';
-
-
             btnConfirm.onclick = (e) => {
                 e.stopPropagation();
                 quickConfirm(booking.bookId);
@@ -134,6 +139,8 @@ function displayBookings(bookings) {
         container.appendChild(card);
     });
 }
+// Biến toàn cục để lưu booking detail hiện tại
+// Dùng để xác nhận booking và tạo bước điều trị
 let currentBookingDetail = null;
 // Hiển thị chi tiết booking
 async function showBookingDetail(bookId) {

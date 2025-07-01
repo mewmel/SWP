@@ -121,8 +121,8 @@ public VisitSubService getSubServicesForBooking(Integer bookId) {
     return new VisitSubService(bookId, visitNumber, subServicesGrouped);
 }
 
-    public boolean updateBookingStepWithBooking(Integer bookId, String subName, BookingStep req) {
-        Optional<BookingStep> existingStep = bookingStepRepo.findByBookIdAndSubName(bookId, subName);
+    public boolean updateBookingStepWithBooking(Integer bookId, Integer subId, BookingStep req) {
+        Optional<BookingStep> existingStep = bookingStepRepo.findByBookIdAndSubId(bookId, subId);
         if (!existingStep.isPresent()) return false;
 
         existingStep.get().setPerformedAt(req.getPerformedAt());

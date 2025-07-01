@@ -87,10 +87,9 @@
                 </div>
 
                 <div id="appointmentsList" class="appointments-list">
-                    <!-- Template cho mỗi booking card - THÊM VÀO ĐÂY -->
                     <div class="appointment-card template" id="bookingTemplate" style="display: none;">
                         <div class="appointment-header">
-                            <h3 class="patient-name" id="patientName">Booking #</h3>
+                            <h3 class="patient-name" id="patientName"></h3>
                             <div class="appointment-time">
                                 <i class="fas fa-clock"></i>
                                 <span id="appointmentTime">--/--/---- --:--</span>
@@ -104,7 +103,7 @@
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Service: </span>
-                                <span class="detail-value" id="serviceId">N/A</span>
+                                <span class="detail-value" id="serviceName">N/A</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Trạng thái</span>
@@ -127,8 +126,6 @@
                             </button>
                         </div>
                     </div>
-                    <!-- HẾT TEMPLATE -->
-
                     <!-- Các booking cards khác sẽ được JavaScript clone và thêm vào đây -->
                 </div>
 

@@ -199,7 +199,6 @@ public class BookingService {
         Optional<Booking> optBooking = bookingRepo.findById(bookId);
         if (optBooking.isPresent()) {
             Booking booking = optBooking.get();
-            // Chỉ cho phép chuyển từ pending sang confirmed/rejected
             // Validate status value
             booking.setBookStatus(status);
             bookingRepo.save(booking);

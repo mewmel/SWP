@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.project.dto.BookingPatientService;
 import com.example.project.dto.BookingRequest;
 import com.example.project.entity.Booking;
 import com.example.project.repository.BookingRepository;
@@ -146,6 +147,8 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
+    // API lấy danh sách booking đã xác nhận trong ngày hôm nay của bác sĩ
+    // GET /api/booking/doctor/{docId}/confirmed-today
 @GetMapping("/booking/doctor/{docId}/confirmed-today")
 public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Integer docId) {
     LocalDate today = LocalDate.now();
@@ -156,6 +159,7 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
     return ResponseEntity.ok(bookings);
 }
 
+
     // dùng để update khi đã khám xong
     // PUT /api/booking/note-status/{bookId}
     @PutMapping("/booking/update-note-status/{bookId}")
@@ -165,7 +169,16 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
         return ResponseEntity.status(404).body("Booking not found");
     }
 
-
+    // Lấy thông tin tên khách hàng và tên dịch vụ của 1 booking theo bookId
+    //PUT /api/booking/patient-service/{bookId}
+@GetMapping("/booking/patient-service/{bookId}")
+    public ResponseEntity<?> getBookingPatientService(@PathVariable Integer bookId) {
+        BookingPatientService dto = bookingRepository.findBookingPatientServiceByBookId(bookId);
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(dto);
+    }
 
 // dùng để update khi có đến khám
     // PUT /api/booking/update-status/{bookId}

@@ -20,9 +20,10 @@ List<Object[]> findInactiveStepDTOByBookId(@Param("bookId") Integer bookId);
 @Query(
   value = "SELECT bs.* FROM BookingStep bs " +
           "JOIN SubService ss ON bs.subId = ss.subId " +
-          "WHERE bs.bookId = :bookId AND ss.subName = :subName",
+          "WHERE bs.bookId = :bookId AND ss.subId = :subId",
   nativeQuery = true
 )
-Optional<BookingStep> findByBookIdAndSubName(@Param("bookId") Integer bookId, @Param("subName") String subName);
+Optional<BookingStep> findByBookIdAndSubId(@Param("bookId") Integer bookId, @Param("subId") Integer subId);
+
 
 }

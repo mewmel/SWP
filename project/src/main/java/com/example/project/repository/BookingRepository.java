@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.project.dto.BookingPatientService;
 import com.example.project.entity.Booking;
 
 
@@ -55,4 +56,12 @@ List<Booking> findConfirmedBookingsToday(
 
     List<Booking> findByCusIdOrderByBookIdAsc(Integer cusId);
 
+
+    // Lấy tên dịch vụ và tên khách hàng theo bookId
+    @Query("SELECT new com.example.project.dto.BookingPatientService(b.bookId, c.cusFullName, s.serName) " +
+       "FROM Booking b " +
+       "JOIN Customer c ON b.cusId = c.cusId " +
+       "JOIN Service s ON b.serId = s.serId " +
+       "WHERE b.bookId = :bookId")
+BookingPatientService findBookingPatientServiceByBookId(@Param("bookId") Integer bookId);
 }

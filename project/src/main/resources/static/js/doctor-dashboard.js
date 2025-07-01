@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch(`/api/booking/doctor/${docId}/confirmed-today`);
             if (!response.ok) throw new Error('Network error');
             const bookings = await response.json();
-            console.log('bookings', bookings); // Thêm dòng này!
             const scheduleList = document.querySelector('.schedule-list');
             if (!scheduleList) return;
 
@@ -49,29 +48,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Xóa hết cũ, chỉ giữ lại node mẫu (ẩn đi)
             scheduleList.innerHTML = '';
-            // scheduleList.appendChild(sample); // KHÔNG giữ lại mẫu, chỉ clone luôn (vì mỗi lần load lại render mới hết)
 
             if (bookings.length === 0) {
                 scheduleList.innerHTML = '<div style="padding: 1rem; color: #888;">Không có lịch hẹn hôm nay.</div>';
                 return;
             }
 
-            bookings.forEach(b => {
+            // Xài for...of vì await trong vòng lặp
+            for (const b of bookings) {
                 // Clone node mẫu
                 const clone = sample.cloneNode(true);
+
+                // Call API để lấy tên bệnh nhân và dịch vụ bằng bookId
+                let info = { cusName: 'Ẩn danh', serName: 'Dịch vụ' };
+                try {
+                    const infoRes = await fetch(`/api/booking/patient-service/${b.bookId}`);
+                    if (infoRes.ok) {
+                        info = await infoRes.json();
+                    }
+                } catch (e) {
+                    // Nếu lỗi thì vẫn dùng mặc định
+                }
 
                 // Set data
                 clone.dataset.patient = b.cusId || '';
                 clone.dataset.status = b.bookStatus || '';
 
                 // Time
-                clone.querySelector('.time').textContent = b.startTime ? b.startTime.slice(0, 5) : '--:--';
+                clone.querySelector('.time').textContent = b.createdAt ? b.createdAt.slice(11, 16) : '--:--';
 
                 // Tên BN
-                clone.querySelector('.patient-name').textContent = b.cusFullName || 'Ẩn danh';
+                clone.querySelector('.patient-name').textContent = info.cusName || 'Ẩn danh';
 
                 // Tên dịch vụ
-                clone.querySelector('.service-name').textContent = b.serName || 'Dịch vụ';
+                clone.querySelector('.service-name').textContent = info.serName || 'Dịch vụ';
 
                 // Trạng thái + badge
                 const badge = clone.querySelector('.status-badge');
@@ -90,25 +100,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 const actions = clone.querySelector('.appointment-actions');
                 if (b.bookStatus === 'confirmed') {
                     actions.innerHTML = `<button class="btn-waiting" onclick="window.markAsExamined('${b.cusId}','${b.serId}','${b.docId}','${b.bookId}')">
-    <i class="fas fa-check"></i> Đang khám
-</button>`;
+                    <i class="fas fa-check"></i> Đang khám
+                </button>`;
                 } else if (b.bookStatus === 'completed') {
                     actions.innerHTML = `<button class="btn-record" onclick="window.viewPatientRecord('${b.cusId}')">
                     <i class="fas fa-file-medical"></i> Xem hồ sơ
                 </button>`;
-                } else if (b.bookStatus === 'completed') {
-                    actions.innerHTML = `<span style="color:gray; font-size:0.9rem;">Đã hoàn tất</span>`;
                 } else {
                     actions.innerHTML = '';
                 }
 
                 // Thêm vào danh sách
                 scheduleList.appendChild(clone);
-            });
+            }
         } catch (err) {
             console.error('Lỗi tải booking:', err);
         }
     }
+
     // Cập nhật thời gian hiện tại  
     updateCurrentTime();
 
@@ -224,11 +233,11 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: { 'Content-Type': 'application/json' }
         });
         // Cập nhật lịch hẹn hôm nay
-    await loadTodayConfirmedBookings();  
+        await loadTodayConfirmedBookings();
 
 
 
-        
+
         // Update status badge
         const statusBadge = appointmentItem.querySelector('.status-badge');
         statusBadge.textContent = 'Đang khám';
@@ -484,8 +493,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Nếu là "Khám lần đầu" mà KHÔNG đến khám → XÓA medical record nếu có (nếu có API xóa)
         if (bookType === 'initial' && bookStatus !== 'completed') {
-            console.log('bookType value:', document.getElementById('bookType')?.value);
-console.log('bookStatus input:', document.getElementById('bookStatus'));
             // Nếu có recordId thì lấy ra rồi xóa (nếu backend cho xóa, bạn tùy biến ở đây)
             // await fetch(`/api/medical-records/${recordId}`, { method: 'DELETE' });
             alert("Không tạo hồ sơ bệnh án vì bệnh nhân không đến khám!");
@@ -508,21 +515,29 @@ console.log('bookStatus input:', document.getElementById('bookStatus'));
         const dischargeDate = document.getElementById('dischargeDate').value || '';
         const note = document.getElementById('medicalNote').value || '';
 
+        const stepsArr = Array.from(document.querySelectorAll('#completedStepsList .step-item'))
+            .filter(item => !item.classList.contains('step-template'))
+            .map(stepDiv => {
+                let performedAt = stepDiv.querySelector('.step-time')?.textContent.trim() || '';
+                if (performedAt.match(/^\d{2}\/\d{2}\/\d{4}/)) {
+                    const [date, time] = performedAt.split(' ');
+                    const [d, m, y] = date.split('/');
+                    performedAt = `${y}-${m}-${d}T${time}:00`;
+                }
 
-        // (3) Lấy danh sách các bước đã hoàn thành
-        const stepsArr = Array.from(document.querySelectorAll('#completedStepsList .step-item')).map(stepDiv => {
-            return {
-                subName: stepDiv.querySelector('.step-info strong').textContent.trim(),
-                stepStatus: stepDiv.querySelector('.step-status')?.textContent.trim() || 'Đang thực hiện',
-                //nếu stepStatus là hoàn thành thì lấy thêm thông tin
-                ...(stepStatus === 'completed' && {
-                    performedAt: stepDiv.querySelector('.stepPerformedAt')?.value || '',
-                    result: stepDiv.querySelector('.stepResult')?.textContent.trim() || '',
-                    note: stepDiv.querySelector('.stepNote')?.textContent.trim() || '',
-                })
+                // LẤY stepStatus đúng từ node:
+                let stepStatus = stepDiv.querySelector('.step-status')?.getAttribute('data-status') || 'pending';
 
-            };
-        });
+                return {
+                    subId: parseInt(stepDiv.getAttribute('data-sub-id')),
+                    performedAt,
+                    result: stepDiv.querySelector('.step-result')?.textContent.trim() || '',
+                    note: stepDiv.querySelector('.step-note')?.textContent.trim() || '',
+                    stepStatus, 
+                };
+            });
+
+
 
         // (4) Lấy danh sách đơn thuốc
         const drugsArr = Array.from(document.querySelectorAll('.drug-item')).map(drugDiv => {
@@ -564,14 +579,18 @@ console.log('bookStatus input:', document.getElementById('bookStatus'));
                 headers: { 'Content-Type': 'application/json' }
             });
 
+
             // (3) Gọi API insert BookingStep cho từng bước
             for (let step of stepsArr) {
-                await fetch(`/api/booking-steps/update-with-booking/${bookId}/${step.subName}`, {
+                await fetch(`/api/booking-steps/update-with-booking/${bookId}/${step.subId}`, {
                     method: 'PUT',
                     body: JSON.stringify(step),
                     headers: { 'Content-Type': 'application/json' }
                 });
             }
+
+
+
 
             // (4) Gọi API insert Drug cho từng thuốc
             for (let drug of drugsArr) {
@@ -864,23 +883,28 @@ console.log('bookStatus input:', document.getElementById('bookStatus'));
     // ========== SERVICE SELECTION AND STEP FORM ==========
 
 
+    // Lưu subId/subName khi chọn option (nên khai báo biến ở ngoài nếu muốn dùng sau)
+    let selectedSubId = null;
+    let selectedSubName = '';
+
     function setupServiceSelection(bookId) {
         const serviceSelect = document.getElementById('serviceSelect');
         const stepForm = document.getElementById('stepForm');
         const selectedServiceTitle = document.getElementById('selectedServiceTitle');
+        const emptyStepsDiv = document.getElementById('emptySteps');
 
+        // 1. Fetch subservice list
         fetch(`/api/booking-steps/${bookId}/subservice-of-visit`)
             .then(res => {
                 if (!res.ok) throw new Error(`API lỗi: ${res.status}`);
                 return res.json();
             })
             .then(subs => {
+                // Đổ danh sách vào select
                 serviceSelect.innerHTML = '<option value="">-- Chọn dịch vụ/bước --</option>';
-                document.getElementById('completedStepsList').innerHTML = '';
-                document.getElementById('emptySteps').style.display = 'none';
                 if (!Array.isArray(subs) || subs.length === 0) {
                     serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
-                    document.getElementById('emptySteps').style.display = '';
+                    emptyStepsDiv.style.display = '';
                     return;
                 }
                 subs.forEach(sub => {
@@ -889,34 +913,31 @@ console.log('bookStatus input:', document.getElementById('bookStatus'));
                     opt.textContent = sub.subName; // tên dịch vụ lấy từ backend
                     serviceSelect.appendChild(opt);
                 });
-
-                // Reset step form
-                stepForm.style.display = 'none';
+                stepForm.style.display = 'none'; // Reset form
             })
             .catch(err => {
                 console.error('Lỗi lấy subservice:', err);
                 serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
-                document.getElementById('completedStepsList').innerHTML = '';
-                document.getElementById('emptySteps').style.display = '';
+                emptyStepsDiv.style.display = '';
             });
 
-        // Gắn event: chỉ lấy tên bước từ textContent
+        // 2. Khi chọn option thì show form + set biến subId/subName
         serviceSelect.onchange = function () {
             const selectedOption = this.options[this.selectedIndex];
             if (this.value) {
-                selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedOption.textContent}`;
+                selectedSubId = this.value;                      // subId
+                selectedSubName = selectedOption.textContent;    // subName
+
+                selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
                 stepForm.style.display = 'block';
-
-                // Set current datetime
-                const stepPerformedAt = document.getElementById('performedAt');
-                stepPerformedAt.value = getLocalDateTimeValue();
-
-                // Clear form
+                document.getElementById('performedAt').value = getLocalDateTimeValue();
                 document.getElementById('stepResult').value = '';
                 document.getElementById('stepNote').value = '';
                 document.getElementById('stepStatus').value = 'pending';
             } else {
                 stepForm.style.display = 'none';
+                selectedSubId = null;
+                selectedSubName = '';
             }
         };
     }
@@ -924,78 +945,76 @@ console.log('bookStatus input:', document.getElementById('bookStatus'));
 
 
 
-    window.saveBookingStep = function () {
-        const serviceSelect = document.getElementById('serviceSelect');
-        const performedAt = document.getElementById('performedAt').value;
-        const stepStatus = document.getElementById('stepStatus').value;
-        const stepResult = document.getElementById('stepResult').value;
-        const stepNote = document.getElementById('stepNote').value;
+window.saveBookingStep = function () {
+    const serviceSelect = document.getElementById('serviceSelect');
+    const performedAt = document.getElementById('performedAt').value;
+    const stepStatus = document.getElementById('stepStatus').value; // 'pending', 'completed', 'inactive'
+    const stepResult = document.getElementById('stepResult').value;
+    const stepNote = document.getElementById('stepNote').value;
+    const selectedServiceTitle = document.getElementById('selectedServiceTitle');
 
-        if (!serviceSelect.value || !performedAt || !stepResult) {
-            alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
-            return;
-        }
+    if (!serviceSelect.value || !performedAt || !stepResult) {
+        alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+        return;
+    }
 
-        const subName = serviceSelect.options[serviceSelect.selectedIndex].textContent;
-        const dateTime = new Date(performedAt);
-        const formattedDateTime = `${dateTime.getDate().toString().padStart(2, '0')}/${(dateTime.getMonth() + 1).toString().padStart(2, '0')}/${dateTime.getFullYear()} ${dateTime.getHours().toString().padStart(2, '0')}:${dateTime.getMinutes().toString().padStart(2, '0')}`;
+    const subId = serviceSelect.value;
+    const subName = serviceSelect.options[serviceSelect.selectedIndex].textContent;
+    const dateTime = new Date(performedAt);
+    const formattedDateTime = `${dateTime.getDate().toString().padStart(2, '0')}/${(dateTime.getMonth() + 1).toString().padStart(2, '0')}/${dateTime.getFullYear()} ${dateTime.getHours().toString().padStart(2, '0')}:${dateTime.getMinutes().toString().padStart(2, '0')}`;
 
-        const statusClass = stepStatus === 'completed' ? 'completed' : 'pending';
-        const statusText = {
-            'pending': 'Đang thực hiện',
-            'completed': 'Đã hoàn thành',
-            'inactive': 'Không hoạt động',
-        }[stepStatus];
+    const statusClass = stepStatus;
+    const statusText = {
+        'pending': 'Đang thực hiện',
+        'completed': 'Đã hoàn thành',
+        'inactive': 'Không hoạt động',
+    }[stepStatus];
 
-        // Create new step item
-        const stepsList = document.getElementById('completedStepsList');
-        const newStepId = Date.now(); // Use timestamp as ID
+    const stepsList = document.getElementById('completedStepsList');
+    const stepTemplate = stepsList.querySelector('.step-template');
+    const newStepId = Date.now();
 
-        // Remove existing step if editing
-        if (window.currentEditingStepId) {
-            const oldStepItem = document.querySelector(`[data-step-id="${window.currentEditingStepId}"]`);
-            if (oldStepItem) {
-                oldStepItem.remove();
-            }
-            window.currentEditingStepId = null;
-        }
+    if (window.currentEditingStepId) {
+        const oldStepItem = stepsList.querySelector(`[data-step-id="${window.currentEditingStepId}"]`);
+        if (oldStepItem) oldStepItem.remove();
+        window.currentEditingStepId = null;
+    }
 
-        const newStepItem = document.createElement('div');
-        newStepItem.className = `step-item ${statusClass}`;
-        newStepItem.setAttribute('data-step-id', newStepId);
+    const newStepItem = stepTemplate.cloneNode(true);
+    newStepItem.style.display = '';
+    newStepItem.classList.remove('step-template');
+    newStepItem.classList.add('step-item', statusClass);
+    newStepItem.setAttribute('data-step-id', newStepId);
+    newStepItem.setAttribute('data-sub-id', subId);
+    newStepItem.setAttribute('data-sub-name', subName);
 
-        newStepItem.innerHTML = `
-            <div class="step-header">
-                <div class="step-info">
-                    <strong>${subName}</strong>
-                    <span class="step-time">${formattedDateTime}</span>
-                </div>
-                <div class="step-actions">
-                    <span class="step-status ${statusClass}">${statusText}</span>
-                    <button class="btn-edit-step" onclick="editStep(${newStepId})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="step-summary">
-                <p><strong>Kết quả:</strong> ${stepResult}</p>
-                <p><strong>Ghi chú:</strong> ${stepNote}</p>
-            </div>
-        `;
-
-        // Insert at the beginning of the list
-        stepsList.insertBefore(newStepItem, stepsList.firstChild);
-        updateEmptyStepsNotice();
-        // Clear and hide form
-        cancelStepForm();
-
-
-        alert('Đã lưu bước thực hiện thành công!');
+    // Gán dữ liệu vào DOM node
+    newStepItem.querySelector('.step-info strong').textContent = subName;
+    newStepItem.querySelector('.step-time').textContent = formattedDateTime;
+    newStepItem.querySelector('.step-status').textContent = statusText;
+    newStepItem.querySelector('.step-status').className = 'step-status ' + statusClass;
+    newStepItem.querySelector('.step-status').setAttribute('data-status', statusClass); 
+    newStepItem.querySelector('.step-result').textContent = stepResult;
+    newStepItem.querySelector('.step-note').textContent = stepNote;
+    newStepItem.querySelector('.btn-edit-step').onclick = function () {
+        window.editStep(newStepId);
     };
+
+    stepsList.insertBefore(newStepItem, stepsList.firstChild);
+
+    updateEmptyStepsNotice();
+    cancelStepForm();
+
+    alert('Đã lưu bước thực hiện thành công!');
+};
+
+
     function updateEmptyStepsNotice() {
         const stepsList = document.getElementById('completedStepsList');
         const emptyDiv = document.getElementById('emptySteps');
-        if (!stepsList.children.length) {
+        // Đếm số node KHÔNG phải template
+        const realItems = Array.from(stepsList.children).filter(child => !child.classList.contains('step-template'));
+        if (realItems.length === 0) {
             emptyDiv.style.display = '';
         } else {
             emptyDiv.style.display = 'none';
@@ -1003,8 +1022,8 @@ console.log('bookStatus input:', document.getElementById('bookStatus'));
     }
 
     window.cancelStepForm = function () {
-        stepForm.style.display = 'none';
-        serviceSelect.value = '';
+        document.getElementById('stepForm').style.display = 'none';
+        document.getElementById('serviceSelect').value = '';
         document.getElementById('stepResult').value = '';
         document.getElementById('stepNote').value = '';
         document.getElementById('stepStatus').value = 'pending';
@@ -1014,35 +1033,31 @@ console.log('bookStatus input:', document.getElementById('bookStatus'));
     };
 
     window.editStep = function (stepId) {
-        const stepItem = document.querySelector(`[data-step-id="${stepId}"]`);
+        const stepsList = document.getElementById('completedStepsList');
+        const stepItem = stepsList.querySelector(`[data-step-id="${stepId}"]`);
         if (stepItem) {
-            const stepInfo = stepItem.querySelector('.step-info strong').textContent;
-            const stepResult = stepItem.querySelector('.step-summary p:first-child').textContent.replace('Kết quả: ', '');
-            const stepNote = stepItem.querySelector('.step-summary p:last-child').textContent.replace('Ghi chú: ', '');
+            const serviceSelect = document.getElementById('serviceSelect');
+            const selectedServiceTitle = document.getElementById('selectedServiceTitle');
+            const subId = stepItem.getAttribute('data-sub-id');
+            const subName = stepItem.getAttribute('data-sub-name');
+            const stepResult = stepItem.querySelector('.step-result').textContent;
+            const stepNote = stepItem.querySelector('.step-note').textContent;
+            // Không cần lấy formattedDateTime vì khi edit thường để user nhập lại performedAt
 
-            // Find the service key by name
-            let serviceKey = '';
-            for (let i = 0; i < serviceSelect.options.length; i++) {
-                if (serviceSelect.options[i].textContent === stepInfo) {
-                    serviceKey = serviceSelect.options[i].value;
-                    break;
-                }
-            }
-            serviceSelect.value = serviceKey;
-
-            // Populate form with existing data
-            serviceSelect.value = serviceKey;
-            selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Chỉnh sửa: ${stepInfo}`;
+            // Chọn đúng dịch vụ
+            serviceSelect.value = subId;
+            selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Chỉnh sửa: ${subName}`;
             document.getElementById('stepResult').value = stepResult;
             document.getElementById('stepNote').value = stepNote;
 
             // Show form
-            stepForm.style.display = 'block';
+            document.getElementById('stepForm').style.display = 'block';
 
             // Store editing step ID for later removal
             window.currentEditingStepId = stepId;
         }
     };
+
 
 
 });

@@ -67,11 +67,11 @@
                 <div class="schedule-section">
                     <div class="schedule-header">
                         <h2>Lịch trình hôm nay</h2>
-                        <span class="current-date">Thứ 4 - 24/06/2024</span>
+                        <span class="current-date"></span>
                     </div>
                     <div class="schedule-list">
                         <div class="appointment-item" data-patient="" data-status="">
-                            <div class="time"></div>
+                            <div class="time" type ="time"></div>
                             <div class="appointment-info">
                                 <h3>BN: <span class="patient-name"></span></h3>
                                 <p class="service-name"></p>
@@ -311,27 +311,26 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <!-- Completed Steps List -->
                                 <div class="completed-steps">
                                     <h6><i class="fas fa-check-circle"></i> Các bước đã thực hiện</h6>
                                     <div class="steps-list" id="completedStepsList">
-                                        <div class="step-item completed" data-step-id="1">
+                                        <!-- NODE TEMPLATE ẨN -->
+                                        <div class="step-item step-template" style="display:none" data-step-id=""
+                                            data-sub-id="" data-sub-name="">
                                             <div class="step-header">
                                                 <div class="step-info">
-                                                    <strong>tên của subservice</strong>
+                                                    <strong></strong>
                                                     <span class="step-time"></span>
                                                 </div>
                                                 <div class="step-actions">
-                                                    <!-- <span class="step-status completed">Đã hoàn thành</span> -->
-                                                    <button class="btn-edit-step" onclick="editStep(1)">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
+                                                    <span class="step-status"></span>
+                                                    <button class="btn-edit-step"><i class="fas fa-edit"></i></button>
                                                 </div>
                                             </div>
                                             <div class="step-summary">
-                                                <p><strong>Kết quả:</strong></p>
-                                                <p><strong>Ghi chú:</strong></p>
+                                                <p><strong>Kết quả:</strong> <span class="step-result"></span></p>
+                                                <p><strong>Ghi chú:</strong> <span class="step-note"></span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -341,7 +340,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Drug Prescription-->
                             <div class="drug-prescription">
                                 <h5><i class="fas fa-pills"></i> Đơn thuốc</h5>

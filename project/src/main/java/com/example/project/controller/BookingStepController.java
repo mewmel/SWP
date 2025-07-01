@@ -94,13 +94,13 @@ public List<SubService> getSubServiceOfVisit(@PathVariable Integer bookId) {
 }
 
     // Cập nhật BookingStep với bookingId
-    @PutMapping("/update-with-booking/{bookId}/{subName}")
-    public ResponseEntity<?> updateBookingStepWithBooking(@PathVariable Integer bookId, @PathVariable String subName, @RequestBody BookingStep req) {
-        boolean updated = bookingStepService.updateBookingStepWithBooking(bookId, subName, req);
+    @PutMapping("/update-with-booking/{bookId}/{subId}")
+    public ResponseEntity<?> updateBookingStepWithBooking(@PathVariable Integer bookId, @PathVariable Integer subId, @RequestBody BookingStep req) {
+        boolean updated = bookingStepService.updateBookingStepWithBooking(bookId, subId, req);
         if (updated) {
-            return ResponseEntity.ok().body("Cập nhật thành công bước " + subName);
+            return ResponseEntity.ok().body("Cập nhật thành công !");
         } else {
-            return ResponseEntity.badRequest().body("Không tìm thấy bước " + subName + " để cập nhật");
+            return ResponseEntity.badRequest().body("Không thể cập nhật");
         }
     }
 
