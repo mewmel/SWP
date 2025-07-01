@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,7 @@ import com.example.project.entity.SubService;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.BookingStepService;
+
 
 
 
@@ -92,9 +94,9 @@ public List<SubService> getSubServiceOfVisit(@PathVariable Integer bookId) {
 }
 
     // Cập nhật BookingStep với bookingId
-    @PutMapping("/update-with-booking/{subName}")
-    public ResponseEntity<?> updateBookingStepWithBooking(@PathVariable String subName, BookingStep req) {
-        boolean updated = bookingStepService.updateBookingStepWithBooking(subName, req);
+    @PutMapping("/update-with-booking/{bookId}/{subName}")
+    public ResponseEntity<?> updateBookingStepWithBooking(@PathVariable Integer bookId, @PathVariable String subName, @RequestBody BookingStep req) {
+        boolean updated = bookingStepService.updateBookingStepWithBooking(bookId, subName, req);
         if (updated) {
             return ResponseEntity.ok().body("Cập nhật thành công bước " + subName);
         } else {

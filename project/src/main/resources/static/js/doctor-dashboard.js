@@ -564,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // (3) Gọi API insert BookingStep cho từng bước
             for (let step of stepsArr) {
-                await fetch(`/api/booking-steps/update-with-booking/${bookId},${step.subName}`, {
+                await fetch(`/api/booking-steps/update-with-booking/${bookId}/${step.subName}`, {
                     method: 'PUT',
                     body: JSON.stringify(step),
                     headers: { 'Content-Type': 'application/json' }
