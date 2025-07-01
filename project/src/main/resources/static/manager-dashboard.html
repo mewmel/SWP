@@ -1253,6 +1253,70 @@
             }
         });
     });
+    // Render danh sách bác sĩ từ backend
+    async function fetchAndRenderDoctors() {
+        const tableBody = document.querySelector('.doctors-table tbody');
+        try {
+            const res = await fetch('/api/doctors');
+            if (!res.ok) throw new Error('Lỗi server');
+            const doctors = await res.json();
+
+            tableBody.innerHTML = ''; // Xóa dữ liệu cũ
+            doctors.forEach((doctor, idx) => {
+                const doctorCode = 'BS' + String(doctor.docId).padStart(3, '0');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td>${idx + 1}</td>
+                <td>
+                    <img src="img/doctor${(idx % 3) + 1}.png" alt="${doctor.docFullName || ''}" class="doctor-avatar">
+                </td>
+                <td class="doctor-name">${doctor.docFullName || ''}</td>
+                <td><span class="doctor-id">${doctorCode}</span></td>
+                <td>${doctor.expertise || ''}</td>
+                <td>${doctor.degree || ''}</td>
+                <td>
+                    <div class="rating-container">
+                        <div class="rating-stars"><span class="stars">⭐⭐⭐⭐⭐</span>
+                        <span class="rating-value">5.0</span></div>
+                        <div class="rating-count">0 đánh giá</div>
+                    </div>
+                </td>
+                <td>
+                    <span class="status-badge status-active">Đang hoạt động</span>
+                </td>
+                <td class="contact-info">
+                    <div class="contact-phone">${doctor.docPhone || ''}</div>
+                    <div class="contact-email">${doctor.docEmail || ''}</div>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn view" onclick="showDoctorDetail('${doctorCode}')" title="Xem chi tiết">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn rate" onclick="showRatingModal('${doctorCode}')" title="Đánh giá">
+                            <i class="fas fa-star"></i>
+                        </button>
+                        <button class="action-btn view view-degree-btn" data-doctor="${doctorCode}" title="Bằng cấp">
+                            <i class="fas fa-user-graduate"></i>
+                        </button>
+                        <button class="action-btn edit" title="Sửa">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete" title="Xóa">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+                tableBody.appendChild(tr);
+            });
+        } catch (e) {
+            tableBody.innerHTML = `<tr><td colspan="10" style="color:red;">${e.message}</td></tr>`;
+        }
+    }
+
+    // Gọi hàm khi trang tải xong
+    document.addEventListener('DOMContentLoaded', fetchAndRenderDoctors);
 </script>
 
 <script src="js/manager-dashboard.js"></script>

@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="css/manager-common.css">
   <link rel="stylesheet" href="css/sap-xep-lich-bac-si.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
 </head>
 <body class="manager-dashboard">
 <header class="doctor-header">
@@ -27,7 +26,6 @@
         Thống kê
       </a>
     </nav>
-
     <div class="doctor-header-right">
       <div class="doctor-user-info">
         <div class="doctor-user-details">
@@ -53,40 +51,29 @@
       Sắp xếp lịch làm việc bác sĩ
     </h1>
     <p class="schedule-subtitle">Quản lý và phân công lịch làm việc cho đội ngũ bác sĩ trong tuần</p>
-    <div style="margin-top: 16px; padding: 16px; background: #f1f5f9; border-radius: 8px; font-size: 14px; color: #64748b;">
+    <div class="schedule-info">
       <strong>Khung giờ đăng ký:</strong>
-      <div style="margin: 12px 0;">
-        <div style="margin-bottom: 8px;"><strong>Thứ 2 - Thứ 6:</strong></div>
-        <div style="margin-left: 20px;">
-          <div> Ca sáng: 08:00 - 12:00</div>
-          <div> Ca chiều: 14:00 - 17:00</div>
-        </div>
-      </div>
-      <div style="margin: 12px 0;">
-        <div style="margin-bottom: 8px;"><strong>📅 Thứ 7 & Chủ nhật:</strong></div>
-        <div style="margin-left: 20px;">
-          <div> Ca sáng: 08:00 - 12:00 (chỉ buổi sáng)</div>
-        </div>
-      </div>
+      <div><strong>Thứ 2 - Thứ 6:</strong> Ca sáng: 08:00 - 12:00 | Ca chiều: 14:00 - 17:00</div>
+      <div><strong>Thứ 7 & Chủ nhật:</strong> Chỉ Ca sáng: 08:00 - 12:00</div>
     </div>
   </div>
 
   <!-- Stats Summary -->
   <div class="stats-summary">
     <div class="summary-card blue">
-      <div class="summary-value" id="totalDoctors">6</div>
+      <div class="summary-value" id="totalDoctors">0</div>
       <div class="summary-label">Tổng số bác sĩ</div>
     </div>
     <div class="summary-card green">
-      <div class="summary-value" id="workingDoctors">4</div>
+      <div class="summary-value" id="workingDoctors">0</div>
       <div class="summary-label">Bác sĩ làm việc</div>
     </div>
     <div class="summary-card orange">
-      <div class="summary-value" id="totalShifts">42</div>
+      <div class="summary-value" id="totalShifts">0</div>
       <div class="summary-label">Tổng ca làm việc</div>
     </div>
     <div class="summary-card">
-      <div class="summary-value" id="coverageRate">85%</div>
+      <div class="summary-value" id="coverageRate">0%</div>
       <div class="summary-label">Tỷ lệ phủ sóng</div>
     </div>
   </div>
@@ -102,7 +89,6 @@
         <i class="fas fa-chevron-right"></i>
       </button>
     </div>
-
     <div style="display: flex; gap: 12px;">
       <button class="btn btn-outline" id="selectAllBtn">
         <i class="fas fa-check-double"></i>
@@ -115,16 +101,13 @@
     </div>
   </div>
 
-  <!-- Modern Schedule Cards -->
+  <!-- Schedule Cards -->
   <div class="schedule-cards-section">
     <div class="section-header">
       <i class="fas fa-calendar-week"></i>
       <h3>Lịch làm việc trong tuần</h3>
     </div>
-
-    <div class="doctors-grid" id="doctorsGrid">
-      <!-- Doctor cards will be populated by JavaScript -->
-    </div>
+    <div class="doctors-grid" id="doctorsGrid"></div>
   </div>
 
   <!-- Save Section -->

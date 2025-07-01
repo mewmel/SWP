@@ -1,112 +1,134 @@
-// Simplified JavaScript for schedule management with only 2 shifts
-const doctors = [
-    { id: 'BS001', name: 'BS. Nguyễn Văn A' },
-    { id: 'BS002', name: 'BS. Trần Thị B' },
-    { id: 'BS003', name: 'BS. Lê Văn C' },
-    { id: 'BS004', name: 'BS. Phạm Thị D' },
-    { id: 'BS005', name: 'BS. Hoàng Văn E' },
-    { id: 'BS006', name: 'BS. Đặng Thị F' }
-];
-
-// Simplified time sessions with only 2 shifts per day
-const timeSessions = {
-    'T2': {
-        morning: ['08:00-12:00'],
-        afternoon: ['14:00-17:00']
-    },
-    'T3': {
-        morning: ['08:00-12:00'],
-        afternoon: ['14:00-17:00']
-    },
-    'T4': {
-        morning: ['08:00-12:00'],
-        afternoon: ['14:00-17:00']
-    },
-    'T5': {
-        morning: ['08:00-12:00'],
-        afternoon: ['14:00-17:00']
-    },
-    'T6': {
-        morning: ['08:00-12:00'],
-        afternoon: ['14:00-17:00']
-    },
-    'T7': {
-        morning: ['08:00-12:00'],
-        afternoon: [] // Weekend only morning
-    },
-    'CN': {
-        morning: ['08:00-12:00'],
-        afternoon: [] // Weekend only morning
-    }
-};
-
-// Simplified schedule data with only 2 shifts
-const doctorSchedules = {
-    'BS001': {
-        'T2': { 'morning': true, 'afternoon': false },
-        'T3': { 'morning': true, 'afternoon': true },
-        'T4': { 'morning': false, 'afternoon': true },
-        'T5': { 'morning': true, 'afternoon': false },
-        'T6': { 'morning': false, 'afternoon': false },
-        'T7': { 'morning': false },
-        'CN': { 'morning': false }
-    },
-    'BS002': {
-        'T2': { 'morning': false, 'afternoon': true },
-        'T3': { 'morning': true, 'afternoon': true },
-        'T4': { 'morning': true, 'afternoon': false },
-        'T5': { 'morning': false, 'afternoon': true },
-        'T6': { 'morning': true, 'afternoon': true },
-        'T7': { 'morning': false },
-        'CN': { 'morning': false }
-    },
-    'BS003': {
-        'T2': { 'morning': true, 'afternoon': false },
-        'T3': { 'morning': false, 'afternoon': true },
-        'T4': { 'morning': true, 'afternoon': true },
-        'T5': { 'morning': false, 'afternoon': false },
-        'T6': { 'morning': true, 'afternoon': false },
-        'T7': { 'morning': false },
-        'CN': { 'morning': false }
-    },
-    'BS004': {
-        'T2': { 'morning': false, 'afternoon': false },
-        'T3': { 'morning': true, 'afternoon': false },
-        'T4': { 'morning': false, 'afternoon': true },
-        'T5': { 'morning': true, 'afternoon': true },
-        'T6': { 'morning': false, 'afternoon': true },
-        'T7': { 'morning': false },
-        'CN': { 'morning': false }
-    },
-    'BS005': {
-        'T2': { 'morning': true, 'afternoon': true },
-        'T3': { 'morning': false, 'afternoon': false },
-        'T4': { 'morning': true, 'afternoon': false },
-        'T5': { 'morning': false, 'afternoon': true },
-        'T6': { 'morning': true, 'afternoon': false },
-        'T7': { 'morning': false },
-        'CN': { 'morning': false }
-    },
-    'BS006': {
-        'T2': { 'morning': false, 'afternoon': true },
-        'T3': { 'morning': true, 'afternoon': false },
-        'T4': { 'morning': false, 'afternoon': false },
-        'T5': { 'morning': true, 'afternoon': false },
-        'T6': { 'morning': false, 'afternoon': true },
-        'T7': { 'morning': false },
-        'CN': { 'morning': false }
-    }
-};
-
+// Các ngày trong tuần
 const days = ['T2','T3','T4','T5','T6','T7','CN'];
 const dayNames = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
 
+// Khung giờ của từng ca
+const timeSessions = {
+    'T2': { morning: ['08:00-12:00'], afternoon: ['14:00-17:00'] },
+    'T3': { morning: ['08:00-12:00'], afternoon: ['14:00-17:00'] },
+    'T4': { morning: ['08:00-12:00'], afternoon: ['14:00-17:00'] },
+    'T5': { morning: ['08:00-12:00'], afternoon: ['14:00-17:00'] },
+    'T6': { morning: ['08:00-12:00'], afternoon: ['14:00-17:00'] },
+    'T7': { morning: ['08:00-12:00'], afternoon: [] },
+    'CN': { morning: ['08:00-12:00'], afternoon: [] }
+};
+
+// Biến động: danh sách bác sĩ và schedule
+let doctors = [];
+let doctorSchedules = {};
+let currentWeekStartDate = null;
+
+// === Biến toàn cục cho tuần (dạng Date object) ===
+let currentWeekStartDateObj = null;
+
+// ======== HÀM HIỂN THỊ LOADING ========
 function showLoading() {
     document.getElementById('loadingOverlay').style.display = 'flex';
 }
-
 function hideLoading() {
     document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+// ----- HÀM XỬ LÝ TUẦN (CHUẨN LỊCH WINDOWS, ĐÚNG NGÀY MONDAY ĐANG HIỂN THỊ) -----
+
+// Lấy ngày Thứ 2 gần nhất của 1 ngày bất kỳ (luôn trả về object mới, không thay đổi biến truyền vào)
+function getMondayOfDate(date) {
+    const d = new Date(date);
+    d.setHours(0,0,0,0);
+    const day = d.getDay();
+    // day === 0 là Chủ nhật => lùi về thứ 2 trước đó (6 ngày)
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    d.setDate(diff);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+// Lấy mảng các ngày Thứ 2 đầu tuần của tháng (có thể kéo từ cuối tháng trước sang)
+function getMonthWeeks(year, month) {
+    let weeks = [];
+    let firstDayOfMonth = new Date(year, month, 1);
+    let monday = getMondayOfDate(firstDayOfMonth);
+
+    while (true) {
+        weeks.push(new Date(monday));
+        monday.setDate(monday.getDate() + 7);
+        // Khi monday đã sang hẳn tháng sau, break
+        if (monday.getMonth() > month || (monday.getMonth() < month && monday.getFullYear() > year)) {
+            break;
+        }
+    }
+    return weeks;
+}
+
+// Xác định tuần thứ mấy trong tháng (tuần lịch, không phải tuần ISO)
+function getWeekOfMonth(date) {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const weeks = getMonthWeeks(year, month);
+    for (let i = 0; i < weeks.length; i++) {
+        let start = new Date(weeks[i]);
+        let end = new Date(start);
+        end.setDate(end.getDate() + 7);
+        if (date >= start && date < end) return i + 1;
+    }
+    return weeks.length; // fallback
+}
+
+// Trả về string: "Tuần x - dd Tháng mm, yyyy" (ngày là thứ 2 đầu tuần, đúng tuần lịch)
+function formatWeekDisplay(monday) {
+    const start = new Date(monday);
+    const year = start.getFullYear();
+    const month = start.getMonth();
+    const weeks = getMonthWeeks(year, month);
+    let weekNumber = weeks.findIndex(w => w.getTime() === start.getTime()) + 1;
+    if (weekNumber < 1) weekNumber = getWeekOfMonth(start);
+    return `Tuần ${weekNumber} - ${start.getDate()} Tháng ${start.getMonth() + 1}, ${start.getFullYear()}`;
+}
+
+// Update hiển thị tuần lên giao diện
+function updateWeekDisplay() {
+    document.getElementById('currentWeekDisplay').textContent = formatWeekDisplay(currentWeekStartDateObj);
+}
+
+// Hàm lấy ngày đầu tuần (yyyy-mm-dd) dùng cho API - KHÔNG DÙNG toISOString() để tránh lệch ngày!
+function extractWeekStartDate() {
+    const d = currentWeekStartDateObj;
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+// Fetch danh sách bác sĩ từ backend và khởi tạo schedule
+function fetchDoctorsAndInit() {
+    showLoading();
+    fetch('/api/doctors')
+        .then(res => res.json())
+        .then(data => {
+            doctors = data.map(d => ({
+                id: d.id || d.docId,
+                name: d.fullName || d.docFullName || d.name
+            }));
+            if (doctors.length === 0) {
+                hideLoading();
+                showSuccessMessage('Không có bác sĩ nào trong hệ thống!');
+                renderDoctorCards();
+                return;
+            }
+            doctorSchedules = {};
+            doctors.forEach(doctor => {
+                doctorSchedules[doctor.id] = {};
+                days.forEach(day => {
+                    doctorSchedules[doctor.id][day] = { morning: false, afternoon: false };
+                });
+            });
+            renderDoctorCards();
+            hideLoading();
+        })
+        .catch((e) => {
+            hideLoading();
+            showSuccessMessage('Không thể tải danh sách bác sĩ từ server! ' + e);
+            renderDoctorCards();
+        });
 }
 
 function renderDoctorCards() {
@@ -114,28 +136,24 @@ function renderDoctorCards() {
     doctorsGrid.innerHTML = '';
 
     doctors.forEach(doctor => {
-        // Calculate doctor stats
         let totalSlots = 0;
         let workingSlots = 0;
 
         days.forEach(day => {
             const sessions = timeSessions[day];
-            // Morning shift
             if (sessions.morning.length > 0) {
                 totalSlots++;
                 if (doctorSchedules[doctor.id]?.[day]?.morning) workingSlots++;
             }
-            // Afternoon shift
             if (sessions.afternoon.length > 0) {
                 totalSlots++;
                 if (doctorSchedules[doctor.id]?.[day]?.afternoon) workingSlots++;
             }
         });
 
-        const workingPercentage = Math.round((workingSlots / totalSlots) * 100);
+        const workingPercentage = totalSlots ? Math.round((workingSlots / totalSlots) * 100) : 0;
         const doctorInitials = doctor.name.split(' ').map(n => n.charAt(0)).join('').toUpperCase();
 
-        // Create doctor card
         const doctorCard = document.createElement('div');
         doctorCard.className = 'doctor-card';
 
@@ -186,7 +204,7 @@ function renderDayTimeSlots(doctorId, day, dayIndex) {
     `;
     }
 
-    // Afternoon shift (only for weekdays)
+    // Afternoon shift
     if (sessions.afternoon.length > 0) {
         const isAfternoonSelected = doctorSchedules[doctorId]?.[day]?.afternoon || false;
 
@@ -203,12 +221,10 @@ function renderDayTimeSlots(doctorId, day, dayIndex) {
     return slotsHTML;
 }
 
-function toggleTimeSlot(element) {
+window.toggleTimeSlot = function(element) {
     const doctor = element.getAttribute('data-doctor');
     const day = element.getAttribute('data-day');
     const shift = element.getAttribute('data-shift');
-
-    // Toggle selection
     const isSelected = element.classList.contains('selected');
 
     if (isSelected) {
@@ -216,18 +232,17 @@ function toggleTimeSlot(element) {
         doctorSchedules[doctor][day][shift] = false;
     } else {
         element.classList.add('selected');
-        if (!doctorSchedules[doctor]) doctorSchedules[doctor] = {};
-        if (!doctorSchedules[doctor][day]) doctorSchedules[doctor][day] = {};
         doctorSchedules[doctor][day][shift] = true;
     }
 
-    // Update doctor stats in real-time
     updateDoctorStats(doctor);
     updateStats();
-}
+};
 
 function updateDoctorStats(doctorId) {
-    const doctorCard = document.querySelector(`[data-doctor="${doctorId}"]`).closest('.doctor-card');
+    const doctorCard = Array.from(document.querySelectorAll('.doctor-card')).find(card =>
+        card.querySelector(`.time-slot[data-doctor="${doctorId}"]`)
+    );
     if (!doctorCard) return;
 
     let totalSlots = 0;
@@ -235,19 +250,17 @@ function updateDoctorStats(doctorId) {
 
     days.forEach(day => {
         const sessions = timeSessions[day];
-        // Morning shift
         if (sessions.morning.length > 0) {
             totalSlots++;
             if (doctorSchedules[doctorId]?.[day]?.morning) workingSlots++;
         }
-        // Afternoon shift
         if (sessions.afternoon.length > 0) {
             totalSlots++;
             if (doctorSchedules[doctorId]?.[day]?.afternoon) workingSlots++;
         }
     });
 
-    const workingPercentage = Math.round((workingSlots / totalSlots) * 100);
+    const workingPercentage = totalSlots ? Math.round((workingSlots / totalSlots) * 100) : 0;
     const statsElement = doctorCard.querySelector('.doctor-stats');
     if (statsElement) {
         statsElement.textContent = `${workingSlots}/${totalSlots} ca làm việc (${workingPercentage}%)`;
@@ -259,7 +272,6 @@ function updateStats() {
     let totalShifts = 0;
     let totalPossibleShifts = 0;
 
-    // Calculate total possible shifts
     days.forEach(day => {
         const sessions = timeSessions[day];
         if (sessions.morning.length > 0) totalPossibleShifts += doctors.length;
@@ -270,14 +282,10 @@ function updateStats() {
         let hasAnyShift = false;
         days.forEach(day => {
             const sessions = timeSessions[day];
-
-            // Check morning shift
             if (sessions.morning.length > 0 && doctorSchedules[doctor.id]?.[day]?.morning) {
                 totalShifts++;
                 hasAnyShift = true;
             }
-
-            // Check afternoon shift
             if (sessions.afternoon.length > 0 && doctorSchedules[doctor.id]?.[day]?.afternoon) {
                 totalShifts++;
                 hasAnyShift = true;
@@ -286,7 +294,7 @@ function updateStats() {
         if (hasAnyShift) workingDoctors++;
     });
 
-    const coverageRate = Math.round((totalShifts / totalPossibleShifts) * 100);
+    const coverageRate = totalPossibleShifts ? Math.round((totalShifts / totalPossibleShifts) * 100) : 0;
 
     document.getElementById('totalDoctors').textContent = doctors.length;
     document.getElementById('workingDoctors').textContent = workingDoctors;
@@ -294,30 +302,49 @@ function updateStats() {
     document.getElementById('coverageRate').textContent = coverageRate + '%';
 }
 
+// --- HÀM LƯU LỊCH (POST ĐÚNG NGÀY ĐẦU TUẦN) ---
 function saveAllSchedule() {
     showLoading();
 
-    // Simulate API call delay
-    setTimeout(() => {
-        document.querySelectorAll('.time-slot').forEach(slot => {
-            const doctor = slot.getAttribute('data-doctor');
-            const day = slot.getAttribute('data-day');
-            const shift = slot.getAttribute('data-shift');
-            const isSelected = slot.classList.contains('selected');
+    // Lấy ngày đầu tuần từ currentWeekStartDateObj
+    currentWeekStartDate = extractWeekStartDate();
 
-            if (!doctorSchedules[doctor]) doctorSchedules[doctor] = {};
-            if (!doctorSchedules[doctor][day]) doctorSchedules[doctor][day] = {};
-            doctorSchedules[doctor][day][shift] = isSelected;
+    // LẤY maId từ localStorage
+    const maId = localStorage.getItem('maId');
+
+    const payload = doctors.map(doctor => ({
+        docId: doctor.id,
+        maId: maId ? parseInt(maId) : null, // BỔ SUNG maId vào payload
+        weekStartDate: currentWeekStartDate,
+        shifts: days.map(day => ({
+            weekday: day,
+            morning: !!doctorSchedules[doctor.id][day].morning,
+            afternoon: !!doctorSchedules[doctor.id][day].afternoon,
+            maxPatient: 5 // hoặc lấy theo từng bác sĩ nếu có
+        }))
+    }));
+
+    fetch('/api/workslots/week-bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+        .then(res => {
+            hideLoading();
+            if (res.ok) {
+                showSuccessMessage('Đã lưu lịch làm việc cho tất cả bác sĩ thành công!');
+                updateStats();
+            } else {
+                return res.text().then(txt => { throw new Error(txt); });
+            }
+        })
+        .catch(err => {
+            hideLoading();
+            showSuccessMessage('Lỗi khi lưu lịch: ' + err.message);
         });
-
-        hideLoading();
-        showSuccessMessage('Đã lưu lịch làm việc cho tất cả bác sĩ thành công!');
-        updateStats();
-    }, 1500);
 }
 
 function showSuccessMessage(message) {
-    // Simple success notification
     const notification = document.createElement('div');
     notification.style.cssText = `
     position: fixed;
@@ -340,16 +367,12 @@ function showSuccessMessage(message) {
     }, 3000);
 }
 
-// Event listeners
 document.getElementById('saveAllScheduleBtn').addEventListener('click', saveAllSchedule);
 
 document.getElementById('resetScheduleBtn').addEventListener('click', function() {
     if (confirm('Bạn có chắc chắn muốn đặt lại tất cả lịch làm việc?')) {
         doctors.forEach(doctor => {
             days.forEach(day => {
-                if (!doctorSchedules[doctor.id]) doctorSchedules[doctor.id] = {};
-                if (!doctorSchedules[doctor.id][day]) doctorSchedules[doctor.id][day] = {};
-
                 const sessions = timeSessions[day];
                 if (sessions.morning.length > 0) {
                     doctorSchedules[doctor.id][day].morning = false;
@@ -371,14 +394,9 @@ document.getElementById('selectAllBtn').addEventListener('click', function() {
             const doctor = slot.getAttribute('data-doctor');
             const day = slot.getAttribute('data-day');
             const shift = slot.getAttribute('data-shift');
-
-            if (!doctorSchedules[doctor]) doctorSchedules[doctor] = {};
-            if (!doctorSchedules[doctor][day]) doctorSchedules[doctor][day] = {};
             doctorSchedules[doctor][day][shift] = true;
         }
     });
-
-    // Update all doctor stats
     doctors.forEach(doctor => updateDoctorStats(doctor.id));
     updateStats();
 });
@@ -390,32 +408,34 @@ document.getElementById('clearAllBtn').addEventListener('click', function() {
             const doctor = slot.getAttribute('data-doctor');
             const day = slot.getAttribute('data-day');
             const shift = slot.getAttribute('data-shift');
-
-            if (doctorSchedules[doctor] && doctorSchedules[doctor][day]) {
-                doctorSchedules[doctor][day][shift] = false;
-            }
+            doctorSchedules[doctor][day][shift] = false;
         }
     });
-
-    // Update all doctor stats
     doctors.forEach(doctor => updateDoctorStats(doctor.id));
     updateStats();
 });
 
-// Week navigation (dummy functionality)
+// ==== XỬ LÝ CHUYỂN TUẦN BẰNG MŨI TÊN CHUẨN LỊCH WINDOWS ====
 document.getElementById('prevWeek').addEventListener('click', function() {
-    showSuccessMessage('Chuyển đến tuần trước');
+    let prev = new Date(currentWeekStartDateObj);
+    prev.setDate(prev.getDate() - 7);
+    currentWeekStartDateObj = getMondayOfDate(prev);
+    updateWeekDisplay();
 });
-
 document.getElementById('nextWeek').addEventListener('click', function() {
-    showSuccessMessage('Chuyển đến tuần sau');
+    let next = new Date(currentWeekStartDateObj);
+    next.setDate(next.getDate() + 7);
+    currentWeekStartDateObj = getMondayOfDate(next);
+    updateWeekDisplay();
 });
 
-// Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    renderDoctorCards();
+    // Khởi tạo ngày đầu tuần là Thứ 2 gần nhất, có thể là cuối tháng trước
+    currentWeekStartDateObj = getMondayOfDate(new Date());
+    updateWeekDisplay();
 
-    // Add CSS for animations
+    fetchDoctorsAndInit();
+
     const style = document.createElement('style');
     style.textContent = `
     @keyframes slideIn {
@@ -428,7 +448,6 @@ document.addEventListener('DOMContentLoaded', function() {
         opacity: 1;
       }
     }
-    
     .slot-hours {
       font-size: 11px;
       color: #64748b;
