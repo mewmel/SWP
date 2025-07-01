@@ -158,7 +158,7 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
 
     // dùng để update khi đã khám xong
     // PUT /api/booking/note-status/{bookId}
-    @PutMapping("/update-note-status/{bookId}")
+    @PutMapping("/booking/update-note-status/{bookId}")
     public ResponseEntity<?> updateBookingNoteStatus(@PathVariable Integer bookId, @RequestBody Booking bookingUpdate) {
         boolean ok = bookingService.updateNoteAndStatus(bookId, bookingUpdate.getBookStatus(), bookingUpdate.getNote());
         if (ok) return ResponseEntity.ok().build();

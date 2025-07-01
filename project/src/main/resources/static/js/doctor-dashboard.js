@@ -484,6 +484,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Nếu là "Khám lần đầu" mà KHÔNG đến khám → XÓA medical record nếu có (nếu có API xóa)
         if (bookType === 'initial' && bookStatus !== 'completed') {
+            console.log('bookType value:', document.getElementById('bookType')?.value);
+console.log('bookStatus input:', document.getElementById('bookStatus'));
             // Nếu có recordId thì lấy ra rồi xóa (nếu backend cho xóa, bạn tùy biến ở đây)
             // await fetch(`/api/medical-records/${recordId}`, { method: 'DELETE' });
             alert("Không tạo hồ sơ bệnh án vì bệnh nhân không đến khám!");
@@ -557,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     diagnosis: diagnosis,
                     treatmentPlan: treatmentPlan,
                     dischargeDate: dischargeDate,
-                    medicalNotes: note,
+                    note: note,
                 }),
                 headers: { 'Content-Type': 'application/json' }
             });
