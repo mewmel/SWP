@@ -126,6 +126,15 @@ document.addEventListener('DOMContentLoaded', function () {
     loadTodayConfirmedBookings();
 
 
+    // Show notification
+    function showNotification(message, type = 'success') {
+    alert(`${type.toUpperCase()}: ${message}`);
+}
+//code tồi
+        // Show notification
+    function showNotification(message, type = 'error') {
+    alert(`${type.toUpperCase()}: ${message}`);
+}
 
     // Remove old modal functions - will be redefined later to match database structure
 
@@ -1044,6 +1053,9 @@ function fillPrescriptionHeader() {
 
     if (nameInput) nameInput.value = fullName || '';
     if (numberInput) numberInput.value = localStorage.getItem('drugId') || '';
+
+// lấy ttin dưới db lên bằng api
+
 }
 fillPrescriptionHeader();
 

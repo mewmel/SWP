@@ -230,7 +230,6 @@ CREATE TABLE Drug (
     bookId			INT             NOT NULL,                   -- Gắn với bước cụ thể của quá trình điều trị
     docId           INT             NOT NULL,                   -- Bác sĩ kê thuốc
     cusId           INT             NOT NULL,                   -- Bệnh nhân được kê thuốc
-	drugItemId      INT				NULL,
     drugNote        NVARCHAR(200)   NULL,                      
     createdAt       DATETIME        NULL,          -- Thời gian kê thuốc
 
@@ -359,44 +358,13 @@ INSERT INTO WorkSlot (docId, maId, workDate, startTime, endTime, maxPatient, slo
 
 --------------------------------------------------------
 
-(1, 1, '2025-07-2', '08:00', '09:00', 2, 'approved'),						
-(1, 1, '2025-07-2', '09:00', '10:00', 2, 'approved'),						
-(1, 1, '2025-07-2', '10:00', '11:00', 2, 'approved'),						
-(1, 1, '2025-07-2', '11:00', '12:00', 2, 'approved'),						
-						
-(2, 1, '2025-07-2', '14:00', '15:00', 2, 'approved'),						
-(2, 1, '2025-07-2', '15:00', '16:00', 2, 'approved'),						
-(2, 1, '2025-07-2', '16:00', '17:00', 2, 'approved');
+(1, 1, '2025-07-3', '08:00', '09:00', 2, 'approved'),						
+(1, 1, '2025-07-3', '09:00', '10:00', 2, 'approved'),						
+(1, 1, '2025-07-3', '10:00', '11:00', 2, 'approved'),						
+(1, 1, '2025-07-3', '11:00', '12:00', 2, 'approved'),
+
+(2, 1, '2025-07-3', '14:00', '15:00', 2, 'approved'),
+(2, 1, '2025-07-3', '15:00', '16:00', 2, 'approved'),
+(2, 1, '2025-07-3', '16:00', '17:00', 2, 'approved');
 --------------------------------------------------------
-
-
-----------------------------------------------------------				
-
-
-
-----------------------------------------------------------
-
-
-USE [Healthcare_ServiceVer92]
-
-
-select * from WorkSlot
-
-select * from BookingStep
-
-select * from Booking
-
-select * from Customer
-
-select * from MedicalRecord
-
-select * from Service
-
-select * from SubService
-
-select * from Drug
-
-select * from DrugItem
-
-select * from Image
 

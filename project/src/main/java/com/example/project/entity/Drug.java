@@ -30,9 +30,6 @@ public class Drug {
     @Column(name = "cusId", nullable = false)
     private Integer cusId;
 
-    @Column(name = "drugItemId", length = 100)
-    private String drugItemId;
-
     @Column(name = "drugNote", length = 200)
     private String drugNote;
 
