@@ -597,15 +597,7 @@
         </nav>
 
         <div class="doctor-header-right">
-            <div class="doctor-search-box">
-                <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
-                <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-            </div>
-
-            <div class="notification-wrapper" style="position: relative; display: none;">
+            <div class="notification-wrapper" style="position: relative;">
                 <button class="doctor-notification-btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
@@ -615,13 +607,19 @@
                 </button>
             </div>
 
-            <div class="user-menu" style="display:none;">
-                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-                <button class="logout-btn"
-                        style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
-                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                </button>
+            <div class="doctor-profile-info">
+                <div class="doctor-info">
+                    <div class="doctor-name">BS. Nguyễn Ngọc Khánh Linh</div>
+                    <div class="doctor-role">Quản trị viên</div>
+                </div>
+                <div class="doctor-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
             </div>
+
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
 
             <button class="doctor-mobile-menu">
                 <i class="fas fa-bars"></i>
