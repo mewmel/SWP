@@ -1,4 +1,8 @@
 package com.example.project.controller;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,10 +32,7 @@ public class DrugController {
 
 
      @PostMapping("/create/{bookId}")
-    public ResponseEntity<?> createDrug(
-            @PathVariable Integer bookId,
-            @RequestBody Drug drugRequest
-    ) {
+    public ResponseEntity<?> createDrug(@PathVariable Integer bookId, @RequestBody Drug drugRequest) {
         try {
             // Optional: Validate input
             if (drugRequest.getDocId() == null || drugRequest.getCusId() == null) {
@@ -46,20 +47,40 @@ public class DrugController {
             // drugRequest.setCustomer(customerRepository.findById(drugRequest.getCusId()).orElse(null));
 
             Drug saved = drugRepository.save(drugRequest);
-            return ResponseEntity.ok(saved);
+            return ResponseEntity.ok(saved.getDrugId());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Lỗi tạo thuốc: " + e.getMessage());
         }
     }
-
     
 
-    // PUT /api/drugs/update-with-booking/{bookId}
-    @PutMapping("/update-with-booking/{bookId}")
-    public ResponseEntity<?> updateDrug(
-            @PathVariable Integer bookId, @RequestBody Drug drug) {
-        boolean ok = drugService.updateDrug(bookId, drug);
-        if (ok) return ResponseEntity.ok().build();
-        return ResponseEntity.status(404).body("Drug not found");
-    }   
+    //PUT /api/drugs/update/${drugId}
+@PutMapping("/update/{drugId}")
+public ResponseEntity<?> updateDrug(@PathVariable Integer drugId, @RequestBody Map<String, String> request) {
+    Optional<Drug> optionalDrug = drugRepository.findById(drugId);
+    if (optionalDrug.isEmpty()) {
+        return ResponseEntity.notFound().build();
+    }
+
+    Drug drug = optionalDrug.get();
+
+    try {
+        String createdAtStr = request.get("createdAt");
+        String note = request.get("note");
+
+        if (createdAtStr != null && !createdAtStr.isEmpty()) {
+            LocalDateTime createdAt = LocalDateTime.parse(createdAtStr);
+            drug.setCreatedAt(createdAt);
+        }
+
+        drug.setDrugNote(note);
+
+        drugRepository.save(drug);
+        return ResponseEntity.ok("Drug updated successfully");
+
+    } catch (Exception e) {
+        return ResponseEntity.status(400).body("Invalid input: " + e.getMessage());
+    }
+}
+  
 }

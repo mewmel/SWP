@@ -33,8 +33,8 @@ public class Drug {
     @Column(name = "drugItemId", length = 100)
     private String drugItemId;
 
-    @Column(name = "note", length = 200)
-    private String note;
+    @Column(name = "drugNote", length = 200)
+    private String drugNote;
 
     @Column(name = "createdAt")
     private LocalDateTime createdAt;

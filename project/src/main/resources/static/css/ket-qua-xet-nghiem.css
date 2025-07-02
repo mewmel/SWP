@@ -1,4 +1,3 @@
-
 .dashboard-user-area {
     display: flex;
     align-items: center;
@@ -646,7 +645,7 @@ nav a.active {
 }
 
 /* Status badges specific styling */
-.test-status.status-normal,
+.test-status.status-normal, 
 .test-status:contains("Hoàn thành") {
     background: rgba(39, 174, 96, 0.1);
     color: #27ae60;

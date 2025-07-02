@@ -152,7 +152,6 @@ CREATE TABLE BookingStep (
     performedAt        DATETIME       NULL,  -- Ngày bat dau thuc hien
     result             NVARCHAR(500)  NULL,  -- Ket qua xet nghiem
     note               NVARCHAR(500)  NULL,  -- Ghi chu cua bac si cho buoc nay
-	--drugId			   INT			  NULL,
 	stepStatus		   NVARCHAR(20)	  NOT NULL		CONSTRAINT CK_BookingStep_Status CHECK (stepStatus IN ('inactive','pending','completed'))
 													CONSTRAINT DF_BookingStep_Status DEFAULT 'inactive',
 );
@@ -213,13 +212,11 @@ CREATE TABLE Post (
     postId      INT             IDENTITY(1,1) CONSTRAINT PK_Post PRIMARY KEY,
 
     docId       INT             NOT NULL      CONSTRAINT FK_Post_Doctor
-											  FOREIGN KEY 
+											  FOREIGN KEY (docId)
 											  REFERENCES Doctor(docId),
     title       NVARCHAR(200)   NOT NULL,
     content     NVARCHAR(MAX)   NOT NULL,
-	thumbnail   VARBINARY(MAX)  NULL, 
-	thumbnailMimeType NVARCHAR(50) NULL, -- MIME type ảnh: image/jpeg, image/png,...
-
+	imageId		int				NULL, 
     createdAt   DATETIME        NOT NULL	  DEFAULT GETDATE(),
     updatedAt   DATETIME        NULL,
     postStatus      NVARCHAR(20)    NOT NULL  CONSTRAINT CK_Post_Status CHECK (postStatus IN ('draft','published','hidden'))
@@ -229,22 +226,47 @@ CREATE TABLE Post (
 );
 GO
 CREATE TABLE Drug (
-    drugId          INT             IDENTITY(1,1) PRIMARY KEY,  -- ID duy nhất cho mỗi đơn thuốc
+    drugId          INT             IDENTITY(1,1) PRIMARY KEY,  -- ID duy nhất cho mỗi toa thuốc
     bookId			INT             NOT NULL,                   -- Gắn với bước cụ thể của quá trình điều trị
     docId           INT             NOT NULL,                   -- Bác sĩ kê thuốc
     cusId           INT             NOT NULL,                   -- Bệnh nhân được kê thuốc
-    drugName        NVARCHAR(100)   NULL,                   -- Tên thuốc
-    dosage          NVARCHAR(50)    NULL,                   -- Liều dùng, ví dụ: "2 viên/lần"
-    frequency       NVARCHAR(50)    NULL,                   -- Tần suất: "3 lần/ngày"
-    duration        NVARCHAR(50)    NULL,                   -- Thời gian dùng: "5 ngày"
-    note            NVARCHAR(200)   NULL,                       -- Ghi chú thêm nếu có
-    createdAt       DATETIME        DEFAULT GETDATE(),          -- Thời gian kê thuốc
+	drugItemId      INT				NULL,
+    drugNote        NVARCHAR(200)   NULL,                      
+    createdAt       DATETIME        NULL,          -- Thời gian kê thuốc
 
     CONSTRAINT FK_Drug_Booking     FOREIGN KEY (bookId)		   REFERENCES Booking(bookId),
     CONSTRAINT FK_Drug_Doctor      FOREIGN KEY (docId)         REFERENCES Doctor(docId),
     CONSTRAINT FK_Drug_Customer    FOREIGN KEY (cusId)         REFERENCES Customer(cusId)
 );
+GO
 
+
+
+CREATE TABLE DrugItem (
+	drugItemId		INT             IDENTITY(1,1)	PRIMARY KEY,
+
+	drugId			INT             NOT NULL		CONSTRAINT FK_DrugItem_Drug
+													FOREIGN KEY (drugId)
+													REFERENCES Drug(drugId),
+
+    drugName        NVARCHAR(100)   NULL,                   -- Tên thuốc
+    dosage          NVARCHAR(50)    NULL,                   -- Liều dùng, ví dụ: "2 viên/lần"
+    frequency       NVARCHAR(50)    NULL,                   -- Tần suất: "3 lần/ngày"
+    duration        NVARCHAR(50)    NULL,                   -- Thời gian dùng: "5 ngày"
+	drugItemNote    NVARCHAR(200)   NULL,
+
+);
+GO
+CREATE TABLE Image (
+    imageId        INT           IDENTITY(1,1)			PRIMARY KEY,
+
+    docId          INT           NOT NULL               CONSTRAINT FK_Image_Doctor 
+														FOREIGN KEY(docId) 
+														REFERENCES dbo.Doctor(docId),             -- FK tới Doctor.docId
+    imageData      VARBINARY(MAX) NOT NULL,            -- dữ liệu ảnh
+    imageMimeType  NVARCHAR(100)  NOT NULL,            -- vd "image/png"
+
+);
 
 
 INSERT INTO Customer ( cusFullName, cusGender, cusDate, cusEmail, cusPhone, cusPassword, cusAddress, cusStatus,  cusOccupation,  emergencyContact)
@@ -268,7 +290,7 @@ INSERT INTO Manager ( maFullName, maEmail, maPassword, maPhone, position, roles)
 
 
 INSERT INTO Service (serName, serDescription, serPrice, duration)
-VALUES (N'Khám tiền đăng ký điều trị IVF/IUI', N'Tư vấn chuyên sâu và chẩn đoán tình trạng sinh sản, xác định phương án điều trị phù hợp cho cả nam và nữ', 3100000, 7),
+VALUES (N'Khám tiền đăng ký điều trị IVF-IUI', N'Tư vấn chuyên sâu và chẩn đoán tình trạng sinh sản, xác định phương án điều trị phù hợp cho cả nam và nữ', 3100000, 7),
 (N'Liệu trình điều trị IVF', N'Quy trình thụ tinh trong ống nghiệm: kích thích buồng trứng, chọc hút noãn, thụ tinh và chuyển phôi', 20700000, 30),
 (N'Liệu trình điều trị IUI', N'Quy trình bơm tinh trùng vào buồng tử cung, tối ưu tỉ lệ thụ thai tự nhiên', 3750000, 30);
 
@@ -296,15 +318,15 @@ VALUES
 -- Sub‐services cho Khám tiền đăng ký điều trị (serId = 1)
 INSERT INTO SubService (serId, subName, subDescription, estimatedDayOffset, subPrice)
 VALUES
-  (1, N'Khám lâm sàng tổng quát',    N'Đánh giá sức khỏe sinh sản tổng thể cho vợ/chồng',    1, 200000),
-  (1, N'Khám chuyên khoa nam/nữ',    N'Khám chi tiết bộ phận sinh dục nam hoặc nữ',          1, 250000),
+  (1, N'Khám lâm sàng tổng quát',    N'Đánh giá sức khỏe sinh sản tổng thể cho vợ-chồng',    1, 200000),
+  (1, N'Khám chuyên khoa nam-nữ',    N'Khám chi tiết bộ phận sinh dục nam hoặc nữ',          1, 250000),
   (1, N'Xét nghiệm AMH (dự trữ buồng trứng)', N'Đánh giá dự trữ buồng trứng ở nữ',               2, 500000),
   (1, N'Xét nghiệm nội tiết tố nữ (FSH, LH, E2)', N'Kiểm tra hormone sinh sản nữ',               2, 300000),
   (1, N'Xét nghiệm tinh dịch đồ',    N'Đánh giá chất lượng tinh trùng nam',                2, 300000),
   (1, N'Xét nghiệm máu, viêm gan, HIV, giang mai', N'Tầm soát các bệnh truyền nhiễm',            2, 400000),
   (1, N'Siêu âm tử cung, buồng trứng',N'Kiểm tra cấu trúc tử cung và dự trữ noãn',            2, 250000),
   (1, N'Chụp HSG/siêu âm vòi trứng', N'Kiểm tra thông vòi trứng ở nữ',                     3, 700000),
-  (1, N'Tư vấn kết quả, định hướng điều trị', N'Tư vấn phác đồ IVF/IUI hoặc hướng điều trị khác', 3, 200000);
+  (1, N'Tư vấn kết quả, định hướng điều trị', N'Tư vấn phác đồ IVF-IUI hoặc hướng điều trị khác', 3, 200000);
 
 -- Sub‐services cho Liệu trình điều trị IVF (serId = 2)
 INSERT INTO SubService (serId, subName, subDescription, estimatedDayOffset, subPrice)
@@ -337,14 +359,14 @@ INSERT INTO WorkSlot (docId, maId, workDate, startTime, endTime, maxPatient, slo
 
 --------------------------------------------------------
 
-(1, 1, '2025-07-1', '08:00', '09:00', 2, 'approved'),						
-(1, 1, '2025-07-1', '09:00', '10:00', 2, 'approved'),						
-(1, 1, '2025-07-1', '10:00', '11:00', 2, 'approved'),						
-(1, 1, '2025-07-1', '11:00', '12:00', 2, 'approved'),						
+(1, 1, '2025-07-2', '08:00', '09:00', 2, 'approved'),						
+(1, 1, '2025-07-2', '09:00', '10:00', 2, 'approved'),						
+(1, 1, '2025-07-2', '10:00', '11:00', 2, 'approved'),						
+(1, 1, '2025-07-2', '11:00', '12:00', 2, 'approved'),						
 						
-(2, 1, '2025-06-2', '14:00', '15:00', 2, 'approved'),						
-(2, 1, '2025-06-26', '15:00', '16:00', 2, 'approved'),						
-(2, 1, '2025-06-26', '16:00', '17:00', 2, 'approved');
+(2, 1, '2025-07-2', '14:00', '15:00', 2, 'approved'),						
+(2, 1, '2025-07-2', '15:00', '16:00', 2, 'approved'),						
+(2, 1, '2025-07-2', '16:00', '17:00', 2, 'approved');
 --------------------------------------------------------
 
 
@@ -355,7 +377,7 @@ INSERT INTO WorkSlot (docId, maId, workDate, startTime, endTime, maxPatient, slo
 ----------------------------------------------------------
 
 
-USE [Healthcare_ServiceVer9]
+USE [Healthcare_ServiceVer92]
 
 
 select * from WorkSlot
@@ -373,3 +395,8 @@ select * from Service
 select * from SubService
 
 select * from Drug
+
+select * from DrugItem
+
+select * from Image
+

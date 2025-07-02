@@ -35,5 +35,7 @@ public class DrugItem {
     @Column(name = "duration", length = 50)
     private String duration;
 
-
+    @Column(name = "drugItemNote", length = 200)
+    private String drugItemNote;
+    
 }

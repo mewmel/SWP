@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const res = await fetch(`/api/medical-records/exist?cusId=${cusId}&serId=${serId}`);
             const { exists } = await res.json();
             if (!exists) {
-                // Tạo mới
+                // Tạo mới medical record
                 await fetch(`/api/medical-records/create/${serId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -270,8 +270,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         recordStatus: 'closed'
                     })
                 });
-                //tạo mới table Drug
-                await fetch(`/api/drugs/create/${bookId}`, {
+
+                // Tạo mới drug
+                const drugRes = await fetch(`/api/drugs/create/${bookId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -279,10 +280,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         cusId,
                     })
                 });
+                const drugId = await drugRes.json(); 
+
+                // Lưu drugId vào localStorage để dùng sau
+                localStorage.setItem('drugId', drugId);
+
+                const fullName = localStorage.getItem('docFullName') || '';
 
                 if (typeof showNotification === 'function') showNotification('Đã tạo hồ sơ bệnh án!', 'success');
-
-
 
                 // Show success notification
                 if (typeof showNotification === 'function') {
@@ -294,7 +299,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (typeof showNotification === 'function') showNotification('Không thể tạo hồ sơ bệnh án', 'error');
         }
     };
-
 
 
 
@@ -533,25 +537,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     performedAt,
                     result: stepDiv.querySelector('.step-result')?.textContent.trim() || '',
                     note: stepDiv.querySelector('.step-note')?.textContent.trim() || '',
-                    stepStatus, 
+                    stepStatus,
                 };
             });
 
-
-
         // (4) Lấy danh sách đơn thuốc
-        const drugsArr = Array.from(document.querySelectorAll('.drug-item')).map(drugDiv => {
-            return {
-                bookId: bookId,
-                docId: localStorage.getItem('docId') || '',
-                cusId: patientId,
-                drugName: drugDiv.querySelector('input[placeholder="Tên thuốc..."]').value,
-                dosage: drugDiv.querySelector('input[placeholder="Liều dùng..."]').value,
-                frequency: drugDiv.querySelector('input[placeholder="Tần suất sử dụng..."]').value,
-                duration: drugDiv.querySelector('input[placeholder="Thời gian dùng..."]').value,
-                note: drugDiv.querySelector('textarea').value,
-            };
-        });
 
         try {
             // (1) Gọi API insert Booking 
@@ -589,17 +579,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-
-
-
             // (4) Gọi API insert Drug cho từng thuốc
-            for (let drug of drugsArr) {
-                await fetch(`/api/drugs/update-with-booking/${bookId}`, {
-                    method: 'PUT',
-                    body: JSON.stringify(drug),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-            }
+
 
             alert('Đã lưu hồ sơ bệnh án thành công!');
             // Có thể gọi thêm showNotification() nếu có
@@ -610,16 +591,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-
     // Additional utility functions for sidebar
     // openScheduleManager function is already defined in doctor-common.js
     // Removed duplicate definition to avoid conflicts
-
-    window.openReports = function () {
-        if (typeof showNotification === 'function') {
-            showNotification('Tính năng báo cáo thống kê đang được phát triển', 'info');
-        }
-    };
 
     // ========== NEW FUNCTIONS FOR DATABASE MATCHING ========== 
 
@@ -664,53 +638,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.removeBookingStep = function (button) {
         if (confirm('Bạn có chắc chắn muốn xóa bước này?')) {
             button.closest('.step-item').remove();
-        }
-    };
-
-    // Add new drug
-    window.addDrug = function () {
-        const drugsList = document.getElementById('drugsList');
-        const drugCount = drugsList.children.length + 1;
-
-        const newDrug = document.createElement('div');
-        newDrug.className = 'drug-item';
-        newDrug.innerHTML = `
-            <div class="record-grid">
-                <div class="record-section">
-                    <label>Tên thuốc:</label>
-                    <input type="text" placeholder="Tên thuốc...">
-                </div>
-                <div class="record-section">
-                    <label>Liều dùng:</label>
-                    <input type="text" placeholder="Liều dùng...">
-                </div>
-            </div>
-            <div class="record-grid">
-                <div class="record-section">
-                    <label>Tần suất:</label>
-                    <input type="text" placeholder="Tần suất sử dụng...">
-                </div>
-                <div class="record-section">
-                    <label>Thời gian dùng:</label>
-                    <input type="text" placeholder="Thời gian dùng...">
-                </div>
-            </div>
-            <div class="record-section">
-                <label>Ghi chú thuốc:</label>
-                <textarea rows="2" placeholder="Hướng dẫn sử dụng..."></textarea>
-            </div>
-            <button type="button" class="btn-remove-drug" onclick="removeDrug(this)">
-                <i class="fas fa-trash"></i> Xóa
-            </button>
-        `;
-
-        drugsList.appendChild(newDrug);
-    };
-
-    // Remove drug
-    window.removeDrug = function (button) {
-        if (confirm('Bạn có chắc chắn muốn xóa thuốc này?')) {
-            button.closest('.drug-item').remove();
         }
     };
 
@@ -945,68 +872,68 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-window.saveBookingStep = function () {
-    const serviceSelect = document.getElementById('serviceSelect');
-    const performedAt = document.getElementById('performedAt').value;
-    const stepStatus = document.getElementById('stepStatus').value; // 'pending', 'completed', 'inactive'
-    const stepResult = document.getElementById('stepResult').value;
-    const stepNote = document.getElementById('stepNote').value;
-    const selectedServiceTitle = document.getElementById('selectedServiceTitle');
+    window.saveBookingStep = function () {
+        const serviceSelect = document.getElementById('serviceSelect');
+        const performedAt = document.getElementById('performedAt').value;
+        const stepStatus = document.getElementById('stepStatus').value; // 'pending', 'completed', 'inactive'
+        const stepResult = document.getElementById('stepResult').value;
+        const stepNote = document.getElementById('stepNote').value;
+        const selectedServiceTitle = document.getElementById('selectedServiceTitle');
 
-    if (!serviceSelect.value || !performedAt || !stepResult) {
-        alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
-        return;
-    }
+        if (!serviceSelect.value || !performedAt || !stepResult) {
+            alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+            return;
+        }
 
-    const subId = serviceSelect.value;
-    const subName = serviceSelect.options[serviceSelect.selectedIndex].textContent;
-    const dateTime = new Date(performedAt);
-    const formattedDateTime = `${dateTime.getDate().toString().padStart(2, '0')}/${(dateTime.getMonth() + 1).toString().padStart(2, '0')}/${dateTime.getFullYear()} ${dateTime.getHours().toString().padStart(2, '0')}:${dateTime.getMinutes().toString().padStart(2, '0')}`;
+        const subId = serviceSelect.value;
+        const subName = serviceSelect.options[serviceSelect.selectedIndex].textContent;
+        const dateTime = new Date(performedAt);
+        const formattedDateTime = `${dateTime.getDate().toString().padStart(2, '0')}/${(dateTime.getMonth() + 1).toString().padStart(2, '0')}/${dateTime.getFullYear()} ${dateTime.getHours().toString().padStart(2, '0')}:${dateTime.getMinutes().toString().padStart(2, '0')}`;
 
-    const statusClass = stepStatus;
-    const statusText = {
-        'pending': 'Đang thực hiện',
-        'completed': 'Đã hoàn thành',
-        'inactive': 'Không hoạt động',
-    }[stepStatus];
+        const statusClass = stepStatus;
+        const statusText = {
+            'pending': 'Đang thực hiện',
+            'completed': 'Đã hoàn thành',
+            'inactive': 'Không hoạt động',
+        }[stepStatus];
 
-    const stepsList = document.getElementById('completedStepsList');
-    const stepTemplate = stepsList.querySelector('.step-template');
-    const newStepId = Date.now();
+        const stepsList = document.getElementById('completedStepsList');
+        const stepTemplate = stepsList.querySelector('.step-template');
+        const newStepId = Date.now();
 
-    if (window.currentEditingStepId) {
-        const oldStepItem = stepsList.querySelector(`[data-step-id="${window.currentEditingStepId}"]`);
-        if (oldStepItem) oldStepItem.remove();
-        window.currentEditingStepId = null;
-    }
+        if (window.currentEditingStepId) {
+            const oldStepItem = stepsList.querySelector(`[data-step-id="${window.currentEditingStepId}"]`);
+            if (oldStepItem) oldStepItem.remove();
+            window.currentEditingStepId = null;
+        }
 
-    const newStepItem = stepTemplate.cloneNode(true);
-    newStepItem.style.display = '';
-    newStepItem.classList.remove('step-template');
-    newStepItem.classList.add('step-item', statusClass);
-    newStepItem.setAttribute('data-step-id', newStepId);
-    newStepItem.setAttribute('data-sub-id', subId);
-    newStepItem.setAttribute('data-sub-name', subName);
+        const newStepItem = stepTemplate.cloneNode(true);
+        newStepItem.style.display = '';
+        newStepItem.classList.remove('step-template');
+        newStepItem.classList.add('step-item', statusClass);
+        newStepItem.setAttribute('data-step-id', newStepId);
+        newStepItem.setAttribute('data-sub-id', subId);
+        newStepItem.setAttribute('data-sub-name', subName);
 
-    // Gán dữ liệu vào DOM node
-    newStepItem.querySelector('.step-info strong').textContent = subName;
-    newStepItem.querySelector('.step-time').textContent = formattedDateTime;
-    newStepItem.querySelector('.step-status').textContent = statusText;
-    newStepItem.querySelector('.step-status').className = 'step-status ' + statusClass;
-    newStepItem.querySelector('.step-status').setAttribute('data-status', statusClass); 
-    newStepItem.querySelector('.step-result').textContent = stepResult;
-    newStepItem.querySelector('.step-note').textContent = stepNote;
-    newStepItem.querySelector('.btn-edit-step').onclick = function () {
-        window.editStep(newStepId);
+        // Gán dữ liệu vào DOM node
+        newStepItem.querySelector('.step-info strong').textContent = subName;
+        newStepItem.querySelector('.step-time').textContent = formattedDateTime;
+        newStepItem.querySelector('.step-status').textContent = statusText;
+        newStepItem.querySelector('.step-status').className = 'step-status ' + statusClass;
+        newStepItem.querySelector('.step-status').setAttribute('data-status', statusClass);
+        newStepItem.querySelector('.step-result').textContent = stepResult;
+        newStepItem.querySelector('.step-note').textContent = stepNote;
+        newStepItem.querySelector('.btn-edit-step').onclick = function () {
+            window.editStep(newStepId);
+        };
+
+        stepsList.insertBefore(newStepItem, stepsList.firstChild);
+
+        updateEmptyStepsNotice();
+        cancelStepForm();
+
+        alert('Đã lưu bước thực hiện thành công!');
     };
-
-    stepsList.insertBefore(newStepItem, stepsList.firstChild);
-
-    updateEmptyStepsNotice();
-    cancelStepForm();
-
-    alert('Đã lưu bước thực hiện thành công!');
-};
 
 
     function updateEmptyStepsNotice() {
@@ -1058,6 +985,251 @@ window.saveBookingStep = function () {
         }
     };
 
+    // ========== PRESCRIPTION TAB FUNCTIONS ==========
+// Drug counter for unique IDs
+let drugCounter = 0;
+
+window.addDrugPrescription = function () {
+    drugCounter++;
+    const drugsList = document.getElementById('drugsList');
+
+    const itemId = `drugItem${drugCounter}`;
+
+    const newDrugItem = document.createElement('div');
+    newDrugItem.className = 'drug-item';
+    newDrugItem.innerHTML = `
+        <div class="drug-header">
+            <h6><i class="fas fa-capsules"></i> Thuốc #${drugCounter}</h6>
+            <button type="button" class="btn-remove-drug" onclick="window.removeDrugPrescription(this)" title="Xóa thuốc này">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        <div class="drug-content">
+            <div class="record-grid">
+                <div class="record-section">
+                    <label><i class="fas fa-pills"></i> Tên thuốc:</label>
+                    <input type="text" placeholder="Nhập tên thuốc..." id="drugName-${itemId}" class="form-control">
+                </div>
+                <div class="record-section">
+                    <label><i class="fas fa-weight"></i> Hàm lượng:</label>
+                    <input type="text" placeholder="Ví dụ: 5mg" id="dosage-${itemId}" class="form-control">
+                </div>
+            </div>
+            <div class="record-section">
+                <div class="record-section">
+                    <label><i class="fas fa-clock"></i> Tần suất sử dụng:</label>
+                    <input type="text" id="frequency-${itemId}" class="form-control">
+                </div>
+                <div class="record-section">
+                    <label><i class="fas fa-calendar-days"></i> Thời gian dùng:</label>
+                    <input type="text" placeholder="Ví dụ: 30 ngày" value="30 ngày" id="duration-${itemId}" class="form-control">
+                </div>
+            </div>
+            <div class="record-section">
+                <label><i class="fas fa-comment-medical"></i> Hướng dẫn sử dụng & Lưu ý:</label>
+                <textarea rows="2" placeholder="Ghi chú cách sử dụng thuốc..." id="drugItemNote-${itemId}" class="form-control"></textarea>
+            </div>
+        </div>
+    `;
+
+    drugsList.appendChild(newDrugItem);
+};
+
+function fillPrescriptionHeader() {
+    const nameInput = document.getElementById('prescribingDoctorName');
+    const numberInput = document.getElementById('prescriptionNumber');
+
+    const fullName = localStorage.getItem('docFullName');
+
+
+    if (nameInput) nameInput.value = fullName || '';
+    if (numberInput) numberInput.value = localStorage.getItem('drugId') || '';
+}
+fillPrescriptionHeader();
+
+// Remove drug item
+window.removeDrugPrescription = function (button) {
+    const drugItem = button.closest('.drug-item');
+    if (!drugItem) return;
+
+    if (confirm('Bạn có chắc chắn muốn xóa thuốc này?')) {
+        drugItem.style.transition = 'all 0.3s ease';
+        drugItem.style.opacity = '0';
+        drugItem.style.transform = 'translateX(-20px)';
+
+        setTimeout(() => {
+            drugItem.remove();
+            updatePrescriptionSummary();
+            renumberDrugs();
+        }, 300);
+    }
+};
+
+// Renumber drug items
+function renumberDrugs() {
+    const items = document.querySelectorAll('#drugsList .drug-item');
+    items.forEach((item, idx) => {
+        const header = item.querySelector('.drug-header h6');
+        if (header) header.innerHTML = `<i class="fas fa-capsules"></i> Thuốc #${idx + 1}`;
+    });
+}
+
+// Update summary
+function updatePrescriptionSummary() {
+    const items = document.querySelectorAll('#drugsList .drug-item');
+    const count = items.length;
+    document.querySelector('#prescriptionTab .stat-item .stat-number').textContent = count;
+}
+
+
+function collectPrescriptionData() {
+    const drugs = [];
+    const drugItems = document.querySelectorAll('#prescriptionTab .drug-item');
+
+    drugItems.forEach(item => {
+        const drugNameInput = item.querySelector('input[id^="drugName-"]');
+        const dosageInput = item.querySelector('input[id^="dosage-"]');
+        const frequencyInput = item.querySelector('input[id^="frequency-"]');
+        const durationInput = item.querySelector('input[id^="duration-"]');
+        const instructionsTextarea = item.querySelector('textarea[id^="drugItemNote-"]');
+
+        const drugName = drugNameInput?.value?.trim() || '';
+        const dosage = dosageInput?.value?.trim() || '';
+        const frequency = frequencyInput?.value?.trim() || '';
+        const duration = durationInput?.value?.trim() || '';
+        const drugItemNote = instructionsTextarea?.value?.trim() || '';
+
+        if (drugName !== '') {
+            drugs.push({
+                drugName,
+                dosage,
+                frequency,
+                duration,
+                drugItemNote,
+            });
+        }
+    });
+
+    // Final prescription data
+    return {
+        prescriptionNumber: document.getElementById('prescriptionNumber')?.value || '',
+        prescriptionDate: document.getElementById('prescriptionDate')?.value || '',
+        doctorName: document.getElementById('prescribingDoctorName')?.value || '',
+        diagnosis: document.getElementById('prescriptionDiagnosis')?.value || '',
+        drugs: drugs,
+        generalNotes: document.getElementById('generalNotes')?.value || '',
+
+    };
+}
+
+window.savePrescription = async function () {
+    const data = collectPrescriptionData();
+
+    const drugId = localStorage.getItem('drugId') || '';
+
+
+    if (!data.prescriptionNumber) {
+        showNotification('❌ Không tìm thấy prescriptionNumber. Vui lòng kiểm tra lại.', 'error');
+        return;
+    }
+
+    try {
+        // 1. Cập nhật bảng Drug
+        const updateDrugRes = await fetch(`/api/drugs/update/${drugId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                createdAt: data.prescriptionDate || new Date().toISOString(),
+                note: data.diagnosis || ''
+            })
+        });
+
+        if (!updateDrugRes.ok) throw new Error('Không thể cập nhật đơn thuốc');
+
+        // 2. Tạo mới các bản ghi DrugItem liên kết với drugId
+        const drugItemsPayload = data.drugs.map(item => ({ 
+            drugName: item.drugName,
+            dosage: item.dosage,
+            frequency: item.frequency,
+            duration: item.duration,
+            drugItemNote: item.drugItemNote
+        }));
+
+        const drugItemRes = await fetch(`/api/drug-items/create/${drugId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(drugItemsPayload)
+        });
+
+        if (!drugItemRes.ok) throw new Error('Không thể lưu thuốc con');
+
+        showNotification('💊 Đã lưu đơn thuốc thành công!', 'success');
+    } catch (err) {
+        console.error(err);
+        showNotification('❌ Có lỗi khi lưu đơn thuốc', 'error');
+    }
+};
+
+
+
+window.previewPrescription = function () {
+
+    const prescriptionData = collectPrescriptionData();
+
+    const previewContent = `
+        <div style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white;">
+            <h3 style="text-align: center; margin-bottom: 20px;">Xem trước đơn thuốc</h3>
+            <div style="margin-bottom: 15px;">
+                <strong>Chẩn đoán:</strong> ${prescriptionData.diagnosis}
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong>Danh sách thuốc:</strong>
+                <ul style="margin-left: 20px;">
+                    ${prescriptionData.drugs.map((drug, index) => `
+                        <li style="margin-bottom: 10px;">
+                            <strong>${drug.name} ${drug.dosage}</strong><br>
+                            ${drug.frequency}, ${drug.duration}<br>
+                            <em>${drug.instructions}</em>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong>Lời dặn:</strong> ${prescriptionData.generalNotes}
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="this.parentElement.parentElement.remove()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Đóng</button>
+            </div>
+        </div>
+    `;
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    overlay.innerHTML = previewContent;
+
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+
+    document.body.appendChild(overlay);
+};
 
 
 });

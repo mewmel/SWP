@@ -71,7 +71,7 @@
                     </div>
                     <div class="schedule-list">
                         <div class="appointment-item" data-patient="" data-status="">
-                            <div class="time" type ="time"></div>
+                            <div class="time" type="time"></div>
                             <div class="appointment-info">
                                 <h3>BN: <span class="patient-name"></span></h3>
                                 <p class="service-name"></p>
@@ -121,11 +121,11 @@
                                 <i class="fas fa-user"></i>
                             </div>
                             <div class="patient-details">
-                                <h4 id="patientName">Nguyễn Thị Mai</h4>
-                                <p class="patient-id">Mã BN: <span id="cusId">BN001</span></p>
+                                <h4 id="patientName"></h4>
+                                <p class="patient-id">Mã BN: <span id="cusId"></span></p>
                             </div>
                             <div class="patient-status">
-                                <span class="status-badge" id="currentStatus">Đã khám</span>
+                                <span class="status-badge" id="currentStatus"></span>
                             </div>
                         </div>
 
@@ -133,37 +133,37 @@
                             <div class="info-row">
                                 <div class="info-item">
                                     <label><i class="fas fa-venus-mars"></i> Giới tính:</label>
-                                    <span id="patientGender">Nữ</span>
+                                    <span id="patientGender"></span>
                                 </div>
                                 <div class="info-item">
                                     <label><i class="fas fa-birthday-cake"></i> Ngày sinh:</label>
-                                    <span id="patientBirthDate">26/09/2004</span>
+                                    <span id="patientBirthDate"></span>
                                 </div>
                             </div>
                             <div class="info-row">
                                 <div class="info-item">
                                     <label><i class="fas fa-phone"></i> Số điện thoại:</label>
-                                    <span id="patientPhone">0352020737</span>
+                                    <span id="patientPhone"></span>
                                 </div>
                                 <div class="info-item">
                                     <label><i class="fas fa-envelope"></i> Email:</label>
-                                    <span id="patientEmail">thutase180353@fpt.edu.vn</span>
+                                    <span id="patientEmail"></span>
                                 </div>
                             </div>
                             <div class="info-row">
                                 <div class="info-item">
                                     <label><i class="fas fa-map-marker-alt"></i> Địa chỉ:</label>
-                                    <span id="patientAddress">HCMC</span>
+                                    <span id="patientAddress"></span>
                                 </div>
                                 <div class="info-item">
                                     <label><i class="fas fa-briefcase"></i> Nghề nghiệp:</label>
-                                    <span id="patientOccupation">Con sen</span>
+                                    <span id="patientOccupation"></span>
                                 </div>
                             </div>
                             <div class="info-row">
                                 <div class="info-item">
                                     <label><i class="fas fa-phone-alt"></i> Liên hệ khẩn cấp:</label>
-                                    <span id="emergencyContact">Mơ</span>
+                                    <span id="emergencyContact"></span>
                                 </div>
                                 <div class="info-item">
                                     <label><i class="fas fa-user-check"></i> Trạng thái:</label>
@@ -176,8 +176,9 @@
                     <!-- Medical Record Tabs -->
                     <div class="record-tabs">
                         <button class="tab-btn active" onclick="window.switchTab('current')">Khám hôm nay</button>
-                        <button class="tab-btn" onclick="window.switchTab('history')">Lịch sử khám</button>
-                        <button class="tab-btn" onclick="window.switchTab('treatment')">Điều trị</button>
+                        <!-- <button class="tab-btn" onclick="window.switchTab('history')">Lịch sử khám</button>
+                        <button class="tab-btn" onclick="window.switchTab('treatment')">Điều trị</button> -->
+                        <button class="tab-btn" onclick="window.switchTab('prescription')">Kê thuốc</button>
                         <button class="tab-btn" onclick="window.switchTab('tests')">Xét nghiệm</button>
                     </div>
 
@@ -236,13 +237,13 @@
                                 <div class="record-section">
                                     <label>Chẩn đoán:</label>
                                     <textarea id="diagnosis" rows="4"
-                                        placeholder="Nhập chẩn đoán...">Vô sinh nguyên phát, chuẩn bị điều trị IVF chu kỳ 1</textarea>
+                                        placeholder="Nhập chẩn đoán..."></textarea>
                                 </div>
 
                                 <div class="record-section">
                                     <label>Kế hoạch điều trị:</label>
                                     <textarea id="treatmentPlan" rows="5"
-                                        placeholder="Mô tả kế hoạch điều trị...">1. Kích thích buồng trứng bằng thuốc FSH</textarea>
+                                        placeholder="Mô tả kế hoạch điều trị..."></textarea>
                                 </div>
 
                                 <div class="record-section">
@@ -340,469 +341,511 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Drug Prescription-->
-                            <div class="drug-prescription">
-                                <h5><i class="fas fa-pills"></i> Đơn thuốc</h5>
-                                <div class="drugs-list" id="drugsList">
-                                    <div class="drug-item">
-                                        <div class="record-grid">
-                                            <div class="record-section">
-                                                <label>Tên thuốc:</label>
-                                                <input type="text" placeholder="Tên thuốc..." value="Folic Acid">
-                                            </div>
-                                            <div class="record-section">
-                                                <label>Liều dùng:</label>
-                                                <input type="text" placeholder="Liều dùng..." value="5mg">
-                                            </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Medical History Tab -->
+                        <div id="historyTab" class="tab-content">
+                            <div class="history-list">
+                                <h4><i class="fas fa-history"></i> Lịch sử bệnh án</h4>
+                                <!-- Medical Record 1 -->
+                                <div class="history-item">
+                                    <div class="history-header">
+                                        <div class="history-date"></div>
+                                        <div class="history-status active"></div>
+                                    </div>
+                                    <div class="history-content">
+                                        <div class="history-info">
+                                            <p><strong>Mã hồ sơ:</strong> MR002</p>
+                                            <p><strong>Dịch vụ:</strong> Liệu trình điều trị IVF</p>
+                                            <p><strong>Bác sĩ điều trị:</strong> BS. Nguyễn Ngọc Khánh Linh</p>
                                         </div>
-                                        <div class="record-grid">
-                                            <div class="record-section">
-                                                <label>Tần suất:</label>
-                                                <input type="text" placeholder="Tần suất sử dụng..." value="1 lần/ngày">
-                                            </div>
-                                            <div class="record-section">
-                                                <label>Thời gian dùng:</label>
-                                                <input type="text" placeholder="Thời gian dùng..." value="30 ngày">
-                                            </div>
+                                        <div class="history-details">
+                                            <p><strong>Chẩn đoán:</strong></p>
+                                            <p><strong>Kế hoạch điều trị:</strong></p>
+                                            <p><strong>Ngày dự kiến kết thúc:</strong></p>
                                         </div>
-                                        <div class="record-section">
-                                            <label>Ghi chú thuốc:</label>
-                                            <textarea rows="2"
-                                                placeholder="Hướng dẫn sử dụng...">Uống sau bữa ăn</textarea>
+                                        <div class="history-notes">
+                                            <p><strong>Ghi chú:</strong></p>
                                         </div>
-                                        <button type="button" class="btn-remove-drug" onclick="window.removeDrug(this)">
-                                            <i class="fas fa-trash"></i> Xóa
-                                        </button>
                                     </div>
                                 </div>
-                                <button type="button" class="btn-add-drug" onclick="window.addDrug()">
+
+                                <!-- Booking History -->
+                                <div class="booking-history">
+                                    <h5><i class="fas fa-calendar-alt"></i> Lịch sử đặt lịch</h5>
+                                    <div class="booking-item">
+                                        <div class="booking-header">
+                                            <span class="booking-date">24/06/2024 08:00</span>
+                                            <span class="booking-status confirmed">Đã xác nhận</span>
+                                        </div>
+                                        <div class="booking-details">
+                                            <p><strong>Loại:</strong> Tái khám</p>
+                                            <p><strong>Bác sĩ:</strong> BS. Nguyễn Ngọc Khánh Linh</p>
+                                            <p><strong>Dịch vụ:</strong> Liệu trình điều trị IVF</p>
+                                            <p><strong>Ghi chú:</strong> Bệnh nhân đến đúng giờ hẹn</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="booking-item">
+                                        <div class="booking-header">
+                                            <span class="booking-date">20/06/2024 09:00</span>
+                                            <span class="booking-status confirmed">Đã xác nhận</span>
+                                        </div>
+                                        <div class="booking-details">
+                                            <p><strong>Loại:</strong> Khám lần đầu</p>
+                                            <p><strong>Bác sĩ:</strong> BS. Nguyễn Ngọc Khánh Linh</p>
+                                            <p><strong>Dịch vụ:</strong> Khám tiền đăng ký điều trị (IVF/IUI)</p>
+                                            <p><strong>Ghi chú:</strong> Tư vấn lần đầu</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Treatment Tab -->
+                        <div id="treatmentTab" class="tab-content">
+                            <div class="treatment-plan">
+                                <h4><i class="fas fa-tasks"></i> Kế hoạch điều trị</h4>
+
+                                <!-- Current Service -->
+                                <div class="current-service">
+                                    <h5><i class="fas fa-medical-kit"></i> Dịch vụ hiện tại</h5>
+                                    <div class="service-info">
+                                        <div class="service-card">
+                                            <h6>Liệu trình điều trị IVF</h6>
+                                            <p class="service-description">Quy trình thụ tinh trong ống nghiệm: kích
+                                                thích
+                                                buồng trứng, chọc hút noãn, thụ tinh và chuyển phôi</p>
+                                            <div class="service-details">
+                                                <span class="service-price">20.700.000 VNĐ</span>
+                                                <span class="service-duration">30 ngày</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sub Services -->
+                                <div class="sub-services">
+                                    <h5><i class="fas fa-list-check"></i> Các bước điều trị chi tiết</h5>
+
+                                    <div class="sub-service-item completed">
+                                        <div class="sub-service-header">
+                                            <span class="step-number">1</span>
+                                            <div class="sub-service-info">
+                                                <h6>Kích thích buồng trứng</h6>
+                                                <p>Tiêm thuốc, theo dõi nang noãn</p>
+                                            </div>
+                                            <div class="sub-service-details">
+                                                <span class="estimated-day">Ngày 1</span>
+                                                <span class="sub-price">600.000 VNĐ</span>
+                                            </div>
+                                            <span class="status-icon completed"><i
+                                                    class="fas fa-check-circle"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sub-service-item completed">
+                                        <div class="sub-service-header">
+                                            <span class="step-number">2</span>
+                                            <div class="sub-service-info">
+                                                <h6>Siêu âm noãn</h6>
+                                                <p>Theo dõi nang noãn phát triển</p>
+                                            </div>
+                                            <div class="sub-service-details">
+                                                <span class="estimated-day">Ngày 3</span>
+                                                <span class="sub-price">250.000 VNĐ</span>
+                                            </div>
+                                            <span class="status-icon completed"><i
+                                                    class="fas fa-check-circle"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sub-service-item current">
+                                        <div class="sub-service-header">
+                                            <span class="step-number">3</span>
+                                            <div class="sub-service-info">
+                                                <h6>Tiêm hCG</h6>
+                                                <p>Kích thích trưởng thành noãn, chuẩn bị chọc trứng</p>
+                                            </div>
+                                            <div class="sub-service-details">
+                                                <span class="estimated-day">Ngày 8</span>
+                                                <span class="sub-price">300.000 VNĐ</span>
+                                            </div>
+                                            <span class="status-icon current"><i class="fas fa-clock"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sub-service-item pending">
+                                        <div class="sub-service-header">
+                                            <span class="step-number">4</span>
+                                            <div class="sub-service-info">
+                                                <h6>Chọc hút trứng</h6>
+                                                <p>Lấy trứng ra khỏi buồng trứng</p>
+                                            </div>
+                                            <div class="sub-service-details">
+                                                <span class="estimated-day">Ngày 10</span>
+                                                <span class="sub-price">7.000.000 VNĐ</span>
+                                            </div>
+                                            <span class="status-icon pending"><i class="fas fa-circle"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sub-service-item pending">
+                                        <div class="sub-service-header">
+                                            <span class="step-number">5</span>
+                                            <div class="sub-service-info">
+                                                <h6>Lấy tinh trùng</h6>
+                                                <p>Lấy mẫu tinh trùng vào ngày chọc trứng</p>
+                                            </div>
+                                            <div class="sub-service-details">
+                                                <span class="estimated-day">Ngày 10</span>
+                                                <span class="sub-price">1.000.000 VNĐ</span>
+                                            </div>
+                                            <span class="status-icon pending"><i class="fas fa-circle"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sub-service-item pending">
+                                        <div class="sub-service-header">
+                                            <span class="step-number">6</span>
+                                            <div class="sub-service-info">
+                                                <h6>Tạo phôi, nuôi phôi trong lab</h6>
+                                                <p>Nuôi cấy và chọn lọc phôi</p>
+                                            </div>
+                                            <div class="sub-service-details">
+                                                <span class="estimated-day">Ngày 11</span>
+                                                <span class="sub-price">5.000.000 VNĐ</span>
+                                            </div>
+                                            <span class="status-icon pending"><i class="fas fa-circle"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sub-service-item pending">
+                                        <div class="sub-service-header">
+                                            <span class="step-number">7</span>
+                                            <div class="sub-service-info">
+                                                <h6>Chuyển phôi</h6>
+                                                <p>Đưa phôi vào buồng tử cung</p>
+                                            </div>
+                                            <div class="sub-service-details">
+                                                <span class="estimated-day">Ngày 15</span>
+                                                <span class="sub-price">6.000.000 VNĐ</span>
+                                            </div>
+                                            <span class="status-icon pending"><i class="fas fa-circle"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sub-service-item pending">
+                                        <div class="sub-service-header">
+                                            <span class="step-number">8</span>
+                                            <div class="sub-service-info">
+                                                <h6>Thử β-hCG</h6>
+                                                <p>Xét nghiệm kiểm tra thai sau chuyển phôi</p>
+                                            </div>
+                                            <div class="sub-service-details">
+                                                <span class="estimated-day">Ngày 22</span>
+                                                <span class="sub-price">200.000 VNĐ</span>
+                                            </div>
+                                            <span class="status-icon pending"><i class="fas fa-circle"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sub-service-item pending">
+                                        <div class="sub-service-header">
+                                            <span class="step-number">9</span>
+                                            <div class="sub-service-info">
+                                                <h6>Siêu âm tim thai</h6>
+                                                <p>Theo dõi sự phát triển của thai (nếu có)</p>
+                                            </div>
+                                            <div class="sub-service-details">
+                                                <span class="estimated-day">Ngày 29</span>
+                                                <span class="sub-price">350.000 VNĐ</span>
+                                            </div>
+                                            <span class="status-icon pending"><i class="fas fa-circle"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Treatment Summary -->
+                                <div class="treatment-summary">
+                                    <h5><i class="fas fa-chart-pie"></i> Tổng quan điều trị</h5>
+                                    <div class="summary-grid">
+                                        <div class="summary-item">
+                                            <span class="summary-label">Tổng số bước:</span>
+                                            <span class="summary-value">9</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Đã hoàn thành:</span>
+                                            <span class="summary-value">2</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Đang thực hiện:</span>
+                                            <span class="summary-value">1</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Tiến độ:</span>
+                                            <span class="summary-value">22%</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 22%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prescription Tab -->
+              <div id="prescriptionTab" class="tab-content">
+                    <div class="prescription-management">
+                        <h4><i class="fas fa-pills"></i> Kê đơn thuốc</h4>
+                        
+                        <!-- Prescription Header -->
+                        <div class="prescription-header">
+                            <div class="prescription-info">
+                                <div class="record-grid">
+                                    <div class="record-section">
+                                        <label><i class="fas fa-calendar-alt"></i> Ngày kê đơn:</label>
+                                        <input type="datetime-local" id="prescriptionDate"class="form-control"> <!--chỗ của createdAt -->
+                                    </div>
+                                    <div class="record-section">
+                                        <label><i class="fas fa-user-md"></i> Bác sĩ kê đơn:</label>
+                                        <input type="text" readonly class="form-control" id="prescribingDoctorName" >
+                                    </div>
+                                </div>
+                                <div class="record-grid">
+                                    <div class="record-section">
+                                        <label><i class="fas fa-hashtag"></i> Số đơn thuốc:</label>
+                                        <input type="text" readonly class="form-control" id="prescriptionNumber"> <!--chỗ của drugId -->
+                                    </div>
+                                </div>
+                                <div class="record-section">
+                                    <label><i class="fas fa-stethoscope"></i> Chẩn đoán liên quan:</label>
+                                    <textarea rows="2" id="prescriptionDiagnosis" class="form-control" placeholder="Chẩn đoán liên quan đến đơn thuốc..."></textarea> <!--chỗ của drugNote -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Drug Prescription List -->
+                        <div class="drug-prescription">
+                            <div class="prescription-section-header">
+                                <h5><i class="fas fa-list-ul"></i> Danh sách thuốc kê đơn</h5>
+                                <button type="button" class="btn-add-drug" onclick="window.addDrugPrescription()">
                                     <i class="fas fa-plus"></i> Thêm thuốc
                                 </button>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Medical History Tab -->
-                    <div id="historyTab" class="tab-content">
-                        <div class="history-list">
-                            <h4><i class="fas fa-history"></i> Lịch sử bệnh án</h4>
-                            <!-- Medical Record 1 -->
-                            <div class="history-item">
-                                <div class="history-header">
-                                    <div class="history-date"></div>
-                                    <div class="history-status active"></div>
-                                </div>
-                                <div class="history-content">
-                                    <div class="history-info">
-                                        <p><strong>Mã hồ sơ:</strong> MR002</p>
-                                        <p><strong>Dịch vụ:</strong> Liệu trình điều trị IVF</p>
-                                        <p><strong>Bác sĩ điều trị:</strong> BS. Nguyễn Ngọc Khánh Linh</p>
-                                    </div>
-                                    <div class="history-details">
-                                        <p><strong>Chẩn đoán:</strong></p>
-                                        <p><strong>Kế hoạch điều trị:</strong></p>
-                                        <p><strong>Ngày dự kiến kết thúc:</strong></p>
-                                    </div>
-                                    <div class="history-notes">
-                                        <p><strong>Ghi chú:</strong></p>
-                                    </div>
-                                </div>
+                            
+                            <div class="drugs-list" id="drugsList">
+                                <!-- Drug Item -->
                             </div>
+                        </div>
 
-                            <!-- Booking History -->
-                            <div class="booking-history">
-                                <h5><i class="fas fa-calendar-alt"></i> Lịch sử đặt lịch</h5>
-                                <div class="booking-item">
-                                    <div class="booking-header">
-                                        <span class="booking-date">24/06/2024 08:00</span>
-                                        <span class="booking-status confirmed">Đã xác nhận</span>
-                                    </div>
-                                    <div class="booking-details">
-                                        <p><strong>Loại:</strong> Tái khám</p>
-                                        <p><strong>Bác sĩ:</strong> BS. Nguyễn Ngọc Khánh Linh</p>
-                                        <p><strong>Dịch vụ:</strong> Liệu trình điều trị IVF</p>
-                                        <p><strong>Ghi chú:</strong> Bệnh nhân đến đúng giờ hẹn</p>
+                        <!-- Prescription Summary -->
+                        <div class="prescription-summary">
+                            <h5><i class="fas fa-clipboard-check"></i> Tóm tắt đơn thuốc</h5>
+                            <div class="summary-content">
+                                <div class="summary-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">2</span>
+                                        <span class="stat-label">Loại thuốc</span>
                                     </div>
                                 </div>
-
-                                <div class="booking-item">
-                                    <div class="booking-header">
-                                        <span class="booking-date">20/06/2024 09:00</span>
-                                        <span class="booking-status confirmed">Đã xác nhận</span>
-                                    </div>
-                                    <div class="booking-details">
-                                        <p><strong>Loại:</strong> Khám lần đầu</p>
-                                        <p><strong>Bác sĩ:</strong> BS. Nguyễn Ngọc Khánh Linh</p>
-                                        <p><strong>Dịch vụ:</strong> Khám tiền đăng ký điều trị (IVF/IUI)</p>
-                                        <p><strong>Ghi chú:</strong> Tư vấn lần đầu</p>
-                                    </div>
+                                <div class="prescription-notes">
+                                    <label><i class="fas fa-notes-medical"></i> Lời dặn chung của bác sĩ:</label>
+                                    <textarea rows="3" id="generalNotes" class="form-control" placeholder="Lời dặn tổng quát cho bệnh nhân về việc sử dụng thuốc...">Tuân thủ đúng liều dùng và thời gian. Báo với bác sĩ nếu có tác dụng phụ bất thường. Không tự ý ngừng thuốc mà không tham khảo ý kiến bác sĩ.</textarea>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Treatment Tab -->
-                    <div id="treatmentTab" class="tab-content">
-                        <div class="treatment-plan">
-                            <h4><i class="fas fa-tasks"></i> Kế hoạch điều trị</h4>
-
-                            <!-- Current Service -->
-                            <div class="current-service">
-                                <h5><i class="fas fa-medical-kit"></i> Dịch vụ hiện tại</h5>
-                                <div class="service-info">
-                                    <div class="service-card">
-                                        <h6>Liệu trình điều trị IVF</h6>
-                                        <p class="service-description">Quy trình thụ tinh trong ống nghiệm: kích thích
-                                            buồng trứng, chọc hút noãn, thụ tinh và chuyển phôi</p>
-                                        <div class="service-details">
-                                            <span class="service-price">20.700.000 VNĐ</span>
-                                            <span class="service-duration">30 ngày</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Sub Services -->
-                            <div class="sub-services">
-                                <h5><i class="fas fa-list-check"></i> Các bước điều trị chi tiết</h5>
-
-                                <div class="sub-service-item completed">
-                                    <div class="sub-service-header">
-                                        <span class="step-number">1</span>
-                                        <div class="sub-service-info">
-                                            <h6>Kích thích buồng trứng</h6>
-                                            <p>Tiêm thuốc, theo dõi nang noãn</p>
-                                        </div>
-                                        <div class="sub-service-details">
-                                            <span class="estimated-day">Ngày 1</span>
-                                            <span class="sub-price">600.000 VNĐ</span>
-                                        </div>
-                                        <span class="status-icon completed"><i class="fas fa-check-circle"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="sub-service-item completed">
-                                    <div class="sub-service-header">
-                                        <span class="step-number">2</span>
-                                        <div class="sub-service-info">
-                                            <h6>Siêu âm noãn</h6>
-                                            <p>Theo dõi nang noãn phát triển</p>
-                                        </div>
-                                        <div class="sub-service-details">
-                                            <span class="estimated-day">Ngày 3</span>
-                                            <span class="sub-price">250.000 VNĐ</span>
-                                        </div>
-                                        <span class="status-icon completed"><i class="fas fa-check-circle"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="sub-service-item current">
-                                    <div class="sub-service-header">
-                                        <span class="step-number">3</span>
-                                        <div class="sub-service-info">
-                                            <h6>Tiêm hCG</h6>
-                                            <p>Kích thích trưởng thành noãn, chuẩn bị chọc trứng</p>
-                                        </div>
-                                        <div class="sub-service-details">
-                                            <span class="estimated-day">Ngày 8</span>
-                                            <span class="sub-price">300.000 VNĐ</span>
-                                        </div>
-                                        <span class="status-icon current"><i class="fas fa-clock"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="sub-service-item pending">
-                                    <div class="sub-service-header">
-                                        <span class="step-number">4</span>
-                                        <div class="sub-service-info">
-                                            <h6>Chọc hút trứng</h6>
-                                            <p>Lấy trứng ra khỏi buồng trứng</p>
-                                        </div>
-                                        <div class="sub-service-details">
-                                            <span class="estimated-day">Ngày 10</span>
-                                            <span class="sub-price">7.000.000 VNĐ</span>
-                                        </div>
-                                        <span class="status-icon pending"><i class="fas fa-circle"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="sub-service-item pending">
-                                    <div class="sub-service-header">
-                                        <span class="step-number">5</span>
-                                        <div class="sub-service-info">
-                                            <h6>Lấy tinh trùng</h6>
-                                            <p>Lấy mẫu tinh trùng vào ngày chọc trứng</p>
-                                        </div>
-                                        <div class="sub-service-details">
-                                            <span class="estimated-day">Ngày 10</span>
-                                            <span class="sub-price">1.000.000 VNĐ</span>
-                                        </div>
-                                        <span class="status-icon pending"><i class="fas fa-circle"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="sub-service-item pending">
-                                    <div class="sub-service-header">
-                                        <span class="step-number">6</span>
-                                        <div class="sub-service-info">
-                                            <h6>Tạo phôi, nuôi phôi trong lab</h6>
-                                            <p>Nuôi cấy và chọn lọc phôi</p>
-                                        </div>
-                                        <div class="sub-service-details">
-                                            <span class="estimated-day">Ngày 11</span>
-                                            <span class="sub-price">5.000.000 VNĐ</span>
-                                        </div>
-                                        <span class="status-icon pending"><i class="fas fa-circle"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="sub-service-item pending">
-                                    <div class="sub-service-header">
-                                        <span class="step-number">7</span>
-                                        <div class="sub-service-info">
-                                            <h6>Chuyển phôi</h6>
-                                            <p>Đưa phôi vào buồng tử cung</p>
-                                        </div>
-                                        <div class="sub-service-details">
-                                            <span class="estimated-day">Ngày 15</span>
-                                            <span class="sub-price">6.000.000 VNĐ</span>
-                                        </div>
-                                        <span class="status-icon pending"><i class="fas fa-circle"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="sub-service-item pending">
-                                    <div class="sub-service-header">
-                                        <span class="step-number">8</span>
-                                        <div class="sub-service-info">
-                                            <h6>Thử β-hCG</h6>
-                                            <p>Xét nghiệm kiểm tra thai sau chuyển phôi</p>
-                                        </div>
-                                        <div class="sub-service-details">
-                                            <span class="estimated-day">Ngày 22</span>
-                                            <span class="sub-price">200.000 VNĐ</span>
-                                        </div>
-                                        <span class="status-icon pending"><i class="fas fa-circle"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="sub-service-item pending">
-                                    <div class="sub-service-header">
-                                        <span class="step-number">9</span>
-                                        <div class="sub-service-info">
-                                            <h6>Siêu âm tim thai</h6>
-                                            <p>Theo dõi sự phát triển của thai (nếu có)</p>
-                                        </div>
-                                        <div class="sub-service-details">
-                                            <span class="estimated-day">Ngày 29</span>
-                                            <span class="sub-price">350.000 VNĐ</span>
-                                        </div>
-                                        <span class="status-icon pending"><i class="fas fa-circle"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Treatment Summary -->
-                            <div class="treatment-summary">
-                                <h5><i class="fas fa-chart-pie"></i> Tổng quan điều trị</h5>
-                                <div class="summary-grid">
-                                    <div class="summary-item">
-                                        <span class="summary-label">Tổng số bước:</span>
-                                        <span class="summary-value">9</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Đã hoàn thành:</span>
-                                        <span class="summary-value">2</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Đang thực hiện:</span>
-                                        <span class="summary-value">1</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Tiến độ:</span>
-                                        <span class="summary-value">22%</span>
-                                    </div>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 22%"></div>
-                                </div>
-                            </div>
+                        <!-- Prescription Actions -->
+                        <div class="prescription-actions">
+                            <button type="button" class="btn-secondary" onclick="window.previewPrescription()">
+                                <i class="fas fa-eye"></i> Xem trước đơn thuốc
+                            </button>
+                            <!-- <button type="button" class="btn-print" onclick="window.printPrescription()">
+                                <i class="fas fa-print"></i> In đơn thuốc
+                            </button> -->
+                            <button type="button" class="btn-primary" onclick="window.savePrescription()">
+                                <i class="fas fa-save"></i> Lưu đơn thuốc
+                            </button>
                         </div>
                     </div>
-
-                    <!-- Tests Tab -->
-                    <div id="testsTab" class="tab-content">
-                        <div class="test-results">
-                            <h4><i class="fas fa-flask"></i> Kết quả xét nghiệm </h4>
-                            <!-- Booking Steps Results -->
-                            <div class="booking-steps-results">
-                                <h5><i class="fas fa-vial"></i> Kết quả các bước đã thực hiện</h5>
-                                <div class="step-result-item">
-                                    <div class="step-result-header">
-                                        <div class="step-info">
-                                            <h6 contenteditable="true" class="editable-title"></h6>
-                                            <input type="datetime-local" class="editable-date">
-                                        </div>
-                                        <select class="step-status-select">
-                                            <option value="completed" selected>Hoàn thành</option>
-                                            <option value="pending">Đang chờ</option>
-                                            <option value="cancelled">Đã hủy</option>
-                                        </select>
-                                    </div>
-                                    <div class="step-result-content">
-                                        <div class="result-grid">
-                                            <div class="result-item">
-                                                <input type="text" class="editable-label" value="Nồng độ"
-                                                    placeholder="Tên chỉ số">:
-                                                <input type="text" class="editable-result" value="45"
-                                                    placeholder="Giá trị">
-                                                <select class="unit-select">
-                                                    <option value="triệu/ml" selected>triệu/ml</option>
-                                                    <option value="mIU/ml">mIU/ml</option>
-                                                    <option value="ng/ml">ng/ml</option>
-                                                    <option value="pg/ml">pg/ml</option>
-                                                    <option value="%">%</option>
-                                                </select>
-                                                <select class="status-select">
-                                                    <option value="Bình thường" selected>Bình thường</option>
-                                                    <option value="Cao">Cao</option>
-                                                    <option value="Thấp">Thấp</option>
-                                                    <option value="Bất thường">Bất thường</option>
-                                                </select>
+                </div>                         
+                        <!-- Tests Tab -->
+                        <div id="testsTab" class="tab-content">
+                            <div class="test-results">
+                                <h4><i class="fas fa-flask"></i> Kết quả xét nghiệm </h4>
+                                <!-- Booking Steps Results -->
+                                <div class="booking-steps-results">
+                                    <h5><i class="fas fa-vial"></i> Kết quả các bước đã thực hiện</h5>
+                                    <div class="step-result-item">
+                                        <div class="step-result-header">
+                                            <div class="step-info">
+                                                <h6 contenteditable="true" class="editable-title"></h6>
+                                                <input type="datetime-local" class="editable-date">
                                             </div>
-                                            <div class="result-item">
-                                                <input type="text" class="editable-label" value="Khả năng vận động"
-                                                    placeholder="Tên chỉ số">:
-                                                <input type="text" class="editable-result" value="65"
-                                                    placeholder="Giá trị">
-                                                <select class="unit-select">
-                                                    <option value="%" selected>%</option>
-                                                    <option value="mIU/ml">mIU/ml</option>
-                                                    <option value="ng/ml">ng/ml</option>
-                                                    <option value="pg/ml">pg/ml</option>
-                                                    <option value="triệu/ml">triệu/ml</option>
-                                                </select>
-                                                <select class="status-select">
-                                                    <option value="Bình thường" selected>Bình thường</option>
-                                                    <option value="Cao">Cao</option>
-                                                    <option value="Thấp">Thấp</option>
-                                                    <option value="Bất thường">Bất thường</option>
-                                                </select>
+                                            <select class="step-status-select">
+                                                <option value="completed" selected>Hoàn thành</option>
+                                                <option value="pending">Đang chờ</option>
+                                                <option value="cancelled">Đã hủy</option>
+                                            </select>
+                                        </div>
+                                        <div class="step-result-content">
+                                            <div class="result-grid">
+                                                <div class="result-item">
+                                                    <input type="text" class="editable-label" value="Nồng độ"
+                                                        placeholder="Tên chỉ số">:
+                                                    <input type="text" class="editable-result" value="45"
+                                                        placeholder="Giá trị">
+                                                    <select class="unit-select">
+                                                        <option value="triệu/ml" selected>triệu/ml</option>
+                                                        <option value="mIU/ml">mIU/ml</option>
+                                                        <option value="ng/ml">ng/ml</option>
+                                                        <option value="pg/ml">pg/ml</option>
+                                                        <option value="%">%</option>
+                                                    </select>
+                                                    <select class="status-select">
+                                                        <option value="Bình thường" selected>Bình thường</option>
+                                                        <option value="Cao">Cao</option>
+                                                        <option value="Thấp">Thấp</option>
+                                                        <option value="Bất thường">Bất thường</option>
+                                                    </select>
+                                                </div>
+                                                <div class="result-item">
+                                                    <input type="text" class="editable-label" value="Khả năng vận động"
+                                                        placeholder="Tên chỉ số">:
+                                                    <input type="text" class="editable-result" value="65"
+                                                        placeholder="Giá trị">
+                                                    <select class="unit-select">
+                                                        <option value="%" selected>%</option>
+                                                        <option value="mIU/ml">mIU/ml</option>
+                                                        <option value="ng/ml">ng/ml</option>
+                                                        <option value="pg/ml">pg/ml</option>
+                                                        <option value="triệu/ml">triệu/ml</option>
+                                                    </select>
+                                                    <select class="status-select">
+                                                        <option value="Bình thường" selected>Bình thường</option>
+                                                        <option value="Cao">Cao</option>
+                                                        <option value="Thấp">Thấp</option>
+                                                        <option value="Bất thường">Bất thường</option>
+                                                    </select>
+                                                </div>
+                                                <div class="result-item">
+                                                    <input type="text" class="editable-label" value="Hình thái"
+                                                        placeholder="Tên chỉ số">:
+                                                    <input type="text" class="editable-result" value="8"
+                                                        placeholder="Giá trị">
+                                                    <select class="unit-select">
+                                                        <option value="%" selected>%</option>
+                                                        <option value="mIU/ml">mIU/ml</option>
+                                                        <option value="ng/ml">ng/ml</option>
+                                                        <option value="pg/ml">pg/ml</option>
+                                                        <option value="triệu/ml">triệu/ml</option>
+                                                    </select>
+                                                    <select class="status-select">
+                                                        <option value="Bình thường" selected>Bình thường</option>
+                                                        <option value="Cao">Cao</option>
+                                                        <option value="Thấp">Thấp</option>
+                                                        <option value="Bất thường">Bất thường</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                            <div class="result-item">
-                                                <input type="text" class="editable-label" value="Hình thái"
-                                                    placeholder="Tên chỉ số">:
-                                                <input type="text" class="editable-result" value="8"
-                                                    placeholder="Giá trị">
-                                                <select class="unit-select">
-                                                    <option value="%" selected>%</option>
-                                                    <option value="mIU/ml">mIU/ml</option>
-                                                    <option value="ng/ml">ng/ml</option>
-                                                    <option value="pg/ml">pg/ml</option>
-                                                    <option value="triệu/ml">triệu/ml</option>
-                                                </select>
-                                                <select class="status-select">
-                                                    <option value="Bình thường" selected>Bình thường</option>
-                                                    <option value="Cao">Cao</option>
-                                                    <option value="Thấp">Thấp</option>
-                                                    <option value="Bất thường">Bất thường</option>
-                                                </select>
+                                            <div class="result-note">
+                                                <strong>Ghi chú:</strong>
+                                                <textarea class="editable-note"
+                                                    placeholder="Nhập ghi chú...">Chất lượng tinh trùng tốt, phù hợp cho IVF</textarea>
                                             </div>
                                         </div>
-                                        <div class="result-note">
-                                            <strong>Ghi chú:</strong>
-                                            <textarea class="editable-note"
-                                                placeholder="Nhập ghi chú...">Chất lượng tinh trùng tốt, phù hợp cho IVF</textarea>
+                                    </div>
+                                </div>
+                                <!-- Add New Test Button -->
+                                <div class="add-new-test-section">
+                                    <button type="button" class="add-test-item-btn" onclick="window.addNewTestItem()">
+                                        <i class="fas fa-plus"></i>
+                                        Thêm xét nghiệm mới
+                                    </button>
+                                </div>
+
+                                <!-- Test Summary -->
+                                <!-- <div class="test-summary">
+                                    <h5><i class="fas fa-chart-line"></i> Tổng kết xét nghiệm</h5>
+                                    <div class="summary-card">
+                                        <div class="summary-status success">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span>Tất cả xét nghiệm đều bình thường</span>
+                                        </div>
+                                        <div class="summary-recommendation">
+                                            <strong>Kết luận:</strong>
+                                        </div>
+                                        <div class="next-step">
+                                            <strong>Bước tiếp theo:</strong>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <!-- Add New Test Button -->
-                            <div class="add-new-test-section">
-                                <button type="button" class="add-test-item-btn" onclick="window.addNewTestItem()">
-                                    <i class="fas fa-plus"></i>
-                                    Thêm xét nghiệm mới
-                                </button>
-                            </div>
-
-                            <!-- Test Summary -->
-                            <div class="test-summary">
-                                <h5><i class="fas fa-chart-line"></i> Tổng kết xét nghiệm</h5>
-                                <div class="summary-card">
-                                    <div class="summary-status success">
-                                        <i class="fas fa-check-circle"></i>
-                                        <span>Tất cả xét nghiệm đều bình thường</span>
-                                    </div>
-                                    <div class="summary-recommendation">
-                                        <strong>Kết luận:</strong>
-                                    </div>
-                                    <div class="next-step">
-                                        <strong>Bước tiếp theo:</strong>
-                                    </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-secondary" onclick="window.closeModal()">
-                        <i class="fas fa-times"></i> Đóng
-                    </button>
-                    <button class="btn-print" onclick="window.printRecord()">
-                        <i class="fas fa-print"></i> In hồ sơ
-                    </button>
-                    <button class="btn-primary" onclick="window.savePatientRecord()">
-                        <i class="fas fa-save"></i> Lưu thay đổi
-                    </button>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" onclick="window.closeModal()">
+                            <i class="fas fa-times"></i> Đóng
+                        </button>
+                        <button class="btn-print" onclick="window.printRecord()">
+                            <i class="fas fa-print"></i> In hồ sơ
+                        </button>
+                        <button class="btn-primary" onclick="window.savePatientRecord()">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Patient List Modal -->
-        <div id="patientListModal" class="modal">
-            <div class="modal-content large">
-                <div class="modal-header">
-                    <h3>Danh sách bệnh nhân</h3>
-                    <span class="close" onclick="window.closePatientListModal()">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Tìm kiếm bệnh nhân..."
-                            onkeyup="window.searchPatients()">
-                        <i class="fas fa-search"></i>
+            <!-- Patient List Modal -->
+            <div id="patientListModal" class="modal">
+                <div class="modal-content large">
+                    <div class="modal-header">
+                        <h3>Danh sách bệnh nhân</h3>
+                        <span class="close" onclick="window.closePatientListModal()">&times;</span>
                     </div>
-                    <div class="patient-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Tên bệnh nhân</th>
-                                    <th>Tuổi</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Lần khám gần nhất</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="patientTableBody">
-                                <tr>
-                                    <td>Phạm Thị Hoa</td>
-                                    <td>30</td>
-                                    <td>0456789123</td>
-                                    <td>24/06/2024</td>
-                                    <td>
-                                        <button class="btn-small" onclick="window.editPatientFromList('hoa')">Sửa bệnh
-                                            án</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="modal-body">
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="Tìm kiếm bệnh nhân..."
+                                onkeyup="window.searchPatients()">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="patient-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Tên bệnh nhân</th>
+                                        <th>Tuổi</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Lần khám gần nhất</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patientTableBody">
+                                    <tr>
+                                        <td>Phạm Thị Hoa</td>
+                                        <td>30</td>
+                                        <td>0456789123</td>
+                                        <td>24/06/2024</td>
+                                        <td>
+                                            <button class="btn-small" onclick="window.editPatientFromList('hoa')">Sửa
+                                                bệnh
+                                                án</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script src="js/doctor-common.js"></script>
-    <script src="js/script.js"></script>
-    <script src="js/doctor-dashboard.js"></script>
+        <script src="js/doctor-common.js"></script>
+        <script src="js/script.js"></script>
+        <script src="js/doctor-dashboard.js"></script>
 </body>
 
 </html>
