@@ -1,3 +1,15 @@
+// Logout function
+function logout() {
+    // Clear all localStorage data
+    localStorage.clear();
+    
+    // Show logout message
+    console.log('Đăng xuất thành công');
+    
+    // Redirect to homepage
+    window.location.href = 'index.html';
+}
+
 // Sidebar functions
 function openScheduleManager() {
     console.log('Navigating to schedule manager...');

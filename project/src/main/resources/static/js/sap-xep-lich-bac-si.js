@@ -438,3 +438,449 @@ document.addEventListener('DOMContentLoaded', function() {
   `;
   document.head.appendChild(style);
 }); 
+
+// ========================= LEAVE MANAGEMENT =========================
+
+// Sample leave requests data
+const leaveRequests = [
+  {
+    id: 1,
+    doctorId: 'BS001',
+    doctorName: 'Bác sĩ Nguyễn Ngọc Khánh Linh',
+    doctorSpecialty: 'Sản Phụ khoa',
+    doctorEmail: 'linh.nguyen@hospital.com',
+    leaveType: 'Nghỉ phép năm',
+    startDate: '2024-12-22',
+    endDate: '2024-12-24',
+    days: 3,
+    reason: 'Nghỉ lễ Giáng sinh cùng gia đình',
+    submitDate: '2024-12-18 14:30:00',
+    status: 'pending',
+    attachment: null
+  },
+  {
+    id: 2,
+    doctorId: 'BS002',
+    doctorName: 'Bác sĩ Trương Quốc Lập',
+    doctorSpecialty: 'IUI',
+    doctorEmail: 'lap.truong@hospital.com',
+    leaveType: 'Nghỉ ốm',
+    startDate: '2024-12-26',
+    endDate: '2024-12-27',
+    days: 2,
+    reason: 'Cảm cúm, cần nghỉ ngơi điều trị',
+    submitDate: '2024-12-20 09:15:00',
+    status: 'pending',
+    attachment: 'medical_certificate.pdf'
+  },
+  {
+    id: 3,
+    doctorId: 'BS003',
+    doctorName: 'Bác sĩ Tất Vĩnh Hùng',
+    doctorSpecialty: 'IVF',
+    doctorEmail: 'hung.tat@hospital.com',
+    leaveType: 'Nghỉ phép cá nhân',
+    startDate: '2024-12-15',
+    endDate: '2024-12-16',
+    days: 2,
+    reason: 'Tham dự hội nghị y khoa tại Hà Nội',
+    submitDate: '2024-12-10 11:20:00',
+    status: 'approved',
+    approvedDate: '2024-12-12 16:45:00',
+    approvedBy: 'Quản lý A',
+    attachment: 'conference_invitation.pdf'
+  }
+];
+
+let currentRejectingLeaveId = null;
+let currentDetailLeaveId = null;
+
+// Initialize leave management
+function initializeLeaveManagement() {
+  populateDoctorFilter();
+  setupLeaveFilters();
+  updateLeaveStats();
+}
+
+// Populate doctor filter dropdown
+function populateDoctorFilter() {
+  const doctorFilter = document.getElementById('doctorFilter');
+  if (!doctorFilter) return;
+  
+  // Clear existing options except "Tất cả bác sĩ"
+  while (doctorFilter.children.length > 1) {
+    doctorFilter.removeChild(doctorFilter.lastChild);
+  }
+  
+  // Add doctors from leave requests
+  const doctorsWithLeaves = [...new Set(leaveRequests.map(req => req.doctorName))];
+  doctorsWithLeaves.forEach(doctorName => {
+    const option = document.createElement('option');
+    option.value = doctorName;
+    option.textContent = doctorName;
+    doctorFilter.appendChild(option);
+  });
+}
+
+// Setup filter event listeners
+function setupLeaveFilters() {
+  const statusFilter = document.getElementById('statusFilter');
+  const doctorFilter = document.getElementById('doctorFilter');
+  
+  if (statusFilter) {
+    statusFilter.addEventListener('change', filterLeaveRequests);
+  }
+  
+  if (doctorFilter) {
+    doctorFilter.addEventListener('change', filterLeaveRequests);
+  }
+}
+
+// Filter leave requests based on status and doctor
+function filterLeaveRequests() {
+  const statusFilter = document.getElementById('statusFilter');
+  const doctorFilter = document.getElementById('doctorFilter');
+  
+  if (!statusFilter || !doctorFilter) return;
+  
+  const selectedStatus = statusFilter.value;
+  const selectedDoctor = doctorFilter.value;
+  
+  const filteredRequests = leaveRequests.filter(request => {
+    const statusMatch = selectedStatus === 'all' || request.status === selectedStatus;
+    const doctorMatch = selectedDoctor === 'all' || request.doctorName === selectedDoctor;
+    return statusMatch && doctorMatch;
+  });
+  
+  renderLeaveRequests(filteredRequests);
+  updateLeaveStats(filteredRequests);
+}
+
+// Render leave requests in the container
+function renderLeaveRequests(requests = leaveRequests) {
+  const container = document.querySelector('.leave-requests-container');
+  if (!container) return;
+  
+  if (requests.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: #6b7280;">
+        <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+        <p style="font-size: 16px; margin: 0;">Không có đơn nghỉ phép nào</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = requests.map(request => createLeaveRequestCard(request)).join('');
+}
+
+// Create individual leave request card HTML
+function createLeaveRequestCard(request) {
+  const statusClass = request.status;
+  const statusIcon = {
+    pending: 'fas fa-clock',
+    approved: 'fas fa-check-circle',
+    rejected: 'fas fa-times-circle'
+  }[request.status];
+  
+  const statusText = {
+    pending: 'Chờ duyệt',
+    approved: 'Đã duyệt',
+    rejected: 'Đã từ chối'
+  }[request.status];
+  
+  const actionButtons = request.status === 'pending' ? `
+    <button class="btn-action approve" onclick="approveLeave(${request.id})">
+      <i class="fas fa-check"></i>
+      Duyệt
+    </button>
+    <button class="btn-action reject" onclick="showRejectModal(${request.id})">
+      <i class="fas fa-times"></i>
+      Từ chối
+    </button>
+  ` : '';
+  
+  return `
+    <div class="leave-request-card ${statusClass}">
+      <div class="leave-card-header">
+        <div class="doctor-info">
+          <div class="doctor-avatar">
+            <i class="fas fa-user-md"></i>
+          </div>
+          <div class="doctor-details">
+            <h4>${request.doctorName}</h4>
+            <p>Chuyên khoa: ${request.doctorSpecialty}</p>
+          </div>
+        </div>
+        <div class="leave-status">
+          <span class="status-badge ${statusClass}">
+            <i class="${statusIcon}"></i>
+            ${statusText}
+          </span>
+        </div>
+      </div>
+      <div class="leave-card-body">
+        <div class="leave-details">
+          <div class="leave-detail-item">
+            <i class="fas fa-calendar-day"></i>
+            <div>
+              <strong>Thời gian nghỉ:</strong>
+              <span>${formatDateRange(request.startDate, request.endDate)} (${request.days} ngày)</span>
+            </div>
+          </div>
+          <div class="leave-detail-item">
+            <i class="fas fa-tag"></i>
+            <div>
+              <strong>Loại nghỉ phép:</strong>
+              <span>${request.leaveType}</span>
+            </div>
+          </div>
+          <div class="leave-detail-item">
+            <i class="fas fa-comment"></i>
+            <div>
+              <strong>Lý do:</strong>
+              <span>${request.reason}</span>
+            </div>
+          </div>
+          <div class="leave-detail-item">
+            <i class="fas fa-clock"></i>
+            <div>
+              <strong>Ngày đăng ký:</strong>
+              <span>${formatDateTime(request.submitDate)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="leave-card-actions">
+        ${actionButtons}
+        <button class="btn-action view-detail" onclick="viewLeaveDetail(${request.id})">
+          <i class="fas fa-eye"></i>
+          Chi tiết
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Update leave statistics
+function updateLeaveStats(requests = leaveRequests) {
+  const pendingCount = requests.filter(r => r.status === 'pending').length;
+  const approvedCount = requests.filter(r => r.status === 'approved').length;
+  const rejectedCount = requests.filter(r => r.status === 'rejected').length;
+  const totalCount = requests.length;
+  
+  const pendingElement = document.getElementById('pendingCount');
+  const approvedElement = document.getElementById('approvedCount');
+  const rejectedElement = document.getElementById('rejectedCount');
+  const totalElement = document.getElementById('totalLeaveCount');
+  
+  if (pendingElement) pendingElement.textContent = pendingCount;
+  if (approvedElement) approvedElement.textContent = approvedCount;
+  if (rejectedElement) rejectedElement.textContent = rejectedCount;
+  if (totalElement) totalElement.textContent = totalCount;
+}
+
+// Approve leave request
+function approveLeave(leaveId) {
+  const request = leaveRequests.find(r => r.id === leaveId);
+  if (!request) return;
+  
+  if (confirm(`Bạn có chắc chắn muốn duyệt đơn nghỉ phép của ${request.doctorName}?`)) {
+    showLoading();
+    
+    // Simulate API call
+    setTimeout(() => {
+      request.status = 'approved';
+      request.approvedDate = new Date().toISOString();
+      request.approvedBy = 'Quản lý hiện tại';
+      
+      hideLoading();
+      showSuccessMessage(`Đã duyệt đơn nghỉ phép của ${request.doctorName}!`);
+      
+      // Refresh display
+      filterLeaveRequests();
+    }, 1000);
+  }
+}
+
+// Show reject modal
+function showRejectModal(leaveId) {
+  const request = leaveRequests.find(r => r.id === leaveId);
+  if (!request) return;
+  
+  currentRejectingLeaveId = leaveId;
+  
+  // Populate modal with request info
+  document.getElementById('rejectDoctorName').textContent = request.doctorName;
+  document.getElementById('rejectLeaveDates').textContent = 
+    `${formatDateRange(request.startDate, request.endDate)} (${request.days} ngày)`;
+  
+  // Clear reason textarea
+  document.getElementById('rejectReason').value = '';
+  
+  // Show modal
+  document.getElementById('rejectLeaveModal').style.display = 'block';
+}
+
+// Close reject modal
+function closeRejectModal() {
+  document.getElementById('rejectLeaveModal').style.display = 'none';
+  currentRejectingLeaveId = null;
+}
+
+// Confirm reject leave
+function confirmRejectLeave() {
+  const reason = document.getElementById('rejectReason').value.trim();
+  
+  if (!reason) {
+    alert('Vui lòng nhập lý do từ chối!');
+    return;
+  }
+  
+  if (!currentRejectingLeaveId) return;
+  
+  const request = leaveRequests.find(r => r.id === currentRejectingLeaveId);
+  if (!request) return;
+  
+  showLoading();
+  closeRejectModal();
+  
+  // Simulate API call
+  setTimeout(() => {
+    request.status = 'rejected';
+    request.rejectedDate = new Date().toISOString();
+    request.rejectedBy = 'Quản lý hiện tại';
+    request.rejectReason = reason;
+    
+    hideLoading();
+    showSuccessMessage(`Đã từ chối đơn nghỉ phép của ${request.doctorName}!`);
+    
+    // Refresh display
+    filterLeaveRequests();
+  }, 1000);
+}
+
+// View leave detail
+function viewLeaveDetail(leaveId) {
+  const request = leaveRequests.find(r => r.id === leaveId);
+  if (!request) return;
+  
+  currentDetailLeaveId = leaveId;
+  
+  // Populate detail modal
+  document.getElementById('detailDoctorName').textContent = request.doctorName;
+  document.getElementById('detailDoctorSpecialty').textContent = request.doctorSpecialty;
+  document.getElementById('detailDoctorEmail').textContent = request.doctorEmail;
+  document.getElementById('detailLeaveType').textContent = request.leaveType;
+  document.getElementById('detailLeaveDuration').textContent = 
+    `${formatDateRange(request.startDate, request.endDate)}`;
+  document.getElementById('detailLeaveDays').textContent = `${request.days} ngày`;
+  document.getElementById('detailSubmitDate').textContent = formatDateTime(request.submitDate);
+  document.getElementById('detailLeaveReason').textContent = request.reason;
+  
+  // Handle attachment
+  const attachmentSection = document.getElementById('attachmentSection');
+  if (request.attachment) {
+    attachmentSection.style.display = 'block';
+    const attachmentLink = document.getElementById('detailAttachment');
+    attachmentLink.href = '#';
+    attachmentLink.querySelector('span').textContent = request.attachment;
+  } else {
+    attachmentSection.style.display = 'none';
+  }
+  
+  // Handle manager response
+  const managerResponseSection = document.getElementById('managerResponseSection');
+  if (request.status !== 'pending') {
+    managerResponseSection.style.display = 'block';
+    document.getElementById('detailManagerName').textContent = 
+      request.approvedBy || request.rejectedBy || 'N/A';
+    document.getElementById('detailResponseDate').textContent = 
+      formatDateTime(request.approvedDate || request.rejectedDate);
+    document.getElementById('detailManagerResponse').textContent = 
+      request.rejectReason || 'Đơn nghỉ phép đã được duyệt.';
+  } else {
+    managerResponseSection.style.display = 'none';
+  }
+  
+  // Show/hide action buttons
+  const detailActions = document.getElementById('detailActions');
+  if (request.status === 'pending') {
+    detailActions.style.display = 'flex';
+  } else {
+    detailActions.style.display = 'none';
+  }
+  
+  // Show modal
+  document.getElementById('leaveDetailModal').style.display = 'block';
+}
+
+// Close detail modal
+function closeDetailModal() {
+  document.getElementById('leaveDetailModal').style.display = 'none';
+  currentDetailLeaveId = null;
+}
+
+// Approve from detail modal
+function approveFromDetail() {
+  if (currentDetailLeaveId) {
+    closeDetailModal();
+    approveLeave(currentDetailLeaveId);
+  }
+}
+
+// Reject from detail modal
+function rejectFromDetail() {
+  if (currentDetailLeaveId) {
+    closeDetailModal();
+    showRejectModal(currentDetailLeaveId);
+  }
+}
+
+// Utility functions
+function formatDateRange(startDate, endDate) {
+  const start = new Date(startDate).toLocaleDateString('vi-VN');
+  const end = new Date(endDate).toLocaleDateString('vi-VN');
+  return `${start} - ${end}`;
+}
+
+function formatDateTime(dateTimeString) {
+  return new Date(dateTimeString).toLocaleString('vi-VN');
+}
+
+// Close modals when clicking outside
+window.onclick = function(event) {
+  const rejectModal = document.getElementById('rejectLeaveModal');
+  const detailModal = document.getElementById('leaveDetailModal');
+  
+  if (event.target === rejectModal) {
+    closeRejectModal();
+  }
+  if (event.target === detailModal) {
+    closeDetailModal();
+  }
+}
+
+// Scroll to section function
+function scrollToSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (section) {
+    section.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+    
+    // Add a subtle highlight effect
+    section.style.transition = 'box-shadow 0.3s ease';
+    section.style.boxShadow = '0 0 20px rgba(74, 144, 226, 0.3)';
+    
+    setTimeout(() => {
+      section.style.boxShadow = '';
+    }, 2000);
+  }
+}
+
+// Initialize leave management when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  initializeLeaveManagement();
+});

@@ -48,25 +48,20 @@
   <div class="schedule-container">
     <!-- Page Header -->
     <div class="schedule-header">
-      <h1 class="schedule-title">
-        <i class="fas fa-calendar-plus"></i>
-        Sắp xếp lịch làm việc bác sĩ
-      </h1>
-      <p class="schedule-subtitle">Quản lý và phân công lịch làm việc cho đội ngũ bác sĩ trong tuần</p>
-      <div style="margin-top: 16px; padding: 16px; background: #f1f5f9; border-radius: 8px; font-size: 14px; color: #64748b;">
-        <strong>Khung giờ đăng ký:</strong>
-        <div style="margin: 12px 0;">
-          <div style="margin-bottom: 8px;"><strong>Thứ 2 - Thứ 6:</strong></div>
-          <div style="margin-left: 20px;">
-            <div> Ca sáng: 08:00 - 12:00</div>
-            <div> Ca chiều: 14:00 - 17:00</div>
-          </div>
-        </div>
-        <div style="margin: 12px 0;">
-          <div style="margin-bottom: 8px;"><strong>📅 Thứ 7 & Chủ nhật:</strong></div>
-          <div style="margin-left: 20px;">
-            <div> Ca sáng: 08:00 - 12:00 (chỉ buổi sáng)</div>
-          </div>
+      <div class="header-content">
+        <h1 class="schedule-title">
+          <i class="fas fa-calendar-plus"></i>
+          Sắp xếp lịch làm việc cho bác sĩ
+        </h1>
+        <div class="header-navigation">
+          <button class="nav-btn" onclick="scrollToSection('schedule-section')" title="Đi đến phần lịch làm việc">
+            <i class="fas fa-calendar-week"></i>
+            <span>Lịch làm việc trong tuần</span>
+          </button>
+          <button class="nav-btn" onclick="scrollToSection('leave-section')" title="Đi đến phần quản lý nghỉ phép">
+            <i class="fas fa-calendar-times"></i>
+            <span>Quản lý nghỉ phép bác sĩ</span>
+          </button>
         </div>
       </div>
     </div>
@@ -116,7 +111,7 @@
     </div>
 
         <!-- Modern Schedule Cards -->
-    <div class="schedule-cards-section">
+    <div id="schedule-section" class="schedule-cards-section">
       <div class="section-header">
         <i class="fas fa-calendar-week"></i>
         <h3>Lịch làm việc trong tuần</h3>
@@ -138,11 +133,385 @@
         Lưu lịch làm việc
       </button>
     </div>
+
+    <!-- Leave Management Section -->
+    <div id="leave-section" class="leave-management-section">
+      <div class="section-header">
+        <div class="header-left">
+          <i class="fas fa-calendar-times"></i>
+          <h3>Quản lý nghỉ phép bác sĩ</h3>
+          <p>Xem và duyệt các đơn xin nghỉ phép của bác sĩ</p>
+        </div>
+        <div class="header-actions">
+          <select class="filter-select" id="statusFilter">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="pending">Chờ duyệt</option>
+            <option value="approved">Đã duyệt</option>
+            <option value="rejected">Đã từ chối</option>
+          </select>
+          <select class="filter-select" id="doctorFilter">
+            <option value="all">Tất cả bác sĩ</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Leave Statistics -->
+      <div class="leave-stats">
+        <div class="leave-stat-card pending">
+          <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="pendingCount">5</div>
+            <div class="stat-label">Chờ duyệt</div>
+          </div>
+        </div>
+        <div class="leave-stat-card approved">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="approvedCount">12</div>
+            <div class="stat-label">Đã duyệt</div>
+          </div>
+        </div>
+        <div class="leave-stat-card rejected">
+          <div class="stat-icon">
+            <i class="fas fa-times-circle"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="rejectedCount">2</div>
+            <div class="stat-label">Đã từ chối</div>
+          </div>
+        </div>
+        <div class="leave-stat-card total">
+          <div class="stat-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="totalLeaveCount">19</div>
+            <div class="stat-label">Tổng đơn</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leave Requests List -->
+      <div class="leave-requests-container">
+        <div class="leave-request-card pending">
+          <div class="leave-card-header">
+            <div class="doctor-info">
+              <div class="doctor-avatar">
+                <i class="fas fa-user-md"></i>
+              </div>
+              <div class="doctor-details">
+                <h4>Bác sĩ Nguyễn Ngọc Khánh Linh</h4>
+                <p>Chuyên khoa: Sản Phụ khoa</p>
+              </div>
+            </div>
+            <div class="leave-status">
+              <span class="status-badge pending">
+                <i class="fas fa-clock"></i>
+                Chờ duyệt
+              </span>
+            </div>
+          </div>
+          <div class="leave-card-body">
+            <div class="leave-details">
+              <div class="leave-detail-item">
+                <i class="fas fa-calendar-day"></i>
+                <div>
+                  <strong>Thời gian nghỉ:</strong>
+                  <span>22/12/2024 - 24/12/2024 (3 ngày)</span>
+                </div>
+              </div>
+              <div class="leave-detail-item">
+                <i class="fas fa-tag"></i>
+                <div>
+                  <strong>Loại nghỉ phép:</strong>
+                  <span>Nghỉ phép năm</span>
+                </div>
+              </div>
+              <div class="leave-detail-item">
+                <i class="fas fa-comment"></i>
+                <div>
+                  <strong>Lý do:</strong>
+                  <span>Nghỉ lễ Giáng sinh cùng gia đình</span>
+                </div>
+              </div>
+              <div class="leave-detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                  <strong>Ngày đăng ký:</strong>
+                  <span>18/12/2024 14:30</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="leave-card-actions">
+            <button class="btn-action approve" onclick="approveLeave(1)">
+              <i class="fas fa-check"></i>
+              Duyệt
+            </button>
+            <button class="btn-action reject" onclick="showRejectModal(1)">
+              <i class="fas fa-times"></i>
+              Từ chối
+            </button>
+            <button class="btn-action view-detail" onclick="viewLeaveDetail(1)">
+              <i class="fas fa-eye"></i>
+              Chi tiết
+            </button>
+          </div>
+        </div>
+
+        <div class="leave-request-card pending">
+          <div class="leave-card-header">
+            <div class="doctor-info">
+              <div class="doctor-avatar">
+                <i class="fas fa-user-md"></i>
+              </div>
+              <div class="doctor-details">
+                <h4>Bác sĩ Trương Quốc Lập</h4>
+                <p>Chuyên khoa: IUI</p>
+              </div>
+            </div>
+            <div class="leave-status">
+              <span class="status-badge pending">
+                <i class="fas fa-clock"></i>
+                Chờ duyệt
+              </span>
+            </div>
+          </div>
+          <div class="leave-card-body">
+            <div class="leave-details">
+              <div class="leave-detail-item">
+                <i class="fas fa-calendar-day"></i>
+                <div>
+                  <strong>Thời gian nghỉ:</strong>
+                  <span>26/12/2024 - 27/12/2024 (2 ngày)</span>
+                </div>
+              </div>
+              <div class="leave-detail-item">
+                <i class="fas fa-tag"></i>
+                <div>
+                  <strong>Loại nghỉ phép:</strong>
+                  <span>Nghỉ ốm</span>
+                </div>
+              </div>
+              <div class="leave-detail-item">
+                <i class="fas fa-comment"></i>
+                <div>
+                  <strong>Lý do:</strong>
+                  <span>Cảm cúm, cần nghỉ ngơi điều trị</span>
+                </div>
+              </div>
+              <div class="leave-detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                  <strong>Ngày đăng ký:</strong>
+                  <span>20/12/2024 09:15</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="leave-card-actions">
+            <button class="btn-action approve" onclick="approveLeave(2)">
+              <i class="fas fa-check"></i>
+              Duyệt
+            </button>
+            <button class="btn-action reject" onclick="showRejectModal(2)">
+              <i class="fas fa-times"></i>
+              Từ chối
+            </button>
+            <button class="btn-action view-detail" onclick="viewLeaveDetail(2)">
+              <i class="fas fa-eye"></i>
+              Chi tiết
+            </button>
+          </div>
+        </div>
+
+        <div class="leave-request-card approved">
+          <div class="leave-card-header">
+            <div class="doctor-info">
+              <div class="doctor-avatar">
+                <i class="fas fa-user-md"></i>
+              </div>
+              <div class="doctor-details">
+                <h4>Bác sĩ Tất Vĩnh Hùng</h4>
+                <p>Chuyên khoa: IVF</p>
+              </div>
+            </div>
+            <div class="leave-status">
+              <span class="status-badge approved">
+                <i class="fas fa-check-circle"></i>
+                Đã duyệt
+              </span>
+            </div>
+          </div>
+          <div class="leave-card-body">
+            <div class="leave-details">
+              <div class="leave-detail-item">
+                <i class="fas fa-calendar-day"></i>
+                <div>
+                  <strong>Thời gian nghỉ:</strong>
+                  <span>15/12/2024 - 16/12/2024 (2 ngày)</span>
+                </div>
+              </div>
+              <div class="leave-detail-item">
+                <i class="fas fa-tag"></i>
+                <div>
+                  <strong>Loại nghỉ phép:</strong>
+                  <span>Nghỉ phép cá nhân</span>
+                </div>
+              </div>
+              <div class="leave-detail-item">
+                <i class="fas fa-comment"></i>
+                <div>
+                  <strong>Lý do:</strong>
+                  <span>Tham dự hội nghị y khoa tại Hà Nội</span>
+                </div>
+              </div>
+              <div class="leave-detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                  <strong>Ngày duyệt:</strong>
+                  <span>12/12/2024 16:45</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="leave-card-actions">
+            <button class="btn-action view-detail" onclick="viewLeaveDetail(3)">
+              <i class="fas fa-eye"></i>
+              Chi tiết
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Reject Leave Modal -->
+  <div id="rejectLeaveModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4><i class="fas fa-times-circle"></i> Từ chối đơn nghỉ phép</h4>
+        <span class="close" onclick="closeRejectModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="reject-info">
+          <p><strong>Bác sĩ:</strong> <span id="rejectDoctorName"></span></p>
+          <p><strong>Thời gian nghỉ:</strong> <span id="rejectLeaveDates"></span></p>
+        </div>
+        <div class="form-group">
+          <label for="rejectReason">Lý do từ chối <span style="color: red;">*</span></label>
+          <textarea id="rejectReason" class="form-control" rows="4" 
+                    placeholder="Nhập lý do từ chối đơn nghỉ phép..." required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Hủy</button>
+        <button type="button" class="btn btn-danger" onclick="confirmRejectLeave()">
+          <i class="fas fa-times"></i> Từ chối đơn
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Detail Modal -->
+  <div id="leaveDetailModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4><i class="fas fa-info-circle"></i> Chi tiết đơn nghỉ phép</h4>
+        <span class="close" onclick="closeDetailModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="detail-section">
+          <h5><i class="fas fa-user-md"></i> Thông tin bác sĩ</h5>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Họ tên:</label>
+              <span id="detailDoctorName"></span>
+            </div>
+            <div class="detail-item">
+              <label>Chuyên khoa:</label>
+              <span id="detailDoctorSpecialty"></span>
+            </div>
+            <div class="detail-item">
+              <label>Email:</label>
+              <span id="detailDoctorEmail"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h5><i class="fas fa-calendar-times"></i> Thông tin nghỉ phép</h5>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Loại nghỉ phép:</label>
+              <span id="detailLeaveType"></span>
+            </div>
+            <div class="detail-item">
+              <label>Thời gian nghỉ:</label>
+              <span id="detailLeaveDuration"></span>
+            </div>
+            <div class="detail-item">
+              <label>Số ngày nghỉ:</label>
+              <span id="detailLeaveDays"></span>
+            </div>
+            <div class="detail-item">
+              <label>Ngày đăng ký:</label>
+              <span id="detailSubmitDate"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h5><i class="fas fa-comment"></i> Lý do nghỉ phép</h5>
+          <div class="detail-reason-box">
+            <p id="detailLeaveReason"></p>
+          </div>
+        </div>
+
+        <div class="detail-section" id="attachmentSection" style="display: none;">
+          <h5><i class="fas fa-paperclip"></i> Tài liệu đính kèm</h5>
+          <div class="attachment-list">
+            <a href="#" class="attachment-link" id="detailAttachment">
+              <i class="fas fa-file-pdf"></i>
+              <span>giay-kham-benh.pdf</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="detail-section" id="managerResponseSection" style="display: none;">
+          <h5><i class="fas fa-user-tie"></i> Phản hồi của quản lý</h5>
+          <div class="manager-response">
+            <div class="response-info">
+              <span><strong>Xử lý bởi:</strong> <span id="detailManagerName"></span></span>
+              <span><strong>Thời gian:</strong> <span id="detailResponseDate"></span></span>
+            </div>
+            <div class="response-content">
+              <p id="detailManagerResponse"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeDetailModal()">Đóng</button>
+        <div id="detailActions" style="display: none;">
+          <button type="button" class="btn btn-success" onclick="approveFromDetail()">
+            <i class="fas fa-check"></i> Duyệt
+          </button>
+          <button type="button" class="btn btn-danger" onclick="rejectFromDetail()">
+            <i class="fas fa-times"></i> Từ chối
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="js/sap-xep-lich-bac-si.js"></script>

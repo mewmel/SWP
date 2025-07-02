@@ -239,18 +239,23 @@ body {
 }
 
 .logout-btn {
-    background: none;
+    margin-left: 10px;
+    background: #e74c3c;
+    color: white;
     border: none;
-    padding: 8px;
-    color: #9ca3af;
+    padding: 8px 15px;
+    border-radius: 5px;
     cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .logout-btn:hover {
-    color: #ef4444;
-    background: #fef2f2;
+    background: #c0392b;
+    transform: translateY(-1px);
 }
 
 /* Main Content */
