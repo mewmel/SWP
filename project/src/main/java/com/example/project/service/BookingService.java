@@ -144,7 +144,7 @@ public class BookingService {
 
         StringBuilder body = new StringBuilder();
         body.append("Bạn đã được tạo tài khoản tự động trên hệ thống phòng khám FertilityEHR.\n")
-                .append("Tên đăng nhập: ").append(customer.getCusEmail()).append("\n")
+                .append("Email đăng nhập: ").append(customer.getCusEmail()).append("\n")
                 .append("Mật khẩu: ").append(password).append("\n")
                 .append("Vui lòng đăng nhập và đổi mật khẩu sau khi nhận được email này.\n\n")
                 .append("THÔNG TIN ĐẶT LỊCH KHÁM:\n")

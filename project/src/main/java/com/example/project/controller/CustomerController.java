@@ -168,7 +168,6 @@ public ResponseEntity<?> updateFullRecord(@PathVariable Integer cusId, @RequestB
                     booking.setBookType(b.getBookType());
                     booking.setBookStatus(b.getBookStatus());
                     booking.setNote(b.getNote());
-                    // Nếu muốn cho sửa dịch vụ thì thêm setSerId() ở đây (cần truyền serId lên DTO)
                     bookingRepository.save(booking);
                 }
             }

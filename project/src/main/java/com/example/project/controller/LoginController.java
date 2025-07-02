@@ -14,7 +14,7 @@ import com.example.project.entity.Customer;
 import com.example.project.entity.Doctor;
 import com.example.project.entity.Manager;
 import com.example.project.service.CustomerService;
-import com.example.project.service.DoctorService;
+import com.example.project.service.DoctorManagementService;
 import com.example.project.service.ManagerService;
 
 @RestController
@@ -24,7 +24,7 @@ public class LoginController {
     private CustomerService customerService;
 
     @Autowired
-    private DoctorService doctorService; 
+    private DoctorManagementService doctorService; 
     
     @Autowired
     private ManagerService managerService; 

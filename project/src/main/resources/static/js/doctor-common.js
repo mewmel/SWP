@@ -169,4 +169,14 @@ function initializeDoctorDashboard() {
             }
         }
     });
+
+    function showAlert(type, message) {
+  const alert = document.getElementById(type + 'Alert');
+  alert.querySelector('span').textContent = message;
+  alert.style.display = 'flex';
+
+  setTimeout(() => {
+    alert.style.display = 'none';
+  }, 3000);
+}
 }
