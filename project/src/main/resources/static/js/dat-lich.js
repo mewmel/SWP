@@ -67,7 +67,7 @@ function initializeDateInputs() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('appointmentDate').setAttribute('min', today);
     document.getElementById('dob').setAttribute('max', today);
-    
+
     // Set default to today & update slot
     document.getElementById('appointmentDate').value = today;
     updateTimeSlots(today);
@@ -155,10 +155,10 @@ function setupBookingFormSubmission() {
             alert('Vui lòng chọn khung giờ khám!');
             return;
         }
-        
+
         // Hiển thị loading overlay
         showBookingLoadingOverlay();
-        
+
         // Lấy và tách thời gian, loại bỏ giây và khoảng trắng nếu có
         const timeRange = document.getElementById('selectedTime').value.trim();
         let [startTime, endTime] = timeRange.split('-').map(t => t.trim());
@@ -178,7 +178,7 @@ function setupBookingFormSubmission() {
             note: document.getElementById('symptoms').value,
             bookType: 'initial' // <--- Thêm dòng này (hoặc 'follow-up' tuỳ logic)
         };
-        
+
         fetch('/api/booking', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -211,43 +211,43 @@ function showBookingLoadingOverlay() {
     const loadingContent = overlay.querySelector('.booking-loading-content');
     const successContent = overlay.querySelector('.booking-success-content');
     const errorContent = overlay.querySelector('.booking-error-content');
-    
+
     // Reset states
     loadingContent.style.display = 'block';
     successContent.style.display = 'none';
     errorContent.style.display = 'none';
-    
+
     // Show overlay
     overlay.classList.add('show');
-    
+
     // Simulate progress steps
     simulateProgressSteps();
 }
 
 function simulateProgressSteps() {
     const steps = document.querySelectorAll('.progress-step');
-    
+
     // Reset all steps
     steps.forEach(step => {
         step.classList.remove('active', 'completed');
     });
-    
+
     // Step 1: Xác thực thông tin
     steps[0].classList.add('active');
-    
+
     setTimeout(() => {
         steps[0].classList.remove('active');
         steps[0].classList.add('completed');
         steps[1].classList.add('active');
     }, 1000);
-    
+
     // Step 2: Kiểm tra lịch trống
     setTimeout(() => {
         steps[1].classList.remove('active');
         steps[1].classList.add('completed');
         steps[2].classList.add('active');
     }, 2000);
-    
+
     // Step 3: Gửi xác nhận email (will be completed by success/error)
 }
 
@@ -256,12 +256,12 @@ function showBookingSuccess() {
     const loadingContent = overlay.querySelector('.booking-loading-content');
     const successContent = overlay.querySelector('.booking-success-content');
     const steps = document.querySelectorAll('.progress-step');
-    
+
     // Complete final step
     setTimeout(() => {
         steps[2].classList.remove('active');
         steps[2].classList.add('completed');
-        
+
         // Show success after brief delay
         setTimeout(() => {
             loadingContent.style.display = 'none';
@@ -275,12 +275,12 @@ function showBookingError(message) {
     const loadingContent = overlay.querySelector('.booking-loading-content');
     const errorContent = overlay.querySelector('.booking-error-content');
     const errorMessage = errorContent.querySelector('.error-message');
-    
+
     // Update error message
     if (message) {
         errorMessage.innerHTML = message + '<br>Vui lòng thử lại hoặc liên hệ hotline: <strong>1900 1234</strong>';
     }
-    
+
     setTimeout(() => {
         loadingContent.style.display = 'none';
         errorContent.style.display = 'block';
@@ -290,7 +290,7 @@ function showBookingError(message) {
 function closeBookingOverlay() {
     const overlay = document.getElementById('bookingLoadingOverlay');
     overlay.classList.remove('show');
-    
+
     // Reset form if success
     const successContent = overlay.querySelector('.booking-success-content');
     if (successContent.style.display === 'block') {
@@ -312,7 +312,7 @@ function resetBookingForm() {
     // Reset slot selection
     document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
     document.getElementById('selectedTime').value = '';
-    
+
     // Redirect to home page
     window.location.href = 'index.html';
 }
@@ -329,4 +329,4 @@ document.addEventListener('DOMContentLoaded', function() {
     setupTimeSlotListeners();
     setupBookingFormSubmission();
     setupMobileMenu();
-}); 
+});
