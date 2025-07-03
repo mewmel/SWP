@@ -461,9 +461,10 @@
                         <textarea id="symptoms" class="form-textarea"
                                   placeholder="Mô tả triệu chứng hoặc ghi chú..."></textarea>
                     </div>
-                    <button type="submit" class="submit-btn">
-                        <span>Đặt lịch ngay</span>
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span class="btn-text">Đặt lịch ngay</span>
                         <i class="fas fa-arrow-right"></i>
+                        <span class="btn-spinner" style="display: none;"></span>
                     </button>
                 </form>
             </div>
@@ -558,6 +559,22 @@
     </div>
     </div>
 </footer>
+
+<!-- Loading Overlay -->
+<div class="booking-loading-overlay" id="bookingLoadingOverlay">
+    <div class="booking-loading-content">
+        <div class="booking-loading-spinner"></div>
+        <div class="booking-loading-text">Đang xử lý đặt lịch</div>
+        <div class="booking-loading-subtext">
+            Vui lòng chờ trong giây lát, chúng tôi đang gửi thông tin đặt lịch
+            <div class="booking-loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     // ================================
@@ -709,13 +726,73 @@
         });
     });
 
+    // ========== Hàm hiển thị loading ===========
+    function showBookingLoading() {
+        const loadingOverlay = document.getElementById('bookingLoadingOverlay');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Show loading overlay
+        loadingOverlay.classList.add('show');
+        
+        // Update submit button
+        submitBtn.classList.add('loading');
+        submitBtn.querySelector('.btn-text').textContent = 'Đang xử lý...';
+        submitBtn.querySelector('.fas').style.display = 'none';
+        submitBtn.querySelector('.btn-spinner').style.display = 'inline-block';
+    }
+
+    function hideBookingLoading() {
+        const loadingOverlay = document.getElementById('bookingLoadingOverlay');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Hide loading overlay
+        loadingOverlay.classList.remove('show');
+        
+        // Reset submit button
+        submitBtn.classList.remove('loading');
+        submitBtn.querySelector('.btn-text').textContent = 'Đặt lịch ngay';
+        submitBtn.querySelector('.fas').style.display = 'inline';
+        submitBtn.querySelector('.btn-spinner').style.display = 'none';
+    }
+
+    // ========== Hàm hiển thị thông báo ===========
+    function showBookingMessage(message, type = 'success') {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `booking-message ${type}`;
+        
+        const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+        messageDiv.innerHTML = `<i class="${icon}"></i>${message}`;
+        
+        document.body.appendChild(messageDiv);
+        
+        // Show message
+        setTimeout(() => {
+            messageDiv.classList.add('show');
+        }, 100);
+        
+        // Hide and remove message after 4 seconds
+        setTimeout(() => {
+            messageDiv.classList.remove('show');
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.parentNode.removeChild(messageDiv);
+                }
+            }, 400);
+        }, 4000);
+    }
+
     // ========== Submit form đặt lịch ===========
     document.getElementById('bookingForm').addEventListener('submit', function (e) {
         e.preventDefault();
+        
         if (!document.getElementById('selectedTime').value) {
-            alert('Vui lòng chọn khung giờ khám!');
+            showBookingMessage('Vui lòng chọn khung giờ khám!', 'error');
             return;
         }
+
+        // Show loading
+        showBookingLoading();
+        
         // Lấy và tách thời gian, loại bỏ giây và khoảng trắng nếu có
         const timeRange = document.getElementById('selectedTime').value.trim();
         let [startTime, endTime] = timeRange.split('-').map(t => t.trim());
@@ -735,6 +812,7 @@
             note: document.getElementById('symptoms').value,
             bookType: 'initial' // <--- Thêm dòng này (hoặc 'follow-up' tuỳ logic)
         };
+
         fetch('/api/booking', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -742,25 +820,39 @@
         })
             .then(res => res.json())
             .then(resp => {
+                // Hide loading
+                hideBookingLoading();
+                
                 if (resp.success) {
-                    alert('Đặt lịch thành công! Thông tin đăng ký sẽ được gửi về email.');
+                    showBookingMessage('Đặt lịch thành công! Thông tin đăng ký đã được gửi về email của bạn.', 'success');
+                    
+                    // Reset form
                     document.getElementById('bookingForm').reset();
+                    
                     // Reset lại time slot cho ngày hôm nay
                     const today = new Date().toISOString().split('T')[0];
                     document.getElementById('appointmentDate').value = today;
+                    updateTimeSlots(today);
+                    
                     // Remove working hours display nếu có
                     const workingHoursDisplay = document.querySelector('.working-hours-display');
                     if (workingHoursDisplay) {
                         workingHoursDisplay.remove();
                     }
+                    
                     // Reset slot selection
                     document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
                     document.getElementById('selectedTime').value = '';
                 } else {
-                    alert('Đặt lịch thất bại: ' + (resp.message || 'Có lỗi xảy ra!'));
+                    showBookingMessage('Đặt lịch thất bại: ' + (resp.message || 'Có lỗi xảy ra!'), 'error');
                 }
             })
-            .catch(err => alert('Có lỗi xảy ra khi gửi dữ liệu!'));
+            .catch(err => {
+                // Hide loading
+                hideBookingLoading();
+                showBookingMessage('Có lỗi xảy ra khi gửi dữ liệu. Vui lòng thử lại!', 'error');
+                console.error('Booking error:', err);
+            });
     });
 
 
