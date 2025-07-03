@@ -1,8 +1,11 @@
 package com.example.project.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +18,8 @@ import com.example.project.repository.DoctorRepository;
 import com.example.project.service.DoctorManagementService;
 
 
+
+
 @RestController
 @RequestMapping("/api")
 public class DoctorController {
@@ -23,6 +28,8 @@ public class DoctorController {
 
     @Autowired
     private DoctorManagementService doctorManagementService;
+
+
 
 
     @GetMapping("/doctors")
@@ -43,15 +50,19 @@ public class DoctorController {
      *   - Danh sách dịch vụ (currentServices)
      *   - Ảnh (nếu có)
      */
-    @GetMapping("/doctor/full-profile/{docId}")
-    public ResponseEntity<DocFullProfile> getFullProfile(@PathVariable Integer docId) {
-        try {
-            DocFullProfile profile = doctorManagementService.getFullProfile(docId);
-            return ResponseEntity.ok(profile);
-        } catch (RuntimeException ex) {
-            // Nếu không tìm thấy bác sĩ hoặc lỗi khác
-            return ResponseEntity.notFound().build();
-        }
+@GetMapping("/doctor/full-profile/{docId}")
+public ResponseEntity<?> getFullProfile(@PathVariable Integer docId) {
+    try {
+        DocFullProfile profile = doctorManagementService.getFullProfile(docId);
+        return ResponseEntity.ok(profile);
+    } catch (RuntimeException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("message", "Không tìm thấy bác sĩ");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error); // Trả về JSON thay vì rỗng
     }
+}
+
+
+
 
 }

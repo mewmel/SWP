@@ -82,4 +82,7 @@ public class WorkSlotService {
             this.end = end;
         }
     }
+
+
+
 }

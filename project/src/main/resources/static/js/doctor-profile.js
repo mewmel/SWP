@@ -1,13 +1,56 @@
 document.addEventListener('DOMContentLoaded', function() {
-// 1. Lấy docId từ localStorage
+
+        // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
+    const authButtons = document.querySelector('.auth-buttons');
+    const userMenu = document.querySelector('.user-menu');
+    const userNameSpan = document.querySelector('.user-name');
+    const sidebarUsername = document.querySelector('.sidebar-username');
+    const notificationWrapper = document.querySelector('.notification-wrapper');
+
+    // Hiển thị đúng trạng thái đăng nhập khi load lại trang
+    const fullName = localStorage.getItem('docFullName');
+
+    if (fullName) {
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'flex';
+        if (userNameSpan) userNameSpan.textContent = fullName;
+        if (sidebarUsername) sidebarUsername.textContent = fullName;
+        if (notificationWrapper) notificationWrapper.style.display = 'block';
+    } else {
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+        if (notificationWrapper) notificationWrapper.style.display = 'none';
+    }
+
+    // ========== ĐĂNG XUẤT ==========
+
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            localStorage.clear(); // <-- Sửa ở đây, không cần gọi hàm nào khác
+            window.location.href = "index.html";
+        });
+    }
+
+
+
+
+
+
+
+  // 1. Lấy docId từ localStorage
   var docId = localStorage.getItem('docId');
   if (!docId) {
     showAlert('error', 'Không tìm thấy doctorId!');
     return;
   }
 
+
+
+
   // 2. Fetch hồ sơ bác sĩ
-  fetch(`/api/doctor/full-profile/${encodeURIComponent(docId)}`)
+  fetch(`/api/doctor/full-profile/${docId}`)
     .then(function(res) {
       if (!res.ok) throw new Error('Không lấy được dữ liệu');
       return res.json();
@@ -24,10 +67,18 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('expertise').textContent = doc.expertise || '';
       document.getElementById('bio').textContent       = doc.profileDescription || '';
 
-      // Service hiện tại
-      if (doc.currentService && doc.currentService.serName) {
-        document.getElementById('serName').textContent = doc.currentService.serName;
-      }
+      // Hiển thị các tag chuyên môn từ serviceList
+const tagsContainer = document.getElementById('expertiseTags');
+tagsContainer.innerHTML = ''; // clear tag cũ
+
+if (Array.isArray(doc.currentService)) {
+  doc.currentService.forEach(service => {
+    const tag = document.createElement('span');
+    tag.className = 'expertise-tag';
+    tag.textContent = service.serName || 'Dịch vụ không rõ';
+    tagsContainer.appendChild(tag);
+  });
+}
 
       // Avatar: nếu có imageData
       if (doc.imageData && doc.imageMimeType) {
@@ -47,6 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('Lỗi khi tải hồ sơ bác sĩ:', err);
       showAlert('error', 'Lỗi khi tải hồ sơ bác sĩ');
     });
+
 
 
 

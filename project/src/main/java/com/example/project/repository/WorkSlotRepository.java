@@ -1,6 +1,7 @@
 package com.example.project.repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,5 +29,17 @@ public interface WorkSlotRepository extends JpaRepository<WorkSlot, Integer> {
     );
 
 
+    @Query("SELECT w FROM WorkSlot w WHERE w.docId = :docId AND w.slotStatus = 'approved' AND w.workDate BETWEEN :from AND :to")
+    List<WorkSlot> findApprovedSlotsByDoctorAndDateRange(
+        @Param("docId") Integer docId,
+        @Param("from") LocalDate from,
+        @Param("to") LocalDate to
+    );
+    // Lấy danh sách các khung giờ làm việc của bác sĩ trong tuần
 
 }
+
+
+
+
+

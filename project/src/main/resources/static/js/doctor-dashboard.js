@@ -3,11 +3,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const authButtons = document.querySelector('.auth-buttons');
     const userMenu = document.querySelector('.user-menu');
     const userNameSpan = document.querySelector('.user-name');
+    const userId = document.querySelector('.user-id');
     const sidebarUsername = document.querySelector('.sidebar-username');
     const notificationWrapper = document.querySelector('.notification-wrapper');
 
     // Hiển thị đúng trạng thái đăng nhập khi load lại trang
     const fullName = localStorage.getItem('docFullName');
+
     if (fullName) {
         if (authButtons) authButtons.style.display = 'none';
         if (userMenu) userMenu.style.display = 'flex';
@@ -276,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         cusId,
                         docId,
                         serId,
-                        recordStatus: 'closed'
+                        recordStatus ,
                     })
                 });
 
@@ -293,8 +295,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Lưu drugId vào localStorage để dùng sau
                 localStorage.setItem('drugId', drugId);
-
-                const fullName = localStorage.getItem('docFullName') || '';
 
                 if (typeof showNotification === 'function') showNotification('Đã tạo hồ sơ bệnh án!', 'success');
 
@@ -1044,6 +1044,8 @@ window.addDrugPrescription = function () {
     drugsList.appendChild(newDrugItem);
 };
 
+// Fill prescription header with doctor name and drug ID
+const drugId = localStorage.getItem('drugId') || '';
 function fillPrescriptionHeader() {
     const nameInput = document.getElementById('prescribingDoctorName');
     const numberInput = document.getElementById('prescriptionNumber');
@@ -1052,9 +1054,9 @@ function fillPrescriptionHeader() {
 
 
     if (nameInput) nameInput.value = fullName || '';
-    if (numberInput) numberInput.value = localStorage.getItem('drugId') || '';
+    if (numberInput) numberInput.value = drugId || '';
 
-// lấy ttin dưới db lên bằng api
+    // lấy ttin dưới db lên bằng api
 
 }
 fillPrescriptionHeader();
