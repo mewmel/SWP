@@ -26,7 +26,6 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">9</span>
                     </button>
-
                     <!-- Dropdown Notification -->
                     <div class="notification-dropdown" id="notificationDropdown">
                         <div class="notification-dropdown-header">
@@ -35,7 +34,6 @@
                                 <i class="fas fa-cog"></i>
                             </button>
                         </div>
-
                         <div class="notification-dropdown-body">
                             <div class="notification-dropdown-item unread">
                                 <div class="notification-avatar">
@@ -43,36 +41,30 @@
                                 </div>
                                 <div class="notification-content">
                                     <div class="notification-title">Nhắc nhở tiêm thuốc</div>
-                                    <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
-                                    </div>
+                                    <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU</div>
                                     <div class="notification-time">5 phút trước</div>
                                 </div>
                             </div>
-
                             <div class="notification-dropdown-item unread">
                                 <div class="notification-avatar">
                                     <i class="fas fa-flask"></i>
                                 </div>
                                 <div class="notification-content">
                                     <div class="notification-title">Lịch xét nghiệm</div>
-                                    <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc
-                                        8:00</div>
+                                    <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc 8:00</div>
                                     <div class="notification-time">2 giờ trước</div>
                                 </div>
                             </div>
-
                             <div class="notification-dropdown-item">
                                 <div class="notification-avatar">
                                     <i class="fas fa-calendar-check"></i>
                                 </div>
                                 <div class="notification-content">
                                     <div class="notification-title">Lịch hẹn khám</div>
-                                    <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
-                                        14:00</div>
+                                    <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc 14:00</div>
                                     <div class="notification-time">1 ngày trước</div>
                                 </div>
                             </div>
-
                             <div class="notification-dropdown-item">
                                 <div class="notification-avatar">
                                     <i class="fas fa-chart-line"></i>
@@ -83,20 +75,17 @@
                                     <div class="notification-time">2 ngày trước</div>
                                 </div>
                             </div>
-
                             <div class="notification-dropdown-item">
                                 <div class="notification-avatar">
                                     <i class="fas fa-user-md"></i>
                                 </div>
                                 <div class="notification-content">
                                     <div class="notification-title">Tin nhắn từ bác sĩ</div>
-                                    <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
-                                        cho bạn</div>
+                                    <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn cho bạn</div>
                                     <div class="notification-time">3 ngày trước</div>
                                 </div>
                             </div>
                         </div>
-
                         <div class="notification-dropdown-footer">
                             <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
                         </div>
@@ -110,19 +99,7 @@
             <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
                 <i class="fas fa-bars"></i>
             </button>
-            <button class="logout-btn"
-                    style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
-                <i class="fas fa-sign-out-alt"></i> Đăng xuất
-            </button>
         </div>
-
-        <div class="auth-buttons" style="display:flex;">
-            <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
-            <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
-        </div>
-        <button class="mobile-menu-btn">
-            <i class="fas fa-bars"></i>
-        </button>
     </div>
 </header>
 <!-- Sidebar-->
@@ -141,81 +118,8 @@
     <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
 </aside>
 
-<!-- Auth Modal -->
-<div id="authModal" class="auth-modal">
-    <div class="auth-modal-content">
-        <span class="close-modal">&times;</span>
-        <div class="auth-tabs">
-            <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-            <button class="auth-tab" data-tab="register">Đăng ký</button>
-        </div>
-
-        <!-- Login Form -->
-        <form id="loginForm" class="auth-form active">
-            <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="loginPassword">Mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="loginPassword" name="password" required>
-                    <i class="fas fa-eye toggle-password"></i>
-                </div>
-            </div>
-            <button type="submit" class="auth-submit-btn">
-                <span>Đăng nhập</span>
-                <i class="fas fa-arrow-right"></i>
-            </button>
-            <div class="social-login">
-                <button type="button" class="social-btn google">
-                    <i class="fab fa-google"></i> Đăng nhập với Google
-                </button>
-                <button type="button" class="social-btn facebook">
-                    <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
-                </button>
-            </div>
-        </form>
-
-        <!-- Register Form -->
-        <form id="registerForm" class="auth-form">
-            <div class="form-group">
-                <label for="registerName">Họ và tên</label>
-                <input type="text" id="registerName" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="registerEmail">Email</label>
-                <input type="email" id="registerEmail" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="registerPassword">Mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="registerPassword" name="password" required>
-                    <i class="fas fa-eye toggle-password"></i>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="confirmPassword">Xác nhận mật khẩu</label>
-                <div class="password-input">
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                    <i class="fas fa-eye toggle-password"></i>
-                </div>
-            </div>
-            <div class="form-group checkbox-group">
-                <input type="checkbox" id="agreeTerms" required>
-                <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
-            </div>
-            <button type="submit" class="auth-submit-btn">
-                <span>Đăng ký</span>
-                <i class="fas fa-arrow-right"></i>
-            </button>
-        </form>
-    </div>
-</div>
-
-
 <main class="page-main">
-    <div class="page-header">
+    <div class="page-header fade-in-up">
         <h1>Kết quả xét nghiệm</h1>
         <p>Theo dõi và quản lý kết quả xét nghiệm của bạn</p>
     </div>
@@ -254,321 +158,11 @@
                 <div class="results-header">
                     <h3><i class="fas fa-list"></i> Kết quả xét nghiệm & Kết quả bước điều trị</h3>
                 </div>
-
-                <!-- Kết quả các bước đã thực hiện -->
+                <!-- Kết quả các bước đã thực hiện - JS sẽ render động ở đây -->
                 <div class="booking-steps-results">
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm AMH (dự trữ buồng trứng)</h4>
-                                <div class="test-date">18/06/2024 - 14:30</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-value">
-                                <strong>Kết quả:</strong>
-                                <span class="result-number">2.5</span>
-                                <span class="result-unit">ng/ml</span>
-                                <span class="result-status">(Bình thường)</span>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Dự trữ buồng trứng ở mức tốt, phù hợp cho điều trị IVF</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm nội tiết tố nữ (FSH, LH, E2)</h4>
-                                <div class="test-date">18/06/2024 - 14:30</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">FSH:</span>
-                                    <span class="result-number">8.2</span>
-                                    <span class="result-unit">mIU/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">LH:</span>
-                                    <span class="result-number">5.1</span>
-                                    <span class="result-unit">mIU/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">E2:</span>
-                                    <span class="result-number">45</span>
-                                    <span class="result-unit">pg/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Các chỉ số nội tiết trong giới hạn bình thường</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm tinh dịch đồ</h4>
-                                <div class="test-date">18/06/2024 - 16:00</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">Nồng độ:</span>
-                                    <span class="result-number">45</span>
-                                    <span class="result-unit">triệu/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Khả năng vận động:</span>
-                                    <span class="result-number">65</span>
-                                    <span class="result-unit">%</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Hình thái:</span>
-                                    <span class="result-number">8</span>
-                                    <span class="result-unit">%</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Chất lượng tinh trùng tốt, phù hợp cho IVF</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Siêu âm tử cung, buồng trứng</h4>
-                                <div class="test-date">19/06/2024 - 09:00</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-value">
-                                <strong>Kết quả:</strong>
-                                <span class="result-description">Tử cung bình thường, không có u xơ hay polyp. Buồng trứng có 12 nang noãn ở bên phải, 10 nang noãn ở bên trái.</span>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Cấu trúc tử cung và buồng trứng bình thường, thuận lợi cho điều trị</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm máu, viêm gan, HIV, giang mai</h4>
-                                <div class="test-date">19/06/2024 - 10:30</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">HBsAg:</span>
-                                    <span class="result-value">Âm tính</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Anti-HCV:</span>
-                                    <span class="result-value">Âm tính</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Anti-HIV:</span>
-                                    <span class="result-value">Âm tính</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">VDRL:</span>
-                                    <span class="result-value">Âm tính</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Không có bệnh truyền nhiễm, đủ điều kiện điều trị</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm hormone E2 (Estradiol) - Theo dõi điều trị</h4>
-                                <div class="test-date">24/06/2024 - 08:30</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">E2:</span>
-                                    <span class="result-number">245</span>
-                                    <span class="result-unit">pg/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">LH:</span>
-                                    <span class="result-number">12.3</span>
-                                    <span class="result-unit">mIU/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">FSH:</span>
-                                    <span class="result-number">8.7</span>
-                                    <span class="result-unit">mIU/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Mức độ hormone E2 phù hợp với giai đoạn kích thích buồng trứng. Tiếp tục theo dõi và điều chỉnh liều thuốc.</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Siêu âm kiểm tra nang trứng - Theo dõi kích thích</h4>
-                                <div class="test-date">22/06/2024 - 14:00</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">Số nang trứng (phải):</span>
-                                    <span class="result-number">8</span>
-                                    <span class="result-unit">nang</span>
-                                    <span class="result-status">(Tốt)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Số nang trứng (trái):</span>
-                                    <span class="result-number">6</span>
-                                    <span class="result-unit">nang</span>
-                                    <span class="result-status">(Tốt)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Nang lớn nhất:</span>
-                                    <span class="result-number">15</span>
-                                    <span class="result-unit">mm</span>
-                                    <span class="result-status">(Phát triển tốt)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Nang noãn phát triển tốt, đáp ứng tích cực với thuốc kích thích buồng trứng</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm máu tổng quát</h4>
-                                <div class="test-date">20/06/2024 - 07:45</div>
-                            </div>
-                            <div class="test-status status-abnormal">Cần chú ý</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">Hemoglobin:</span>
-                                    <span class="result-number">10.2</span>
-                                    <span class="result-unit">g/dl</span>
-                                    <span class="result-status">(Thấp)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Tiểu cầu:</span>
-                                    <span class="result-number">380</span>
-                                    <span class="result-unit">K/μl</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Bạch cầu:</span>
-                                    <span class="result-number">6.8</span>
-                                    <span class="result-unit">K/μl</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Cần bổ sung sắt và theo dõi chế độ ăn uống. Tái khám sau 2 tuần.</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm đường huyết</h4>
-                                <div class="test-date">18/06/2024 - 09:15</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">Glucose:</span>
-                                    <span class="result-number">92</span>
-                                    <span class="result-unit">mg/dl</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">HbA1c:</span>
-                                    <span class="result-number">5.4</span>
-                                    <span class="result-unit">%</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Chỉ số đường huyết trong giới hạn bình thường</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm hormone AMH - Kiểm tra dự trữ buồng trứng</h4>
-                                <div class="test-date">25/06/2024 - 10:00</div>
-                            </div>
-                            <div class="test-status status-pending">Đang chờ kết quả</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-value">
-                                <strong>Kết quả:</strong>
-                                <span class="result-pending">Đang xử lý, kết quả sẽ có trong 24-48 giờ</span>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Xét nghiệm để đánh giá lại dự trữ buồng trứng sau quá trình kích thích</span>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Dữ liệu xét nghiệm sẽ được JS render vào đây -->
                 </div>
-
-                <!-- Test Summary -->
+                <!-- Test Summary giữ nguyên -->
                 <div class="test-summary-section">
                     <h4><i class="fas fa-chart-line"></i> Tổng kết xét nghiệm</h4>
                     <div class="summary-card">
@@ -586,7 +180,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="sidebar">
                 <div class="trend-chart">
                     <div class="chart-header">
@@ -596,7 +189,6 @@
                         <canvas id="hormoneChart"></canvas>
                     </div>
                 </div>
-
                 <div class="upcoming-tests">
                     <h3><i class="fas fa-calendar-alt"></i> Xét nghiệm sắp tới</h3>
                     <div class="upcoming-item">
@@ -620,7 +212,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="notes-section">
                     <h3><i class="fas fa-sticky-note"></i> Ghi chú bác sĩ</h3>
                     <div class="doctor-note">
@@ -636,7 +227,6 @@
                 </div>
             </div>
         </div>
-
         <div class="right-content">
             <div class="test-summary">
                 <div class="summary-card">
@@ -654,4 +244,4 @@
 <script src="js/result.js"></script>
 <script src="js/script.js"></script>
 </body>
-</html> 
+</html>

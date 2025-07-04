@@ -9,6 +9,20 @@
     <link rel="stylesheet" href="css/dat-lich.css">
     <link rel="stylesheet" href="css/booking-loading.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 0.8s cubic-bezier(.4, 0, .2, 1) 0.1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -19,18 +33,19 @@
         </div>
         <nav>
             <ul>
-                <li><a href="index.html#doctor">Đội ngũ bác sĩ</a></li>
+                <li><a href="#doctor">Đội ngũ bác sĩ</a></li>
                 <li class="dropdown">
-                    <a href="#">Dịch vụ<i class="fas fa-caret-down"></i></a>
+                    <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="kham-hiem-muon.html">Khám hiếm muộn/ tiền hôn nhân</a></li>
                         <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
                     </ul>
                 </li>
-                <li><a href="index.html#blog">Blog</a></li>
+                <li><a href="#blog">Blog</a></li>
                 <li><a href="bang-gia.html">Bảng giá</a></li>
                 <li><a href="#footer">Liên hệ</a></li>
                 <li><a href="dat-lich.html" class="active">Đặt lịch</a></li>
+
                 <li>
                     <div class="notification-wrapper" style="position: relative; display: none">
                         <button class="notification-icon" id="notificationBtn">
@@ -38,7 +53,7 @@
                             <span class="notification-badge">9</span>
                         </button>
 
-                        <!-- Dropdown Notification -->
+                        <!-- Hiển thị dropdown thông báo -->
                         <div class="notification-dropdown" id="notificationDropdown">
                             <div class="notification-dropdown-header">
                                 <h3>Thông báo</h3>
@@ -54,8 +69,7 @@
                                     </div>
                                     <div class="notification-content">
                                         <div class="notification-title">Nhắc nhở tiêm thuốc</div>
-                                        <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150
-                                            IU
+                                        <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
                                         </div>
                                         <div class="notification-time">5 phút trước</div>
                                     </div>
@@ -79,8 +93,7 @@
                                     </div>
                                     <div class="notification-content">
                                         <div class="notification-title">Lịch hẹn khám</div>
-                                        <div class="notification-description">Khám siêu âm kiểm tra vào 28/06
-                                            lúc
+                                        <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
                                             14:00</div>
                                         <div class="notification-time">1 ngày trước</div>
                                     </div>
@@ -92,8 +105,7 @@
                                     </div>
                                     <div class="notification-content">
                                         <div class="notification-title">Kết quả xét nghiệm</div>
-                                        <div class="notification-description">Kết quả xét nghiệm hormone đã có
-                                        </div>
+                                        <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
                                         <div class="notification-time">2 ngày trước</div>
                                     </div>
                                 </div>
@@ -104,8 +116,7 @@
                                     </div>
                                     <div class="notification-content">
                                         <div class="notification-title">Tin nhắn từ bác sĩ</div>
-                                        <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin
-                                            nhắn
+                                        <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
                                             cho bạn</div>
                                         <div class="notification-time">3 ngày trước</div>
                                     </div>
@@ -120,6 +131,7 @@
                 </li>
             </ul>
         </nav>
+        <!--hiển thị nút Đăng nhập và đăng kí-->
         <div class="auth-buttons">
             <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
             <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
@@ -370,13 +382,15 @@
     </div>
 </div>
 
-Đặt lịch hẹn với các chuyên gia hàng đầu trong lĩnh vực hiếm muộn
+
 <!-- Hero Section -->
 <section class="hero">
-    <div class="hero-content">
-        <h1>Đặt lịch khám</h1>
-        <h2>Đặt lịch hẹn với các chuyên gia hàng đầu trong lĩnh vực hiếm muộn</h2>
-        <p>Vui lòng điền đầy đủ thông tin để được hỗ trợ tốt nhất</p>
+    <div class="container">
+        <div class="hero-content fade-in-up">
+            <h1>Đặt lịch khám</h1>
+            <h2>Đặt lịch hẹn với các chuyên gia hàng đầu trong lĩnh vực hiếm muộn</h2>
+            <p>Vui lòng điền đầy đủ thông tin để được hỗ trợ tốt nhất</p>
+        </div>
     </div>
 </section>
 
@@ -641,5 +655,14 @@
 <script src="js/dat-lich.js"></script>
 <script src="js/script.js"></script>
 <script src="js/service-dropdown.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var hero = document.querySelector('.hero-content.fade-in-up');
+        if (hero) {
+            hero.style.animationPlayState = 'running';
+        }
+    });
+</script>
 </body>
+
 </html>

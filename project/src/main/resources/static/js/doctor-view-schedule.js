@@ -257,5 +257,325 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Initialize leave request modal
-    initializeLeaveRequestModal();
+    initializeEnhancedLeaveRequestModal();
 });
+
+// Enhanced Leave Request Modal Functions
+function initializeEnhancedLeaveRequestModal() {
+    const modal = document.getElementById('leaveRequestModal');
+    const openBtn = document.getElementById('requestLeaveBtn');
+    const closeBtn = document.querySelector('.close-btn');
+    const cancelBtn = document.getElementById('cancelLeaveBtn');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const durationDisplay = document.getElementById('durationDisplay');
+    const totalDaysSpan = document.getElementById('totalDays');
+    const fileInput = document.getElementById('attachment');
+    const uploadArea = document.getElementById('fileUploadArea');
+    const filePreview = document.getElementById('filePreview');
+    const uploadContent = uploadArea ? uploadArea.querySelector('.upload-content') : null;
+
+    if (!modal || !openBtn) return; // Exit if elements don't exist
+
+    // Open modal
+    openBtn.addEventListener('click', function() {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        startDateInput.min = today;
+        endDateInput.min = today;
+    });
+
+    // Close modal functions
+    function closeModal() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        resetForm();
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal || e.target.classList.contains('modal-overlay')) {
+            closeModal();
+        }
+    });
+
+    // Calculate duration
+    function calculateDuration() {
+        if (!startDateInput || !endDateInput) return;
+
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        if (startDate && endDate && endDate >= startDate) {
+            const timeDiff = endDate.getTime() - startDate.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+
+            if (totalDaysSpan) totalDaysSpan.textContent = `${daysDiff} ngày`;
+            if (durationDisplay) durationDisplay.style.display = 'block';
+
+            // Add animation
+            if (durationDisplay) {
+                durationDisplay.style.opacity = '0';
+                durationDisplay.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    durationDisplay.style.transition = 'all 0.3s ease';
+                    durationDisplay.style.opacity = '1';
+                    durationDisplay.style.transform = 'translateY(0)';
+                }, 10);
+            }
+        } else {
+            if (durationDisplay) durationDisplay.style.display = 'none';
+        }
+    }
+
+    // Date validation
+    if (startDateInput) {
+        startDateInput.addEventListener('change', function() {
+            if (endDateInput) {
+                endDateInput.min = this.value;
+                if (endDateInput.value && endDateInput.value < this.value) {
+                    endDateInput.value = this.value;
+                }
+            }
+            calculateDuration();
+        });
+    }
+
+    if (endDateInput) {
+        endDateInput.addEventListener('change', function() {
+            if (startDateInput && this.value < startDateInput.value) {
+                this.value = startDateInput.value;
+            }
+            calculateDuration();
+        });
+    }
+
+    // File upload handling
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileUpload(file);
+            }
+        });
+    }
+
+    // Drag and drop
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                handleFileUpload(file);
+            }
+        });
+    }
+
+    function handleFileUpload(file) {
+        // Validate file type
+        const allowedTypes = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx'];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+        if (!allowedTypes.includes(fileExtension)) {
+            showNotification('Loại file không được hỗ trợ. Vui lòng chọn file: PDF, JPG, PNG, DOC, DOCX', 'error');
+            return;
+        }
+
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('Kích thước file không được vượt quá 5MB', 'error');
+            return;
+        }
+
+        // Show file preview
+        if (document.getElementById('fileName') && document.getElementById('fileSize')) {
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+        }
+
+        if (uploadContent && filePreview) {
+            uploadContent.style.display = 'none';
+            filePreview.style.display = 'block';
+
+            // Add animation
+            filePreview.style.opacity = '0';
+            filePreview.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                filePreview.style.transition = 'all 0.3s ease';
+                filePreview.style.opacity = '1';
+                filePreview.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        showNotification('File đã được tải lên thành công', 'success');
+    }
+
+    // Format file size
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Form submission
+    const leaveForm = document.getElementById('leaveRequestForm');
+    if (leaveForm) {
+        leaveForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Show loading state
+            const submitBtn = document.querySelector('.btn-submit');
+            if (submitBtn) {
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+                submitBtn.disabled = true;
+
+                // Simulate API call
+                setTimeout(() => {
+                    showNotification('Đơn nghỉ phép đã được gửi thành công!', 'success');
+                    closeModal();
+
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+
+                    // Add to leave requests list (demo)
+                    addLeaveRequestToList();
+                }, 2000);
+            }
+        });
+    }
+
+    // Reset form
+    function resetForm() {
+        if (leaveForm) leaveForm.reset();
+        if (durationDisplay) durationDisplay.style.display = 'none';
+        if (uploadContent) uploadContent.style.display = 'block';
+        if (filePreview) filePreview.style.display = 'none';
+        if (fileInput) fileInput.value = '';
+    }
+
+    // Add leave request to list (demo)
+    function addLeaveRequestToList() {
+        const leaveList = document.querySelector('.leave-requests-list');
+        if (!leaveList || !startDateInput || !endDateInput || !totalDaysSpan) return;
+
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+        const reason = document.getElementById('reason') ? document.getElementById('reason').value : '';
+
+        const startFormatted = formatDateVN(startDate);
+        const endFormatted = formatDateVN(endDate);
+        const todayFormatted = formatDateVN(new Date().toISOString().split('T')[0]);
+
+        const newRequest = document.createElement('div');
+        newRequest.className = 'leave-request-item pending';
+        newRequest.innerHTML = `
+            <div class="leave-info">
+                <div class="leave-dates">
+                    <strong>${startFormatted} - ${endFormatted}</strong>
+                    <span class="leave-duration">(${totalDaysSpan.textContent})</span>
+                </div>
+                <div class="leave-reason">Lý do: ${reason}</div>
+                <div class="leave-submitted">Đăng ký: ${todayFormatted}</div>
+            </div>
+            <div class="leave-status">
+                <span class="status-badge pending">Chờ duyệt</span>
+            </div>
+        `;
+
+        leaveList.insertBefore(newRequest, leaveList.firstChild);
+
+        // Add animation
+        newRequest.style.opacity = '0';
+        newRequest.style.transform = 'translateX(-20px)';
+        setTimeout(() => {
+            newRequest.style.transition = 'all 0.3s ease';
+            newRequest.style.opacity = '1';
+            newRequest.style.transform = 'translateX(0)';
+        }, 10);
+    }
+
+    // Format date to Vietnamese
+    function formatDateVN(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('vi-VN');
+    }
+}
+
+// Remove file function (global for onclick)
+window.removeFile = function() {
+    const fileInput = document.getElementById('attachment');
+    const uploadContent = document.querySelector('.upload-content');
+    const filePreview = document.getElementById('filePreview');
+
+    if (fileInput) fileInput.value = '';
+    if (uploadContent) uploadContent.style.display = 'block';
+    if (filePreview) filePreview.style.display = 'none';
+    showNotification('File đã được xóa', 'info');
+};
+
+// Notification system
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+
+    // Styles based on type
+    const styles = {
+        success: { bg: '#10b981', border: '#059669' },
+        error: { bg: '#ef4444', border: '#dc2626' },
+        warning: { bg: '#f59e0b', border: '#d97706' },
+        info: { bg: '#3b82f6', border: '#2563eb' }
+    };
+
+    const style = styles[type] || styles.info;
+
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${style.bg};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid ${style.border};
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 10001;
+        font-weight: 500;
+        max-width: 400px;
+        animation: slideInRight 0.3s ease-out;
+    `;
+
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
+}

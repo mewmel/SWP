@@ -1114,4 +1114,523 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    // ========== PRESCRIPTION TAB FUNCTIONS ==========
+
+    // Drug counter for unique IDs
+    let drugCounter = 2; // Start from 2 since we have drug1 and drug2 pre-loaded
+
+    // Override addDrug function for prescription tab
+    window.addDrugPrescription = function() {
+        drugCounter++;
+        const drugsList = document.getElementById('drugsList');
+        if (!drugsList) {
+            console.error('drugsList element not found');
+            return;
+        }
+
+        const newDrugItem = document.createElement('div');
+        newDrugItem.className = 'drug-item';
+        newDrugItem.innerHTML = `
+            <div class="drug-header">
+                <h6><i class="fas fa-capsules"></i> Thuốc #${drugCounter}</h6>
+                <button type="button" class="btn-remove-drug" onclick="window.removeDrugPrescription(this)" title="Xóa thuốc này">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="drug-content">
+                <div class="record-grid">
+                    <div class="record-section">
+                        <label><i class="fas fa-pills"></i> Tên thuốc:</label>
+                        <input type="text" placeholder="Nhập tên thuốc..." value="" id="drugName${drugCounter}" class="form-control">
+                    </div>
+                    <div class="record-section">
+                        <label><i class="fas fa-weight"></i> Hàm lượng:</label>
+                        <input type="text" placeholder="Ví dụ: 5mg" value="" id="dosage${drugCounter}" class="form-control">
+                    </div>
+                </div>
+                <div class="record-grid">
+                    <div class="record-section">
+                        <label><i class="fas fa-clock"></i> Tần suất sử dụng:</label>
+                        <select id="frequency${drugCounter}" class="form-control">
+                            <option value="1 lần/ngày">1 lần/ngày</option>
+                            <option value="2 lần/ngày">2 lần/ngày</option>
+                            <option value="3 lần/ngày">3 lần/ngày</option>
+                            <option value="1 lần/2 ngày">1 lần/2 ngày</option>
+                            <option value="1 lần/tuần">1 lần/tuần</option>
+                            <option value="Khi cần">Khi cần</option>
+                        </select>
+                    </div>
+                    <div class="record-section">
+                        <label><i class="fas fa-calendar-days"></i> Thời gian dùng:</label>
+                        <input type="text" placeholder="Ví dụ: 30 ngày" value="" id="duration${drugCounter}" class="form-control">
+                    </div>
+                </div>
+                <div class="record-grid">
+                    <div class="record-section">
+                        <label><i class="fas fa-utensils"></i> Thời điểm uống:</label>
+                        <select id="timing${drugCounter}" class="form-control">
+                            <option value="Sau bữa ăn">Sau bữa ăn</option>
+                            <option value="Trước bữa ăn">Trước bữa ăn</option>
+                            <option value="Trong bữa ăn">Trong bữa ăn</option>
+                            <option value="Lúc đói">Lúc đói</option>
+                            <option value="Trước khi ngủ">Trước khi ngủ</option>
+                            <option value="Sáng sớm">Sáng sớm</option>
+                        </select>
+                    </div>
+                    <div class="record-section">
+                        <label><i class="fas fa-box"></i> Số lượng:</label>
+                        <input type="number" placeholder="Số viên/gói" value="" id="quantity${drugCounter}" class="form-control">
+                    </div>
+                </div>
+                <div class="record-section">
+                    <label><i class="fas fa-comment-medical"></i> Hướng dẫn sử dụng:</label>
+                    <textarea rows="2" placeholder="Ghi chú cách sử dụng thuốc..." id="drugNote${drugCounter}" class="form-control"></textarea>
+                </div>
+                <div class="record-section">
+                    <label><i class="fas fa-exclamation-triangle"></i> Lưu ý đặc biệt:</label>
+                    <textarea rows="2" placeholder="Các lưu ý, tác dụng phụ, tương tác thuốc..." id="specialNote${drugCounter}" class="form-control"></textarea>
+                </div>
+            </div>
+        `;
+
+        drugsList.appendChild(newDrugItem);
+
+        // Add animation
+        newDrugItem.style.opacity = '0';
+        newDrugItem.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            newDrugItem.style.transition = 'all 0.3s ease';
+            newDrugItem.style.opacity = '1';
+            newDrugItem.style.transform = 'translateY(0)';
+        }, 10);
+
+        updatePrescriptionSummary();
+
+        console.log(`Added prescription drug #${drugCounter}`);
+    };
+
+    // Remove drug function for prescription
+    window.removeDrugPrescription = function(button) {
+        const drugItem = button.closest('.drug-item');
+        if (!drugItem) return;
+
+        // Confirm deletion
+        if (confirm('Bạn có chắc chắn muốn xóa thuốc này?')) {
+            drugItem.style.transition = 'all 0.3s ease';
+            drugItem.style.opacity = '0';
+            drugItem.style.transform = 'translateX(-20px)';
+
+            setTimeout(() => {
+                drugItem.remove();
+                updatePrescriptionSummary();
+                renumberDrugs();
+                console.log('Prescription drug removed successfully');
+            }, 300);
+        }
+    };
+
+    // Renumber drugs after deletion
+    function renumberDrugs() {
+        const drugItems = document.querySelectorAll('#prescriptionTab .drug-item');
+        drugItems.forEach((item, index) => {
+            const header = item.querySelector('.drug-header h6');
+            if (header) {
+                header.innerHTML = `<i class="fas fa-capsules"></i> Thuốc #${index + 1}`;
+            }
+        });
+    }
+
+    // Update prescription summary
+    function updatePrescriptionSummary() {
+        const drugItems = document.querySelectorAll('#prescriptionTab .drug-item');
+        const drugCount = drugItems.length;
+
+        // Update drug count
+        const statItems = document.querySelectorAll('#prescriptionTab .stat-item .stat-number');
+        if (statItems[0]) {
+            statItems[0].textContent = drugCount;
+        }
+
+        // Calculate total quantity
+        let totalQuantity = 0;
+        drugItems.forEach(item => {
+            const quantityInput = item.querySelector('input[id*="quantity"]');
+            if (quantityInput && quantityInput.value) {
+                totalQuantity += parseInt(quantityInput.value) || 0;
+            }
+        });
+
+        if (statItems[2]) {
+            statItems[2].textContent = totalQuantity;
+        }
+    }
+
+    // Save prescription function
+    window.savePrescription = function() {
+        console.log('💾 Saving prescription...');
+
+        // Show loading state
+        const saveBtn = document.querySelector('#prescriptionTab .prescription-actions .btn-primary');
+        if (saveBtn) {
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+            saveBtn.disabled = true;
+
+            // Simulate save process
+            setTimeout(() => {
+                // Collect prescription data
+                const prescriptionData = collectPrescriptionData();
+
+                // Save to localStorage (or send to server)
+                savePrescriptionToStorage(prescriptionData);
+
+                // Restore button
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+
+                // Show success message
+                alert('Đơn thuốc đã được lưu thành công!');
+
+                console.log('✅ Prescription saved successfully');
+            }, 1500);
+        }
+    };
+
+    // Print prescription function
+    window.printPrescription = function() {
+        console.log('🖨️ Printing prescription...');
+
+        const prescriptionData = collectPrescriptionData();
+        const patientName = document.getElementById('patientName')?.textContent || 'Không xác định';
+
+        // Create printable content
+        const printContent = `
+            <html>
+            <head>
+                <title>Đơn thuốc - ${patientName}</title>
+                <style>
+                    body { 
+                        font-family: 'Times New Roman', serif; 
+                        margin: 20px; 
+                        line-height: 1.5;
+                    }
+                    .header { 
+                        text-align: center; 
+                        margin-bottom: 30px; 
+                        border-bottom: 2px solid #333;
+                        padding-bottom: 20px;
+                    }
+                    .clinic-info {
+                        text-align: center;
+                        margin-bottom: 10px;
+                    }
+                    .clinic-name {
+                        font-size: 18px;
+                        font-weight: bold;
+                        color: #333;
+                    }
+                    .clinic-address {
+                        font-size: 12px;
+                        color: #666;
+                    }
+                    .prescription-title {
+                        font-size: 20px;
+                        font-weight: bold;
+                        margin: 20px 0;
+                        text-transform: uppercase;
+                    }
+                    .patient-info {
+                        margin-bottom: 20px;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 20px;
+                    }
+                    .info-item {
+                        margin-bottom: 8px;
+                    }
+                    .label { 
+                        font-weight: bold; 
+                        display: inline-block;
+                        min-width: 120px;
+                    }
+                    .drugs-list {
+                        margin: 20px 0;
+                    }
+                    .drug-item {
+                        margin-bottom: 15px;
+                        padding: 10px;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                    }
+                    .drug-name {
+                        font-weight: bold;
+                        font-size: 14px;
+                        margin-bottom: 5px;
+                    }
+                    .drug-details {
+                        font-size: 12px;
+                        color: #555;
+                        margin-left: 20px;
+                    }
+                    .signature-section {
+                        margin-top: 40px;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 40px;
+                    }
+                    .signature-box {
+                        text-align: center;
+                        margin-top: 20px;
+                    }
+                    .signature-line {
+                        border-top: 1px solid #333;
+                        margin-top: 40px;
+                        padding-top: 5px;
+                    }
+                    .notes {
+                        margin: 20px 0;
+                        padding: 15px;
+                        background: #f9f9f9;
+                        border-left: 4px solid #007bff;
+                    }
+                    .print-date {
+                        font-size: 10px;
+                        color: #999;
+                        text-align: right;
+                        margin-top: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div class="clinic-info">
+                        <div class="clinic-name">PHÒNG KHÁM CHUYÊN KHOA HIẾM MUỘN</div>
+                        <div class="clinic-address">Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM | ĐT: (028) 1234 5678</div>
+                    </div>
+                    <div class="prescription-title">Đơn thuốc</div>
+                </div>
+                
+                <div class="patient-info">
+                    <div>
+                        <div class="info-item">
+                            <span class="label">Họ tên:</span> ${patientName}
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Ngày sinh:</span> ${document.getElementById('patientBirthDate')?.textContent || ''}
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Giới tính:</span> ${document.getElementById('patientGender')?.textContent || ''}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-item">
+                            <span class="label">Số đơn:</span> ${prescriptionData.prescriptionNumber}
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Ngày kê:</span> ${prescriptionData.prescriptionDate}
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Bác sĩ:</span> ${prescriptionData.doctorName}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <span class="label">Chẩn đoán:</span> ${prescriptionData.diagnosis}
+                </div>
+                
+                <div class="drugs-list">
+                    <h4>Danh sách thuốc:</h4>
+                    ${prescriptionData.drugs.map((drug, index) => `
+                        <div class="drug-item">
+                            <div class="drug-name">${index + 1}. ${drug.name} ${drug.dosage}</div>
+                            <div class="drug-details">
+                                - Số lượng: ${drug.quantity} viên/gói<br>
+                                - Cách dùng: ${drug.frequency}, ${drug.timing}<br>
+                                - Thời gian: ${drug.duration}<br>
+                                - Hướng dẫn: ${drug.instructions}<br>
+                                ${drug.specialNotes ? `- Lưu ý: ${drug.specialNotes}` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="notes">
+                    <strong>Lời dặn của bác sĩ:</strong><br>
+                    ${prescriptionData.generalNotes}
+                </div>
+                
+                <div class="info-item">
+                    <span class="label">Tái khám:</span> ${prescriptionData.nextAppointment}
+                </div>
+                
+                <div class="signature-section">
+                    <div class="signature-box">
+                        <div>Người nhận thuốc</div>
+                        <div class="signature-line">(Ký, ghi rõ họ tên)</div>
+                    </div>
+                    <div class="signature-box">
+                        <div>Bác sĩ kê đơn</div>
+                        <div class="signature-line">${prescriptionData.doctorName}</div>
+                    </div>
+                </div>
+                
+                <div class="print-date">
+                    Ngày in: ${new Date().toLocaleDateString('vi-VN')} ${new Date().toLocaleTimeString('vi-VN')}
+                </div>
+            </body>
+            </html>
+        `;
+
+        // Open print window
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.print();
+    };
+
+    // Preview prescription function
+    window.previewPrescription = function() {
+        console.log('👁️ Previewing prescription...');
+
+        const prescriptionData = collectPrescriptionData();
+
+        // Create preview modal (simplified version)
+        const previewContent = `
+            <div style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white;">
+                <h3 style="text-align: center; margin-bottom: 20px;">Xem trước đơn thuốc</h3>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>Bệnh nhân:</strong> ${document.getElementById('patientName')?.textContent || 'Không xác định'}
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>Chẩn đoán:</strong> ${prescriptionData.diagnosis}
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>Danh sách thuốc:</strong>
+                    <ul style="margin-left: 20px;">
+                        ${prescriptionData.drugs.map((drug, index) => `
+                            <li style="margin-bottom: 10px;">
+                                <strong>${drug.name} ${drug.dosage}</strong><br>
+                                ${drug.frequency}, ${drug.timing}, ${drug.duration}<br>
+                                <em>${drug.instructions}</em>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>Lời dặn:</strong> ${prescriptionData.generalNotes}
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button onclick="this.parentElement.parentElement.remove()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Đóng</button>
+                </div>
+            </div>
+        `;
+
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        overlay.innerHTML = previewContent;
+
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                overlay.remove();
+            }
+        });
+
+        document.body.appendChild(overlay);
+    };
+
+    // Collect prescription data from form
+    function collectPrescriptionData() {
+        const drugs = [];
+        const drugItems = document.querySelectorAll('#prescriptionTab .drug-item');
+
+        drugItems.forEach((item, index) => {
+            const drugName = item.querySelector('input[id*="drugName"]')?.value || '';
+            const dosage = item.querySelector('input[id*="dosage"]')?.value || '';
+            const frequency = item.querySelector('select[id*="frequency"]')?.value || '';
+            const duration = item.querySelector('input[id*="duration"]')?.value || '';
+            const timing = item.querySelector('select[id*="timing"]')?.value || '';
+            const quantity = item.querySelector('input[id*="quantity"]')?.value || '';
+            const instructions = item.querySelector('textarea[id*="drugNote"]')?.value || '';
+            const specialNotes = item.querySelector('textarea[id*="specialNote"]')?.value || '';
+
+            if (drugName) { // Only add if drug name is provided
+                drugs.push({
+                    name: drugName,
+                    dosage: dosage,
+                    frequency: frequency,
+                    duration: duration,
+                    timing: timing,
+                    quantity: quantity,
+                    instructions: instructions,
+                    specialNotes: specialNotes
+                });
+            }
+        });
+
+        return {
+            prescriptionNumber: document.getElementById('prescriptionDate')?.value.replace(/-/g, '') + '001' || 'DT' + Date.now(),
+            prescriptionDate: document.getElementById('prescriptionDate')?.value || new Date().toISOString().split('T')[0],
+            doctorName: 'BS. Nguyễn Ngọc Khánh Linh',
+            diagnosis: document.getElementById('prescriptionDiagnosis')?.value || '',
+            treatmentDuration: document.getElementById('treatmentDuration')?.value || '30',
+            drugs: drugs,
+            generalNotes: document.getElementById('generalNotes')?.value || '',
+            nextAppointment: document.getElementById('nextAppointment')?.value || ''
+        };
+    }
+
+    // Save prescription to localStorage
+    function savePrescriptionToStorage(prescriptionData) {
+        const patientId = getCurrentPatientId();
+        if (patientId) {
+            const storageKey = `prescription_${patientId}_${Date.now()}`;
+            localStorage.setItem(storageKey, JSON.stringify(prescriptionData));
+            console.log(`Prescription saved to localStorage with key: ${storageKey}`);
+        }
+    }
+
+    // Get current patient ID from modal
+    function getCurrentPatientId() {
+        const patientIdElement = document.getElementById('patientId');
+        if (patientIdElement) {
+            const patientIdText = patientIdElement.textContent;
+            const match = patientIdText.match(/BN(\d+)/);
+            if (match) {
+                const cusId = parseInt(match[1]);
+                // Find patient by cusId in patientData
+                for (const [key, patient] of Object.entries(patientData)) {
+                    if (patient.cusId === cusId) {
+                        return key;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // Add event listeners for real-time updates
+    document.addEventListener('input', function(e) {
+        if (e.target.closest('#prescriptionTab')) {
+            updatePrescriptionSummary();
+        }
+    });
+
 });

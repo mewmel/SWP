@@ -22,15 +22,7 @@
         </nav>
 
         <div class="doctor-header-right">
-            <div class="doctor-search-box">
-                <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
-                <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-            </div>
-
-            <div class="notification-wrapper" style="position: relative; display: none;">
+            <div class="notification-wrapper" style="position: relative;">
                 <button class="doctor-notification-btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
@@ -40,13 +32,19 @@
                 </button>
             </div>
 
-            <div class="user-menu" style="display:none;">
-                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-                <button class="logout-btn"
-                        style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
-                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                </button>
+            <div class="doctor-profile-info">
+                <div class="doctor-info">
+                    <div class="doctor-name">BS. Nguyễn Ngọc Khánh Linh</div>
+                    <div class="doctor-role">Quản trị viên</div>
+                </div>
+                <div class="doctor-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
             </div>
+
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
 
             <button class="doctor-mobile-menu">
                 <i class="fas fa-bars"></i>
@@ -254,6 +252,7 @@
                     <button class="tab-btn active" onclick="window.switchTab('current')">Khám hôm nay</button>
                     <button class="tab-btn" onclick="window.switchTab('history')">Lịch sử khám</button>
                     <button class="tab-btn" onclick="window.switchTab('treatment')">Điều trị</button>
+                    <button class="tab-btn" onclick="window.switchTab('prescription')">Kê thuốc</button>
                     <button class="tab-btn" onclick="window.switchTab('tests')">Xét nghiệm</button>
                 </div>
 
@@ -426,44 +425,7 @@
                             </div>
                         </div>
 
-                        <!-- Drug Prescription -->
-                        <div class="drug-prescription">
-                            <h5><i class="fas fa-pills"></i> Đơn thuốc</h5>
-                            <div class="drugs-list" id="drugsList">
-                                <div class="drug-item">
-                                    <div class="record-grid">
-                                        <div class="record-section">
-                                            <label>Tên thuốc:</label>
-                                            <input type="text" placeholder="Tên thuốc..." value="Folic Acid" id="drugName1">
-                                        </div>
-                                        <div class="record-section">
-                                            <label>Liều dùng:</label>
-                                            <input type="text" placeholder="5mg" value="5mg" id="dosage1">
-                                        </div>
-                                    </div>
-                                    <div class="record-grid">
-                                        <div class="record-section">
-                                            <label>Tần suất:</label>
-                                            <input type="text" placeholder="1 lần/ngày" value="1 lần/ngày" id="frequency1">
-                                        </div>
-                                        <div class="record-section">
-                                            <label>Thời gian dùng:</label>
-                                            <input type="text" placeholder="30 ngày" value="30 ngày" id="duration1">
-                                        </div>
-                                    </div>
-                                    <div class="record-section">
-                                        <label>Ghi chú thuốc:</label>
-                                        <textarea rows="2" placeholder="Hướng dẫn sử dụng..." id="drugNote1">Uống sau bữa ăn</textarea>
-                                    </div>
-                                    <button type="button" class="btn-remove-drug" onclick="window.removeDrug(this)">
-                                        <i class="fas fa-trash"></i> Xóa
-                                    </button>
-                                </div>
-                            </div>
-                            <button type="button" class="btn-add-drug" onclick="window.addDrug()">
-                                <i class="fas fa-plus"></i> Thêm thuốc
-                            </button>
-                        </div>
+
                     </div>
                 </div>
 
@@ -734,6 +696,232 @@
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: 22%"></div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescription Tab -->
+                <div id="prescriptionTab" class="tab-content">
+                    <div class="prescription-management">
+                        <h4><i class="fas fa-pills"></i> Kê đơn thuốc</h4>
+
+                        <!-- Prescription Header -->
+                        <div class="prescription-header">
+                            <div class="prescription-info">
+                                <div class="record-grid">
+                                    <div class="record-section">
+                                        <label><i class="fas fa-calendar-alt"></i> Ngày kê đơn:</label>
+                                        <input type="date" id="prescriptionDate" value="2024-06-24" class="form-control">
+                                    </div>
+                                    <div class="record-section">
+                                        <label><i class="fas fa-user-md"></i> Bác sĩ kê đơn:</label>
+                                        <input type="text" value="BS. Nguyễn Ngọc Khánh Linh" readonly class="form-control">
+                                    </div>
+                                </div>
+                                <div class="record-grid">
+                                    <div class="record-section">
+                                        <label><i class="fas fa-hashtag"></i> Số đơn thuốc:</label>
+                                        <input type="text" value="DT2024062401" readonly class="form-control">
+                                    </div>
+                                    <div class="record-section">
+                                        <label><i class="fas fa-clock"></i> Thời gian điều trị:</label>
+                                        <select id="treatmentDuration" class="form-control">
+                                            <option value="7">7 ngày</option>
+                                            <option value="14">14 ngày</option>
+                                            <option value="30" selected>30 ngày</option>
+                                            <option value="60">60 ngày</option>
+                                            <option value="90">90 ngày</option>
+                                            <option value="custom">Tùy chỉnh</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="record-section">
+                                    <label><i class="fas fa-stethoscope"></i> Chẩn đoán liên quan:</label>
+                                    <textarea rows="2" id="prescriptionDiagnosis" class="form-control" placeholder="Chẩn đoán liên quan đến đơn thuốc...">Vô sinh nguyên phát, chuẩn bị điều trị IVF chu kỳ 1</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Drug Prescription List -->
+                        <div class="drug-prescription">
+                            <div class="prescription-section-header">
+                                <h5><i class="fas fa-list-ul"></i> Danh sách thuốc kê đơn</h5>
+                                <button type="button" class="btn-add-drug" onclick="window.addDrugPrescription()">
+                                    <i class="fas fa-plus"></i> Thêm thuốc
+                                </button>
+                            </div>
+
+                            <div class="drugs-list" id="drugsList">
+                                <!-- Drug Item 1 -->
+                                <div class="drug-item">
+                                    <div class="drug-header">
+                                        <h6><i class="fas fa-capsules"></i> Thuốc #1</h6>
+                                        <button type="button" class="btn-remove-drug" onclick="window.removeDrugPrescription(this)" title="Xóa thuốc này">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="drug-content">
+                                        <div class="record-grid">
+                                            <div class="record-section">
+                                                <label><i class="fas fa-pills"></i> Tên thuốc:</label>
+                                                <input type="text" placeholder="Nhập tên thuốc..." value="Folic Acid" id="drugName1" class="form-control">
+                                            </div>
+                                            <div class="record-section">
+                                                <label><i class="fas fa-weight"></i> Hàm lượng:</label>
+                                                <input type="text" placeholder="Ví dụ: 5mg" value="5mg" id="dosage1" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="record-grid">
+                                            <div class="record-section">
+                                                <label><i class="fas fa-clock"></i> Tần suất sử dụng:</label>
+                                                <select id="frequency1" class="form-control">
+                                                    <option value="1 lần/ngày" selected>1 lần/ngày</option>
+                                                    <option value="2 lần/ngày">2 lần/ngày</option>
+                                                    <option value="3 lần/ngày">3 lần/ngày</option>
+                                                    <option value="1 lần/2 ngày">1 lần/2 ngày</option>
+                                                    <option value="1 lần/tuần">1 lần/tuần</option>
+                                                    <option value="Khi cần">Khi cần</option>
+                                                </select>
+                                            </div>
+                                            <div class="record-section">
+                                                <label><i class="fas fa-calendar-days"></i> Thời gian dùng:</label>
+                                                <input type="text" placeholder="Ví dụ: 30 ngày" value="30 ngày" id="duration1" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="record-grid">
+                                            <div class="record-section">
+                                                <label><i class="fas fa-utensils"></i> Thời điểm uống:</label>
+                                                <select id="timing1" class="form-control">
+                                                    <option value="Sau bữa ăn" selected>Sau bữa ăn</option>
+                                                    <option value="Trước bữa ăn">Trước bữa ăn</option>
+                                                    <option value="Trong bữa ăn">Trong bữa ăn</option>
+                                                    <option value="Lúc đói">Lúc đói</option>
+                                                    <option value="Trước khi ngủ">Trước khi ngủ</option>
+                                                    <option value="Sáng sớm">Sáng sớm</option>
+                                                </select>
+                                            </div>
+                                            <div class="record-section">
+                                                <label><i class="fas fa-box"></i> Số lượng:</label>
+                                                <input type="number" placeholder="Số viên/gói" value="30" id="quantity1" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="record-section">
+                                            <label><i class="fas fa-comment-medical"></i> Hướng dẫn sử dụng:</label>
+                                            <textarea rows="2" placeholder="Ghi chú cách sử dụng thuốc..." id="drugNote1" class="form-control">Uống sau bữa ăn với một cốc nước đầy. Không nhai, nuốt nguyên viên.</textarea>
+                                        </div>
+                                        <div class="record-section">
+                                            <label><i class="fas fa-exclamation-triangle"></i> Lưu ý đặc biệt:</label>
+                                            <textarea rows="2" placeholder="Các lưu ý, tác dụng phụ, tương tác thuốc..." id="specialNote1" class="form-control">Có thể gây buồn nôn nhẹ. Tránh uống cùng với sữa hoặc sản phẩm từ sữa.</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Drug Item 2 -->
+                                <div class="drug-item">
+                                    <div class="drug-header">
+                                        <h6><i class="fas fa-capsules"></i> Thuốc #2</h6>
+                                        <button type="button" class="btn-remove-drug" onclick="window.removeDrugPrescription(this)" title="Xóa thuốc này">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="drug-content">
+                                        <div class="record-grid">
+                                            <div class="record-section">
+                                                <label><i class="fas fa-pills"></i> Tên thuốc:</label>
+                                                <input type="text" placeholder="Nhập tên thuốc..." value="Vitamin D3" id="drugName2" class="form-control">
+                                            </div>
+                                            <div class="record-section">
+                                                <label><i class="fas fa-weight"></i> Hàm lượng:</label>
+                                                <input type="text" placeholder="Ví dụ: 5mg" value="1000 IU" id="dosage2" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="record-grid">
+                                            <div class="record-section">
+                                                <label><i class="fas fa-clock"></i> Tần suất sử dụng:</label>
+                                                <select id="frequency2" class="form-control">
+                                                    <option value="1 lần/ngày" selected>1 lần/ngày</option>
+                                                    <option value="2 lần/ngày">2 lần/ngày</option>
+                                                    <option value="3 lần/ngày">3 lần/ngày</option>
+                                                    <option value="1 lần/2 ngày">1 lần/2 ngày</option>
+                                                    <option value="1 lần/tuần">1 lần/tuần</option>
+                                                    <option value="Khi cần">Khi cần</option>
+                                                </select>
+                                            </div>
+                                            <div class="record-section">
+                                                <label><i class="fas fa-calendar-days"></i> Thời gian dùng:</label>
+                                                <input type="text" placeholder="Ví dụ: 30 ngày" value="30 ngày" id="duration2" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="record-grid">
+                                            <div class="record-section">
+                                                <label><i class="fas fa-utensils"></i> Thời điểm uống:</label>
+                                                <select id="timing2" class="form-control">
+                                                    <option value="Sau bữa ăn" selected>Sau bữa ăn</option>
+                                                    <option value="Trước bữa ăn">Trước bữa ăn</option>
+                                                    <option value="Trong bữa ăn">Trong bữa ăn</option>
+                                                    <option value="Lúc đói">Lúc đói</option>
+                                                    <option value="Trước khi ngủ">Trước khi ngủ</option>
+                                                    <option value="Sáng sớm">Sáng sớm</option>
+                                                </select>
+                                            </div>
+                                            <div class="record-section">
+                                                <label><i class="fas fa-box"></i> Số lượng:</label>
+                                                <input type="number" placeholder="Số viên/gói" value="30" id="quantity2" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="record-section">
+                                            <label><i class="fas fa-comment-medical"></i> Hướng dẫn sử dụng:</label>
+                                            <textarea rows="2" placeholder="Ghi chú cách sử dụng thuốc..." id="drugNote2" class="form-control">Uống sau bữa ăn chính trong ngày, tốt nhất là bữa sáng.</textarea>
+                                        </div>
+                                        <div class="record-section">
+                                            <label><i class="fas fa-exclamation-triangle"></i> Lưu ý đặc biệt:</label>
+                                            <textarea rows="2" placeholder="Các lưu ý, tác dụng phụ, tương tác thuốc..." id="specialNote2" class="form-control">Tăng cường hấp thu calcium. Tránh uống cùng lúc với thuốc kháng sinh.</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prescription Summary -->
+                        <div class="prescription-summary">
+                            <h5><i class="fas fa-clipboard-check"></i> Tóm tắt đơn thuốc</h5>
+                            <div class="summary-content">
+                                <div class="summary-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">2</span>
+                                        <span class="stat-label">Loại thuốc</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">30</span>
+                                        <span class="stat-label">Ngày điều trị</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">60</span>
+                                        <span class="stat-label">Tổng số viên</span>
+                                    </div>
+                                </div>
+                                <div class="prescription-notes">
+                                    <label><i class="fas fa-notes-medical"></i> Lời dặn chung của bác sĩ:</label>
+                                    <textarea rows="3" id="generalNotes" class="form-control" placeholder="Lời dặn tổng quát cho bệnh nhân về việc sử dụng thuốc...">Tuân thủ đúng liều dùng và thời gian. Báo với bác sĩ nếu có tác dụng phụ bất thường. Không tự ý ngừng thuốc mà không tham khảo ý kiến bác sĩ.</textarea>
+                                </div>
+                                <div class="next-appointment">
+                                    <label><i class="fas fa-calendar-plus"></i> Tái khám:</label>
+                                    <input type="date" id="nextAppointment" class="form-control" value="2024-07-24">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prescription Actions -->
+                        <div class="prescription-actions">
+                            <button type="button" class="btn-secondary" onclick="window.previewPrescription()">
+                                <i class="fas fa-eye"></i> Xem trước đơn thuốc
+                            </button>
+                            <button type="button" class="btn-print" onclick="window.printPrescription()">
+                                <i class="fas fa-print"></i> In đơn thuốc
+                            </button>
+                            <button type="button" class="btn-primary" onclick="window.savePrescription()">
+                                <i class="fas fa-save"></i> Lưu đơn thuốc
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -7,17 +7,6 @@
     overflow: hidden;
 }
 
-.booking-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.1)"/></svg>');
-    opacity: 0.1;
-}
-
 .booking-container {
     position: relative;
     z-index: 1;
@@ -26,16 +15,7 @@
     padding: 0 var(--spacing-md);
 }
 
-.booking-hero h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
-    margin-bottom: var(--spacing-sm);
-    font-weight: 700;
-}
 
-.booking-hero p {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    opacity: 0.9;
-}
 
 .booking-main {
     padding: var(--spacing-xl) 0;
@@ -368,17 +348,4 @@
     width: 16px;
     height: 16px;
     cursor: pointer;
-}
-
-.event-item.pending {
-    background: #ffd600;
-    color: #333;
-    border-radius: 5px;
-    padding: 2px 6px;
-}
-.event-item.rejected {
-    background: #e57373;
-    color: #fff;
-    border-radius: 5px;
-    padding: 2px 6px;
 }

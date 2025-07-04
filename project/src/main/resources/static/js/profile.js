@@ -16,38 +16,38 @@ document.addEventListener('DOMContentLoaded', function() {
     let cusId = null;
 
 // --- CHỨC NĂNG CHUYỂN ĐỔI TAB ---
-const tabButtons = document.querySelectorAll('.tab-btn');
-const tabContents = document.querySelectorAll('.tab-content');
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
 
 // Hàm chuyển đổi tab
-function switchTab(targetTab) {
-    // Xóa class active khỏi tất cả tab buttons
-    tabButtons.forEach(btn => btn.classList.remove('active'));
-    
-    // Xóa class active khỏi tất cả tab contents
-    tabContents.forEach(content => content.classList.remove('active'));
-    
-    // Thêm class active cho tab button được click
-    const activeButton = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
-    if (activeButton) {
-        activeButton.classList.add('active');
+    function switchTab(targetTab) {
+        // Xóa class active khỏi tất cả tab buttons
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+
+        // Xóa class active khỏi tất cả tab contents
+        tabContents.forEach(content => content.classList.remove('active'));
+
+        // Thêm class active cho tab button được click
+        const activeButton = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+
+        // Hiển thị tab content tương ứng
+        const activeContent = document.getElementById(targetTab);
+        if (activeContent) {
+            activeContent.classList.add('active');
+        }
     }
-    
-    // Hiển thị tab content tương ứng
-    const activeContent = document.getElementById(targetTab);
-    if (activeContent) {
-        activeContent.classList.add('active');
-    }
-}
 
 // Thêm event listener cho tất cả tab buttons
-tabButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetTab = this.getAttribute('data-tab');
-        switchTab(targetTab);
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetTab = this.getAttribute('data-tab');
+            switchTab(targetTab);
+        });
     });
-});
 
 
 
@@ -113,10 +113,10 @@ tabButtons.forEach(button => {
     // Bước 1: Xác thực mật khẩu hiện tại
     verifyBtn.addEventListener("click", async () => {
         const currentPassword = currentInput.value.trim();
-        if (!currentPassword) return alert("Vui lòng nhập mật khẩu hiện tại!");
+        if (!currentPassword) return showNotification("Vui lòng nhập mật khẩu hiện tại!", 'warning');
         // LẤY ID CUSTOMER
-        const cusId = localStorage.getItem('cusId'); 
-        if (!cusId) return alert("Không tìm thấy thông tin người dùng!");
+        const cusId = localStorage.getItem('cusId');
+        if (!cusId) return showNotification("Không tìm thấy thông tin người dùng!", 'error');
 
         try {
             const res = await fetch(`/api/auth/${cusId}/verify-cus-password`, {
@@ -124,18 +124,19 @@ tabButtons.forEach(button => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ currentPassword })
             });
-            
+
             if (res.ok) {
                 currentPasswordCache = currentPassword;          // Lưu lại
                 document.getElementById("currentPasswordGroup").style.display = "none";
                 newGroup.style.display = "block";                // Mở form mới
+                showNotification("Mật khẩu đã được xác thực!", 'success');
             } else {
                 const errorMsg = await res.text();
-                alert(errorMsg || "Mật khẩu hiện tại không đúng!");
+                showNotification(errorMsg || "Mật khẩu hiện tại không đúng!", 'error');
             }
         } catch (err) {
             console.error(err);
-            alert("Không thể kết nối tới máy chủ!");
+            showNotification("Không thể kết nối tới máy chủ!", 'error');
         }
     });
 
@@ -144,12 +145,12 @@ tabButtons.forEach(button => {
         const newPassword = document.getElementById("newPassword").value.trim();
         const confirm = document.getElementById("changeConfirmPassword").value.trim();
 
-        if (!newPassword || !confirm) return alert("Vui lòng nhập đủ hai ô!");
-        if (newPassword !== confirm) return alert("Mật khẩu mới không khớp!");
+        if (!newPassword || !confirm) return showNotification("Vui lòng nhập đủ hai ô!", 'warning');
+        if (newPassword !== confirm) return showNotification("Mật khẩu mới không khớp!", 'warning');
 
         // LẤY ID CUSTOMER
         const cusId = localStorage.getItem('cusId');
-        if (!cusId) return alert("Không tìm thấy thông tin người dùng!");
+        if (!cusId) return showNotification("Không tìm thấy thông tin người dùng!", 'error');
 
         try {
             // SỬA: Thêm cusId vào đường dẫn
@@ -161,9 +162,9 @@ tabButtons.forEach(button => {
                     newPassword: newPassword
                 })
             });
-            
+
             if (res.ok) {
-                alert("Đổi mật khẩu thành công!");
+                showNotification("Đổi mật khẩu thành công!", 'success');
                 // Reset form
                 document.getElementById("currentPasswordGroup").style.display = "block";
                 document.getElementById("newPasswordGroup").style.display = "none";
@@ -173,11 +174,11 @@ tabButtons.forEach(button => {
                 currentPasswordCache = "";
             } else {
                 const errorMsg = await res.text();
-                alert(errorMsg || "Đổi mật khẩu thất bại!");
+                showNotification(errorMsg || "Đổi mật khẩu thất bại!", 'error');
             }
         } catch (err) {
             console.error(err);
-            alert("Không thể kết nối tới máy chủ!");
+            showNotification("Không thể kết nối tới máy chủ!", 'error');
         }
     });
 
@@ -246,11 +247,11 @@ function showNotification(message, type = 'success') {
     notification.className = `profile-notification ${type}`;
     notification.textContent = message;
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.classList.add('show');
     }, 10);
-    
+
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => {
@@ -260,3 +261,69 @@ function showNotification(message, type = 'success') {
 }
 
 // CSS đã được chuyển sang styles.css
+// Add notification styles
+const style = document.createElement('style');
+style.textContent = `
+         .profile-notification {
+             position: fixed;
+             top: 20px;
+             right: 20px;
+             padding: 15px 25px;
+             border-radius: 8px;
+             color: white;
+             font-weight: 500;
+             opacity: 0;
+             transform: translateX(120%);
+             transition: all 0.3s ease;
+             z-index: 99999;
+             max-width: 350px;
+             word-wrap: break-word;
+             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+         }
+         .profile-notification.show {
+             opacity: 1;
+             transform: translateX(0);
+         }
+         .profile-notification.success {
+             background: linear-gradient(135deg, #2ecc71, #27ae60);
+         }
+         .profile-notification.error {
+             background: linear-gradient(135deg, #e74c3c, #c0392b);
+         }
+         .profile-notification.warning {
+             background: linear-gradient(135deg, #f39c12, #e67e22);
+         }
+         .profile-notification.info {
+             background: linear-gradient(135deg, #3498db, #2980b9);
+         }
+
+         /* Animation cho notification mới */
+         @keyframes slideInNotification {
+             0% {
+                 opacity: 0;
+                 transform: translateX(-20px) scale(0.9);
+             }
+             100% {
+                 opacity: 1;
+                 transform: translateX(0) scale(1);
+             }
+         }
+
+         /* Ripple effect cho buttons */
+         .ripple {
+             position: absolute;
+             border-radius: 50%;
+             background: rgba(255, 255, 255, 0.6);
+             transform: scale(0);
+             animation: ripple-animation 0.6s linear;
+             pointer-events: none;
+         }
+
+         @keyframes ripple-animation {
+             to {
+                 transform: scale(4);
+                 opacity: 0;
+             }
+         }
+     `;
+document.head.appendChild(style);

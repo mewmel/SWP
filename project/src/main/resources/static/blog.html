@@ -9,365 +9,311 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Header Navigation -->
-    <header class="doctor-header">
-        <div class="doctor-header-container">
-            <nav class="doctor-nav">
-                <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
-                <a href="blog.html" class="nav-link active">Đăng Blog</a>
-                <a href="bac-si-lich-lam-viec.html" class="nav-link">Xem lịch làm</a>
-                <a href="bac-si-profile.html" class="nav-link">Hồ sơ cá nhân</a>
-            </nav>
-            
-            <div class="doctor-header-right">
-                <div class="doctor-search-box">
-                    <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
-                    <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.35-4.35"></path>
+<!-- Header Navigation -->
+<header class="doctor-header">
+    <div class="doctor-header-container">
+        <nav class="doctor-nav">
+            <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
+            <a href="blog.html" class="nav-link active">Đăng Blog</a>
+            <a href="bac-si-lich-lam-viec.html" class="nav-link">Xem lịch làm</a>
+            <a href="bac-si-profile.html" class="nav-link">Hồ sơ cá nhân</a>
+        </nav>
+
+        <div class="doctor-header-right">
+            <div class="notification-wrapper" style="position: relative;">
+                <button class="doctor-notification-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                     </svg>
-                </div>
-                
-                <div class="notification-wrapper" style="position: relative; display: none;">
-                    <button class="doctor-notification-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
-                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                        <span class="doctor-notification-badge">3</span>
-                    </button>
-                </div>
-                
-                <div class="user-menu" style="display:none;">
-                    <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-                    <button class="logout-btn"
-                        style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
-                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                    </button>
-                </div>
-                
-                <button class="doctor-mobile-menu">
-                    <i class="fas fa-bars"></i>
+                    <span class="doctor-notification-badge">3</span>
                 </button>
             </div>
-        </div>
-    </header>
 
-    
-    <!-- Auth Modal -->
-     <!--
-    <div id="authModal" class="auth-modal">
-        <div class="auth-modal-content">
-            <span class="close-modal">&times;</span>
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-                <button class="auth-tab" data-tab="register">Đăng ký</button>
+            <div class="doctor-profile-info">
+                <div class="doctor-info">
+                    <div class="doctor-name">BS. Nguyễn Ngọc Khánh Linh</div>
+                    <div class="doctor-role">Quản trị viên</div>
+                </div>
+                <div class="doctor-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
             </div>
 
-            -- Login Form --
-            <form id="loginForm" class="auth-form active">
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Mật khẩu</label>
-                    <div class="password-input">
-                        <input type="password" id="loginPassword" name="password" required>
-                        <i class="fas fa-eye toggle-password"></i>
-                    </div>
-                </div>
-                <button type="submit" class="auth-submit-btn">
-                    <span>Đăng nhập</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-                <div class="social-login">
-                    <button type="button" class="social-btn google">
-                        <i class="fab fa-google"></i> Đăng nhập với Google
-                    </button>
-                    <button type="button" class="social-btn facebook">
-                        <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
-                    </button>
-                </div>
-            </form>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
 
-            -- Register Form --
-            <form id="registerForm" class="auth-form">
-                <div class="form-group">
-                    <label for="registerName">Họ và tên</label>
-                    <input type="text" id="registerName" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Mật khẩu</label>
-                    <div class="password-input">
-                        <input type="password" id="registerPassword" name="password" required>
-                        <i class="fas fa-eye toggle-password"></i>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Xác nhận mật khẩu</label>
-                    <div class="password-input">
-                        <input type="password" id="confirmPassword" name="confirmPassword" required>
-                        <i class="fas fa-eye toggle-password"></i>
-                    </div>
-                </div>
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" id="agreeTerms" required>
-                    <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
-                </div>
-                <button type="submit" class="auth-submit-btn">
-                    <span>Đăng ký</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </form>
+            <button class="doctor-mobile-menu">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
-    </div> -->
+    </div>
+</header>
 
-    <!-- Main Content -->
-    <div class="doctor-page-container">
-        <div class="container">
-            <div class="blog-layout">
-                <main class="main-content">
-                <div class="blog-editor-container">
-                <div class="blog-editor">
-                    <div class="editor-header">
-                        <h1 class="editor-title">Tạo bài viết mới</h1>
-                        <div class="editor-actions">
-                            <button class="btn btn-secondary" id="previewBtn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                                <span id="previewText">Xem trước</span>
-                            </button>
+
+
+<!-- Main Content -->
+<div class="doctor-page-container">
+    <div class="container">
+        <div class="blog-layout">
+            <main class="main-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-header-content">
+                        <div class="page-title-section">
+                            <h1><i class="fas fa-pen-fancy"></i> Tạo bài viết mới</h1>
+                            <p>Chia sẻ kiến thức và kinh nghiệm y tế với cộng đồng</p>
+                        </div>
+                        <div class="page-actions">
                             <button class="btn btn-outline" id="saveDraftBtn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                    <polyline points="17,21 17,13 7,13 7,21"></polyline>
-                                    <polyline points="7,3 7,8 15,8"></polyline>
-                                </svg>
-                                Lưu nháp
+                                <i class="fas fa-save"></i> Lưu nháp
+                            </button>
+                            <button class="btn btn-secondary" id="previewBtn">
+                                <i class="fas fa-eye"></i> <span id="previewText">Xem trước</span>
                             </button>
                             <button class="btn btn-primary" id="publishBtn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                                    <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
-                                </svg>
-                                Xuất bản
+                                <i class="fas fa-paper-plane"></i> Xuất bản
                             </button>
                         </div>
                     </div>
+                </div>
 
-                    <div class="editor-content">
-                        <div class="editor-main">
-                            <div class="form-group">
-                                <label for="postTitle" class="form-label">Tiêu đề bài viết</label>
-                                <input type="text" id="postTitle" class="form-input title-input" placeholder="Nhập tiêu đề bài viết...">
-                            </div>
+                <!-- Blog Editor -->
+                <div class="blog-editor-container">
+                    <div class="blog-editor">
 
-                            <div class="editor-section" id="editorSection">
-                                <div class="toolbar">
-                                    <button class="toolbar-btn" data-command="bold" title="Đậm">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
-                                            <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
-                                        </svg>
-                                    </button>
-                                    <button class="toolbar-btn" data-command="italic" title="Nghiêng">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="19" y1="4" x2="10" y2="4"></line>
-                                            <line x1="14" y1="20" x2="5" y2="20"></line>
-                                            <line x1="15" y1="4" x2="9" y2="20"></line>
-                                        </svg>
-                                    </button>
-                                    <button class="toolbar-btn" data-command="underline" title="Gạch chân">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"></path>
-                                            <line x1="4" y1="21" x2="20" y2="21"></line>
-                                        </svg>
-                                    </button>
-                                    <div class="toolbar-divider"></div>
-                                    <button class="toolbar-btn" data-command="insertUnorderedList" title="Danh sách">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="8" y1="6" x2="21" y2="6"></line>
-                                            <line x1="8" y1="12" x2="21" y2="12"></line>
-                                            <line x1="8" y1="18" x2="21" y2="18"></line>
-                                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                                        </svg>
-                                    </button>
-                                    <button class="toolbar-btn" data-command="insertOrderedList" title="Danh sách số">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="10" y1="6" x2="21" y2="6"></line>
-                                            <line x1="10" y1="12" x2="21" y2="12"></line>
-                                            <line x1="10" y1="18" x2="21" y2="18"></line>
-                                            <path d="M4 6h1v4"></path>
-                                            <path d="M4 10h2"></path>
-                                            <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path>
-                                        </svg>
-                                    </button>
-                                    <div class="toolbar-divider"></div>
-                                    <button class="toolbar-btn" onclick="insertLink()" title="Liên kết">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path>
-                                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path>
-                                        </svg>
-                                    </button>
-                                    <button class="toolbar-btn" onclick="insertImage()" title="Hình ảnh">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                            <polyline points="21,15 16,10 5,21"></polyline>
-                                        </svg>
-                                    </button>
-                                    <button class="toolbar-btn" data-command="formatBlock" data-value="pre" title="Code">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="16,18 22,12 16,6"></polyline>
-                                            <polyline points="8,6 2,12 8,18"></polyline>
-                                        </svg>
-                                    </button>
+                        <!-- Post Metadata -->
+                        <div class="post-metadata">
+                            <div class="metadata-grid">
+                                <div class="metadata-item">
+                                    <label for="postTitle" class="form-label">
+                                        <i class="fas fa-heading"></i> Tiêu đề bài viết
+                                    </label>
+                                    <input type="text" id="postTitle" class="form-input title-input" placeholder="Nhập tiêu đề hấp dẫn cho bài viết...">
                                 </div>
-                                <div class="content-editor" id="contentEditor" contenteditable="true" placeholder="Viết nội dung bài viết..."></div>
-                            </div>
-
-                            <div class="preview-section" id="previewSection" style="display: none;">
-                                <div class="preview-container">
-                                    <h2 class="preview-title" id="previewTitle">Tiêu đề bài viết</h2>
-                                    <div class="preview-content" id="previewContent">Nội dung bài viết sẽ hiển thị ở đây...</div>
+                                <div class="metadata-item">
+                                    <label for="categorySelect" class="form-label">
+                                        <i class="fas fa-tags"></i> Chuyên khoa
+                                    </label>
+                                    <select id="categorySelect" class="form-select">
+                                        <option value="">Chọn chuyên khoa</option>
+                                        <option value="IVF">Thụ tinh ống nghiệm - IVF</option>
+                                        <option value="IUI">Truyền tinh trùng - IUI</option>
+                                        <option value="hiem-muon">Điều trị hiếm muộn</option>
+                                        <option value="phu-khoa">Phụ khoa tổng quát</option>
+                                        <option value="thai-san">Thai sản</option>
+                                    </select>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="editor-sidebar">
-                            <div class="sidebar-section">
-                                <h3 class="sidebar-title">Danh mục</h3>
-                                <select id="categorySelect" class="form-select">
-                                    <option value="">Chọn chuyên khoa</option>
-                                    <option value="IVF">Thụ tinh ống nghiệm-IVF</option>
-                                    <option value="IUI">Truyền tinh trùng-IUI</option>
-                                    <option value="hiem-muon">Hiếm muộn</option>
-                                </select>
-                            </div>
-
-                            <div class="sidebar-section">
-                                <h3 class="sidebar-title">Thẻ tag</h3>
+                            <div class="tag-section">
+                                <label class="form-label">
+                                    <i class="fas fa-hashtag"></i> Thẻ tag
+                                </label>
                                 <div class="tag-input-group">
-                                    <input type="text" id="tagInput" class="form-input" placeholder="Thêm tag...">
-                                    <button class="btn btn-primary btn-sm" id="addTagBtn">Thêm</button>
+                                    <input type="text" id="tagInput" class="form-input" placeholder="Thêm tag (Enter để thêm)...">
+                                    <button class="btn btn-primary btn-sm" id="addTagBtn">
+                                        <i class="fas fa-plus"></i> Thêm
+                                    </button>
                                 </div>
                                 <div class="tags-container" id="tagsContainer"></div>
                             </div>
+                        </div>
 
-                            <div class="sidebar-section">
-                                <h3 class="sidebar-title">Trạng thái</h3>
-                                <div class="status-indicator">
-                                    <div class="status-dot" id="statusDot"></div>
-                                    <span class="status-text" id="statusText">Bản nháp</span>
+                        <!-- Content Editor -->
+                        <div class="editor-content">
+                            <div class="editor-main">
+
+                                <div class="editor-section" id="editorSection">
+                                    <div class="editor-header">
+                                        <h3><i class="fas fa-edit"></i> Nội dung bài viết</h3>
+                                        <div class="editor-tools">
+                                            <div class="word-count" id="wordCount">0 từ</div>
+                                            <button class="btn btn-sm btn-outline" id="fullscreenBtn">
+                                                <i class="fas fa-expand"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="toolbar">
+                                        <div class="toolbar-group">
+                                            <button class="toolbar-btn" data-command="bold" title="Đậm (Ctrl+B)">
+                                                <i class="fas fa-bold"></i>
+                                            </button>
+                                            <button class="toolbar-btn" data-command="italic" title="Nghiêng (Ctrl+I)">
+                                                <i class="fas fa-italic"></i>
+                                            </button>
+                                            <button class="toolbar-btn" data-command="underline" title="Gạch chân (Ctrl+U)">
+                                                <i class="fas fa-underline"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="toolbar-divider"></div>
+
+                                        <div class="toolbar-group">
+                                            <button class="toolbar-btn" data-command="insertUnorderedList" title="Danh sách">
+                                                <i class="fas fa-list-ul"></i>
+                                            </button>
+                                            <button class="toolbar-btn" data-command="insertOrderedList" title="Danh sách số">
+                                                <i class="fas fa-list-ol"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="toolbar-divider"></div>
+
+                                        <div class="toolbar-group">
+                                            <button class="toolbar-btn" onclick="insertLink()" title="Thêm liên kết">
+                                                <i class="fas fa-link"></i>
+                                            </button>
+                                            <button class="toolbar-btn" onclick="insertImage()" title="Thêm hình ảnh">
+                                                <i class="fas fa-image"></i>
+                                            </button>
+                                            <button class="toolbar-btn" data-command="insertHorizontalRule" title="Đường kẻ ngang">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="toolbar-divider"></div>
+
+                                        <div class="toolbar-group">
+                                            <select class="toolbar-select" onchange="formatText(this.value)">
+                                                <option value="">Định dạng</option>
+                                                <option value="h1">Tiêu đề 1</option>
+                                                <option value="h2">Tiêu đề 2</option>
+                                                <option value="h3">Tiêu đề 3</option>
+                                                <option value="p">Đoạn văn</option>
+                                                <option value="blockquote">Trích dẫn</option>
+                                            </select>
+                                            <button class="toolbar-btn" onclick="insertCode()" title="Code">
+                                                <i class="fas fa-code"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="content-editor" id="contentEditor" contenteditable="true" placeholder="Bắt đầu viết nội dung bài viết của bạn...
+
+Mẹo: Sử dụng các tiêu đề để tổ chức nội dung, thêm hình ảnh minh họa và chia sẻ kinh nghiệm thực tế."></div>
                                 </div>
-                            </div>
 
-                            <div class="sidebar-section">
-                                <h3 class="sidebar-title">Thông tin tác giả</h3>
-                                <div class="author-info">
-                                    <div class="author-avatar">TA</div>
-                                    <div class="author-details">
-                                        <p class="author-name">Trần Anh Thư</p>
-                                        <p class="author-title">Bác sĩ Nhi khoa</p>
+                                <!-- Preview Section -->
+                                <div class="preview-section" id="previewSection" style="display: none;">
+                                    <div class="preview-header">
+                                        <h3><i class="fas fa-eye"></i> Xem trước bài viết</h3>
+                                        <div class="preview-meta">
+                                        <span class="author-info">
+                                            <i class="fas fa-user-md"></i> BS. Nguyễn Ngọc Khánh Linh
+                                        </span>
+                                            <span class="publish-date">
+                                            <i class="fas fa-calendar"></i> <span id="currentDate"></span>
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="preview-container">
+                                        <h1 class="preview-title" id="previewTitle">Tiêu đề bài viết</h1>
+                                        <div class="preview-tags" id="previewTags"></div>
+                                        <div class="preview-content" id="previewContent">
+                                            <p>Nội dung bài viết sẽ hiển thị ở đây...</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Status Bar -->
+                                <div class="status-bar">
+                                    <div class="status-left">
+                                        <div class="status-indicator">
+                                            <div class="status-dot" id="statusDot"></div>
+                                            <span class="status-text" id="statusText">Bản nháp</span>
+                                        </div>
+                                        <div class="auto-save" id="autoSave">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span>Đã lưu tự động</span>
+                                        </div>
+                                    </div>
+                                    <div class="status-right">
+                                        <div class="reading-time" id="readingTime">
+                                            <i class="fas fa-clock"></i>
+                                            <span>~2 phút đọc</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
             </main>
-
-            <aside class="sidebar">
-                <div class="sidebar-content">
-                    <div class="sidebar-card management-card">
-                        <div class="card-header">
-                            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            <h3>Quản lý bệnh nhân</h3>
-                        </div>
-                        <div class="card-content">
-                            <div class="management-item">
-                                <div class="management-icon">👥</div>
-                                <span>Xem danh sách bệnh nhân</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="sidebar-card schedule-card">
-                        <div class="card-header">
-                            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <h3>Quản lý lịch hẹn</h3>
-                        </div>
-                    </div>
-
-                    <div class="sidebar-card stats-card">
-                        <div class="card-header">
-                            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="20" x2="12" y2="10"></line>
-                                <line x1="18" y1="20" x2="18" y2="4"></line>
-                                <line x1="6" y1="20" x2="6" y2="16"></line>
-                            </svg>
-                            <h3>Báo cáo thống kê</h3>
-                        </div>
-                    </div>
-
-                    <div class="sidebar-card appointments-card">
-                        <div class="card-header">
-                            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <h3>Lịch hẹn hôm nay</h3>
-                        </div>
-                        <div class="appointments-list">
-                            <div class="appointment-item">
-                                <div class="appointment-time">11:30</div>
-                                <div class="appointment-details">
-                                    <p>Chuyển phôi - BN Lê Thị Lan</p>
-                                </div>
-                            </div>
-                            <div class="appointment-item">
-                                <div class="appointment-time">14:00</div>
-                                <div class="appointment-details">
-                                    <p>Tư vấn - BN Nguyễn Thị Thu</p>
-                                </div>
-                            </div>
-                            <div class="appointment-item">
-                                <div class="appointment-time">15:30</div>
-                                <div class="appointment-details">
-                                    <p>Theo dõi - BN Phạm Văn Nam</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-            </div>
         </div>
     </div>
-    <script src="js/doctor-common.js"></script>
-    <script src="js/script.js"></script>
-    <script src="js/blog.js"></script>
+</div>
+
+<!-- Image Upload Modal -->
+<div id="imageModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4><i class="fas fa-image"></i> Thêm hình ảnh</h4>
+            <span class="close" onclick="closeImageModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-content">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Kéo thả hoặc click để chọn ảnh</h3>
+                    <p>Hỗ trợ: JPG, PNG, GIF (tối đa 5MB)</p>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                    <button class="btn btn-primary" onclick="document.getElementById('imageInput').click()">
+                        <i class="fas fa-folder-open"></i> Chọn ảnh
+                    </button>
+                </div>
+            </div>
+            <div class="image-preview" id="imagePreview" style="display: none;">
+                <img id="previewImg" src="" alt="Preview">
+                <div class="image-info">
+                    <input type="text" id="imageAlt" class="form-input" placeholder="Mô tả ảnh (Alt text)...">
+                    <input type="text" id="imageCaption" class="form-input" placeholder="Chú thích ảnh...">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeImageModal()">Hủy</button>
+            <button class="btn btn-primary" onclick="insertSelectedImage()">
+                <i class="fas fa-plus"></i> Thêm ảnh
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Link Modal -->
+<div id="linkModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4><i class="fas fa-link"></i> Thêm liên kết</h4>
+            <span class="close" onclick="closeLinkModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="linkText">Văn bản hiển thị</label>
+                <input type="text" id="linkText" class="form-input" placeholder="Nhập văn bản hiển thị...">
+            </div>
+            <div class="form-group">
+                <label for="linkUrl">URL</label>
+                <input type="url" id="linkUrl" class="form-input" placeholder="https://example.com">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="linkNewTab"> Mở trong tab mới
+                </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeLinkModal()">Hủy</button>
+            <button class="btn btn-primary" onclick="insertSelectedLink()">
+                <i class="fas fa-plus"></i> Thêm liên kết
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="js/doctor-common.js"></script>
+<script src="js/script.js"></script>
+<script src="js/blog.js"></script>
 </body>
 </html>

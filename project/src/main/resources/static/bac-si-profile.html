@@ -15,21 +15,12 @@
         <nav class="doctor-nav">
             <a href="bac-si-dashboard.html" class="nav-link">Trang cá nhân</a>
             <a href="blog.html" class="nav-link">Đăng Blog</a>
-
             <a href="bac-si-lich-lam-viec.html" class="nav-link">Xem lịch làm</a>
             <a href="bac-si-profile.html" class="nav-link active">Hồ sơ cá nhân</a>
         </nav>
 
         <div class="doctor-header-right">
-            <div class="doctor-search-box">
-                <input type="text" placeholder="Tìm kiếm bệnh nhân..." class="doctor-search-input">
-                <svg class="doctor-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-            </div>
-
-            <div class="notification-wrapper" style="position: relative; display: none;">
+            <div class="notification-wrapper" style="position: relative;">
                 <button class="doctor-notification-btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
@@ -39,13 +30,19 @@
                 </button>
             </div>
 
-            <div class="user-menu" style="display:none;">
-                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-                <button class="logout-btn"
-                        style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
-                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                </button>
+            <div class="doctor-profile-info">
+                <div class="doctor-info">
+                    <div class="doctor-name">BS. Nguyễn Ngọc Khánh Linh</div>
+                    <div class="doctor-role">Quản trị viên</div>
+                </div>
+                <div class="doctor-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
             </div>
+
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
 
             <button class="doctor-mobile-menu">
                 <i class="fas fa-bars"></i>
@@ -59,139 +56,235 @@
         <!-- Profile Header -->
         <div class="profile-header">
             <div class="profile-header-content">
-                <div class="profile-avatar">
-                    <i class="fas fa-user-md"></i>
-                    <div class="avatar-upload">
-                        <i class="fas fa-camera"></i>
-                        <input type="file" id="avatarUpload" style="display: none;" accept="image/*">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user-md"></i>
+                        <div class="avatar-upload" onclick="document.getElementById('avatarUpload').click()">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" id="avatarUpload" style="display: none;" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="avatar-info">
+                        <button class="btn btn-outline btn-sm" onclick="document.getElementById('avatarUpload').click()">
+                            <i class="fas fa-upload"></i> Thay đổi ảnh
+                        </button>
+                        <p class="avatar-note">JPG, PNG. Tối đa 5MB</p>
                     </div>
                 </div>
-                <div class="profile-info">
+                <div class="profile-header-info">
                     <h1>BS. Nguyễn Ngọc Khánh Linh</h1>
-                    <div class="title">Bác sĩ Chuyên khoa Sản Phụ khoa</div>
-                    <div class="department">Khoa Hỗ trợ sinh sản</div>
+                    <div class="profile-badges">
+                        <span class="badge primary">Bác sĩ Chuyên khoa</span>
+                        <span class="badge success">Đã xác thực</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Alert Messages -->
-        <div class="alert success" id="successAlert">
+        <div class="alert success" id="successAlert" style="display: none;">
             <i class="fas fa-check-circle"></i>
-            <span>Ảnh đại diện đã được cập nhật thành công!</span>
+            <span>Cập nhật thành công!</span>
+            <button class="alert-close" onclick="hideAlert('successAlert')">&times;</button>
+        </div>
+
+        <div class="alert error" id="errorAlert" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>Có lỗi xảy ra!</span>
+            <button class="alert-close" onclick="hideAlert('errorAlert')">&times;</button>
         </div>
 
         <!-- Profile Content -->
         <div class="profile-content">
-            <!-- Personal Information -->
-            <div class="profile-section">
-                <div class="section-header">
-                    <h3><i class="fas fa-user"></i> Thông tin cá nhân</h3>
+            <div class="profile-layout">
+                <!-- Left Column -->
+                <div class="profile-left">
+                    <!-- Personal Information -->
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-user"></i> Thông tin cá nhân</h3>
+                        </div>
+                        <div class="section-content">
+                            <form id="personalForm" class="profile-form">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-user"></i> Họ và tên</label>
+                                        <input type="text" id="fullName" value="BS. Nguyễn Ngọc Khánh Linh" readonly class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-id-card"></i> Mã bác sĩ</label>
+                                        <input type="text" id="doctorId" value="BS001" readonly class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-envelope"></i> Email</label>
+                                        <input type="email" id="email" value="doc1@gmail.com" readonly class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-phone"></i> Số điện thoại</label>
+                                        <input type="tel" id="phone" value="+84 123 456 789" readonly class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-birthday-cake"></i> Ngày sinh</label>
+                                        <input type="date" id="birthDate" value="1990-01-15" readonly class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-venus-mars"></i> Giới tính</label>
+                                        <select id="gender" disabled class="form-input">
+                                            <option value="female" selected>Nữ</option>
+                                            <option value="male">Nam</option>
+                                            <option value="other">Khác</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Professional Information -->
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-graduation-cap"></i> Thông tin chuyên môn</h3>
+                        </div>
+                        <div class="section-content">
+                            <form id="professionalForm" class="profile-form">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-certificate"></i> Bằng cấp</label>
+                                        <input type="text" id="degree" value="Tiến sĩ Sản Phụ khoa" readonly class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-university"></i> Trường tốt nghiệp</label>
+                                        <input type="text" id="university" value="Đại học Y Dược TP.HCM" readonly class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-calendar-alt"></i> Năm tốt nghiệp</label>
+                                        <input type="number" id="graduationYear" value="2012" readonly class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-clock"></i> Kinh nghiệm</label>
+                                        <input type="text" id="experience" value="12 năm" readonly class="form-input">
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label><i class="fas fa-stethoscope"></i> Chuyên môn</label>
+                                        <textarea id="specialization" readonly class="form-input" rows="3">Khám, tư vấn và thực hiện các kỹ thuật điều trị vô sinh – hiếm muộn, hỗ trợ sinh sản.</textarea>
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label><i class="fas fa-file-alt"></i> Mô tả chi tiết</label>
+                                        <textarea id="description" readonly class="form-input" rows="4">Tiến sĩ Nguyễn Ngọc Khánh Linh là chuyên gia về kiểm soát chất lượng phôi và thụ tinh trong ống nghiệm, với hơn 12 năm công tác tại các trung tâm sinh sản hàng đầu.</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="expertise-section">
+                                    <label><i class="fas fa-tags"></i> Lĩnh vực chuyên môn</label>
+                                    <div class="expertise-tags" id="expertiseTags">
+                                        <span class="expertise-tag">IVF</span>
+                                        <span class="expertise-tag">IUI</span>
+                                        <span class="expertise-tag">Sinh học phôi</span>
+                                        <span class="expertise-tag">Nội tiết sinh sản</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="section-content">
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-label"><i class="fas fa-user"></i> Họ và tên</div>
-                            <div class="info-value">BS. Nguyễn Ngọc Khánh Linh</div>
+
+                <!-- Right Column -->
+                <div class="profile-right">
+
+                    <!-- Activity Section -->
+                    <!-- <div class="profile-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-history"></i> Hoạt động gần đây</h3>
                         </div>
-                        <div class="info-item">
-                            <div class="info-label"><i class="fas fa-envelope"></i> Email</div>
-                            <div class="info-value">doc1@gmail.com</div>
+                        <div class="section-content">
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon success">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>Cập nhật hồ sơ</h5>
+                                        <p>Thay đổi thông tin liên hệ</p>
+                                        <span class="activity-time">2 giờ trước</span>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon info">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>Đăng ký ca làm việc</h5>
+                                        <p>Ca sáng ngày 25/12/2024</p>
+                                        <span class="activity-time">1 ngày trước</span>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon warning">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>Đổi mật khẩu</h5>
+                                        <p>Mật khẩu đã được cập nhật</p>
+                                        <span class="activity-time">3 ngày trước</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="info-item">
-                            <div class="info-label"><i class="fas fa-phone"></i> Số điện thoại</div>
-                            <div class="info-value">+84 123 456 789</div>
+                    </div> -->
+
+                    <!-- Statistics Section -->
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-chart-bar"></i> Thống kê</h3>
                         </div>
-                        <div class="info-item">
-                            <div class="info-label"><i class="fas fa-id-card"></i> Mã bác sĩ</div>
-                            <div class="info-value">BS001</div>
-                        </div>
-                        <div class="info-item full-width">
-                            <div class="info-label"><i class="fas fa-map-marker-alt"></i> Địa chỉ</div>
-                            <div class="info-value">123 Đường ABC, Quận 1, TP.HCM</div>
+                        <div class="section-content">
+                            <div class="stats-grid-small">
+                                <div class="stat-card-small">
+                                    <div class="stat-icon blue">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="stat-details">
+                                        <span class="stat-number">245</span>
+                                        <span class="stat-text">Bệnh nhân tháng này</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card-small">
+                                    <div class="stat-icon green">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="stat-details">
+                                        <span class="stat-number">92%</span>
+                                        <span class="stat-text">Tỷ lệ hài lòng</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card-small">
+                                    <div class="stat-icon orange">
+                                        <i class="fas fa-calendar-week"></i>
+                                    </div>
+                                    <div class="stat-details">
+                                        <span class="stat-number">32</span>
+                                        <span class="stat-text">Giờ làm việc/tuần</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card-small">
+                                    <div class="stat-icon purple">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="stat-details">
+                                        <span class="stat-number">4.8</span>
+                                        <span class="stat-text">Đánh giá trung bình</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Professional Information -->
-            <div class="profile-section">
-                <div class="section-header">
-                    <h3><i class="fas fa-graduation-cap"></i> Thông tin chuyên môn</h3>
-                </div>
-                <div class="section-content">
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-certificate"></i> Bằng cấp</div>
-                        <div class="info-value">Tiến sĩ Sản Phụ khoa</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-stethoscope"></i> Chuyên môn</div>
-                        <div class="info-value">Khám, tư vấn và thực hiện các kỹ thuật điều trị vô sinh – hiếm muộn, hỗ trợ sinh sản.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-file-alt"></i> Mô tả hồ sơ</div>
-                        <div class="info-value">Tiến sĩ Nguyễn Ngọc Khánh Linh là chuyên gia về kiểm soát chất lượng phôi và thụ tinh trong ống nghiệm, với hơn 12 năm công tác tại các trung tâm sinh sản hàng đầu.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-tags"></i> Lĩnh vực chuyên môn</div>
-                        <div class="expertise-tags">
-                            <span class="expertise-tag">IVF</span>
-                            <span class="expertise-tag">IUI</span>
-                            <span class="expertise-tag">Sinh học phôi</span>
-                            <span class="expertise-tag">Nội tiết sinh sản</span>
-                        </div>
-                    </div>
-
-                    <!-- Statistics -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value">12+</div>
-                            <div class="stat-label">Năm kinh nghiệm</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">500+</div>
-                            <div class="stat-label">Bệnh nhân đã điều trị</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">85%</div>
-                            <div class="stat-label">Tỷ lệ thành công</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
         </div>
     </div>
 </div>
 
 <script src="js/doctor-common.js"></script>
-<script>
-    function showAlert(type, message) {
-        const alert = document.getElementById(type + 'Alert');
-        alert.querySelector('span').textContent = message;
-        alert.style.display = 'flex';
-
-        setTimeout(() => {
-            alert.style.display = 'none';
-        }, 3000);
-    }
-
-    // Handle avatar upload
-    document.querySelector('.avatar-upload').addEventListener('click', function() {
-        document.getElementById('avatarUpload').click();
-    });
-
-    document.getElementById('avatarUpload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                // Here you would typically upload the image to the server
-                showAlert('success', 'Ảnh đại diện đã được cập nhật!');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-</script>
+<script src="js/bac-si-profile.js"></script>
 </body>
 </html>

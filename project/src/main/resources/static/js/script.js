@@ -1491,4 +1491,80 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+    // ====== Lọc dịch vụ theo danh mục cho bảng giá (fix: chỉ chạy trên trang bảng giá) ======
+    (function() {
+        // Chỉ chạy nếu có phần tử filter và tbody
+        const filter = document.getElementById('categoryFilter');
+        const tbody = document.getElementById('subservice-table-body');
+        if (!filter || !tbody) return;
+
+        // Lưu lại HTML gốc của tbody
+        const originalHTML = tbody.innerHTML;
+
+        filter.addEventListener('change', function() {
+            const selected = filter.value;
+            tbody.innerHTML = originalHTML;
+            if (!selected) return;
+            // Lọc các dòng theo danh mục
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            rows.forEach(row => {
+                const category = row.children[1]?.textContent.trim();
+                if (category !== selected) {
+                    row.style.display = 'none';
+                } else {
+                    row.style.display = '';
+                }
+            });
+        });
+    })();
+
+    // Mở Gmail web khi bấm icon mail
+    var gmailBtn = document.getElementById('gmail-link');
+    if (gmailBtn) {
+        gmailBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            try {
+                var email = 'fertilityehr@gmail.com';
+                var subject = encodeURIComponent('Liên hệ FertilityEHR');
+                var body = encodeURIComponent('Xin chào FertilityEHR,\n\n');
+                var gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+
+                var newWindow = window.open(gmailUrl, '_blank');
+                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                    // Fallback nếu popup bị chặn
+                    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+                    showNotification('Đang mở ứng dụng email mặc định...', 'info');
+                } else {
+                    showNotification('Đang mở Gmail...', 'success');
+                }
+            } catch (error) {
+                console.error('Gmail error:', error);
+                showNotification('Không thể mở Gmail. Vui lòng thử lại!', 'error');
+            }
+        });
+    }
+
+    // Mở Instagram web khi bấm icon Instagram
+    var instagramBtn = document.getElementById('instagram-link');
+    if (instagramBtn) {
+        instagramBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            try {
+                var instagramUrl = `https://www.instagram.com/fert.ilityehr?igsh=Nzk1bmRsa3hnNXh4&utm_source=qr`;
+
+                var newWindow = window.open(instagramUrl, '_blank');
+                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                    // Fallback nếu popup bị chặn
+                    window.location.href = instagramUrl;
+                } else {
+                    showNotification('Đang mở Instagram...', 'success');
+                }
+            } catch (error) {
+                console.error('Instagram error:', error);
+                showNotification('Không thể mở Instagram. Vui lòng thử lại!', 'error');
+            }
+        });
+    }
+
 });
