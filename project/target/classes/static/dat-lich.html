@@ -550,10 +550,6 @@
                             <span>Xác thực thông tin</span>
                         </div>
                         <div class="progress-step">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Kiểm tra lịch trống</span>
-                        </div>
-                        <div class="progress-step">
                             <i class="fas fa-envelope"></i>
                             <span>Gửi xác nhận email</span>
                         </div>
@@ -660,6 +656,66 @@
             var hero = document.querySelector('.hero-content.fade-in-up');
             if (hero) {
                 hero.style.animationPlayState = 'running';
+            }
+
+            // Xử lý URL parameter để tự động chọn dịch vụ
+            const urlParams = new URLSearchParams(window.location.search);
+            const serviceParam = urlParams.get('service');
+            const serviceSelect = document.getElementById('service');
+            
+            console.log('URL Service Parameter:', serviceParam);
+            
+            if (serviceParam && serviceSelect) {
+                // Function để tự động chọn service
+                function autoSelectService() {
+                    const options = serviceSelect.querySelectorAll('option');
+                    console.log('Available service options:', Array.from(options).map(opt => opt.textContent));
+                    
+                    for (let option of options) {
+                        const optionText = option.textContent.toLowerCase();
+                        console.log('Checking option:', optionText);
+                        
+                        if (serviceParam === 'iui' && (optionText.includes('iui') || optionText.includes('thụ tinh nhân tạo'))) {
+                            option.selected = true;
+                            serviceSelect.value = option.value;
+                            console.log('Selected IUI service:', optionText);
+                            break;
+                        } else if (serviceParam === 'ivf' && (optionText.includes('ivf') || optionText.includes('thụ tinh trong ống nghiệm'))) {
+                            option.selected = true;
+                            serviceSelect.value = option.value;
+                            console.log('Selected IVF service:', optionText);
+                            break;
+                        } else if (serviceParam === 'hiem-muon' && (optionText.includes('khám hiếm muộn') || optionText.includes('tiền hôn nhân'))) {
+                            option.selected = true;
+                            serviceSelect.value = option.value;
+                            console.log('Selected hiếm muộn service:', optionText);
+                            break;
+                        }
+                    }
+                    
+                    // Trigger change event để cập nhật UI nếu cần
+                    const changeEvent = new Event('change', { bubbles: true });
+                    serviceSelect.dispatchEvent(changeEvent);
+                }
+
+                // Listen cho event khi services được load xong
+                document.addEventListener('servicesLoaded', function(event) {
+                    console.log('Services loaded, attempting auto-select...');
+                    autoSelectService();
+                });
+                
+                // Fallback: Thử ngay lập tức nếu services đã có sẵn
+                if (serviceSelect.options.length > 1) {
+                    autoSelectService();
+                }
+                
+                // Fallback: Thử lại sau 2 giây để đảm bảo
+                setTimeout(function() {
+                    if (serviceSelect.value === '') {
+                        console.log('Fallback: Final attempt to select service...');
+                        autoSelectService();
+                    }
+                }, 2000);
             }
         });
     </script>
