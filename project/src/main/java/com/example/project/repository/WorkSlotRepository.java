@@ -1,6 +1,7 @@
 package com.example.project.repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,9 @@ public interface WorkSlotRepository extends JpaRepository<WorkSlot, Integer> {
             @Param("startTime") String startTime,
             @Param("endTime") String endTime
     );
+
+    List<WorkSlot> findByWorkDate(LocalDate workDate);
+
+    List<WorkSlot> findByDocIdAndWorkDate(Integer docId, LocalDate workDate);
+
 }

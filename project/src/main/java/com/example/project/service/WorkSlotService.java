@@ -1,13 +1,16 @@
 package com.example.project.service;
 
 import com.example.project.dto.DoctorWeekScheduleDTO;
+import com.example.project.dto.WorkSlotBookingDTO;
 import com.example.project.entity.WorkSlot;
+import com.example.project.repository.BookingRepository;
 import com.example.project.repository.WorkSlotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WorkSlotService {
     private final WorkSlotRepository workSlotRepository;
+    private final BookingRepository bookingRepo;
 
     // Ánh xạ weekday sang số ngày cộng thêm từ weekStartDate (Thứ 2)
     private static final Map<String, Integer> WEEKDAY_OFFSET = Map.of(
@@ -41,31 +45,48 @@ public class WorkSlotService {
                 Integer offset = WEEKDAY_OFFSET.get(shift.getWeekday());
                 if (offset == null) continue; // bỏ qua nếu sai key
                 LocalDate date = dto.getWeekStartDate().plusDays(offset);
-                int maxPatient = shift.getMaxPatient() != null ? shift.getMaxPatient() : 2;
+                int maxPatient = 2;
                 if (Boolean.TRUE.equals(shift.getMorning())) {
                     for (SlotTimeRange slot : MORNING_SLOTS) {
-                        WorkSlot ws = new WorkSlot();
-                        ws.setDocId(dto.getDocId());
-                        ws.setMaId(maID); // Lưu maID vào entity
-                        ws.setWorkDate(date);
-                        ws.setStartTime(slot.start);
-                        ws.setEndTime(slot.end);
-                        ws.setMaxPatient(maxPatient);
-                        ws.setSlotStatus("approved");
-                        workSlotRepository.save(ws);
+                        // Kiểm tra tồn tại trước khi tạo mới
+                        boolean exists = workSlotRepository.findSlotNative(
+                                dto.getDocId(),
+                                date,
+                                slot.start.toString().substring(0,5),
+                                slot.end.toString().substring(0,5)
+                        ).isPresent();
+                        if (!exists) {
+                            WorkSlot ws = new WorkSlot();
+                            ws.setDocId(dto.getDocId());
+                            ws.setMaId(maID);
+                            ws.setWorkDate(date);
+                            ws.setStartTime(slot.start);
+                            ws.setEndTime(slot.end);
+                            ws.setMaxPatient(maxPatient);
+                            ws.setSlotStatus("approved");
+                            workSlotRepository.save(ws);
+                        }
                     }
                 }
                 if (Boolean.TRUE.equals(shift.getAfternoon())) {
                     for (SlotTimeRange slot : AFTERNOON_SLOTS) {
-                        WorkSlot ws = new WorkSlot();
-                        ws.setDocId(dto.getDocId());
-                        ws.setMaId(maID); // Lưu maID vào entity
-                        ws.setWorkDate(date);
-                        ws.setStartTime(slot.start);
-                        ws.setEndTime(slot.end);
-                        ws.setMaxPatient(maxPatient);
-                        ws.setSlotStatus("approved");
-                        workSlotRepository.save(ws);
+                        boolean exists = workSlotRepository.findSlotNative(
+                                dto.getDocId(),
+                                date,
+                                slot.start.toString().substring(0,5),
+                                slot.end.toString().substring(0,5)
+                        ).isPresent();
+                        if (!exists) {
+                            WorkSlot ws = new WorkSlot();
+                            ws.setDocId(dto.getDocId());
+                            ws.setMaId(maID);
+                            ws.setWorkDate(date);
+                            ws.setStartTime(slot.start);
+                            ws.setEndTime(slot.end);
+                            ws.setMaxPatient(maxPatient);
+                            ws.setSlotStatus("approved");
+                            workSlotRepository.save(ws);
+                        }
                     }
                 }
             }
@@ -79,5 +100,27 @@ public class WorkSlotService {
             this.start = start;
             this.end = end;
         }
+    }
+
+    public List<WorkSlot> getSlotsByDate(LocalDate date) {
+        return workSlotRepository.findByWorkDate(date);
+    }
+
+    public List<WorkSlotBookingDTO> getWorkSlotsWithBookingCount(Integer docId, LocalDate date) {
+        List<WorkSlot> slots = workSlotRepository.findByDocIdAndWorkDate(docId, date);
+        List<WorkSlotBookingDTO> result = new ArrayList<>();
+        for (WorkSlot slot : slots) {
+            int bookingCount = bookingRepo.countBySlotIdAndBookStatusIn(
+                    slot.getSlotId(), List.of("approved", "pending")
+            );
+            WorkSlotBookingDTO dto = new WorkSlotBookingDTO();
+            dto.setSlotId(slot.getSlotId());
+            dto.setStartTime(slot.getStartTime().toString().substring(0,5));
+            dto.setEndTime(slot.getEndTime().toString().substring(0,5));
+            dto.setMaxPatient(slot.getMaxPatient());
+            dto.setCurrentBooking(bookingCount);
+            result.add(dto);
+        }
+        return result;
     }
 }

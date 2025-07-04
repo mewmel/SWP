@@ -1,5 +1,6 @@
 package com.example.project.controller;
 
+import com.example.project.dto.BookingStepResultDTO;
 import com.example.project.entity.BookingStep;
 import com.example.project.entity.SubService;
 import com.example.project.repository.BookingStepRepository;
@@ -8,7 +9,10 @@ import com.example.project.service.BookingStepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/booking-steps")
@@ -48,5 +52,31 @@ public class BookingStepController {
         return resp;
     }
 
+    @GetMapping("/booking-steps/today-performed-at")
+    public List<LocalDateTime> getBookingStepPerformedAtToday() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime start = today.atStartOfDay();
+        LocalDateTime end = today.plusDays(1).atStartOfDay();
+        return bookingStepRepo.findByPerformedAtBetween(start, end)
+                .stream()
+                .map(BookingStep::getPerformedAt)
+                .collect(Collectors.toList());
+    }
 
+    @GetMapping("/results")
+    public List<BookingStepResultDTO> getResultsByCus(@RequestParam Integer cusId) {
+        // Query list BookingStep theo cusId
+        List<BookingStep> steps = bookingStepRepo.findByCusId(cusId); // Viết custom query JOIN với Booking để lấy theo cusId
+
+        return steps.stream().map(step -> {
+            BookingStepResultDTO dto = new BookingStepResultDTO();
+            SubService sub = subServiceRepo.findById(step.getSubId()).orElse(null);
+            dto.setSubName(sub != null ? sub.getSubName() : "");
+            dto.setPerformedAt(step.getPerformedAt() != null ? step.getPerformedAt().toString() : "");
+            dto.setResult(step.getResult());
+            dto.setNote(step.getNote());
+            dto.setStepStatus(step.getStepStatus());
+            return dto;
+        }).collect(Collectors.toList());
+    }
 }
