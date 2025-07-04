@@ -340,5 +340,71 @@ function showNotification(message, type = 'success') {
         }, 300);
     }, 3000);
 }
+// CSS đã được chuyển sang styles.css
+// Add notification styles
+const style = document.createElement('style');
+style.textContent = `
+         .profile-notification {
+             position: fixed;
+             top: 20px;
+             right: 20px;
+             padding: 15px 25px;
+             border-radius: 8px;
+             color: white;
+             font-weight: 500;
+             opacity: 0;
+             transform: translateX(120%);
+             transition: all 0.3s ease;
+             z-index: 99999;
+             max-width: 350px;
+             word-wrap: break-word;
+             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+         }
+         .profile-notification.show {
+             opacity: 1;
+             transform: translateX(0);
+         }
+         .profile-notification.success {
+             background: linear-gradient(135deg, #2ecc71, #27ae60);
+         }
+         .profile-notification.error {
+             background: linear-gradient(135deg, #e74c3c, #c0392b);
+         }
+         .profile-notification.warning {
+             background: linear-gradient(135deg, #f39c12, #e67e22);
+         }
+         .profile-notification.info {
+             background: linear-gradient(135deg, #3498db, #2980b9);
+         }
 
+         /* Animation cho notification mới */
+         @keyframes slideInNotification {
+             0% {
+                 opacity: 0;
+                 transform: translateX(-20px) scale(0.9);
+             }
+             100% {
+                 opacity: 1;
+                 transform: translateX(0) scale(1);
+             }
+         }
+
+         /* Ripple effect cho buttons */
+         .ripple {
+             position: absolute;
+             border-radius: 50%;
+             background: rgba(255, 255, 255, 0.6);
+             transform: scale(0);
+             animation: ripple-animation 0.6s linear;
+             pointer-events: none;
+         }
+
+         @keyframes ripple-animation {
+             to {
+                 transform: scale(4);
+                 opacity: 0;
+             }
+         }
+     `;
+document.head.appendChild(style);
 // CSS đã được chuyển sang styles.css

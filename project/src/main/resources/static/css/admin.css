@@ -1179,11 +1179,11 @@ body {
     display: none; /* Hidden by default */
     position: fixed;
     z-index: 1000;
-    left: 0; 
-    top: 0; 
-    right: 0; 
+    left: 0;
+    top: 0;
+    right: 0;
     bottom: 0;
-    width: 100vw; 
+    width: 100vw;
     height: 100vh;
     background: rgba(0,0,0,0.5);
     backdrop-filter: blur(4px);
@@ -1280,13 +1280,13 @@ body {
 }
 
 @keyframes modalShow {
-    from { 
-        transform: translateY(50px) scale(0.95); 
-        opacity: 0; 
+    from {
+        transform: translateY(50px) scale(0.95);
+        opacity: 0;
     }
-    to { 
-        transform: translateY(0) scale(1); 
-        opacity: 1; 
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
     }
 }
 
@@ -1457,27 +1457,27 @@ body {
     .sidebar {
         transform: translateX(-100%);
     }
-    
+
     .sidebar.open {
         transform: translateX(0);
     }
-    
+
     .header {
         left: 0;
     }
-    
+
     .main-content {
         margin-left: 0;
     }
-    
+
     .sidebar-toggle {
         display: block;
     }
-    
+
     .search-box input {
         width: 200px;
     }
-    
+
     .user-info {
         display: none;
     }
@@ -1487,80 +1487,80 @@ body {
     .header-content {
         padding: 0 16px;
     }
-    
+
     .main-content {
         padding: 16px;
     }
-    
+
     .search-box {
         display: none;
     }
-    
+
     .stats-grid {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 16px;
     }
-    
+
     .dashboard-row {
         grid-template-columns: 1fr;
     }
-    
+
     .filters {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
     }
-    
+
     .filter-group {
         justify-content: space-between;
     }
-    
+
     .page-header {
         flex-direction: column;
         align-items: stretch;
         gap: 16px;
     }
-    
+
     .report-controls {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
     }
-    
+
     .report-tabs {
         flex-wrap: wrap;
     }
-    
+
     .summary-stats {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         gap: 16px;
     }
-    
+
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .modal-content {
         margin: 20px;
         max-width: none;
         width: calc(100% - 40px);
         max-height: calc(100vh - 40px);
     }
-    
+
     .modal-content.large {
         width: calc(100% - 40px);
         max-width: none;
     }
-    
+
     .table-container {
         font-size: 14px;
     }
-    
+
     .data-table th,
     .data-table td {
         padding: 8px 12px;
     }
-    
+
     .action-buttons {
         flex-direction: column;
         gap: 4px;
@@ -1571,61 +1571,61 @@ body {
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .summary-stats {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .patient-detail-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .stat-content {
         flex-direction: column;
         text-align: center;
         gap: 16px;
     }
-    
+
     .schedule-info {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
     }
-    
+
     .schedule-time {
         min-width: auto;
     }
-    
+
     .modal-content {
         margin: 10px;
         width: calc(100% - 20px);
         max-height: calc(100vh - 20px);
         border-radius: 12px;
     }
-    
+
     .modal-header {
         padding: 16px 20px 12px;
     }
-    
+
     .modal-header h3 {
         font-size: 18px;
     }
-    
+
     .modal-body {
         padding: 20px;
     }
-    
+
     .modal-footer {
         padding: 12px 20px 20px;
         flex-direction: column;
         gap: 8px;
     }
-    
+
     .modal-footer .btn {
         width: 100%;
         justify-content: center;
     }
-    
+
     .form-group input,
     .form-group select,
     .form-group textarea {

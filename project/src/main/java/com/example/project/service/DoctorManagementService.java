@@ -15,8 +15,8 @@ import com.example.project.entity.DoctorService;
 import com.example.project.entity.Image;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.repository.DoctorServiceRepository;
-import com.example.project.repository.ServiceRepository;
 import com.example.project.repository.ImageRepository;
+import com.example.project.repository.ServiceRepository;
 
 
 @Service
@@ -44,6 +44,36 @@ public class DoctorManagementService {
             }
         }
         return Optional.empty();
+    }
+
+    // Tạo mới bác sĩ (từ JSON, có thể có mật khẩu)
+    public Doctor createDoctor(Doctor doctor) {
+        // Hash password nếu có nhập mới
+        if (doctor.getDocPassword() != null && !doctor.getDocPassword().isEmpty()) {
+            doctor.setDocPassword(passwordEncoder.encode(doctor.getDocPassword()));
+        } else {
+            // Nếu không nhập, có thể cho giá trị mặc định hoặc bỏ qua
+            doctor.setDocPassword(""); // hoặc null tùy bạn
+        }
+        return doctorRepository.save(doctor);
+    }
+
+    // Update, nếu docPassword rỗng hoặc null thì giữ nguyên password cũ
+    public Optional<Doctor> updateDoctor(Integer id, Doctor doctorUpdate) {
+        return doctorRepository.findById(id).map(doctor -> {
+            doctor.setDocFullName(doctorUpdate.getDocFullName());
+            doctor.setDocEmail(doctorUpdate.getDocEmail());
+            doctor.setDocPhone(doctorUpdate.getDocPhone());
+            doctor.setExpertise(doctorUpdate.getExpertise());
+            doctor.setDegree(doctorUpdate.getDegree());
+            doctor.setProfileDescription(doctorUpdate.getProfileDescription());
+            // Nếu có nhập password mới thì hash lại, nếu không thì giữ nguyên
+            if (doctorUpdate.getDocPassword() != null && !doctorUpdate.getDocPassword().isEmpty()) {
+                doctor.setDocPassword(passwordEncoder.encode(doctorUpdate.getDocPassword()));
+            }
+            // Nếu không nhập password mới -> giữ nguyên password cũ
+            return doctorRepository.save(doctor);
+        });
     }
 
     /**

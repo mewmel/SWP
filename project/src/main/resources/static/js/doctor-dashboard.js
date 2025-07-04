@@ -291,7 +291,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         cusId,
                     })
                 });
-                const drugId = await drugRes.json(); 
+                const drugId = await drugRes.json();
+                document.getElementById('prescriptionNumber').value = drugId;
 
                 // Lưu drugId vào localStorage để dùng sau
                 localStorage.setItem('drugId', drugId);
@@ -1048,13 +1049,13 @@ window.addDrugPrescription = function () {
 const drugId = localStorage.getItem('drugId') || '';
 function fillPrescriptionHeader() {
     const nameInput = document.getElementById('prescribingDoctorName');
-    const numberInput = document.getElementById('prescriptionNumber');
+
 
     const fullName = localStorage.getItem('docFullName');
 
 
     if (nameInput) nameInput.value = fullName || '';
-    if (numberInput) numberInput.value = drugId || '';
+
 
     // lấy ttin dưới db lên bằng api
 

@@ -65,3 +65,20 @@ function showRatingModal(doctorId) {
             alert(e.message);
         });
 }
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.querySelector('.doctor-logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            localStorage.clear();
+            window.location.href = '/index.html';
+        });
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // Lấy tên manager từ localStorage
+    const maFullName = localStorage.getItem('maFullName');
+    if (maFullName) {
+        const el = document.querySelector('.doctor-user-name');
+        if (el) el.textContent = maFullName;
+    }
+});

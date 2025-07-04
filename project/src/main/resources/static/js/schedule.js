@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     // State quản lý tháng hiện tại
     let currentDate = new Date();
@@ -272,8 +271,8 @@ document.addEventListener('DOMContentLoaded', function() {
     //Hàm load đồng thời nhiều bookingId và merge vào lịch
     function loadMultipleBookingSteps(bookingIds, callback) {
         let fetchDone = 0;
-        bookingIds.forEach(bookingId => {
-            fetch(`/api/booking-steps/by-booking/${bookingId}`)
+        bookingIds.forEach(bookId => {
+            fetch(`/api/booking-steps/by-booking/${bookId}`)
                 .then(res => res.json())
                 .then(steps => {
                     steps.forEach(step => {
@@ -313,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(bookings => {
                 const bookingIds = [];
                 bookings.forEach(b => {
-                    if (b.bookStatus === 'pending' || b.bookStatus === 'rejected') {
+                    if (b.bookStatus === 'pending' || b.bookStatus === 'completed' ) {
                         // Lấy ngày đăng ký
                         const date = new Date(b.createdAt);
                         const year = date.getFullYear();
@@ -322,8 +321,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         const eventsKey = `${year}-${month}`;
                         if (!eventsData[eventsKey]) eventsData[eventsKey] = {};
                         if (!eventsData[eventsKey][day]) eventsData[eventsKey][day] = [];
-                        let title = b.bookStatus === 'pending' ? "Đang chờ xác thực" : "Đã bị từ chối";
-                        let type = b.bookStatus; // "pending" hoặc "rejected"
+                        let title = b.bookStatus === 'pending' ? "Đang chờ xác thực" : "Đã đến khám";
+                        let type = b.bookStatus; // "pending" hoặc "completed"
                         eventsData[eventsKey][day].push({
                             type: type,
                             title: title
@@ -367,4 +366,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
 });

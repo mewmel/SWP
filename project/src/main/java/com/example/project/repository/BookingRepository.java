@@ -30,31 +30,33 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     // Đếm số booking theo trạng thái
     long countByDocIdAndBookStatus(Integer docId, String bookStatus);
 
-
-
-@Query("""
-  SELECT b 
-  FROM Booking b 
-  WHERE b.cusId = :cusId 
-    AND b.bookStatus IN :bookStatus 
-  ORDER BY b.bookId DESC
-""")
-Optional<Booking> findLatestBooking(
-  @Param("cusId") Integer cusId,
-  @Param("bookStatus") List<String> bookStatus
-);
-
-@Query("SELECT b FROM Booking b " +
-       "WHERE b.docId = :docId " +
-       "AND b.bookStatus IN ('confirmed', 'completed') " +
-       "AND b.createdAt BETWEEN :startOfDay AND :endOfDay")
-List<Booking> findConfirmedBookingsToday(
-    @Param("docId") Integer docId,
-    @Param("startOfDay") LocalDateTime startOfDay,
-    @Param("endOfDay") LocalDateTime endOfDay
-);
-
     List<Booking> findByCusIdOrderByBookIdAsc(Integer cusId);
+
+    int countBySlotIdAndBookStatusIn(Integer slotId, List<String> status);
+
+
+
+    @Query("""
+      SELECT b 
+      FROM Booking b 
+      WHERE b.cusId = :cusId 
+        AND b.bookStatus IN :bookStatus 
+      ORDER BY b.bookId DESC
+    """)
+    Optional<Booking> findLatestBooking(
+      @Param("cusId") Integer cusId,
+      @Param("bookStatus") List<String> bookStatus
+    );
+
+    @Query("SELECT b FROM Booking b " +
+          "WHERE b.docId = :docId " +
+          "AND b.bookStatus IN ('confirmed', 'completed') " +
+          "AND b.createdAt BETWEEN :startOfDay AND :endOfDay")
+    List<Booking> findConfirmedBookingsToday(
+        @Param("docId") Integer docId,
+        @Param("startOfDay") LocalDateTime startOfDay,
+        @Param("endOfDay") LocalDateTime endOfDay
+    );
 
 
     // Lấy tên dịch vụ và tên khách hàng theo bookId
@@ -64,4 +66,6 @@ List<Booking> findConfirmedBookingsToday(
        "JOIN Service s ON b.serId = s.serId " +
        "WHERE b.bookId = :bookId")
 BookingPatientService findBookingPatientServiceByBookId(@Param("bookId") Integer bookId);
+
+
 }

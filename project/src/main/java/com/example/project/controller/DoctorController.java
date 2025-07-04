@@ -9,13 +9,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 import com.example.project.dto.DocFullProfile;
 import com.example.project.entity.Doctor;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.service.DoctorManagementService;
+import java.util.Optional;
 
 
 
@@ -30,8 +35,6 @@ public class DoctorController {
     private DoctorManagementService doctorManagementService;
 
 
-
-
     @GetMapping("/doctors")
     public List<Doctor> getAllDoctors() {
         return doctorRepository.findAll();
@@ -40,6 +43,16 @@ public class DoctorController {
     @GetMapping("/doctors/{id}")
     public Doctor getDoctorById(@PathVariable Integer id) {
         return doctorRepository.findById(id).orElse(null);
+    }
+
+    @PostMapping("/doctors")
+    public Doctor createDoctor(@RequestBody Doctor doctor) {
+        return doctorManagementService.createDoctor(doctor);
+    }
+
+    @PutMapping("/doctors/{id}")
+    public Optional<Doctor> updateDoctor(@PathVariable Integer id, @RequestBody Doctor doctor) {
+        return doctorManagementService.updateDoctor(id, doctor);
     }
 
 

@@ -25,9 +25,10 @@ public class CusFullRecord {
     private String cusStatus;
     private CurrentMedicalRecord currentMedicalRecord;
     private CurrentBooking currentBooking;
-
+    // private String drugId; 
+    // private DrugItemWithBooking currentDrugItem;
     
-
+    
     @Getter
     @Setter
     public static class CurrentMedicalRecord {

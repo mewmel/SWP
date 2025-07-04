@@ -28,7 +28,12 @@ public interface WorkSlotRepository extends JpaRepository<WorkSlot, Integer> {
             @Param("endTime") String endTime
     );
 
+    List<WorkSlot> findByWorkDate(LocalDate workDate);
 
+    List<WorkSlot> findByDocIdAndWorkDate(Integer docId, LocalDate workDate);
+
+    
+    // Lấy danh sách các khung giờ làm việc của bác sĩ trong tuần
     @Query("SELECT w FROM WorkSlot w WHERE w.docId = :docId AND w.slotStatus = 'approved' AND w.workDate BETWEEN :from AND :to")
     List<WorkSlot> findApprovedSlotsByDoctorAndDateRange(
         @Param("docId") Integer docId,
