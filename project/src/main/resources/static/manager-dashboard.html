@@ -18,6 +18,10 @@
                 <i class="fas fa-users-cog"></i>
                 Quản lý bác sĩ
             </a>
+            <a href="quan-ly-benh-nhan.html" class="nav-link ">
+                <i class="fas fa-users-cog"></i>
+                Quản lý bệnh nhân
+            </a>
             <a href="sap-xep-lich-bac-si.html" class="nav-link">
                 <i class="fas fa-calendar-plus"></i>
                 Sắp xếp lịch làm
@@ -83,7 +87,7 @@
             </div>
         </div>
         
-        <div class="stat-card">
+<div class="stat-card">
             <div class="stat-content">
                 <div class="stat-label">Lịch hẹn hôm nay</div>
                 <div class="stat-value">12</div>
@@ -156,7 +160,7 @@
                         <td class="contact-info">
                             <div class="contact-phone">0901 234 567</div>
                             <div class="contact-email">nguyenvana@hospital.com</div>
-                        </td>
+</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn view" onclick="showDoctorDetail('BS001')" title="Xem chi tiết">
@@ -207,7 +211,7 @@
                                 <button class="action-btn view" onclick="showDoctorDetail('BS002')" title="Xem chi tiết">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="action-btn rate" onclick="showRatingModal('BS002')" title="Đánh giá">
+<button class="action-btn rate" onclick="showRatingModal('BS002')" title="Đánh giá">
                                     <i class="fas fa-star"></i>
                                 </button>
                                 <button class="action-btn view view-degree-btn" data-doctor="BS002" title="Bằng cấp">
@@ -257,7 +261,7 @@
                                 </button>
                                 <button class="action-btn view view-degree-btn" data-doctor="BS003" title="Bằng cấp">
                                     <i class="fas fa-user-graduate"></i>
-                                </button>
+</button>
                                 <button class="action-btn edit" title="Sửa">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -309,7 +313,7 @@
                                 <button class="action-btn delete" title="Xóa">
                                     <i class="fas fa-trash"></i>
                                 </button>
-                            </div>
+</div>
                     </td>
                 </tr>
                 <tr>
@@ -363,7 +367,7 @@
                             <img src="img/doctor3.png" alt="BS. Đặng Thị F" class="doctor-avatar">
                         </td>
                         <td class="doctor-name">BS. Đặng Thị F</td>
-                        <td><span class="doctor-id">BS006</span></td>
+<td><span class="doctor-id">BS006</span></td>
                         <td>Da liễu</td>
                         <td>Chăm sóc da</td>
                         <td>
@@ -423,7 +427,7 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="modal-body degree-modal-body">
+<div class="modal-body degree-modal-body">
             <div class="degree-content-wrapper">
                 <div class="degree-section">
                     <div class="section-header">
@@ -484,8 +488,8 @@
                     <label style="font-weight: 600; color: #374151; margin-bottom: 8px; display: block;">Chuyên môn:</label>
                     <ul id="editSpecialtyList" class="specialty-list"></ul>
                     <div style="margin-top: 12px; display: flex; gap: 8px;">
-                        <input type="text" id="newSpecialtyInput" placeholder="Thêm chuyên môn mới..." 
-                               style="flex: 1; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                        <input type="text" id="newSpecialtyInput" placeholder="Thêm chuyên môn mới..."
+style="flex: 1; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px;">
                         <button type="button" id="addSpecialtyBtn" class="btn btn-secondary">Thêm</button>
                     </div>
                 </div>
@@ -545,7 +549,7 @@
                     
                     <div class="info-card">
                         <div class="info-header">
-                            <i class="fas fa-chart-line"></i>
+<i class="fas fa-chart-line"></i>
                             Thống kê
                         </div>
                         <div class="info-content">
@@ -606,7 +610,7 @@
             
             <div id="reviewsTab" class="tab-content">
                 <div class="reviews-summary">
-                    <div class="rating-overview">
+<div class="rating-overview">
                         <div class="overall-rating">
                             <span class="rating-number" id="overallRating">4.8</span>
                             <div class="rating-stars-large">
@@ -668,7 +672,7 @@
             <form id="rateDoctorForm">
                 <div class="rating-section">
                     <label>Chọn mức đánh giá:</label>
-                    <div class="interactive-rating">
+<div class="interactive-rating">
                         <span class="rating-star" data-rating="1">☆</span>
                         <span class="rating-star" data-rating="2">☆</span>
                         <span class="rating-star" data-rating="3">☆</span>
@@ -708,7 +712,7 @@
                             <span class="criteria-star" data-criteria="effectiveness" data-rating="2">☆</span>
                             <span class="criteria-star" data-criteria="effectiveness" data-rating="3">☆</span>
                             <span class="criteria-star" data-criteria="effectiveness" data-rating="4">☆</span>
-                            <span class="criteria-star" data-criteria="effectiveness" data-rating="5">☆</span>
+<span class="criteria-star" data-criteria="effectiveness" data-rating="5">☆</span>
                         </div>
                     </div>
                 </div>
@@ -803,7 +807,7 @@ const doctorDegrees = {
         ],
         specialties: [
             {
-                title: 'Nhi tổng quát',
+title: 'Nhi tổng quát',
                 details: '7 năm kinh nghiệm'
             },
             {
@@ -908,8 +912,7 @@ function openDegreeModal(doctorId) {
         </div>
     `).join('');
     document.getElementById('degreeList').innerHTML = degreeListHtml;
-
-    // Render danh sách chuyên môn
+// Render danh sách chuyên môn
     const specialtyListHtml = data.specialties.map(specialty => `
         <div class="specialty-item">
             <div class="specialty-title">${specialty.title}</div>
@@ -977,7 +980,7 @@ function showDoctorDetail(doctorId) {
     
     // Sample schedule
     document.getElementById('doctorWeeklySchedule').innerHTML = `
-        <div class="schedule-grid">
+<div class="schedule-grid">
             <div class="day-column">
                 <div class="day-header">T2</div>
                 <div class="time-slot">08:00-12:00</div>
@@ -1052,7 +1055,7 @@ function showRatingModal(doctorId) {
         'BS002': 'BS. Trần Thị B', 
         'BS003': 'BS. Lê Văn C',
         'BS004': 'BS. Phạm Thị D',
-        'BS005': 'BS. Hoàng Văn E',
+'BS005': 'BS. Hoàng Văn E',
         'BS006': 'BS. Đặng Thị F'
     };
     
@@ -1147,7 +1150,7 @@ function submitRating() {
         rating: selectedRating,
         criteria: criteriaRatings,
         comment: comment
-    });
+});
     
     alert('Đánh giá đã được gửi thành công!');
     closeModal('rateDoctorModal');
@@ -1227,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.criteria-star').forEach(star => {
         star.addEventListener('click', function() {
             const criteria = this.dataset.criteria;
-            const rating = parseInt(this.dataset.rating);
+const rating = parseInt(this.dataset.rating);
             setCriteriaRating(criteria, rating);
         });
     });
