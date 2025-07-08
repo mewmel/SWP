@@ -145,12 +145,13 @@ async function renderSchedule() {
     console.log("fromDate:", fromDate, "toDate:", toDate);
     console.log("slots from API:", slots);
 
+// THÊM đoạn filter này:
+const approvedSlots = slots.filter(slot =>
+    (slot.startTime.startsWith("08") || slot.startTime.startsWith("14"))
+    && slot.slotStatus === "approved"
+);
 
-    // Nếu backend chưa filter thì filter tại đây:
-    // const approvedSlots = slots.filter(slot => slot.slotStatus === 'approved');
-    // const registeredSlots = mapSlotsForHighlight(approvedSlots);
-
-    const registeredSlots = mapSlotsForHighlight(slots);
+    const registeredSlots = mapSlotsForHighlight(approvedSlots);
         console.log('registeredSlots:', registeredSlots);
 
 
