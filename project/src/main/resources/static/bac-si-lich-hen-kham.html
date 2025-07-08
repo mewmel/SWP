@@ -109,7 +109,7 @@
 
         .detail-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 16px;
         }
 
@@ -707,19 +707,14 @@
                                         <span class="status-badge" id="statusBadge">--</span>
                                     </span>
                                 </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">
-                                        <i class="fas fa-calendar-plus"></i> Ngày tạo
-                                    </span>
-                                    <span class="detail-value" id="createdAt">N/A</span>
-                                </div>
+
                             </div>
                         </div>
 
                         <div class="follow-up-info" id="followUpInfo" style="display: none;">
                             <div class="follow-up-badge">
                                 <i class="fas fa-redo-alt"></i>
-                                <span>Tái khám dịch vụ: <strong id="followUpService">Tên dịch vụ</strong></span>
+                                <span>Tái khám bước điều trị: <strong id="followUpService">Tên bước điều trị</strong></span>
                             </div>
                             <div class="previous-visit">
                                 <i class="fas fa-history"></i>
@@ -884,7 +879,6 @@ function createSampleAppointment(isFollowUp = false) {
     // Detail info
     appointmentCard.querySelector('#customerId').textContent = isFollowUp ? 'BN #12345' : 'BN #12346';
     appointmentCard.querySelector('#customerPhone').textContent = isFollowUp ? '0352020737' : '0987654321';
-    appointmentCard.querySelector('#createdAt').textContent = isFollowUp ? '20/06/2024' : '23/06/2024';
     
     // Status
     const statusBadge = appointmentCard.querySelector('#statusBadge');
@@ -895,7 +889,7 @@ function createSampleAppointment(isFollowUp = false) {
     const followUpInfo = appointmentCard.querySelector('#followUpInfo');
     if (isFollowUp) {
         followUpInfo.style.display = 'block';
-        appointmentCard.querySelector('#followUpService').textContent = 'Liệu trình điều trị IVF';
+        appointmentCard.querySelector('#followUpService').textContent = 'Siêu âm noãn (theo dõi nang noãn phát triển)';
         appointmentCard.querySelector('#previousVisit').textContent = '20/06/2024';
     }
 
@@ -916,7 +910,75 @@ function createSampleAppointment(isFollowUp = false) {
     return appointmentCard;
 }
 
-// Demo function để load appointments mẫu
+// Demo function để tạo appointment với subService cụ thể
+function createSubServiceAppointment(subServiceName, subServiceDescription, patientName, time, isFollowUp = true) {
+    const template = document.getElementById('bookingTemplate');
+    const appointmentCard = template.cloneNode(true);
+    appointmentCard.id = 'appointment-' + Date.now() + Math.random();
+    appointmentCard.style.display = 'block';
+    appointmentCard.classList.remove('template');
+
+    // Thông tin cơ bản
+    appointmentCard.querySelector('#patientName').textContent = patientName;
+    appointmentCard.querySelector('#appointmentTime').textContent = time;
+    
+    // Booking type
+    const bookingTypeBadge = appointmentCard.querySelector('#bookingTypeBadge');
+    const bookingType = appointmentCard.querySelector('#bookingType');
+    
+    if (isFollowUp) {
+        bookingTypeBadge.classList.add('follow-up');
+        bookingType.innerHTML = '<i class="fas fa-redo-alt"></i> Tái khám';
+    } else {
+        bookingTypeBadge.classList.add('initial');
+        bookingType.innerHTML = '<i class="fas fa-user-plus"></i> Khám lần đầu';
+    }
+
+    // Service info (hiển thị service chính)
+    if (isFollowUp) {
+        appointmentCard.querySelector('#serviceName').textContent = 'Liệu trình điều trị IVF';
+    } else {
+        appointmentCard.querySelector('#serviceName').textContent = 'Khám tiền đăng ký điều trị (IVF/IUI)';
+    }
+
+    // Detail info
+    const phoneNumbers = ['0352020737', '0987654321', '0912345678', '0933444555'];
+    const customerIds = ['BN #12345', 'BN #12346', 'BN #12347', 'BN #12348'];
+    const randomIndex = Math.floor(Math.random() * phoneNumbers.length);
+    
+    appointmentCard.querySelector('#customerId').textContent = customerIds[randomIndex];
+    appointmentCard.querySelector('#customerPhone').textContent = phoneNumbers[randomIndex];
+    
+    // Status
+    const statusBadge = appointmentCard.querySelector('#statusBadge');
+    statusBadge.textContent = 'Chờ xác nhận';
+    statusBadge.classList.add('pending');
+
+    // Follow-up info với subService cụ thể
+    const followUpInfo = appointmentCard.querySelector('#followUpInfo');
+    if (isFollowUp) {
+        followUpInfo.style.display = 'block';
+        appointmentCard.querySelector('#followUpService').textContent = subServiceName + ' (' + subServiceDescription + ')';
+        appointmentCard.querySelector('#previousVisit').textContent = '20/06/2024';
+    }
+
+    // Note
+    const appointmentNote = appointmentCard.querySelector('#appointmentNote');
+    appointmentNote.style.display = 'block';
+    if (isFollowUp) {
+        appointmentCard.querySelector('#noteText').textContent = `Xin hẹn lại để thực hiện bước: ${subServiceName}. ${subServiceDescription}`;
+    } else {
+        appointmentCard.querySelector('#noteText').textContent = 'Muốn được tư vấn về phương pháp điều trị hiếm muộn phù hợp.';
+    }
+
+    // Show confirm/reject buttons for pending appointments
+    appointmentCard.querySelector('#btnConfirm').style.display = 'inline-flex';
+    appointmentCard.querySelector('#btnReject').style.display = 'inline-flex';
+
+    return appointmentCard;
+}
+
+// Demo function để load appointments mẫu với ví dụ tái khám
 function loadSampleAppointments() {
     const appointmentsList = document.getElementById('appointmentsList');
     
@@ -924,11 +986,18 @@ function loadSampleAppointments() {
     const existingAppointments = appointmentsList.querySelectorAll('.appointment-card:not(.template)');
     existingAppointments.forEach(card => card.remove());
 
-    // Add sample appointments
-    const followUpAppointment = createSampleAppointment(true);
-    const initialAppointment = createSampleAppointment(false);
-    
+    // Tạo 1 ví dụ tái khám với subService từ database
+    const followUpAppointment = createSubServiceAppointment(
+        'Siêu âm noãn', 
+        'Theo dõi nang noãn phát triển', 
+        'Nguyễn Thị Mai (BN #12345)', 
+        '24/06/2024 14:00', 
+        true
+    );
     appointmentsList.appendChild(followUpAppointment);
+
+    // Thêm 1 appointment khám lần đầu
+    const initialAppointment = createSampleAppointment(false);
     appointmentsList.appendChild(initialAppointment);
 
     // Update pending count
