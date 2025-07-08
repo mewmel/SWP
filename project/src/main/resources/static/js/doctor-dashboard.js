@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     actions.innerHTML = '';
                 }
-
+                loadAndRenderTestResults(b.bookId);
                 // Thêm vào danh sách
                 scheduleList.appendChild(clone);
             }
@@ -130,13 +130,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Show notification
     function showNotification(message, type = 'success') {
-    alert(`${type.toUpperCase()}: ${message}`);
-}
-//code tồi
-        // Show notification
+        alert(`${type.toUpperCase()}: ${message}`);
+    }
+    //code tồi
+    // Show notification
     function showNotification(message, type = 'error') {
-    alert(`${type.toUpperCase()}: ${message}`);
-}
+        alert(`${type.toUpperCase()}: ${message}`);
+    }
 
     // Remove old modal functions - will be redefined later to match database structure
 
@@ -652,101 +652,83 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // ========== EDITABLE TEST RESULTS FUNCTIONS ==========
-
-    // Add new test item
-    window.addNewTestItem = function () {
+   window.addNewTestItem = function () {
         const testContainer = document.querySelector('.booking-steps-results');
-        const testCount = testContainer.children.length + 1;
+        const testCount = testContainer.querySelectorAll('.step-result-item').length + 1;
 
         const newTestItem = document.createElement('div');
         newTestItem.className = 'step-result-item';
         newTestItem.innerHTML = `
-            <div class="step-result-header">
-                <div class="step-info">
-                    <h6 contenteditable="true" class="editable-title">Xét nghiệm mới ${testCount}</h6>
-                    <input type="datetime-local" class="editable-date" value="${new Date().toISOString().slice(0, 16)}">
-                </div>
-                <select class="step-status-select">
-                    <option value="pending" selected>Đang chờ</option>
-                    <option value="completed">Hoàn thành</option>
-                    <option value="cancelled">Đã hủy</option>
-                </select>
+        <div class="step-result-header">
+            <div class="step-info">
+                <h6 contenteditable="true" class="editable-title">Xét nghiệm mới ${testCount}</h6>
+                <input type="datetime-local" class="editable-date" value="${new Date().toISOString().slice(0, 16)}">
             </div>
-            <div class="step-result-content">
-                <div class="result-grid">
-                    <div class="result-item">
-                        <input type="text" class="editable-label" value="Chỉ số 1" placeholder="Tên chỉ số">:
-                        <input type="text" class="editable-result" value="" placeholder="Giá trị">
-                        <select class="unit-select">
-                            <option value="mg/ml">mg/ml</option>
-                            <option value="mIU/ml">mIU/ml</option>
-                            <option value="ng/ml">ng/ml</option>
-                            <option value="pg/ml">pg/ml</option>
-                            <option value="triệu/ml">triệu/ml</option>
-                            <option value="%">%</option>
-                        </select>
-                        <select class="status-select">
-                            <option value="Bình thường" selected>Bình thường</option>
-                            <option value="Cao">Cao</option>
-                            <option value="Thấp">Thấp</option>
-                            <option value="Bất thường">Bất thường</option>
-                        </select>
-                        <button type="button" class="remove-test-item-btn" onclick="removeTestResultItem(this)">
-                            <i class="fas fa-trash"></i> Xóa
-                        </button>
-                    </div>
-                </div>
-                <button type="button" class="add-test-item-btn" onclick="addTestResultRow(this)" style="margin-top: 8px; padding: 8px 16px; font-size: 0.8rem;">
-                    <i class="fas fa-plus"></i> Thêm chỉ số
-                </button>
-                <div class="result-note">
-                    <strong>Ghi chú:</strong> 
-                    <textarea class="editable-note" placeholder="Nhập ghi chú..."></textarea>
-                </div>
-                <button type="button" class="remove-test-item-btn" onclick="removeTestItem(this)" style="margin-top: 16px;">
-                    <i class="fas fa-trash"></i> Xóa toàn bộ xét nghiệm
-                </button>
+            <select class="step-status-select">
+                <option value="completed">Hoàn thành</option>
+                <option value="pending" selected>Đang chờ</option>
+                <option value="cancelled">Đã hủy</option>
+            </select>
+        </div>
+        <div class="step-result-content">
+            <div class="result-grid">
+                ${createResultItemHtml()}
             </div>
-        `;
-
+            <button type="button" class="add-test-item-btn" onclick="addTestResultRow(this)" style="margin-top: 8px; padding: 8px 16px; font-size: 0.8rem;">
+                <i class="fas fa-plus"></i> Thêm chỉ số
+            </button>
+            <div class="result-note">
+                <strong>Ghi chú:</strong> 
+                <textarea class="editable-note" placeholder="Nhập ghi chú..."></textarea>
+            </div>
+            <button type="button" class="remove-test-item-btn" onclick="removeTestItem(this)" style="margin-top: 16px;">
+                <i class="fas fa-trash"></i> Xóa toàn bộ xét nghiệm
+            </button>
+        </div>
+    `;
         testContainer.appendChild(newTestItem);
-
-        // Show notification
         if (typeof showNotification === 'function') {
             showNotification('Đã thêm xét nghiệm mới!', 'success');
         }
     };
 
+    function createResultItemHtml(label = '', value = '', unit = '', status = 'Bình thường', editable = true) {
+        return `
+        <div class="result-item">
+            <input type="text" class="editable-label" value="${label}" placeholder="Tên chỉ số" ${editable ? '' : 'readonly'}>
+            :
+            <input type="text" class="editable-result" value="${value}" placeholder="Giá trị" ${editable ? '' : 'readonly'}>
+            <select class="unit-select" ${editable ? '' : 'disabled'}>
+                <option value="triệu/ml"${unit === 'triệu/ml' ? ' selected' : ''}>triệu/ml</option>
+                <option value="mg/ml"${unit === 'mg/ml' ? ' selected' : ''}>mg/ml</option>
+                <option value="mIU/ml"${unit === 'mIU/ml' ? ' selected' : ''}>mIU/ml</option>
+                <option value="ng/ml"${unit === 'ng/ml' ? ' selected' : ''}>ng/ml</option>
+                <option value="pg/ml"${unit === 'pg/ml' ? ' selected' : ''}>pg/ml</option>
+                <option value="%"${unit === '%' ? ' selected' : ''}>%</option>
+            </select>
+            <select class="status-select" ${editable ? '' : 'disabled'}>
+                <option value="Bình thường"${status === 'Bình thường' ? ' selected' : ''}>Bình thường</option>
+                <option value="Cao"${status === 'Cao' ? ' selected' : ''}>Cao</option>
+                <option value="Thấp"${status === 'Thấp' ? ' selected' : ''}>Thấp</option>
+                <option value="Bất thường"${status === 'Bất thường' ? ' selected' : ''}>Bất thường</option>
+            </select>
+            ${editable ? `
+                <button type="button" class="remove-test-item-btn" onclick="removeTestResultItem(this)">
+                    <i class="fas fa-trash"></i> Xóa
+                </button>
+            ` : ''}
+        </div>
+    `;
+    }
+
+
+
     // Add test result row to existing test
     window.addTestResultRow = function (button) {
         const resultGrid = button.parentElement.querySelector('.result-grid');
-
-        const newResultItem = document.createElement('div');
-        newResultItem.className = 'result-item';
-        newResultItem.innerHTML = `
-            <input type="text" class="editable-label" value="Chỉ số mới" placeholder="Tên chỉ số">:
-            <input type="text" class="editable-result" value="" placeholder="Giá trị">
-            <select class="unit-select">
-                <option value="mg/ml">mg/ml</option>
-                <option value="mIU/ml">mIU/ml</option>
-                <option value="ng/ml">ng/ml</option>
-                <option value="pg/ml">pg/ml</option>
-                <option value="triệu/ml">triệu/ml</option>
-                <option value="%">%</option>
-            </select>
-            <select class="status-select">
-                <option value="Bình thường" selected>Bình thường</option>
-                <option value="Cao">Cao</option>
-                <option value="Thấp">Thấp</option>
-                <option value="Bất thường">Bất thường</option>
-            </select>
-            <button type="button" class="remove-test-item-btn" onclick="removeTestResultItem(this)">
-                <i class="fas fa-trash"></i> Xóa
-            </button>
-        `;
-
-        resultGrid.appendChild(newResultItem);
+        resultGrid.insertAdjacentHTML('beforeend', createResultItemHtml());
     };
+
 
     // Remove individual test result item
     window.removeTestResultItem = function (button) {
@@ -765,56 +747,158 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+
     // Save all test results
     window.saveAllTestResults = function () {
         const testItems = document.querySelectorAll('.step-result-item');
-        const results = [];
-
+        const testResults = [];
         testItems.forEach(item => {
-            const title = item.querySelector('.editable-title').textContent;
-            const date = item.querySelector('.editable-date').value;
-            const status = item.querySelector('.step-status-select').value;
+            const bookingStepId = item.dataset.bookingStepId || null;
+            const subId = item.dataset.subId;
+            const subName = item.querySelector('.editable-title').textContent.trim();
+            const performedAt = item.querySelector('.editable-date').value;
+            const stepStatus = item.querySelector('.step-status-select').value;
             const note = item.querySelector('.editable-note').value;
 
-            const resultItems = [];
+            const results = [];
             item.querySelectorAll('.result-item').forEach(resultItem => {
-                const label = resultItem.querySelector('.editable-label').value;
-                const value = resultItem.querySelector('.editable-result').value;
-                const unit = resultItem.querySelector('.unit-select').value;
-                const resultStatus = resultItem.querySelector('.status-select').value;
-
-                resultItems.push({ label, value, unit, status: resultStatus });
+                results.push({
+                    indexName: resultItem.querySelector('.editable-label').value.trim(),
+                    value: resultItem.querySelector('.editable-result').value.trim(),
+                    unit: resultItem.querySelector('.unit-select').value,
+                    status: resultItem.querySelector('.status-select').value
+                });
             });
 
-            results.push({ title, date, status, note, results: resultItems });
+            testResults.push({
+                bookingStepId,
+                subId,
+                subName,
+                performedAt,
+                results,
+                note,
+                stepStatus
+            });
         });
+            // LOG PAYLOAD TRƯỚC KHI GỬI
+    console.log("Test Results Payload:", testResults);
 
-        console.log('Saving test results:', results);
-
-        // Here you would send data to backend
-        // Example: saveTestResultsToAPI(results);
-
-        if (typeof showNotification === 'function') {
-            showNotification('Đã lưu tất cả kết quả xét nghiệm!', 'success');
-        } else {
-            alert('Đã lưu tất cả kết quả xét nghiệm!');
+// Gửi về backend: /api/booking-steps/save-test-results
+    fetch('/api/booking-steps/save-test-results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testResults)
+    })
+    .then(async res => {
+        // Log toàn bộ response nếu bị lỗi
+        if (!res.ok) {
+            const errMsg = await res.text();
+            console.error("API save-test-results error:", errMsg);
+            throw new Error(errMsg);
         }
+        return res.json();
+    })
+    .then(data => {
+        if (typeof showNotification === 'function') showNotification('Đã lưu tất cả kết quả xét nghiệm!', 'success');
+        else alert('Đã lưu tất cả kết quả xét nghiệm!');
+    })
+    .catch((err) => {
+        alert('Lưu thất bại!');
+        console.error('Lỗi khi lưu test results:', err);
+    });
     };
 
 
 
-    // Auto-save functionality
-    let saveTimeout;
-    document.addEventListener('input', function (e) {
-        if (e.target.matches('.editable-title, .editable-date, .editable-result, .editable-label, .editable-note, .step-status-select, .unit-select, .status-select, .result-value-select, .editable-detailed-result')) {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                // Auto-save after 2 seconds of no input
-                console.log('Auto-saving changes...');
-                // You can implement auto-save to backend here
-            }, 2000);
+    // Render test results from backend
+    // This function should be called after fetching test results from the API
+    window.renderTestResults = function (testResults) {
+        const testContainer = document.querySelector('.booking-steps-results');
+        testContainer.innerHTML = ''; // clear cũ
+
+        testResults.forEach(test => {
+            const isEditable = test.stepStatus !== 'completed';
+            const newTestItem = document.createElement('div');
+            newTestItem.className = 'step-result-item';
+            newTestItem.dataset.bookingStepId = test.bookingStepId || '';
+            newTestItem.dataset.subServiceId = test.subServiceId;
+
+            // editable-title: chỉ cho edit nếu chưa completed
+            const titleReadOnly = isEditable ? 'contenteditable="true"' : 'contenteditable="false"';
+            // Thêm nút "Thêm chỉ số" nếu còn edit
+            const addRowBtn = isEditable ? `
+            <button type="button" class="add-test-item-btn" onclick="addTestResultRow(this)" style="margin-top: 8px; padding: 8px 16px; font-size: 0.8rem;">
+                <i class="fas fa-plus"></i> Thêm chỉ số
+            </button>` : '';
+
+            newTestItem.innerHTML = `
+            <div class="step-result-header">
+                <div class="step-info">
+                    <h6 ${titleReadOnly} class="editable-title">${test.subName || ''}</h6>
+                    <input type="datetime-local" class="editable-date" value="${formatDateTimeLocal(test.performedAt)}" ${isEditable ? '' : 'readonly'}>
+                </div>
+                <select class="step-status-select" ${isEditable ? '' : 'disabled'}>
+                    <option value="completed"${test.stepStatus === 'completed' ? ' selected' : ''}>Hoàn thành</option>
+                    <option value="pending"${test.stepStatus === 'pending' ? ' selected' : ''}>Đang chờ</option>
+                    <option value="cancelled"${test.stepStatus === 'inactive' ? ' selected' : ''}>Không kích hoạt</option>
+                </select>
+            </div>
+            <div class="step-result-content">
+                <div class="result-grid"></div>
+                ${addRowBtn}
+                <div class="result-note">
+                    <strong>Ghi chú:</strong>
+                    <textarea class="editable-note" placeholder="Nhập ghi chú..." ${isEditable ? '' : 'readonly'}>${test.note || ''}</textarea>
+                </div>
+                ${isEditable ? `<button type="button" class="remove-test-item-btn" onclick="removeTestItem(this)" style="margin-top: 16px;"><i class="fas fa-trash"></i> Xóa toàn bộ xét nghiệm</button>` : ''}
+            </div>
+        `;
+
+            // Render từng result-item, cho xóa nếu isEditable
+            const grid = newTestItem.querySelector('.result-grid');
+            (test.results || []).forEach(res => {
+                grid.insertAdjacentHTML('beforeend', createResultItemHtml(
+                    res.indexName || '',
+                    res.value || '',
+                    res.unit || '',
+                    res.status || 'Bình thường',
+                    isEditable // truyền cờ này xuống để show/hide nút xóa
+                ));
+            });
+            if (!test.results || !test.results.length) {
+                grid.insertAdjacentHTML('beforeend', createResultItemHtml('', '', '', 'Bình thường', isEditable));
+            }
+            testContainer.appendChild(newTestItem);
+        });
+    };
+
+
+
+
+
+    function formatDateTimeLocal(isoString) {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        // Trả ra format yyyy-MM-ddTHH:mm cho input type="datetime-local"
+        return date.toISOString().slice(0, 16);
+    }
+    // Ví dụ gọi API khi chuyển tab/hoặc khi load trang
+    async function loadAndRenderTestResults(bookId) {
+        try {
+            const res = await fetch(`/api/booking-steps/test-results/${bookId}`); // Sửa path nếu cần
+            if (!res.ok) throw new Error('API error');
+            const data = await res.json();
+                    // Log kết quả subservice:
+        console.log('Test Results API:', data);
+
+
+            window.renderTestResults(data);
+        } catch (e) {
+            window.renderTestResults([]); // Hiện form trống
         }
-    });
+    }
+
+
 
 
     // ========== SERVICE SELECTION AND STEP FORM ==========
@@ -996,18 +1080,18 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // ========== PRESCRIPTION TAB FUNCTIONS ==========
-// Drug counter for unique IDs
-let drugCounter = 0;
+    // Drug counter for unique IDs
+    let drugCounter = 0;
 
-window.addDrugPrescription = function () {
-    drugCounter++;
-    const drugsList = document.getElementById('drugsList');
+    window.addDrugPrescription = function () {
+        drugCounter++;
+        const drugsList = document.getElementById('drugsList');
 
-    const itemId = `drugItem${drugCounter}`;
+        const itemId = `drugItem${drugCounter}`;
 
-    const newDrugItem = document.createElement('div');
-    newDrugItem.className = 'drug-item';
-    newDrugItem.innerHTML = `
+        const newDrugItem = document.createElement('div');
+        newDrugItem.className = 'drug-item';
+        newDrugItem.innerHTML = `
         <div class="drug-header">
             <h6><i class="fas fa-capsules"></i> Thuốc #${drugCounter}</h6>
             <button type="button" class="btn-remove-drug" onclick="window.removeDrugPrescription(this)" title="Xóa thuốc này">
@@ -1042,160 +1126,160 @@ window.addDrugPrescription = function () {
         </div>
     `;
 
-    drugsList.appendChild(newDrugItem);
-};
-
-// Fill prescription header with doctor name and drug ID
-const drugId = localStorage.getItem('drugId') || '';
-function fillPrescriptionHeader() {
-    const nameInput = document.getElementById('prescribingDoctorName');
-
-
-    const fullName = localStorage.getItem('docFullName');
-
-
-    if (nameInput) nameInput.value = fullName || '';
-
-
-    // lấy ttin dưới db lên bằng api
-
-}
-fillPrescriptionHeader();
-
-// Remove drug item
-window.removeDrugPrescription = function (button) {
-    const drugItem = button.closest('.drug-item');
-    if (!drugItem) return;
-
-    if (confirm('Bạn có chắc chắn muốn xóa thuốc này?')) {
-        drugItem.style.transition = 'all 0.3s ease';
-        drugItem.style.opacity = '0';
-        drugItem.style.transform = 'translateX(-20px)';
-
-        setTimeout(() => {
-            drugItem.remove();
-            updatePrescriptionSummary();
-            renumberDrugs();
-        }, 300);
-    }
-};
-
-// Renumber drug items
-function renumberDrugs() {
-    const items = document.querySelectorAll('#drugsList .drug-item');
-    items.forEach((item, idx) => {
-        const header = item.querySelector('.drug-header h6');
-        if (header) header.innerHTML = `<i class="fas fa-capsules"></i> Thuốc #${idx + 1}`;
-    });
-}
-
-// Update summary
-function updatePrescriptionSummary() {
-    const items = document.querySelectorAll('#drugsList .drug-item');
-    const count = items.length;
-    document.querySelector('#prescriptionTab .stat-item .stat-number').textContent = count;
-}
-
-
-function collectPrescriptionData() {
-    const drugs = [];
-    const drugItems = document.querySelectorAll('#prescriptionTab .drug-item');
-
-    drugItems.forEach(item => {
-        const drugNameInput = item.querySelector('input[id^="drugName-"]');
-        const dosageInput = item.querySelector('input[id^="dosage-"]');
-        const frequencyInput = item.querySelector('input[id^="frequency-"]');
-        const durationInput = item.querySelector('input[id^="duration-"]');
-        const instructionsTextarea = item.querySelector('textarea[id^="drugItemNote-"]');
-
-        const drugName = drugNameInput?.value?.trim() || '';
-        const dosage = dosageInput?.value?.trim() || '';
-        const frequency = frequencyInput?.value?.trim() || '';
-        const duration = durationInput?.value?.trim() || '';
-        const drugItemNote = instructionsTextarea?.value?.trim() || '';
-
-        if (drugName !== '') {
-            drugs.push({
-                drugName,
-                dosage,
-                frequency,
-                duration,
-                drugItemNote,
-            });
-        }
-    });
-
-    // Final prescription data
-    return {
-        prescriptionNumber: document.getElementById('prescriptionNumber')?.value || '',
-        prescriptionDate: document.getElementById('prescriptionDate')?.value || '',
-        doctorName: document.getElementById('prescribingDoctorName')?.value || '',
-        diagnosis: document.getElementById('prescriptionDiagnosis')?.value || '',
-        drugs: drugs,
-        generalNotes: document.getElementById('generalNotes')?.value || '',
-
+        drugsList.appendChild(newDrugItem);
     };
-}
 
-window.savePrescription = async function () {
-    const data = collectPrescriptionData();
-
+    // Fill prescription header with doctor name and drug ID
     const drugId = localStorage.getItem('drugId') || '';
+    function fillPrescriptionHeader() {
+        const nameInput = document.getElementById('prescribingDoctorName');
 
 
-    if (!data.prescriptionNumber) {
-        showNotification('❌ Không tìm thấy prescriptionNumber. Vui lòng kiểm tra lại.', 'error');
-        return;
+        const fullName = localStorage.getItem('docFullName');
+
+
+        if (nameInput) nameInput.value = fullName || '';
+
+
+        // lấy ttin dưới db lên bằng api
+
+    }
+    fillPrescriptionHeader();
+
+    // Remove drug item
+    window.removeDrugPrescription = function (button) {
+        const drugItem = button.closest('.drug-item');
+        if (!drugItem) return;
+
+        if (confirm('Bạn có chắc chắn muốn xóa thuốc này?')) {
+            drugItem.style.transition = 'all 0.3s ease';
+            drugItem.style.opacity = '0';
+            drugItem.style.transform = 'translateX(-20px)';
+
+            setTimeout(() => {
+                drugItem.remove();
+                updatePrescriptionSummary();
+                renumberDrugs();
+            }, 300);
+        }
+    };
+
+    // Renumber drug items
+    function renumberDrugs() {
+        const items = document.querySelectorAll('#drugsList .drug-item');
+        items.forEach((item, idx) => {
+            const header = item.querySelector('.drug-header h6');
+            if (header) header.innerHTML = `<i class="fas fa-capsules"></i> Thuốc #${idx + 1}`;
+        });
     }
 
-    try {
-        // 1. Cập nhật bảng Drug
-        const updateDrugRes = await fetch(`/api/drugs/update/${drugId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                createdAt: data.prescriptionDate || new Date().toISOString(),
-                note: data.diagnosis || ''
-            })
-        });
-
-        if (!updateDrugRes.ok) throw new Error('Không thể cập nhật đơn thuốc');
-
-        // 2. Tạo mới các bản ghi DrugItem liên kết với drugId
-        const drugItemsPayload = data.drugs.map(item => ({ 
-            drugName: item.drugName,
-            dosage: item.dosage,
-            frequency: item.frequency,
-            duration: item.duration,
-            drugItemNote: item.drugItemNote
-        }));
-
-        const drugItemRes = await fetch(`/api/drug-items/create/${drugId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(drugItemsPayload)
-        });
-
-        if (!drugItemRes.ok) throw new Error('Không thể lưu thuốc con');
-
-        showNotification('💊 Đã lưu đơn thuốc thành công!', 'success');
-    } catch (err) {
-        console.error(err);
-        showNotification('❌ Có lỗi khi lưu đơn thuốc', 'error');
+    // Update summary
+    function updatePrescriptionSummary() {
+        const items = document.querySelectorAll('#drugsList .drug-item');
+        const count = items.length;
+        document.querySelector('#prescriptionTab .stat-item .stat-number').textContent = count;
     }
-};
+
+
+    function collectPrescriptionData() {
+        const drugs = [];
+        const drugItems = document.querySelectorAll('#prescriptionTab .drug-item');
+
+        drugItems.forEach(item => {
+            const drugNameInput = item.querySelector('input[id^="drugName-"]');
+            const dosageInput = item.querySelector('input[id^="dosage-"]');
+            const frequencyInput = item.querySelector('input[id^="frequency-"]');
+            const durationInput = item.querySelector('input[id^="duration-"]');
+            const instructionsTextarea = item.querySelector('textarea[id^="drugItemNote-"]');
+
+            const drugName = drugNameInput?.value?.trim() || '';
+            const dosage = dosageInput?.value?.trim() || '';
+            const frequency = frequencyInput?.value?.trim() || '';
+            const duration = durationInput?.value?.trim() || '';
+            const drugItemNote = instructionsTextarea?.value?.trim() || '';
+
+            if (drugName !== '') {
+                drugs.push({
+                    drugName,
+                    dosage,
+                    frequency,
+                    duration,
+                    drugItemNote,
+                });
+            }
+        });
+
+        // Final prescription data
+        return {
+            prescriptionNumber: document.getElementById('prescriptionNumber')?.value || '',
+            prescriptionDate: document.getElementById('prescriptionDate')?.value || '',
+            doctorName: document.getElementById('prescribingDoctorName')?.value || '',
+            diagnosis: document.getElementById('prescriptionDiagnosis')?.value || '',
+            drugs: drugs,
+            generalNotes: document.getElementById('generalNotes')?.value || '',
+
+        };
+    }
+
+    window.savePrescription = async function () {
+        const data = collectPrescriptionData();
+
+        const drugId = localStorage.getItem('drugId') || '';
+
+
+        if (!data.prescriptionNumber) {
+            showNotification('❌ Không tìm thấy prescriptionNumber. Vui lòng kiểm tra lại.', 'error');
+            return;
+        }
+
+        try {
+            // 1. Cập nhật bảng Drug
+            const updateDrugRes = await fetch(`/api/drugs/update/${drugId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    createdAt: data.prescriptionDate || new Date().toISOString(),
+                    note: data.diagnosis || ''
+                })
+            });
+
+            if (!updateDrugRes.ok) throw new Error('Không thể cập nhật đơn thuốc');
+
+            // 2. Tạo mới các bản ghi DrugItem liên kết với drugId
+            const drugItemsPayload = data.drugs.map(item => ({
+                drugName: item.drugName,
+                dosage: item.dosage,
+                frequency: item.frequency,
+                duration: item.duration,
+                drugItemNote: item.drugItemNote
+            }));
+
+            const drugItemRes = await fetch(`/api/drug-items/create/${drugId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(drugItemsPayload)
+            });
+
+            if (!drugItemRes.ok) throw new Error('Không thể lưu thuốc con');
+
+            showNotification('💊 Đã lưu đơn thuốc thành công!', 'success');
+        } catch (err) {
+            console.error(err);
+            showNotification('❌ Có lỗi khi lưu đơn thuốc', 'error');
+        }
+    };
 
 
 
-window.previewPrescription = function () {
+    window.previewPrescription = function () {
 
-    const prescriptionData = collectPrescriptionData();
+        const prescriptionData = collectPrescriptionData();
 
-    const previewContent = `
+        const previewContent = `
         <div style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white;">
             <h3 style="text-align: center; margin-bottom: 20px;">Xem trước đơn thuốc</h3>
             <div style="margin-bottom: 15px;">
@@ -1222,8 +1306,8 @@ window.previewPrescription = function () {
         </div>
     `;
 
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
         position: fixed;
         top: 0;
         left: 0;
@@ -1235,16 +1319,16 @@ window.previewPrescription = function () {
         align-items: center;
         justify-content: center;
     `;
-    overlay.innerHTML = previewContent;
+        overlay.innerHTML = previewContent;
 
-    overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) {
-            overlay.remove();
-        }
-    });
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) {
+                overlay.remove();
+            }
+        });
 
-    document.body.appendChild(overlay);
-};
+        document.body.appendChild(overlay);
+    };
 
 
 });

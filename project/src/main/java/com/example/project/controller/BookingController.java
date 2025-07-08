@@ -43,18 +43,6 @@ public class BookingController {
         return ResponseEntity.ok(java.util.Map.of("success", true, "newAccount", isNewAccount));
     }
 
-    // API lấy danh sách booking theo docId
-    @GetMapping("/booking/doctor/{docId}")
-    public ResponseEntity<List<Booking>> getBookingsByDoctor(@PathVariable Integer docId) {
-        try {
-            List<Booking> bookings = bookingRepository.findByDocIdOrderByCreatedAt(docId);
-            return ResponseEntity.ok(bookings);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
-    }
-
     // API lấy chi tiết một booking theo bookId
     @GetMapping("/booking/{bookId}")
     public ResponseEntity<Booking> getBookingDetail(@PathVariable Integer bookId) {
@@ -169,6 +157,19 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
         return ResponseEntity.status(404).body("Booking not found");
     }
 
+
+        // API lấy danh sách booking theo docId
+    @GetMapping("/booking/doctor/{docId}")
+    public ResponseEntity<List<Booking>> getBookingsByDoctor(@PathVariable Integer docId) {
+        try {
+            List<Booking> bookings = bookingRepository.findByDocIdOrderByCreatedAt(docId);
+            return ResponseEntity.ok(bookings);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+    
     // Lấy thông tin tên khách hàng và tên dịch vụ của 1 booking theo bookId
     //PUT /api/booking/patient-service/{bookId}
 @GetMapping("/booking/patient-service/{bookId}")

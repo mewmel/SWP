@@ -8,9 +8,13 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
+import com.example.project.dto.TestResult;
 import com.example.project.dto.VisitSubService;
 import com.example.project.entity.Booking;
 import com.example.project.entity.BookingStep;
@@ -18,6 +22,10 @@ import com.example.project.entity.SubService;
 import com.example.project.repository.BookingRepository;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import java.util.ArrayList;
 
 
 @Service
@@ -134,4 +142,85 @@ public VisitSubService getSubServicesForBooking(Integer bookId) {
         return true;
     }
 
+public List<TestResult> getTestResultsForBooking(Integer bookId) {
+        Booking booking = bookingRepo.findById(bookId)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID = " + bookId));
+        Integer serId = booking.getSerId();
+
+        // Lấy tất cả subService thuộc service này, tên chứa "Xét nghiệm"
+        List<SubService> testSubs = subServiceRepo.findTestSubServices(serId, "Xét nghiệm");
+
+        // Lấy bookingSteps hiện tại của booking này (map subId -> step)
+        List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
+        Map<Integer, BookingStep> subIdToStep = steps.stream()
+                .collect(Collectors.toMap(BookingStep::getSubId, s -> s));
+
+        List<TestResult> result = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+
+        for (SubService sub : testSubs) {
+            BookingStep step = subIdToStep.get(sub.getSubId());
+            TestResult tr = new TestResult();
+            tr.setSubId(sub.getSubId());
+            tr.setSubName(sub.getSubName());
+            if (step != null) {
+                tr.setBookingStepId(step.getBookingStepId());
+                tr.setPerformedAt(step.getPerformedAt());
+                tr.setNote(step.getNote());
+                tr.setStepStatus(step.getStepStatus());
+                // Parse result JSON
+                List<TestResult.IndexResult> list = new ArrayList<>();
+                if (step.getResult() != null && !step.getResult().isBlank()) {
+                    try {
+                        list = mapper.readValue(step.getResult(), new TypeReference<List<TestResult.IndexResult>>() {});
+                    } catch (Exception ignored) {}
+                }
+                tr.setResults(list);
+            } else {
+                tr.setBookingStepId(null);
+                tr.setPerformedAt(null);
+                tr.setNote("");
+                tr.setStepStatus("pending");
+                tr.setResults(new ArrayList<>());
+            }
+            result.add(tr);
+        }
+        return result;
+    }
+
+
+    @Transactional
+    public void saveTestResults(List<TestResult> testResults) throws Exception {
+        for (TestResult dto : testResults) {
+        // Chỉ lưu nếu status là pending hoặc completed
+        if (!"pending".equalsIgnoreCase(dto.getStepStatus())
+            && !"completed".equalsIgnoreCase(dto.getStepStatus())) {
+            continue; // Bỏ qua
+        }
+
+
+            BookingStep step = null;
+            if (dto.getBookingStepId() != null) {
+                // Đã có, update
+                step = bookingStepRepo.findById(dto.getBookingStepId()).orElse(null);
+            }
+            if (step == null) {
+                // Chưa có, tạo mới
+                step = new BookingStep();
+                step.setSubId(dto.getSubId());
+                // Phải biết bookingId, nếu không gửi lên thì cần truyền từ FE
+                step.setBookingStepId(dto.getBookingStepId());
+            }
+            // Update fields
+            step.setPerformedAt(dto.getPerformedAt());
+            step.setStepStatus(dto.getStepStatus());
+            step.setNote(dto.getNote());
+            // Serialize results list thành JSON string
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(dto.getResults());
+            step.setResult(json);
+
+            bookingStepRepo.save(step);
+        }
+    }
 }

@@ -59,12 +59,21 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     );
 
 
-    // Lấy tên dịch vụ và tên khách hàng theo bookId
-    @Query("SELECT new com.example.project.dto.BookingPatientService(b.bookId, c.cusFullName, s.serName) " +
-       "FROM Booking b " +
-       "JOIN Customer c ON b.cusId = c.cusId " +
-       "JOIN Service s ON b.serId = s.serId " +
-       "WHERE b.bookId = :bookId")
+@Query("""
+SELECT new com.example.project.dto.BookingPatientService(
+  b.bookId, c.cusFullName, c.cusPhone, c.cusEmail, s.serName,
+  (
+    SELECT max(b2.createdAt)
+    FROM Booking b2
+    WHERE b2.cusId = c.cusId
+      AND b2.createdAt < b.createdAt
+  )
+)
+FROM Booking b
+JOIN Customer c ON b.cusId = c.cusId
+JOIN Service s ON b.serId = s.serId
+WHERE b.bookId = :bookId
+""")
 BookingPatientService findBookingPatientServiceByBookId(@Param("bookId") Integer bookId);
 
 

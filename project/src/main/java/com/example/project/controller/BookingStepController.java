@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.BookingStepInfo;
 import com.example.project.dto.BookingStepResultDTO;
+import com.example.project.dto.TestResult;
 import com.example.project.dto.VisitSubService;
 import com.example.project.entity.BookingStep;
 import com.example.project.entity.SubService;
@@ -139,6 +140,27 @@ public class BookingStepController {
                 return ResponseEntity.badRequest().body("Không thể cập nhật");
             }
         }
+
+
+
+@PostMapping("/save-test-results")
+    public ResponseEntity<?> saveTestResults(@RequestBody List<TestResult> testResults) {
+        try {
+            bookingStepService.saveTestResults(testResults);
+            return ResponseEntity.ok(Map.of("message", "OK"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("message", "Error", "error", e.getMessage()));
+        }
+    }
+
+        
+        
+@GetMapping("/test-results/{bookId}")
+public List<TestResult> getTestResultsForBooking(@PathVariable Integer bookId) {
+    return bookingStepService.getTestResultsForBooking(bookId);
+}
+
 
 
 }
