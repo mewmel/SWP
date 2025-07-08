@@ -26,19 +26,31 @@
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="#" class="nav-item" data-tab="patients">
-                <i class="fas fa-users"></i>
-                <span>Quản lý bệnh nhân</span>
-            </a>
+            <div class="nav-item-dropdown">
+                <a href="#" class="nav-item" data-tab="accounts">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Quản lý tài khoản</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item" data-tab="customer-accounts">
+                        <i class="fas fa-user"></i>
+                        <span>Tài khoản khách hàng</span>
+                    </a>
+                    <a href="#" class="dropdown-item" data-tab="doctor-accounts">
+                        <i class="fas fa-user-md"></i>
+                        <span>Tài khoản bác sĩ</span>
+                    </a>
+                    <a href="#" class="dropdown-item" data-tab="manager-accounts">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Tài khoản quản lý</span>
+                    </a>
+                </div>
+            </div>
             <a href="#" class="nav-item" data-tab="services">
                 <i class="fas fa-stethoscope"></i>
                 <span>Quản lý dịch vụ</span>
             </a>
-            <a href="#" class="nav-item" data-tab="reports">
-                <i class="fas fa-chart-bar"></i>
-                <span>Báo cáo thống kê</span>
-            </a>
-            
         </nav>
     </div>
 
@@ -181,12 +193,12 @@
             
         </div>
 
-        <!-- Patients Tab -->
-        <div class="tab-content" id="patients">
+        <!-- Customer Accounts Tab -->
+        <div class="tab-content" id="customer-accounts">
             <div class="page-header">
                 <div class="page-title">
-                    <h1>Quản lý bệnh nhân</h1>
-                    <p>Danh sách và thông tin bệnh nhân đã đăng ký</p>
+                    <h1>Quản lý tài khoản khách hàng</h1>
+                    <p>Danh sách và thông tin tài khoản khách hàng</p>
                 </div>
             </div>
 
@@ -245,6 +257,155 @@
                     <div class="summary-stat">
                         <div class="summary-value purple" id="activeCount">0</div>
                         <div class="summary-label">Đang hoạt động</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Accounts Tab -->
+        <div class="tab-content" id="doctor-accounts">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Quản lý tài khoản bác sĩ</h1>
+                    <p>Danh sách và thông tin tài khoản bác sĩ</p>
+                </div>
+                <button class="btn btn-primary" onclick="openDoctorModal()">
+                    <i class="fas fa-plus"></i>
+                    Thêm bác sĩ
+                </button>
+            </div>
+
+            <!-- Doctor Filters -->
+            <div class="card filters-card">
+                <div class="filters">
+                    <div class="search-filter">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="doctorSearch" placeholder="Tìm kiếm theo tên hoặc email...">
+                    </div>
+                    <div class="filter-group">
+                        <select id="doctorStatusFilter">
+                            <option value="all">Tất cả trạng thái</option>
+                            <option value="active">Đang hoạt động</option>
+                            <option value="inactive">Tạm khóa</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctors Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Bác sĩ</th>
+                                <th>Liên hệ</th>
+                                <th>Chuyên khoa</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày tạo</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctorsTableBody">
+                            <!-- Table rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Doctors Summary -->
+            <div class="summary-card">
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <div class="summary-value" id="totalDoctorsCount">0</div>
+                        <div class="summary-label">Tổng số bác sĩ</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value green" id="activeDoctorsCount">0</div>
+                        <div class="summary-label">Đang hoạt động</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value yellow" id="inactiveDoctorsCount">0</div>
+                        <div class="summary-label">Tạm khóa</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value purple" id="newDoctorsCount">0</div>
+                        <div class="summary-label">Mới trong tháng</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manager Accounts Tab -->
+        <div class="tab-content" id="manager-accounts">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Quản lý tài khoản quản lý</h1>
+                    <p>Danh sách và thông tin tài khoản quản lý hệ thống</p>
+                </div>
+                <button class="btn btn-primary" onclick="openManagerModal()">
+                    <i class="fas fa-plus"></i>
+                    Thêm quản lý
+                </button>
+            </div>
+
+            <!-- Manager Filters -->
+            <div class="card filters-card">
+                <div class="filters">
+                    <div class="search-filter">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="managerSearch" placeholder="Tìm kiếm theo tên hoặc email...">
+                    </div>
+                    <div class="filter-group">
+                        <select id="managerRoleFilter">
+                            <option value="all">Tất cả vai trò</option>
+                            <option value="admin">Quản trị viên</option>
+                            <option value="manager">Quản lý</option>
+                            <option value="supervisor">Giám sát</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Managers Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Quản lý</th>
+                                <th>Liên hệ</th>
+                                <th>Vai trò</th>
+                                <th>Quyền hạn</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="managersTableBody">
+                            <!-- Table rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Managers Summary -->
+            <div class="summary-card">
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <div class="summary-value" id="totalManagersCount">0</div>
+                        <div class="summary-label">Tổng số quản lý</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value blue" id="adminCount">0</div>
+                        <div class="summary-label">Quản trị viên</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value purple" id="managerCount">0</div>
+                        <div class="summary-label">Quản lý</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value orange" id="supervisorCount">0</div>
+                        <div class="summary-label">Giám sát</div>
                     </div>
                 </div>
             </div>
@@ -327,70 +488,7 @@
             </div>
         </div>
 
-        <!-- Reports Tab -->
-        <div class="tab-content" id="reports">
-            <div class="page-header">
-                <div class="page-title">
-                    <h1>Báo cáo thống kê</h1>
-                    <p>Phân tích và thống kê hoạt động của hệ thống</p>
-                </div>
-                <div class="report-controls">
-                    <select id="dateRange">
-                        <option value="week">7 ngày qua</option>
-                        <option value="month">30 ngày qua</option>
-                        <option value="quarter">3 tháng qua</option>
-                        <option value="year">12 tháng qua</option>
-                    </select>
-                    <button class="btn btn-success">
-                        <i class="fas fa-download"></i>
-                        Xuất báo cáo
-                    </button>
-                </div>
-            </div>
-
-            <!-- Report Tabs -->
-            <div class="report-tabs">
-                <button class="report-tab active" data-report="overview">
-                    <i class="fas fa-chart-bar"></i>
-                    Tổng quan
-                </button>
-                <button class="report-tab" data-report="patients">
-                    <i class="fas fa-users"></i>
-                    Bệnh nhân
-                </button>
-                <button class="report-tab" data-report="services">
-                    <i class="fas fa-file-medical"></i>
-                    Dịch vụ
-                </button>
-                <button class="report-tab" data-report="financial">
-                    <i class="fas fa-dollar-sign"></i>
-                    Tài chính
-                </button>
-            </div>
-
-            <!-- Report Content -->
-            <div class="report-content" id="reportContent">
-                <!-- Report content will be populated by JavaScript -->
-            </div>
-        </div>
-
-        <!-- Appointments Tab -->
-        <div class="tab-content" id="appointments">
-            <div class="coming-soon">
-                <i class="fas fa-calendar-alt"></i>
-                <h2>Quản lý lịch hẹn</h2>
-                <p>Tính năng đang được phát triển...</p>
-            </div>
-        </div>
-
-        <!-- Settings Tab -->
-        <div class="tab-content" id="settings">
-            <div class="coming-soon">
-                <i class="fas fa-cogs"></i>
-                <h2>Cài đặt hệ thống</h2>
-                <p>Tính năng đang được phát triển...</p>
-            </div>
-        </div>
+       
     </main>
 
 
@@ -450,7 +548,7 @@
     <div class="modal" id="patientDetailModal">
         <div class="modal-content large">
             <div class="modal-header">
-                <h3>Chi tiết bệnh nhân</h3>
+                <h3>Chi tiết khách hàng</h3>
                 <button class="modal-close" onclick="closePatientDetailModal()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -458,6 +556,114 @@
             <div class="modal-body" id="patientDetailContent">
                 <!-- Patient details will be populated by JavaScript -->
             </div>
+        </div>
+    </div>
+
+    <!-- Doctor Modal -->
+    <div class="modal" id="doctorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="doctorModalTitle">Thêm tài khoản bác sĩ</h3>
+                <button class="modal-close" onclick="closeDoctorModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="doctorForm" class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="doctorName">Họ và tên *</label>
+                        <input type="text" id="doctorName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctorEmail">Email *</label>
+                        <input type="email" id="doctorEmail" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="doctorPhone">Số điện thoại *</label>
+                        <input type="tel" id="doctorPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctorSpecialty">Chuyên khoa *</label>
+                        <select id="doctorSpecialty" required>
+                            <option value="">Chọn chuyên khoa</option>
+                            <option value="Sản phụ khoa">Sản phụ khoa</option>
+                            <option value="Hiếm muộn">Hiếm muộn</option>
+                            <option value="IVF">IVF</option>
+                            <option value="Nam khoa">Nam khoa</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="doctorDescription">Mô tả về bác sĩ</label>
+                    <textarea id="doctorDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="doctorIsActive" checked>
+                    <label for="doctorIsActive">Kích hoạt tài khoản</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeDoctorModal()">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="doctorSubmitBtn">Thêm mới</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Manager Modal -->
+    <div class="modal" id="managerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="managerModalTitle">Thêm tài khoản quản lý</h3>
+                <button class="modal-close" onclick="closeManagerModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="managerForm" class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="managerName">Họ và tên *</label>
+                        <input type="text" id="managerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="managerEmail">Email *</label>
+                        <input type="email" id="managerEmail" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="managerPhone">Số điện thoại *</label>
+                        <input type="tel" id="managerPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="managerRole">Vai trò *</label>
+                        <select id="managerRole" required>
+                            <option value="">Chọn vai trò</option>
+                            <option value="admin">Quản trị viên</option>
+                            <option value="manager">Quản lý</option>
+                            <option value="supervisor">Giám sát</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="managerPermissions">Quyền hạn</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="permissions" value="user_management"> Quản lý người dùng</label>
+                        <label><input type="checkbox" name="permissions" value="service_management"> Quản lý dịch vụ</label>
+                        <label><input type="checkbox" name="permissions" value="report_access"> Xem báo cáo</label>
+                        <label><input type="checkbox" name="permissions" value="system_config"> Cấu hình hệ thống</label>
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="managerIsActive" checked>
+                    <label for="managerIsActive">Kích hoạt tài khoản</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeManagerModal()">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="managerSubmitBtn">Thêm mới</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -471,6 +677,24 @@
 
     <script src="js/admin.js"></script>
     <script>
+    // Dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdown = document.querySelector('.nav-item-dropdown');
+        const dropdownToggle = dropdown.querySelector('.nav-item');
+        
+        dropdownToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            dropdown.classList.toggle('open');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+    });
+    
     function openServiceModal() {
         const modal = document.getElementById('serviceModal');
         modal.style.display = 'flex';
@@ -491,12 +715,44 @@
         setTimeout(() => modal.style.display = 'none', 300);
     }
     
+    function openDoctorModal() {
+        const modal = document.getElementById('doctorModal');
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+    
+    function closeDoctorModal() {
+        const modal = document.getElementById('doctorModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
+        document.getElementById('doctorForm').reset();
+    }
+    
+    function openManagerModal() {
+        const modal = document.getElementById('managerModal');
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+    
+    function closeManagerModal() {
+        const modal = document.getElementById('managerModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
+        document.getElementById('managerForm').reset();
+    }
+    
     // Đóng modal khi click vào background
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function(e) {
             if (e.target === this) {
                 if (this.id === 'serviceModal') closeServiceModal();
                 else if (this.id === 'patientDetailModal') closePatientDetailModal();
+                else if (this.id === 'doctorModal') closeDoctorModal();
+                else if (this.id === 'managerModal') closeManagerModal();
             }
         });
     });
@@ -508,6 +764,8 @@
             if (openModal) {
                 if (openModal.id === 'serviceModal') closeServiceModal();
                 else if (openModal.id === 'patientDetailModal') closePatientDetailModal();
+                else if (openModal.id === 'doctorModal') closeDoctorModal();
+                else if (openModal.id === 'managerModal') closeManagerModal();
             }
         }
     });

@@ -1633,3 +1633,86 @@ body {
         font-size: 16px; /* Ngăn zoom trên iOS */
     }
 }
+
+/* Dropdown Navigation Styles */
+.nav-item-dropdown {
+    position: relative;
+}
+
+.nav-item-dropdown .nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 16px;
+}
+
+.dropdown-arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+
+.nav-item-dropdown:hover .dropdown-arrow,
+.nav-item-dropdown.open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    max-height: 0;
+    overflow: hidden;
+    background: #f8fafc;
+    transition: max-height 0.3s ease;
+    border-left: 2px solid #e2e8f0;
+    margin-left: 24px;
+}
+
+.nav-item-dropdown:hover .dropdown-menu,
+.nav-item-dropdown.open .dropdown-menu {
+    max-height: 200px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px 8px 24px;
+    color: #64748b;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    border-left: 2px solid transparent;
+}
+
+.dropdown-item:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+    border-left-color: #3b82f6;
+}
+
+.dropdown-item.active {
+    background: #dbeafe;
+    color: #2563eb;
+    border-left-color: #3b82f6;
+}
+
+.dropdown-item i {
+    width: 16px;
+    font-size: 14px;
+    color: inherit;
+}
+
+.dropdown-item span {
+    font-weight: 400;
+}
+
+/* Enhanced nav-item for dropdown parent */
+.nav-item-dropdown .nav-item:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+.nav-item-dropdown .nav-item.active {
+    background: #eff6ff;
+    color: #3b82f6;
+    border-right-color: #3b82f6;
+}

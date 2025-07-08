@@ -1,104 +1,145 @@
-// Mock Data
+// Real Data from Database
 const mockPatients = [
     {
         id: '1',
-        name: 'Nguyễn Thị Mai',
-        email: 'mai.nguyen@gmail.com',
-        phone: '0912345678',
+        name: 'Trần Anh Thư',
+        email: 'thutase180353@fpt.edu.vn',
+        phone: '0352020737',
+        gender: 'F',
+        birthDate: '2004-09-26',
+        address: 'HCMC',
+        occupation: 'Con sen',
+        emergencyContact: 'Mơ',
         hasService: true,
-        registeredDate: '2024-01-15',
-        lastVisit: '2024-06-20',
-        status: 'active'
+        registeredDate: '2024-09-26',
+        lastVisit: '2024-12-15',
+        status: 'active',
+        provider: 'local'
+    }
+];
+
+const mockDoctors = [
+    {
+        id: '1',
+        name: 'Nguyễn Ngọc Khánh Linh',
+        email: 'doc1@gmail.com',
+        phone: '123',
+        expertise: 'Khám, tư vấn và thực hiện các kỹ thuật điều trị vô sinh – hiếm muộn, hỗ trợ sinh sản',
+        degree: 'Tiến sĩ Sản Phụ khoa',
+        description: 'Tiến sĩ Nguyễn Ngọc Khánh Linh là chuyên gia về kiểm soát chất lượng phôi và thụ tinh trong ống nghiệm, với hơn 12 năm công tác tại các trung tâm sinh sản hàng đầu.',
+        status: 'active',
+        createdDate: '2024-01-01'
     },
     {
         id: '2',
-        name: 'Trần Văn An',
-        email: 'an.tran@gmail.com',
-        phone: '0987654321',
-        hasService: true,
-        registeredDate: '2024-02-10',
-        lastVisit: '2024-06-22',
-        status: 'active'
+        name: 'Trương Quốc Lập',
+        email: 'doc2@gmail.com',
+        phone: '345',
+        expertise: 'Khám, tư vấn và thực hiện các kỹ thuật điều trị vô sinh – hiếm muộn - Thụ tinh nhân tạo - IUI',
+        degree: 'Bác sĩ Chuyên khoa I Sản Phụ khoa',
+        description: 'Bác sĩ Trương Quốc Lập có 8 năm kinh nghiệm trong lĩnh vực IUI, đã hỗ trợ thành công nhiều cặp vợ chồng trên toàn quốc.',
+        status: 'active',
+        createdDate: '2024-01-01'
     },
     {
         id: '3',
-        name: 'Phạm Thị Hoa',
-        email: 'hoa.pham@gmail.com',
-        phone: '0909123456',
-        hasService: false,
-        registeredDate: '2024-03-05',
-        status: 'active'
+        name: 'Tất Vĩnh Hùng',
+        email: 'doc3@gmail.com',
+        phone: '567',
+        expertise: 'Khám, tư vấn và thực hiện các kỹ thuật điều trị vô sinh – hiếm muộn - IVF',
+        degree: 'Thạc sĩ Sản Phụ khoa',
+        description: 'Bác sĩ Tất Vĩnh Hùng có hơn 10 năm kinh nghiệm điều trị vô sinh – hiếm muộn, chuyên sâu về IVF tại các trung tâm hàng đầu.',
+        status: 'active',
+        createdDate: '2024-01-01'
     },
     {
         id: '4',
-        name: 'Lê Thị Lan',
-        email: 'lan.le@gmail.com',
-        phone: '0911222333',
-        hasService: true,
-        registeredDate: '2024-01-20',
-        lastVisit: '2024-06-18',
-        status: 'active'
+        name: 'Phạm Thị Hồng Anh',
+        email: 'doc4@gmail.com',
+        phone: '789',
+        expertise: 'Khám, tư vấn và thực hiện các kỹ thuật điều trị vô sinh – hiếm muộn, hỗ trợ sinh sản',
+        degree: 'Bác sĩ Chuyên khoa II Sản Phụ khoa',
+        description: 'Bác sĩ Phạm Thị Hồng Anh là chuyên gia về thụ tinh trong ống nghiệm và hỗ trợ sinh sản, với 7 năm kinh nghiệm tại các trung tâm hỗ trợ sinh sản uy tín.',
+        status: 'active',
+        createdDate: '2024-01-01'
     },
     {
         id: '5',
-        name: 'Hoàng Thị Thu',
-        email: 'thu.hoang@gmail.com',
-        phone: '0933444555',
-        hasService: true,
-        registeredDate: '2024-04-12',
-        lastVisit: '2024-06-21',
-        status: 'inactive'
+        name: 'Lê Minh Đức',
+        email: 'doc5@gmail.com',
+        phone: '890',
+        expertise: 'Khám, tư vấn và thực hiện các kỹ thuật điều trị vô sinh – hiếm muộn, hỗ trợ sinh sản',
+        degree: 'Thạc sĩ Sản Phụ khoa',
+        description: 'Bác sĩ Lê Minh Đức chuyên sâu về điều trị vô sinh – hiếm muộn và hỗ trợ sinh sản, với 5 năm kinh nghiệm làm việc tại các bệnh viện đầu ngành.',
+        status: 'active',
+        createdDate: '2024-01-01'
+    },
+    {
+        id: '6',
+        name: 'Trần Thị Tú',
+        email: 'doc6@gmail.com',
+        phone: '901',
+        expertise: 'Khám, tư vấn và thực hiện các kỹ thuật điều trị vô sinh – hiếm muộn, hỗ trợ sinh sản',
+        degree: 'Tiến sĩ Sinh học Phôi',
+        description: 'Bác sĩ Trần Thị Tú là chuyên gia về kiểm soát chất lượng phôi và thụ tinh trong ống nghiệm, với hơn 8 năm kinh nghiệm tại các trung tâm hàng đầu.',
+        status: 'active',
+        createdDate: '2024-01-01'
+    }
+];
+
+const mockManagers = [
+    {
+        id: '1',
+        name: 'manager1',
+        email: 'manager1@gmail.com',
+        phone: '0123456789',
+        position: 'tanker',
+        role: 'manager',
+        permissions: ['user_management', 'service_management', 'report_access'],
+        status: 'active',
+        createdDate: '2024-01-01'
+    },
+    {
+        id: '2',
+        name: 'admin1',
+        email: 'admin1@gmail.com',
+        phone: '0123456789',
+        position: 'ad',
+        role: 'admin',
+        permissions: ['user_management', 'service_management', 'report_access', 'system_config'],
+        status: 'active',
+        createdDate: '2024-01-01'
     }
 ];
 
 const mockServices = [
     {
         id: '1',
-        name: 'Khám định kỳ - IVF',
-        description: 'Khám định kỳ cho quá trình thụ tinh trong ống nghiệm',
-        duration: 60,
-        price: 500000,
-        category: 'IVF',
-        isActive: true,
-        createdDate: '2024-01-01'
-    },
-    {
-        id: '2',
-        name: 'Tư vấn lần đầu',
-        description: 'Tư vấn ban đầu về các phương pháp điều trị',
-        duration: 45,
-        price: 300000,
+        name: 'Khám tiền đăng ký điều trị (IVF/IUI)',
+        description: 'Tư vấn chuyên sâu và chẩn đoán tình trạng sinh sản, xác định phương án điều trị phù hợp cho cả nam và nữ',
+        duration: 7, // duration in days
+        price: 3100000,
         category: 'Tư vấn',
         isActive: true,
         createdDate: '2024-01-01'
     },
     {
-        id: '3',
-        name: 'Theo dõi kích thích - IVF',
-        description: 'Theo dõi quá trình kích thích buồng trứng',
-        duration: 30,
-        price: 400000,
+        id: '2',
+        name: 'Liệu trình điều trị IVF',
+        description: 'Quy trình thụ tinh trong ống nghiệm: kích thích buồng trứng, chọc hút noãn, thụ tinh và chuyển phôi',
+        duration: 30, // duration in days
+        price: 20700000,
         category: 'IVF',
         isActive: true,
         createdDate: '2024-01-01'
     },
     {
-        id: '4',
-        name: 'Chuyên phỏi - IVF',
-        description: 'Chuyên khoa phổi trong quá trình IVF',
-        duration: 90,
-        price: 700000,
-        category: 'Chuyên khoa',
-        isActive: true,
-        createdDate: '2024-01-01'
-    },
-    {
-        id: '5',
-        name: 'Kiểm tra sau phẫu thuật',
-        description: 'Kiểm tra tình trạng sau các ca phẫu thuật',
-        duration: 40,
-        price: 350000,
-        category: 'Kiểm tra',
+        id: '3',
+        name: 'Liệu trình điều trị IUI',
+        description: 'Quy trình bơm tinh trùng vào buồng tử cung, tối ưu tỉ lệ thụ thai tự nhiên',
+        duration: 30, // duration in days
+        price: 3750000,
+        category: 'IUI',
         isActive: true,
         createdDate: '2024-01-01'
     }
@@ -144,9 +185,15 @@ const mockAppointments = [
 
 // Global Variables
 let patients = JSON.parse(localStorage.getItem('patients')) || mockPatients;
+let doctors = JSON.parse(localStorage.getItem('doctors')) || mockDoctors;
+let managers = JSON.parse(localStorage.getItem('managers')) || mockManagers;
 let services = JSON.parse(localStorage.getItem('services')) || mockServices;
 let currentEditingService = null;
+let currentEditingDoctor = null;
+let currentEditingManager = null;
 let filteredPatients = [...patients];
+let filteredDoctors = [...doctors];
+let filteredManagers = [...managers];
 let filteredServices = [...services];
 
 // Utility Functions
@@ -161,17 +208,17 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('vi-VN');
 }
 
-function formatDuration(minutes) {
-    if (minutes < 60) {
-        return `${minutes} phút`;
+function formatDuration(days) {
+    if (days === 1) {
+        return `${days} ngày`;
     }
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}p` : `${hours} giờ`;
+    return `${days} ngày`;
 }
 
 function saveToLocalStorage() {
     localStorage.setItem('patients', JSON.stringify(patients));
+    localStorage.setItem('doctors', JSON.stringify(doctors));
+    localStorage.setItem('managers', JSON.stringify(managers));
     localStorage.setItem('services', JSON.stringify(services));
 }
 
@@ -200,16 +247,47 @@ function showToast(message, type = 'success') {
 // Navigation Functions
 function initNavigation() {
     const navItems = document.querySelectorAll('.nav-item');
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
     const tabContents = document.querySelectorAll('.tab-content');
     
+    // Handle main nav items
     navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const tabId = item.getAttribute('data-tab');
+            if (tabId && tabId !== 'accounts') {
+                e.preventDefault();
+                
+                // Update active nav item
+                navItems.forEach(nav => nav.classList.remove('active'));
+                dropdownItems.forEach(dropdown => dropdown.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Update active tab content
+                tabContents.forEach(tab => tab.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+                
+                // Load tab-specific content
+                loadTabContent(tabId);
+            }
+        });
+    });
+    
+    // Handle dropdown items
+    dropdownItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const tabId = item.getAttribute('data-tab');
             
-            // Update active nav item
+            // Update active states
             navItems.forEach(nav => nav.classList.remove('active'));
+            dropdownItems.forEach(dropdown => dropdown.classList.remove('active'));
             item.classList.add('active');
+            
+            // Add active state to parent nav item
+            const parentNavItem = document.querySelector('.nav-item[data-tab="accounts"]');
+            if (parentNavItem) {
+                parentNavItem.classList.add('active');
+            }
             
             // Update active tab content
             tabContents.forEach(tab => tab.classList.remove('active'));
@@ -229,8 +307,14 @@ function loadTabContent(tabId) {
         case 'dashboard':
             loadDashboard();
             break;
-        case 'patients':
+        case 'customer-accounts':
             loadPatients();
+            break;
+        case 'doctor-accounts':
+            loadDoctors();
+            break;
+        case 'manager-accounts':
+            loadManagers();
             break;
         case 'services':
             loadServices();
@@ -432,6 +516,358 @@ function deletePatient(patientId) {
         saveToLocalStorage();
         filterPatients();
         showToast('Đã xóa bệnh nhân thành công');
+    }
+}
+
+// Doctor Functions
+function loadDoctors() {
+    renderDoctorsTable();
+    updateDoctorsSummary();
+    initDoctorFilters();
+}
+
+function renderDoctorsTable() {
+    const tbody = document.getElementById('doctorsTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = filteredDoctors.map(doctor => `
+        <tr>
+            <td>
+                <div class="patient-info">
+                    <div class="patient-avatar">
+                        ${doctor.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="patient-details">
+                        <h4>${doctor.name}</h4>
+                        <p>ID: ${doctor.id}</p>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="contact-info">
+                    <p>${doctor.email}</p>
+                    <p>${doctor.phone}</p>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <strong>${doctor.degree}</strong>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${doctor.expertise}</div>
+                </div>
+            </td>
+            <td>
+                <span class="status-badge ${doctor.status}">
+                    ${doctor.status === 'active' ? 'Hoạt động' : 'Tạm khóa'}
+                </span>
+            </td>
+            <td>${formatDate(doctor.createdDate)}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn view" onclick="viewDoctor('${doctor.id}')" title="Xem chi tiết">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn edit" onclick="editDoctor('${doctor.id}')" title="Chỉnh sửa">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" onclick="deleteDoctor('${doctor.id}')" title="Xóa">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateDoctorsSummary() {
+    document.getElementById('totalDoctorsCount').textContent = filteredDoctors.length;
+    document.getElementById('activeDoctorsCount').textContent = filteredDoctors.filter(d => d.status === 'active').length;
+    document.getElementById('inactiveDoctorsCount').textContent = filteredDoctors.filter(d => d.status === 'inactive').length;
+    
+    // Calculate new doctors this month
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const newDoctorsThisMonth = filteredDoctors.filter(d => {
+        const createdDate = new Date(d.createdDate);
+        return createdDate.getMonth() === currentMonth && createdDate.getFullYear() === currentYear;
+    }).length;
+    document.getElementById('newDoctorsCount').textContent = newDoctorsThisMonth;
+}
+
+function initDoctorFilters() {
+    const searchInput = document.getElementById('doctorSearch');
+    const statusFilter = document.getElementById('doctorStatusFilter');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', filterDoctors);
+    }
+    if (statusFilter) {
+        statusFilter.addEventListener('change', filterDoctors);
+    }
+}
+
+function filterDoctors() {
+    const searchTerm = document.getElementById('doctorSearch')?.value.toLowerCase() || '';
+    const statusFilter = document.getElementById('doctorStatusFilter')?.value || 'all';
+    
+    filteredDoctors = doctors.filter(doctor => {
+        const matchesSearch = doctor.name.toLowerCase().includes(searchTerm) ||
+                             doctor.email.toLowerCase().includes(searchTerm) ||
+                             doctor.expertise.toLowerCase().includes(searchTerm);
+        const matchesStatus = statusFilter === 'all' || doctor.status === statusFilter;
+        
+        return matchesSearch && matchesStatus;
+    });
+    
+    renderDoctorsTable();
+    updateDoctorsSummary();
+}
+
+function viewDoctor(doctorId) {
+    const doctor = doctors.find(d => d.id === doctorId);
+    if (!doctor) return;
+    
+    const modal = document.getElementById('patientDetailModal');
+    const content = document.getElementById('patientDetailContent');
+    const title = modal.querySelector('.modal-header h3');
+    
+    title.textContent = 'Chi tiết bác sĩ';
+    
+    content.innerHTML = `
+        <div class="patient-detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">Họ và tên</div>
+                <div class="detail-value">${doctor.name}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Email</div>
+                <div class="detail-value">${doctor.email}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Số điện thoại</div>
+                <div class="detail-value">${doctor.phone}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Bằng cấp</div>
+                <div class="detail-value">${doctor.degree}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Chuyên môn</div>
+                <div class="detail-value">${doctor.expertise}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Trạng thái</div>
+                <div class="detail-value">
+                    <span class="status-badge ${doctor.status}">
+                        ${doctor.status === 'active' ? 'Hoạt động' : 'Tạm khóa'}
+                    </span>
+                </div>
+            </div>
+            <div class="detail-item" style="grid-column: 1 / -1;">
+                <div class="detail-label">Mô tả</div>
+                <div class="detail-value">${doctor.description}</div>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.add('show');
+}
+
+function editDoctor(doctorId) {
+    // Implementation for editing doctor
+    showToast('Chức năng chỉnh sửa bác sĩ đang được phát triển', 'info');
+}
+
+function deleteDoctor(doctorId) {
+    if (confirm('Bạn có chắc chắn muốn xóa bác sĩ này?')) {
+        doctors = doctors.filter(d => d.id !== doctorId);
+        saveToLocalStorage();
+        filterDoctors();
+        showToast('Đã xóa bác sĩ thành công');
+    }
+}
+
+// Manager Functions
+function loadManagers() {
+    renderManagersTable();
+    updateManagersSummary();
+    initManagerFilters();
+}
+
+function renderManagersTable() {
+    const tbody = document.getElementById('managersTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = filteredManagers.map(manager => `
+        <tr>
+            <td>
+                <div class="patient-info">
+                    <div class="patient-avatar">
+                        ${manager.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="patient-details">
+                        <h4>${manager.name}</h4>
+                        <p>ID: ${manager.id}</p>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="contact-info">
+                    <p>${manager.email}</p>
+                    <p>${manager.phone}</p>
+                </div>
+            </td>
+            <td>
+                <span class="status-badge category">
+                    ${manager.role === 'admin' ? 'Quản trị viên' : 
+                      manager.role === 'manager' ? 'Quản lý' : 'Giám sát'}
+                </span>
+            </td>
+            <td>
+                <div style="font-size: 12px;">
+                    ${manager.permissions.map(perm => {
+                        const permLabels = {
+                            'user_management': 'Quản lý người dùng',
+                            'service_management': 'Quản lý dịch vụ',
+                            'report_access': 'Xem báo cáo',
+                            'system_config': 'Cấu hình hệ thống'
+                        };
+                        return permLabels[perm] || perm;
+                    }).join('<br>')}
+                </div>
+            </td>
+            <td>
+                <span class="status-badge ${manager.status}">
+                    ${manager.status === 'active' ? 'Hoạt động' : 'Tạm khóa'}
+                </span>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn view" onclick="viewManager('${manager.id}')" title="Xem chi tiết">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn edit" onclick="editManager('${manager.id}')" title="Chỉnh sửa">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" onclick="deleteManager('${manager.id}')" title="Xóa">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateManagersSummary() {
+    document.getElementById('totalManagersCount').textContent = filteredManagers.length;
+    document.getElementById('adminCount').textContent = filteredManagers.filter(m => m.role === 'admin').length;
+    document.getElementById('managerCount').textContent = filteredManagers.filter(m => m.role === 'manager').length;
+    document.getElementById('supervisorCount').textContent = filteredManagers.filter(m => m.role === 'supervisor').length;
+}
+
+function initManagerFilters() {
+    const searchInput = document.getElementById('managerSearch');
+    const roleFilter = document.getElementById('managerRoleFilter');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', filterManagers);
+    }
+    if (roleFilter) {
+        roleFilter.addEventListener('change', filterManagers);
+    }
+}
+
+function filterManagers() {
+    const searchTerm = document.getElementById('managerSearch')?.value.toLowerCase() || '';
+    const roleFilter = document.getElementById('managerRoleFilter')?.value || 'all';
+    
+    filteredManagers = managers.filter(manager => {
+        const matchesSearch = manager.name.toLowerCase().includes(searchTerm) ||
+                             manager.email.toLowerCase().includes(searchTerm);
+        const matchesRole = roleFilter === 'all' || manager.role === roleFilter;
+        
+        return matchesSearch && matchesRole;
+    });
+    
+    renderManagersTable();
+    updateManagersSummary();
+}
+
+function viewManager(managerId) {
+    const manager = managers.find(m => m.id === managerId);
+    if (!manager) return;
+    
+    const modal = document.getElementById('patientDetailModal');
+    const content = document.getElementById('patientDetailContent');
+    const title = modal.querySelector('.modal-header h3');
+    
+    title.textContent = 'Chi tiết quản lý';
+    
+    content.innerHTML = `
+        <div class="patient-detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">Họ và tên</div>
+                <div class="detail-value">${manager.name}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Email</div>
+                <div class="detail-value">${manager.email}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Số điện thoại</div>
+                <div class="detail-value">${manager.phone}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Chức vụ</div>
+                <div class="detail-value">${manager.position}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Vai trò</div>
+                <div class="detail-value">
+                    <span class="status-badge category">
+                        ${manager.role === 'admin' ? 'Quản trị viên' : 
+                          manager.role === 'manager' ? 'Quản lý' : 'Giám sát'}
+                    </span>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Trạng thái</div>
+                <div class="detail-value">
+                    <span class="status-badge ${manager.status}">
+                        ${manager.status === 'active' ? 'Hoạt động' : 'Tạm khóa'}
+                    </span>
+                </div>
+            </div>
+            <div class="detail-item" style="grid-column: 1 / -1;">
+                <div class="detail-label">Quyền hạn</div>
+                <div class="detail-value">
+                    ${manager.permissions.map(perm => {
+                        const permLabels = {
+                            'user_management': 'Quản lý người dùng',
+                            'service_management': 'Quản lý dịch vụ',
+                            'report_access': 'Xem báo cáo',
+                            'system_config': 'Cấu hình hệ thống'
+                        };
+                        return `<span class="status-badge category" style="margin-right: 5px; margin-bottom: 5px;">${permLabels[perm] || perm}</span>`;
+                    }).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.add('show');
+}
+
+function editManager(managerId) {
+    // Implementation for editing manager
+    showToast('Chức năng chỉnh sửa quản lý đang được phát triển', 'info');
+}
+
+function deleteManager(managerId) {
+    if (confirm('Bạn có chắc chắn muốn xóa quản lý này?')) {
+        managers = managers.filter(m => m.id !== managerId);
+        saveToLocalStorage();
+        filterManagers();
+        showToast('Đã xóa quản lý thành công');
     }
 }
 
