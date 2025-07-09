@@ -87,27 +87,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Trạng thái + badge
                 const badge = clone.querySelector('.status-badge');
-                if (b.bookStatus === 'confirmed') {
-                    badge.textContent = 'Đang chờ khám';
+                if (b.bookStatus === 'pending') {
+                    badge.textContent = 'Không đến khám';
                     badge.className = 'status-badge waiting';
-                } else if (b.bookStatus === 'completed') {
-                    badge.textContent = 'Đang khám';
+                } 
+                if (b.bookStatus === 'completed') {
+                    badge.textContent = 'Đã khám xong';
                     badge.className = 'status-badge completed';
-                } else {
-                    badge.textContent = 'Không rõ';
-                    badge.className = 'status-badge';
                 }
 
                 // Action button
                 const actions = clone.querySelector('.appointment-actions');
                 if (b.bookStatus === 'confirmed') {
                     actions.innerHTML = `<button class="btn-waiting" onclick="window.markAsExamined('${b.cusId}','${b.serId}','${b.docId}','${b.bookId}')">
-                    <i class="fas fa-check"></i> Đang khám
-                </button>`;
-                } else if (b.bookStatus === 'completed') {
-                    actions.innerHTML = `<button class="btn-record" onclick="window.viewPatientRecord('${b.cusId}')">
-                    <i class="fas fa-file-medical"></i> Xem hồ sơ
-                </button>`;
+                    <i class="fas fa-check"></i> Xem hồ sơ
+                </button>
+                <button onclick="window.markAsCancelled('${b.cusId}','${b.serId}','${b.docId}','${b.bookId}')">
+                    <i class="fas fa-times"></i> Không đến khám
+                </button>
+                `;
+
+                    // } else if (b.bookStatus === 'completed') {
+                    //     actions.innerHTML = `<button class="btn-record" onclick="window.viewPatientRecord('${b.cusId}')">
+                    //     <i class="fas fa-file-medical"></i> Xem hồ sơ
+                    // </button>`;
                 } else {
                     actions.innerHTML = '';
                 }
@@ -228,31 +231,60 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ========== PATIENT STATUS MANAGEMENT ==========
 
-    // Mark patient as examined
-    window.markAsExamined = async function (cusId, serId, docId, bookId) {
+    window.checkout = async function (bookId, cusId) {
         const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
         if (!appointmentItem) return;
 
-        // 1. Đổi trạng thái UI
-        appointmentItem.setAttribute('data-status', 'completed');
-        // Ở ngay sau khi đổi trạng thái UI (hoặc trước khi tạo hồ sơ)
+        const subIds = await getSubServiceIds(bookId);
+
+        let allCompleted = true;
+        for (const subId of subIds) {
+            const res = await fetch(`/api/booking-steps/check-test-result/${bookId}/${subId}`);
+            const step = await res.json();
+            if (step.stepStatus !== 'completed') {
+                allCompleted = false;
+                break;
+            }
+        }
+        if (!allCompleted) {
+            showNotification("❌ Vui lòng hoàn thành tất cả các xét nghiệm/bước trước khi checkout!", "error");
+            return;
+        }
         await fetch(`/api/booking/update-status/${bookId}`, {
             method: 'PUT',
-            body: JSON.stringify({
-                bookStatus: 'completed',
-            }),
+            body: JSON.stringify({ bookStatus: 'completed' }),
             headers: { 'Content-Type': 'application/json' }
         });
-        // Cập nhật lịch hẹn hôm nay
-        await loadTodayConfirmedBookings();
-
-
 
 
         // Update status badge
         const statusBadge = appointmentItem.querySelector('.status-badge');
-        statusBadge.textContent = 'Đang khám';
-        statusBadge.className = 'status-badge confirmed';
+        statusBadge.textContent = 'Đã khám xong';
+        statusBadge.className = 'status-badge completed';
+
+
+        showNotification("✅ Đã check-out bệnh nhân thành công!", "success");
+        loadTodayConfirmedBookings();
+    };
+
+
+
+    // Mark patient as cancelled
+    window.markAsCancelled = async function (cusId, serId, docId, bookId) {
+        const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
+        if (!appointmentItem) return;
+        // 1. Đổi trạng thái UI
+        appointmentItem.setAttribute('data-status', 'pending');
+        // Ở ngay sau khi đổi trạng thái UI (hoặc trước khi tạo hồ sơ)
+
+        //check trạng thái cus nếu lần đầu đi khám thì xóa Booking còn nếu là tái khám thì cho về lại pending+ setnote là ko đi khám+ liên hệ cus xem cus có muốn tiếp tục dịch vụ không
+
+    }
+
+    // Mark patient as examined
+    window.markAsExamined = async function (cusId, serId, docId, bookId) {
+        const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
+        if (!appointmentItem) return;
 
         // 2. Đổi nút/action
         const actionDiv = appointmentItem.querySelector('.appointment-actions');
@@ -291,11 +323,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         cusId,
                     })
                 });
-                const drugId = await drugRes.json();
-                document.getElementById('prescriptionNumber').value = drugId;
 
-                // Lưu drugId vào localStorage để dùng sau
+                const drugId = await drugRes.json();
                 localStorage.setItem('drugId', drugId);
+
+
+
+                await fetch(`/api/booking-steps/set-pending/${bookId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ performedAt: new Date().toISOString() })
+                });
 
                 if (typeof showNotification === 'function') showNotification('Đã tạo hồ sơ bệnh án!', 'success');
 
@@ -473,6 +511,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const modal = document.getElementById('patientModal');
             modal.style.display = 'block';
             modal.dataset.patientId = cusId;
+            modal.dataset.bookId = patientData.currentBooking.bookId || '';
+
+            const btnCheckout = modal.querySelector('.btn-primary[onclick*="checkout"]');
+            if (btnCheckout) {
+                btnCheckout.onclick = function () {
+                    window.checkout(modal.dataset.bookId, modal.dataset.patientId);
+                }
+            }
+
+
         } catch (err) {
             console.error(err);
             alert("Lỗi khi lấy dữ liệu bệnh nhân!");
@@ -485,6 +533,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update close modal functions
     window.closeModal = function () {
         document.getElementById('patientModal').style.display = 'none';
+        localStorage.removeItem('drugId');
     };
 
     window.savePatientRecord = async function () {
@@ -593,8 +642,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
             alert('Đã lưu hồ sơ bệnh án thành công!');
-            // Có thể gọi thêm showNotification() nếu có
-            window.closeModal();
+
         } catch (err) {
             console.error('Lỗi khi lưu hồ sơ bệnh án:', err);
             alert('Lỗi khi lưu hồ sơ bệnh án!');
@@ -652,7 +700,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // ========== EDITABLE TEST RESULTS FUNCTIONS ==========
-   window.addNewTestItem = function () {
+    window.addNewTestItem = function () {
         const testContainer = document.querySelector('.booking-steps-results');
         const testCount = testContainer.querySelectorAll('.step-result-item').length + 1;
 
@@ -780,32 +828,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 stepStatus
             });
         });
-            // LOG PAYLOAD TRƯỚC KHI GỬI
-    console.log("Test Results Payload:", testResults);
+        // LOG PAYLOAD TRƯỚC KHI GỬI
+        console.log("Test Results Payload:", testResults);
 
-// Gửi về backend: /api/booking-steps/save-test-results
-    fetch('/api/booking-steps/save-test-results', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(testResults)
-    })
-    .then(async res => {
-        // Log toàn bộ response nếu bị lỗi
-        if (!res.ok) {
-            const errMsg = await res.text();
-            console.error("API save-test-results error:", errMsg);
-            throw new Error(errMsg);
-        }
-        return res.json();
-    })
-    .then(data => {
-        if (typeof showNotification === 'function') showNotification('Đã lưu tất cả kết quả xét nghiệm!', 'success');
-        else alert('Đã lưu tất cả kết quả xét nghiệm!');
-    })
-    .catch((err) => {
-        alert('Lưu thất bại!');
-        console.error('Lỗi khi lưu test results:', err);
-    });
+        // Gửi về backend: /api/booking-steps/save-test-results
+        fetch('/api/booking-steps/save-test-results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(testResults)
+        })
+            .then(async res => {
+                // Log toàn bộ response nếu bị lỗi
+                if (!res.ok) {
+                    const errMsg = await res.text();
+                    console.error("API save-test-results error:", errMsg);
+                    throw new Error(errMsg);
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (typeof showNotification === 'function') showNotification('Đã lưu tất cả kết quả xét nghiệm!', 'success');
+                else alert('Đã lưu tất cả kết quả xét nghiệm!');
+            })
+            .catch((err) => {
+                alert('Lưu thất bại!');
+                console.error('Lỗi khi lưu test results:', err);
+            });
     };
 
 
@@ -821,7 +869,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const newTestItem = document.createElement('div');
             newTestItem.className = 'step-result-item';
             newTestItem.dataset.bookingStepId = test.bookingStepId || '';
-            newTestItem.dataset.subServiceId = test.subServiceId;
+            newTestItem.dataset.subId = test.subId;
 
             // editable-title: chỉ cho edit nếu chưa completed
             const titleReadOnly = isEditable ? 'contenteditable="true"' : 'contenteditable="false"';
@@ -888,8 +936,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const res = await fetch(`/api/booking-steps/test-results/${bookId}`); // Sửa path nếu cần
             if (!res.ok) throw new Error('API error');
             const data = await res.json();
-                    // Log kết quả subservice:
-        console.log('Test Results API:', data);
+            // Log kết quả subservice:
+            console.log('Test Results API:', data);
 
 
             window.renderTestResults(data);
@@ -920,48 +968,72 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!res.ok) throw new Error(`API lỗi: ${res.status}`);
                 return res.json();
             })
-            .then(subs => {
-                // Đổ danh sách vào select
+            .then(async subs => {
                 serviceSelect.innerHTML = '<option value="">-- Chọn dịch vụ/bước --</option>';
                 if (!Array.isArray(subs) || subs.length === 0) {
                     serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
                     emptyStepsDiv.style.display = '';
                     return;
                 }
-                subs.forEach(sub => {
+                for (const sub of subs) {
                     const opt = document.createElement('option');
-                    opt.value = sub.subId; // subId lấy từ backend
-                    opt.textContent = sub.subName; // tên dịch vụ lấy từ backend
+                    opt.value = sub.subId;
+                    opt.textContent = sub.subName;
                     serviceSelect.appendChild(opt);
-                });
-                stepForm.style.display = 'none'; // Reset form
+
+                    try {
+                        await fetch(`/api/booking-steps/set-pending/${bookId}/${sub.subId}`, {
+                            method: 'PUT',
+                            body: JSON.stringify({
+                                stepStatus: 'pending',
+                                performedAt: new Date().toISOString(),
+                                note: 'Đang tiến hành...',
+                            }),
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    } catch (e) {
+                        console.error('Lỗi update step:', bookId, sub.subId, e);
+                    }
+                }
+
+                // **ĐÂY LÀ ĐIỂM QUAN TRỌNG NHẤT**
+                // Gán lại onchange sau khi render options!
+                serviceSelect.onchange = function () {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (this.value) {
+                        selectedSubId = this.value;
+                        selectedSubName = selectedOption.textContent;
+
+                        selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
+                        stepForm.style.display = 'block';
+                        document.getElementById('performedAt').value = getLocalDateTimeValue();
+                        document.getElementById('stepResult').value = '';
+                        document.getElementById('stepNote').value = '';
+                        document.getElementById('stepStatus').value = 'pending';
+                    } else {
+                        stepForm.style.display = 'none';
+                        selectedSubId = null;
+                        selectedSubName = '';
+                    }
+                };
+
+                // Nếu cần mặc định ẩn form
+                stepForm.style.display = 'none';
             })
             .catch(err => {
                 console.error('Lỗi lấy subservice:', err);
                 serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
                 emptyStepsDiv.style.display = '';
             });
-
-        // 2. Khi chọn option thì show form + set biến subId/subName
-        serviceSelect.onchange = function () {
-            const selectedOption = this.options[this.selectedIndex];
-            if (this.value) {
-                selectedSubId = this.value;                      // subId
-                selectedSubName = selectedOption.textContent;    // subName
-
-                selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
-                stepForm.style.display = 'block';
-                document.getElementById('performedAt').value = getLocalDateTimeValue();
-                document.getElementById('stepResult').value = '';
-                document.getElementById('stepNote').value = '';
-                document.getElementById('stepStatus').value = 'pending';
-            } else {
-                stepForm.style.display = 'none';
-                selectedSubId = null;
-                selectedSubName = '';
-            }
-        };
     }
+
+    async function getSubServiceIds(bookId) {
+        const res = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit`);
+        if (!res.ok) return [];
+        const subs = await res.json();
+        return Array.isArray(subs) ? subs.map(sub => sub.subId) : [];
+    }
+
 
 
 
@@ -1209,6 +1281,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+
+        document.querySelector('#prescriptionNumber').value = localStorage.getItem('drugId') || '';
         // Final prescription data
         return {
             prescriptionNumber: document.getElementById('prescriptionNumber')?.value || '',
@@ -1225,7 +1299,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const data = collectPrescriptionData();
 
         const drugId = localStorage.getItem('drugId') || '';
-
 
         if (!data.prescriptionNumber) {
             showNotification('❌ Không tìm thấy prescriptionNumber. Vui lòng kiểm tra lại.', 'error');

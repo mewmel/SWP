@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import com.example.project.entity.SubService;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.BookingStepService;
+
 
 
 @RestController
@@ -143,23 +145,58 @@ public class BookingStepController {
 
 
 
-@PostMapping("/save-test-results")
-    public ResponseEntity<?> saveTestResults(@RequestBody List<TestResult> testResults) {
-        try {
-            bookingStepService.saveTestResults(testResults);
-            return ResponseEntity.ok(Map.of("message", "OK"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of("message", "Error", "error", e.getMessage()));
+    @PostMapping("/save-test-results")
+        public ResponseEntity<?> saveTestResults(@RequestBody List<TestResult> testResults) {
+            try {
+                bookingStepService.saveTestResults(testResults);
+                return ResponseEntity.ok(Map.of("message", "OK"));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(500).body(Map.of("message", "Error", "error", e.getMessage()));
+            }
+        }
+
+
+
+    // Cập nhật trạng thái của bước điều trị thành "pending"
+    // Ví dụ: khi bác sĩ không thể thực hiện bước điều trị ngay lập tức    
+    @PutMapping("/set-pending/{bookId}/{subId}")
+    public ResponseEntity<?> setStepPending(
+            @PathVariable Integer bookId,
+            @PathVariable Integer subId,
+            @RequestBody Map<String, Object> reqBody
+    ) {
+        boolean updated = bookingStepService.setStepPending(bookId, subId, reqBody);
+        if (updated) {
+            return ResponseEntity.ok().body("Cập nhật trạng thái pending thành công!");
+        } else {
+            // Trả về 400 Bad Request + message
+            return ResponseEntity.badRequest().body("Không thể cập nhật trạng thái pending!");
         }
     }
 
+    // Lấy kết quả xét nghiệm cho bước điều trị
+    // Ví dụ: check để xem đủ điều kiện checkout chưa
+    @GetMapping("/check-test-result/{bookId}/{subId}")
+    public ResponseEntity<?> getBookingStep(
+        @PathVariable Integer bookId,
+        @PathVariable Integer subId
+    ) {
+        Optional<BookingStep> stepOpt = bookingStepRepo.findByBookIdAndSubId(bookId, subId);
+        if (stepOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        // Có thể trả luôn object, hoặc custom DTO (tùy bảo mật)
+        return ResponseEntity.ok(stepOpt.get());
+    }
+
         
+
         
-@GetMapping("/test-results/{bookId}")
-public List<TestResult> getTestResultsForBooking(@PathVariable Integer bookId) {
-    return bookingStepService.getTestResultsForBooking(bookId);
-}
+    @GetMapping("/test-results/{bookId}")
+    public List<TestResult> getTestResultsForBooking(@PathVariable Integer bookId) {
+        return bookingStepService.getTestResultsForBooking(bookId);
+    }
 
 
 

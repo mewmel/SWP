@@ -72,6 +72,7 @@
                             </div>
                             <div class="appointment-actions">
                                 <i class="fas fa-file-medical"></i> Xem hồ sơ
+                                <i class="fas fa-file-medical"></i> Không đến khám
                                 </button>
                             </div>
                         </div>
@@ -169,8 +170,8 @@
                     <!-- Medical Record Tabs -->
                     <div class="record-tabs">
                         <button class="tab-btn active" onclick="window.switchTab('current')">Khám hôm nay</button>
-                        <!-- <button class="tab-btn" onclick="window.switchTab('history')">Lịch sử khám</button>
-                        <button class="tab-btn" onclick="window.switchTab('treatment')">Điều trị</button> -->
+                        <button class="tab-btn" onclick="window.switchTab('history')">Lịch sử khám</button>
+                        <button class="tab-btn" onclick="window.switchTab('treatment')">Điều trị</button>
                         <button class="tab-btn" onclick="window.switchTab('prescription')">Kê thuốc</button>
                         <button class="tab-btn" onclick="window.switchTab('tests')">Xét nghiệm</button>
                     </div>
@@ -576,14 +577,7 @@
                                         <span class="summary-label">Đang thực hiện:</span>
                                         <span class="summary-value">0</span>
                                     </div>
-                                    <!-- <div class="summary-item">
-                                        <span class="summary-label">Tiến độ:</span>
-                                        <span class="summary-value">22%</span>
-                                    </div> -->
                                 </div>
-                                <!-- <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 22%"></div>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -614,12 +608,12 @@
                                             <!--chỗ của drugId -->
                                         </div>
                                     </div>
-                                    <!-- <div class="record-section">
+                                    <div class="record-section">
                                         <label><i class="fas fa-stethoscope"></i> Chẩn đoán liên quan:</label>
                                         <textarea rows="2" id="prescriptionDiagnosis" class="form-control"
-                                            placeholder="Chẩn đoán liên quan đến đơn thuốc..."></textarea>  chỗ của drugNote
-                                        
-                                    </div> -->
+                                             placeholder="Chẩn đoán liên quan đến đơn thuốc..."></textarea>  
+                                                <!--chỗ của drugNote  -->
+                                    </div>
                                 </div>
                             </div>
                             <!-- Drug Prescription List -->
@@ -769,7 +763,7 @@
                     <button class="btn-print" onclick="window.printRecord()">
                         <i class="fas fa-print"></i> In hồ sơ
                     </button>
-                    <button class="btn-primary" onclick="window.savePatientRecord()">
+                    <button class="btn-primary" onclick="window.checkout()">
                         <i class="fas fa-save"></i> Checkout
                     </button>
                 </div>

@@ -11,7 +11,10 @@ import java.util.stream.IntStream;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.stereotype.Service;
 
 import com.example.project.dto.TestResult;
@@ -222,5 +225,36 @@ public List<TestResult> getTestResultsForBooking(Integer bookId) {
 
             bookingStepRepo.save(step);
         }
+    }
+
+
+    public boolean setStepPending(Integer bookId, Integer subId, Map<String, Object> reqBody) {
+        Optional<BookingStep> stepOpt = bookingStepRepo.findByBookIdAndSubId(bookId, subId);
+        if (stepOpt.isEmpty()) return false;
+
+        BookingStep step = stepOpt.get();
+
+        // Update từng field nếu có trong body
+        if (reqBody.containsKey("stepStatus")) {
+            step.setStepStatus((String) reqBody.get("stepStatus"));
+        }
+        if (reqBody.containsKey("note")) {
+            step.setNote((String) reqBody.get("note"));
+        }
+        if (reqBody.containsKey("performedAt")) {
+            String performedAtStr = (String) reqBody.get("performedAt");
+            if (performedAtStr != null && !performedAtStr.isBlank()) {
+                        try {
+            // Xử lý cả dạng có "Z" hoặc không có
+            step.setPerformedAt(java.time.OffsetDateTime.parse(performedAtStr).toLocalDateTime());
+        } catch (Exception e) {
+            // Nếu vẫn fail (do định dạng khác), thử loại bỏ "Z" ở cuối và parse lại
+            step.setPerformedAt(java.time.LocalDateTime.parse(performedAtStr.replace("Z", "")));
+        }
+            }
+        }
+
+        bookingStepRepo.save(step);
+        return true;
     }
 }
