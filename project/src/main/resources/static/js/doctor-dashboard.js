@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     actions.innerHTML = `<button class="btn-waiting" onclick="window.markAsExamined('${b.cusId}','${b.serId}','${b.docId}','${b.bookId}')">
                     <i class="fas fa-check"></i> Xem hồ sơ
                 </button>
-                <button onclick="window.markAsCancelled('${b.cusId}','${b.serId}','${b.docId}','${b.bookId}')">
+                <button class="btn-reject" onclick="window.markAsCancelled('${b.cusId}','${b.serId}','${b.docId}','${b.bookId}')">
                     <i class="fas fa-times"></i> Không đến khám
                 </button>
                 `;
@@ -147,11 +147,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Patient List Modal functions
     window.openPatientList = function () {
-        document.getElementById('patientListModal').style.display = 'block';
+        console.log('Opening patient list...');
+        
+        // Show modal
+        const modal = document.getElementById('patientListModal');
+        if (modal) {
+            modal.style.display = 'block';
+            loadPatientListFromDatabase();
+        } else {
+            alert('Không tìm thấy modal danh sách bệnh nhân');
+        }
     };
 
     window.closePatientListModal = function () {
-        document.getElementById('patientListModal').style.display = 'none';
+        const modal = document.getElementById('patientListModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
     };
 
     window.editPatientFromList = function (patientId) {
@@ -160,13 +172,16 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     window.searchPatients = function () {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
         const tableBody = document.getElementById('patientTableBody');
         const rows = tableBody.getElementsByTagName('tr');
 
         for (let i = 0; i < rows.length; i++) {
-            const patientName = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
-            if (patientName.includes(searchTerm)) {
+            const patientName = rows[i].getElementsByTagName('td')[0]?.textContent?.toLowerCase() || '';
+            const patientPhone = rows[i].getElementsByTagName('td')[2]?.textContent?.toLowerCase() || '';
+            
+            // Search by name or phone
+            if (patientName.includes(searchTerm) || patientPhone.includes(searchTerm)) {
                 rows[i].style.display = '';
             } else {
                 rows[i].style.display = 'none';
@@ -1403,5 +1418,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.appendChild(overlay);
     };
 
+
+    // Patient List functionality is defined outside DOMContentLoaded for global access
 
 });
