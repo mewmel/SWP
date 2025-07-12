@@ -1,13 +1,205 @@
-document.addEventListener('DOMContentLoaded', function() {
+// document.addEventListener('DOMContentLoaded', function() {
 
-        // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
+//         // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
+//     const authButtons = document.querySelector('.auth-buttons');
+//     const userMenu = document.querySelector('.user-menu');
+//     const userNameSpan = document.querySelector('.user-name');
+//     const sidebarUsername = document.querySelector('.sidebar-username');
+//     const notificationWrapper = document.querySelector('.notification-wrapper');
+
+//     // Hiển thị đúng trạng thái đăng nhập khi load lại trang
+//     const fullName = localStorage.getItem('docFullName');
+
+//     if (fullName) {
+//         if (authButtons) authButtons.style.display = 'none';
+//         if (userMenu) userMenu.style.display = 'flex';
+//         if (userNameSpan) userNameSpan.textContent = fullName;
+//         if (sidebarUsername) sidebarUsername.textContent = fullName;
+//         if (notificationWrapper) notificationWrapper.style.display = 'block';
+//     } else {
+//         if (authButtons) authButtons.style.display = 'flex';
+//         if (userMenu) userMenu.style.display = 'none';
+//         if (notificationWrapper) notificationWrapper.style.display = 'none';
+//     }
+
+//     // ========== ĐĂNG XUẤT ==========
+
+//     const logoutBtn = document.querySelector('.logout-btn');
+//     if (logoutBtn) {
+//         logoutBtn.addEventListener('click', function (e) {
+//             e.preventDefault();
+//             localStorage.clear(); // <-- Sửa ở đây, không cần gọi hàm nào khác
+//             window.location.href = "index.html";
+//         });
+//     }
+
+
+
+
+
+
+
+//   // 1. Lấy docId từ localStorage
+//   var docId = localStorage.getItem('docId');
+//   if (!docId) {
+//     showAlert('error', 'Không tìm thấy doctorId!');
+//     return;
+//   }
+
+// const avatarInput = document.getElementById('avatarUpload');
+//     const avatarPreviewImg = document.querySelector('.profile-avatar img');
+//     const avatarIcon = document.querySelector('.profile-avatar i.fas.fa-user-md');
+//     const avatarCamera = document.querySelector('.avatar-upload');
+
+//     if (avatarInput) {
+//         avatarInput.addEventListener('change', function (event) {
+//             const file = event.target.files[0];
+//             if (!file) return;
+
+//             // Kiểm tra định dạng và size
+//             if (!['image/jpeg', 'image/png'].includes(file.type)) {
+//                 showAlert('error', 'Chỉ chấp nhận ảnh JPG hoặc PNG!');
+//                 avatarInput.value = "";
+//                 return;
+//             }
+//             if (file.size > 5 * 1024 * 1024) { // 5MB
+//                 showAlert('error', 'Dung lượng ảnh tối đa 5MB!');
+//                 avatarInput.value = "";
+//                 return;
+//             }
+
+//             // Hiển thị preview ảnh vừa chọn
+//             const reader = new FileReader();
+//             reader.onload = function(e) {
+//                 // Nếu đã có img thì đổi src, không thì tạo mới
+//                 if (avatarPreviewImg) {
+//                     avatarPreviewImg.src = e.target.result;
+//                 } else {
+//                     // Xóa icon user-md nếu có
+//                     if (avatarIcon) avatarIcon.remove();
+//                     // Thêm img preview
+//                     const img = document.createElement('img');
+//                     img.className = "avatar-img";
+//                     img.style.width = "96px";
+//                     img.style.height = "96px";
+//                     img.style.borderRadius = "50%";
+//                     img.style.objectFit = "cover";
+//                     img.src = e.target.result;
+//                     document.querySelector('.profile-avatar').insertBefore(img, avatarCamera);
+//                 }
+//             };
+//             reader.readAsDataURL(file);
+
+//             // Gửi file lên server (backend phải có API nhận form-data)
+//             const formData = new FormData();
+//             formData.append('avatar', file);
+
+//             // Lấy docId từ localStorage (tuỳ bạn lưu kiểu gì)
+//             const docId = localStorage.getItem('docId');
+//             fetch(`/api/avatar/upload-doctor-avatar/${docId}`, {
+//                 method: 'POST',
+//                 body: formData
+//             })
+//             .then(res => {
+//                 if (!res.ok) throw new Error("Upload thất bại");
+//                 showAlert('success', 'Cập nhật ảnh đại diện thành công!');
+//             })
+//             .catch(err => {
+//                 showAlert('error', 'Có lỗi khi upload avatar!');
+//                 console.error(err);
+//             })
+//             .finally(() => {
+//                 avatarInput.value = "";
+//             });
+//         });
+//     }
+
+
+
+
+
+
+
+
+//     // 2. Fetch hồ sơ bác sĩ
+//     fetch(`/api/doctor/full-profile/${docId}`)
+//         .then(res => {
+//             if (!res.ok) throw new Error('Không lấy được dữ liệu');
+//             return res.json();
+//         })
+//         .then(doc => {
+//             // Thông tin cá nhân
+//             document.getElementById('fullName').value = doc.docFullName || '';
+//             document.getElementById('degree').value   = doc.degree || '';
+//             document.getElementById('email').value    = doc.docEmail || '';
+//             document.getElementById('phone').value    = doc.docPhone || '';
+//             document.getElementById('doctorId').value = 'BS' + String(doc.docId).padStart(3, '0');
+
+//             // Chuyên môn, mô tả
+//             document.getElementById('specialization').value = doc.expertise || '';
+//             document.getElementById('description').value = doc.profileDescription || '';
+
+//             // Hiển thị các tag chuyên môn từ serviceList
+//             const tagsContainer = document.getElementById('expertiseTags');
+//             tagsContainer.innerHTML = ''; // clear tag cũ
+//             if (Array.isArray(doc.currentService)) {
+//                 doc.currentService.forEach(service => {
+//                     const tag = document.createElement('span');
+//                     tag.className = 'expertise-tag';
+//                     tag.textContent = service.serName || 'Dịch vụ không rõ';
+//                     tagsContainer.appendChild(tag);
+//                 });
+//             }
+//         })
+//         .catch(err => {
+//             console.error('Lỗi khi tải hồ sơ bác sĩ:', err);
+//             showAlert('error', 'Lỗi khi tải hồ sơ bác sĩ');
+//         });
+
+//     // 3. Fetch ảnh avatar (API trả về binary image)
+//     fetch(`/api/avatar/doctor-avatar/${docId}`)
+//         .then(res => {
+//             if (!res.ok) throw new Error('Không có ảnh đại diện');
+//             return res.blob();
+//         })
+//         .then(blob => {
+//             const url = URL.createObjectURL(blob);
+//             const avatarWrapper = document.querySelector('.profile-avatar');
+//             if (avatarWrapper) {
+//                 // Xóa icon user-md nếu có
+//                 const icon = avatarWrapper.querySelector('i.fas.fa-user-md');
+//                 if (icon) icon.remove();
+//                 // Xóa img cũ (nếu có)
+//                 const oldImg = avatarWrapper.querySelector('img.avatar-img');
+//                 if (oldImg) oldImg.remove();
+
+//                 // Thêm img mới
+//                 const img = document.createElement('img');
+//                 img.src = url;
+//                 img.alt = 'Avatar';
+//                 img.className = 'avatar-img';
+//                 img.style.width = '96px';
+//                 img.style.height = '96px';
+//                 img.style.borderRadius = '50%';
+//                 img.style.objectFit = 'cover';
+//                 avatarWrapper.insertBefore(img, avatarWrapper.querySelector('.avatar-upload'));
+//             }
+//         })
+//         .catch(err => {           
+//           console.log('Chưa có avatar:', err);
+//         });
+
+
+
+// });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
     const authButtons = document.querySelector('.auth-buttons');
     const userMenu = document.querySelector('.user-menu');
     const userNameSpan = document.querySelector('.user-name');
     const sidebarUsername = document.querySelector('.sidebar-username');
     const notificationWrapper = document.querySelector('.notification-wrapper');
-
-    // Hiển thị đúng trạng thái đăng nhập khi load lại trang
     const fullName = localStorage.getItem('docFullName');
 
     if (fullName) {
@@ -23,83 +215,180 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ========== ĐĂNG XUẤT ==========
-
     const logoutBtn = document.querySelector('.logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            localStorage.clear(); // <-- Sửa ở đây, không cần gọi hàm nào khác
+            localStorage.clear();
             window.location.href = "index.html";
         });
     }
 
+    // 1. Lấy docId từ localStorage
+    var docId = localStorage.getItem('docId');
+    if (!docId) {
+        showAlert('error', 'Không tìm thấy doctorId!');
+        return;
+    }
 
+// ========== SỰ KIỆN UPLOAD ẢNH ĐẠI DIỆN ==========
+const avatarInput = document.getElementById('avatarUpload');
+if (avatarInput) {
+    avatarInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
+        // Kiểm tra định dạng và size
+        if (!['image/jpeg', 'image/png'].includes(file.type)) {
+            showAlert('error', 'Chỉ chấp nhận ảnh JPG hoặc PNG!');
+            avatarInput.value = "";
+            return;
+        }
 
+        // Gửi file lên server (chỉ preview nếu upload thành công)
+        const formData = new FormData();
+        formData.append('avatar', file);
 
+        fetch(`/api/avatar/upload-doctor-avatar/${docId}`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => {
+            if (!res.ok) {
+                return res.text().then(msg => { throw new Error(msg || "Upload thất bại"); });
+            }
+            return res.text();
+        })
+        .then(msg => {
+            showAlert('success', msg || 'Cập nhật ảnh đại diện thành công!');
+            // Sau khi upload thành công, fetch lại avatar từ backend (tránh preview tạm)
+            fetchDoctorProfile(docId);
 
-
-  // 1. Lấy docId từ localStorage
-  var docId = localStorage.getItem('docId');
-  if (!docId) {
-    showAlert('error', 'Không tìm thấy doctorId!');
-    return;
-  }
-
-
-
-
-  // 2. Fetch hồ sơ bác sĩ
-  fetch(`/api/doctor/full-profile/${docId}`)
-    .then(function(res) {
-      if (!res.ok) throw new Error('Không lấy được dữ liệu');
-      return res.json();
-    })
-    .then(function(doc) {
-      // Thông tin cơ bản
-      document.getElementById('fullName').textContent = doc.docFullName || '';
-      document.getElementById('degree').textContent   = doc.degree || '';
-      document.getElementById('docEmail').textContent = doc.docEmail || '';
-      document.getElementById('phone').textContent    = doc.docPhone || '';
-      document.getElementById('docId').textContent    = 'BS' + String(doc.docId).padStart(3, '0');
-
-      // Chuyên môn
-      document.getElementById('expertise').textContent = doc.expertise || '';
-      document.getElementById('bio').textContent       = doc.profileDescription || '';
-
-      // Hiển thị các tag chuyên môn từ serviceList
-const tagsContainer = document.getElementById('expertiseTags');
-tagsContainer.innerHTML = ''; // clear tag cũ
-
-if (Array.isArray(doc.currentService)) {
-  doc.currentService.forEach(service => {
-    const tag = document.createElement('span');
-    tag.className = 'expertise-tag';
-    tag.textContent = service.serName || 'Dịch vụ không rõ';
-    tagsContainer.appendChild(tag);
-  });
+        })
+        .catch(err => {
+            showAlert('error', err.message || 'Có lỗi khi upload avatar!');
+            console.error(err);
+        })
+        .finally(() => {
+            avatarInput.value = "";
+        });
+    });
 }
 
-      // Avatar: nếu có imageData
-      if (doc.imageData && doc.imageMimeType) {
-        // doc.imageData là mảng số, cần tạo Blob
-        var bytes = new Uint8Array(doc.imageData.data || doc.imageData);
-        var blob  = new Blob([bytes], { type: doc.imageMimeType });
-        var url   = URL.createObjectURL(blob);
+function fetchAvatar(docId) {
+    fetch(`/api/avatar/doctor-avatar/${docId}`)
+        .then(res => {
+            if (!res.ok) throw new Error('Không lấy được avatar');
+            return res.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            updateAvatarPreview(url);
+        })
+        .catch(err => {
+            console.error('Lỗi khi tải avatar:', err);
+            resetAvatarPreviewToDefault();
+        });
+    }
 
-        // Thay icon bằng <img>
-        var avatarWrapper = document.querySelector('.profile-avatar');
-        if (avatarWrapper) {
-          avatarWrapper.innerHTML = '<img src="' + url + '" alt="Avatar" class="avatar-img"/>';
+    // ========== LOAD PROFILE ==========
+    fetchDoctorProfile(docId);
+
+    // ========== HÀM HỖ TRỢ ==========
+
+    function fetchDoctorProfile(docId) {
+      fetchAvatar(docId);
+        fetch(`/api/doctors/full-profile/${docId}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Không lấy được dữ liệu');
+                return res.json();
+            })
+            .then(doc => {
+                // Thông tin cá nhân
+                document.getElementById('fullName').value = doc.docFullName || '';
+                document.getElementById('degree').value   = doc.degree || '';
+                document.getElementById('email').value    = doc.docEmail || '';
+                document.getElementById('phone').value    = doc.docPhone || '';
+                document.getElementById('doctorId').value = 'BS' + String(doc.docId).padStart(3, '0');
+
+                // Chuyên môn, mô tả
+                document.getElementById('specialization').value = doc.expertise || '';
+                document.getElementById('description').value = doc.profileDescription || '';
+
+                // Hiển thị các tag chuyên môn từ serviceList
+                const tagsContainer = document.getElementById('expertiseTags');
+                tagsContainer.innerHTML = '';
+                if (Array.isArray(doc.currentService)) {
+                    doc.currentService.forEach(service => {
+                        const tag = document.createElement('span');
+                        tag.className = 'expertise-tag';
+                        tag.textContent = service.serName || 'Dịch vụ không rõ';
+                        tagsContainer.appendChild(tag);
+                    });
+                }
+
+            //     // ===== Avatar: chỉ lấy từ doc.currentAvatar (byte[])
+            //     if (doc.currentAvatar && Array.isArray(doc.currentAvatar) && doc.currentAvatar.length > 0) {
+            //         // Convert byte[] to Blob
+            //         const bytes = new Uint8Array(doc.currentAvatar);
+            //         const blob = new Blob([bytes]);
+            //         const url = URL.createObjectURL(blob);
+            //         updateAvatarPreview(url);
+            //     } else {
+            //         // Nếu không có avatar, trả về icon mặc định (tuỳ chỉnh)
+            //         resetAvatarPreviewToDefault();
+            //     }
+            // 
+            }
+            )
+            .catch(err => {
+                console.error('Lỗi khi tải hồ sơ bác sĩ:', err);
+                showAlert('error', 'Lỗi khi tải hồ sơ bác sĩ');
+            });
+    }
+
+    function updateAvatarPreview(imgUrl) {
+        const avatarWrapper = document.querySelector('.profile-avatar');
+        if (!avatarWrapper) return;
+        // Xóa icon user-md nếu có
+        const icon = avatarWrapper.querySelector('i.fas.fa-user-md');
+        if (icon) icon.remove();
+        // Xóa img cũ (nếu có)
+        const oldImg = avatarWrapper.querySelector('img.avatar-img');
+        if (oldImg) oldImg.remove();
+        // Thêm img mới
+        const img = document.createElement('img');
+        img.src = imgUrl;
+        img.alt = 'Avatar';
+        img.className = 'avatar-img';
+        img.style.width = '96px';
+        img.style.height = '96px';
+        img.style.borderRadius = '50%';
+        img.style.objectFit = 'cover';
+        avatarWrapper.insertBefore(img, avatarWrapper.querySelector('.avatar-upload'));
+    }
+
+    function resetAvatarPreviewToDefault() {
+        const avatarWrapper = document.querySelector('.profile-avatar');
+        if (!avatarWrapper) return;
+        // Xóa img cũ (nếu có)
+        const oldImg = avatarWrapper.querySelector('img.avatar-img');
+        if (oldImg) oldImg.remove();
+        // Nếu chưa có icon thì thêm lại
+        if (!avatarWrapper.querySelector('i.fas.fa-user-md')) {
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-user-md';
+            avatarWrapper.insertBefore(icon, avatarWrapper.querySelector('.avatar-upload'));
         }
-      }
-    })
-    .catch(function(err) {
-      console.error('Lỗi khi tải hồ sơ bác sĩ:', err);
-      showAlert('error', 'Lỗi khi tải hồ sơ bác sĩ');
-    });
+    }
 
-
-
-
+    function showAlert(type, message) {
+        const alertBox = document.createElement('div');
+        alertBox.className = `alert alert-${type}`;
+        alertBox.textContent = message;
+        document.body.appendChild(alertBox);
+        setTimeout(() => {
+            alertBox.remove();
+        }, 3000);
+    }
 });

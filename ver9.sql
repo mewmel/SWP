@@ -1,8 +1,8 @@
 ﻿USE [master]
 GO
-CREATE DATABASE [Healthcare_ServiceVer9]
+CREATE DATABASE [Healthcare_ServiceVer91]
 GO
-USE [Healthcare_ServiceVer9]
+USE [Healthcare_ServiceVer91]
 GO
 
 ----------------------------------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ CREATE TABLE Booking (
 );
 GO
 
---8. BookingStep
+--8.  
 -- Bang luu cac buoc thuc te cua mot lan kham/ dieu tri
 CREATE TABLE BookingStep (
     bookingStepId	   INT            IDENTITY(1,1) CONSTRAINT PK_BookingStep PRIMARY KEY,
@@ -216,7 +216,6 @@ CREATE TABLE Post (
 											  REFERENCES Doctor(docId),
     title       NVARCHAR(200)   NOT NULL,
     content     NVARCHAR(MAX)   NOT NULL,
-	imageId		int				NULL, 
     createdAt   DATETIME        NOT NULL	  DEFAULT GETDATE(),
     updatedAt   DATETIME        NULL,
     postStatus      NVARCHAR(20)    NOT NULL  CONSTRAINT CK_Post_Status CHECK (postStatus IN ('draft','published','hidden'))
@@ -225,6 +224,33 @@ CREATE TABLE Post (
     
 );
 GO
+
+CREATE TABLE Image (
+    imageId        INT           IDENTITY(1,1) PRIMARY KEY,
+    imageData      VARBINARY(MAX) NOT NULL,
+    imageMimeType  NVARCHAR(100)  NOT NULL
+);
+GO
+
+CREATE TABLE DoctorAvatar (
+    docAvatarId INT IDENTITY(1,1) PRIMARY KEY,
+    docId       INT NOT NULL CONSTRAINT FK_DoctorAvatar_Doctor
+                          FOREIGN KEY (docId) REFERENCES Doctor(docId),
+    imageId     INT NOT NULL CONSTRAINT FK_DoctorAvatar_Image
+                          FOREIGN KEY (imageId) REFERENCES Image(imageId)
+);
+GO
+
+CREATE TABLE PostImage (
+    postImageId INT IDENTITY(1,1)	PRIMARY KEY,
+    postId      INT NOT NULL		CONSTRAINT FK_PostImage_Post
+									FOREIGN KEY (postId) REFERENCES Post(postId),
+
+    imageId     INT NOT NULL		CONSTRAINT FK_PostImage_Image
+									FOREIGN KEY (imageId) REFERENCES Image(imageId)
+);
+GO
+
 CREATE TABLE Drug (
     drugId          INT             IDENTITY(1,1) PRIMARY KEY,  -- ID duy nhất cho mỗi toa thuốc
     bookId			INT             NOT NULL,                   -- Gắn với bước cụ thể của quá trình điều trị
@@ -256,16 +282,7 @@ CREATE TABLE DrugItem (
 
 );
 GO
-CREATE TABLE Image (
-    imageId        INT           IDENTITY(1,1)			PRIMARY KEY,
 
-    docId          INT           NOT NULL               CONSTRAINT FK_Image_Doctor 
-														FOREIGN KEY(docId) 
-														REFERENCES dbo.Doctor(docId),             -- FK tới Doctor.docId
-    imageData      VARBINARY(MAX) NOT NULL,            -- dữ liệu ảnh
-    imageMimeType  NVARCHAR(100)  NOT NULL,            -- vd "image/png"
-
-);
 
 
 INSERT INTO Customer ( cusFullName, cusGender, cusDate, cusEmail, cusPhone, cusPassword, cusAddress, cusStatus,  cusOccupation,  emergencyContact)
@@ -353,18 +370,41 @@ VALUES
 
 
 
+
+
+/*
 INSERT INTO WorkSlot (docId, maId, workDate, startTime, endTime, maxPatient, slotStatus) VALUES	
 
-
---------------------------------------------------------
-
 (1, 1, '2025-07-3', '08:00', '09:00', 2, 'approved'),						
-(1, 1, '2025-07-3', '09:00', '10:00', 2, 'approved'),						
-(1, 1, '2025-07-3', '10:00', '11:00', 2, 'approved'),						
-(1, 1, '2025-07-3', '11:00', '12:00', 2, 'approved'),
-
-(2, 1, '2025-07-3', '14:00', '15:00', 2, 'approved'),
-(2, 1, '2025-07-3', '15:00', '16:00', 2, 'approved'),
-(2, 1, '2025-07-3', '16:00', '17:00', 2, 'approved');
+(1, 1, '2025-07-2', '09:00', '10:00', 2, 'approved'),						
+(1, 1, '2025-07-2', '10:00', '11:00', 2, 'approved'),						
+(1, 1, '2025-07-2', '11:00', '12:00', 2, 'approved'),						
+						
+(2, 1, '2025-07-2', '14:00', '15:00', 2, 'approved'),						
+(2, 1, '2025-07-2', '15:00', '16:00', 2, 'approved'),						
+(2, 1, '2025-07-2', '16:00', '17:00', 2, 'approved');
 --------------------------------------------------------
 
+USE [Healthcare_ServiceVer9]
+
+
+select * from WorkSlot
+
+select * from BookingStep
+
+select * from Booking
+
+select * from Customer
+
+select * from MedicalRecord
+
+select * from Service
+
+select * from SubService
+
+select * from Drug
+
+select * from DrugItem
+
+select * from Image
+*/

@@ -21,14 +21,12 @@ public class DocFullProfile {
     private String expertise;
     private String degree;
     private String profileDescription;
-    private byte[] imageData;
-    private String imageMimeType;
+
+
 
     
     // Danh sách dịch vụ hiện tại của bác sĩ
     private List<CurrentService> currentService;
-
-    
 
     @Getter
     @Setter
