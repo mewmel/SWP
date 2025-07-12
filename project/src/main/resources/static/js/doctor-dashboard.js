@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const authButtons = document.querySelector('.auth-buttons');
     const userMenu = document.querySelector('.user-menu');
     const userNameSpan = document.querySelector('.user-name');
-    const userId = document.querySelector('.user-id');
     const sidebarUsername = document.querySelector('.sidebar-username');
     const notificationWrapper = document.querySelector('.notification-wrapper');
 

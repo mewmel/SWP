@@ -29,6 +29,69 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 100);
     }
 
+    // // ========== ĐĂNG NHẬP ==========
+    // document.getElementById('loginForm').addEventListener('submit', function (e) {
+    //     e.preventDefault();
+    //     const submitBtn = this.querySelector('button[type="submit"]');
+    //     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+    //     submitBtn.disabled = true;
+
+    //     const cusEmail = document.getElementById('loginEmail').value;
+    //     const cusPassword = document.getElementById('loginPassword').value;
+
+    //     fetch('/api/auth/login', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ cusEmail, cusPassword })
+    //     })
+    //         .then(async response => {
+    //             if (!response.ok) {
+    //                 const errText = await response.text();
+    //                 throw new Error(errText || 'Đăng nhập thất bại');
+    //             }
+    //             return response.json();
+    //         })
+    //         .then(data => {
+    //             // Lưu tất cả trường từ data vào localStorage
+    //             if (data && typeof data === 'object') {
+    //                 Object.keys(data).forEach(key => {
+    //                     if (data[key] !== undefined && data[key] !== null) {
+    //                         localStorage.setItem(key, data[key]);
+    //                     }
+    //                 });
+    //             }
+
+    //             // Hiển thị giao diện đã đăng nhập
+    //             if (authButtons) authButtons.style.display = 'none';
+    //             if (userMenu) userMenu.style.display = 'flex';
+    //             if (userNameSpan) userNameSpan.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+    //             if (sidebarUsername) sidebarUsername.textContent = data.cusFullName || data.cusEmail || 'Người dùng';
+    //             if (notificationWrapper) notificationWrapper.style.display = 'block';
+    //             showNotification('Đăng nhập thành công!', 'success');
+    //             const closeModal = document.querySelector('.close-modal');
+    //             if (closeModal) closeModal.click();
+
+    //             // Lưu role vào localStorage nếu có
+    //             if (typeof selectedRole !== 'undefined' && selectedRole) {
+    //                 localStorage.setItem('userRole', selectedRole);
+    //             }
+
+    //             window.location.href = "dashboard.html";
+    //         })
+    //         .catch((err) => {
+    //             showNotification(
+    //                 (err.message && err.message.startsWith('Invalid'))
+    //                     ? err.message
+    //                     : 'Email hoặc mật khẩu không đúng hoặc tài khoản chưa kích hoạt!',
+    //                 'error'
+    //             );
+    //         })
+    //         .finally(() => {
+    //             submitBtn.innerHTML = '<span>Đăng nhập</span><i class="fas fa-arrow-right"></i>';
+    //             submitBtn.disabled = false;
+    //         });
+    // });
+
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', function (e) {
@@ -1400,7 +1463,7 @@ document.addEventListener('DOMContentLoaded', function () {
         function initDoctorModalFeature() {
             createDoctorDetailModal();
             attachDoctorDetailEvents();
-
+            
             // Đóng popup khi bấm ra ngoài modal-content
             const modal = document.getElementById('doctorDetailModal');
             if (modal) {
@@ -1428,4 +1491,80 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+    // ====== Lọc dịch vụ theo danh mục cho bảng giá (fix: chỉ chạy trên trang bảng giá) ======
+    (function() {
+        // Chỉ chạy nếu có phần tử filter và tbody
+        const filter = document.getElementById('categoryFilter');
+        const tbody = document.getElementById('subservice-table-body');
+        if (!filter || !tbody) return;
+
+        // Lưu lại HTML gốc của tbody
+        const originalHTML = tbody.innerHTML;
+
+        filter.addEventListener('change', function() {
+            const selected = filter.value;
+            tbody.innerHTML = originalHTML;
+            if (!selected) return;
+            // Lọc các dòng theo danh mục
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            rows.forEach(row => {
+                const category = row.children[1]?.textContent.trim();
+                if (category !== selected) {
+                    row.style.display = 'none';
+                } else {
+                    row.style.display = '';
+                }
+            });
+        });
+    })();
+
+    // Mở Gmail web khi bấm icon mail
+    var gmailBtn = document.getElementById('gmail-link');
+    if (gmailBtn) {
+        gmailBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            try {
+                var email = 'fertilityehr@gmail.com';
+                var subject = encodeURIComponent('Liên hệ FertilityEHR');
+                var body = encodeURIComponent('Xin chào FertilityEHR,\n\n');
+                var gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+                
+                var newWindow = window.open(gmailUrl, '_blank');
+                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                    // Fallback nếu popup bị chặn
+                    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+                    showNotification('Đang mở ứng dụng email mặc định...', 'info');
+                } else {
+                    showNotification('Đang mở Gmail...', 'success');
+                }
+            } catch (error) {
+                console.error('Gmail error:', error);
+                showNotification('Không thể mở Gmail. Vui lòng thử lại!', 'error');
+            }
+        });
+    }
+    
+    // Mở Instagram web khi bấm icon Instagram
+    var instagramBtn = document.getElementById('instagram-link');
+    if (instagramBtn) {
+        instagramBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            try {
+                var instagramUrl = `https://www.instagram.com/fert.ilityehr?igsh=Nzk1bmRsa3hnNXh4&utm_source=qr`;
+                
+                var newWindow = window.open(instagramUrl, '_blank');
+                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                    // Fallback nếu popup bị chặn
+                    window.location.href = instagramUrl;
+                } else {
+                    showNotification('Đang mở Instagram...', 'success');
+                }
+            } catch (error) {
+                console.error('Instagram error:', error);
+                showNotification('Không thể mở Instagram. Vui lòng thử lại!', 'error');
+            }
+        });
+    }
+
 });
