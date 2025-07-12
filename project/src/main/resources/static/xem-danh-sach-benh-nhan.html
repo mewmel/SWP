@@ -251,6 +251,57 @@
             display: flex;
         }
 
+        /* Service Checkbox List Styles */
+        .service-checkbox-list {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            padding: 0.5rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .service-checkbox-item {
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .service-checkbox-item:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .service-checkbox-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .service-checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin-right: 0.75rem;
+            accent-color: #10b981;
+        }
+
+        .service-checkbox-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin: 0;
+            width: 100%;
+        }
+
+        .service-checkbox-item input[type="checkbox"]:checked + div {
+            color: #047857;
+        }
+
+        .service-checkbox-item input[type="checkbox"]:checked {
+            background-color: #10b981;
+        }
+
         .modal-content {
             background: white;
             border-radius: 8px;
@@ -1998,12 +2049,18 @@
                             </select>
                         </div>
                     </div>
-                    <div class="record-section">
-                                                        <label><i class="fas fa-medical-kit"></i> Dịch vụ con để hẹn lại:</label>
-                                                                <select id="nextAppService" class="form-control">
-                                            <option value="">-- Chọn dịch vụ con --</option>
-                                        </select>
-                    </div>
+                                                        <div class="record-section">
+                                        <label><i class="fas fa-medical-kit"></i> Dịch vụ để hẹn lại:</label>
+                                        <div id="nextAppServiceList" class="service-checkbox-list" style="border: 1px solid #ddd; border-radius: 4px; padding: 0.5rem; max-height: 200px; overflow-y: auto; background: white;">
+                                            <div class="loading-services" style="text-align: center; padding: 1rem; color: #666;">
+                                                <i class="fas fa-spinner fa-spin"></i> Đang tải dịch vụ...
+                                            </div>
+                                        </div>
+                                        <div id="selectedServicesSummary" style="margin-top: 0.5rem; padding: 0.5rem; background: #f0f9ff; border-radius: 4px; border: 1px solid #0ea5e9; color: #0369a1; font-size: 0.9rem; display: none;">
+                                            <i class="fas fa-info-circle"></i> <span id="summaryText">Chưa chọn dịch vụ nào</span>
+                                        </div>
+                                        <small class="text-muted">Có thể chọn nhiều dịch vụ</small>
+                                    </div>
                     <div class="record-section">
                         <label><i class="fas fa-sticky-note"></i> Ghi chú hẹn lại:</label>
                         <textarea id="nextAppNote" rows="3" class="form-control" 
@@ -4239,6 +4296,18 @@
             document.getElementById('nextAppTime').value = '';
             document.getElementById('nextAppNote').value = '';
             
+            // Clear any existing checkboxes
+            const checkboxes = document.querySelectorAll('#nextAppServiceList .service-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Clear summary
+            const summaryDiv = document.getElementById('selectedServicesSummary');
+            if (summaryDiv) {
+                summaryDiv.style.display = 'none';
+            }
+            
             // Load services
             loadServicesForNextAppointment();
         }
@@ -4254,25 +4323,57 @@
                 if (!response.ok) throw new Error('Failed to load subservices');
                 
                 const subServices = await response.json();
-                const serviceSelect = document.getElementById('nextAppService');
+                const serviceContainer = document.getElementById('nextAppServiceList');
                 
-                if (serviceSelect) {
-                    serviceSelect.innerHTML = '<option value="">-- Chọn dịch vụ con --</option>';
-                    
+                if (serviceContainer) {
                     if (subServices.length > 0) {
+                        let serviceHtml = '';
+                        
                         subServices.forEach(subService => {
-                            const option = document.createElement('option');
-                            option.value = subService.subId;
-                            option.textContent = `${subService.subName} - ${subService.subPrice.toLocaleString()}đ`;
-                            serviceSelect.appendChild(option);
+                            serviceHtml += `
+                                <div class="service-checkbox-item" style="margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 4px; background: #f8fafc;">
+                                    <label style="display: flex; align-items: center; cursor: pointer; margin: 0;">
+                                        <input type="checkbox" 
+                                               value="${subService.subId}" 
+                                               data-name="${subService.subName}"
+                                               data-price="${subService.subPrice}"
+                                               class="service-checkbox" 
+                                               style="margin-right: 0.5rem;">
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 500; color: #2d3748;">${subService.subName}</div>
+                                            <div style="font-size: 0.9rem; color: #10b981; font-weight: 600;">${subService.subPrice.toLocaleString()}đ</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            `;
                         });
+                        
+                        serviceContainer.innerHTML = serviceHtml;
+                        
+                        // Add event listeners to checkboxes
+                        setTimeout(() => {
+                            addServiceCheckboxListeners();
+                            updateSelectedServicesSummary();
+                        }, 100);
                     } else {
-                        serviceSelect.innerHTML = '<option value="">Không có dịch vụ con nào</option>';
+                        serviceContainer.innerHTML = `
+                            <div style="text-align: center; padding: 1rem; color: #666;">
+                                <i class="fas fa-info-circle"></i> Không có dịch vụ nào
+                            </div>
+                        `;
                     }
                 }
             } catch (error) {
                 console.error('Error loading subservices:', error);
-                showNotification('Không thể tải danh sách dịch vụ con!', 'error');
+                const serviceContainer = document.getElementById('nextAppServiceList');
+                if (serviceContainer) {
+                    serviceContainer.innerHTML = `
+                        <div style="text-align: center; padding: 1rem; color: #ef4444;">
+                            <i class="fas fa-exclamation-triangle"></i> Không thể tải danh sách dịch vụ
+                        </div>
+                    `;
+                }
+                showNotification('Không thể tải danh sách dịch vụ!', 'error');
             }
         }
 
@@ -4288,12 +4389,12 @@
             // Get form data
             const appointmentDate = document.getElementById('nextAppDate').value;
             const appointmentTime = document.getElementById('nextAppTime').value;
-            const subServiceId = document.getElementById('nextAppService').value;
+            const selectedServices = getSelectedServices();
             const note = document.getElementById('nextAppNote').value;
             
             // Validation
-            if (!appointmentDate || !appointmentTime || !subServiceId) {
-                showNotification('Vui lòng điền đầy đủ thông tin: ngày, giờ và dịch vụ!', 'error');
+            if (!appointmentDate || !appointmentTime || selectedServices.length === 0) {
+                showNotification('Vui lòng điền đầy đủ thông tin: ngày, giờ và ít nhất một dịch vụ!', 'error');
                 return;
             }
             
@@ -4306,24 +4407,17 @@
             const [startTime, endTime] = appointmentTime.split('-');
             
             try {
-                // Get SubService info to find the selected SubService name
-                const subServiceResponse = await fetch(`/api/subservices/by-service/${currentNextAppPatient.serId}`);
-                if (!subServiceResponse.ok) throw new Error('Cannot get subservice info');
-                
-                const subServices = await subServiceResponse.json();
-                const selectedSubService = subServices.find(sub => sub.subId === parseInt(subServiceId));
-                
-                if (!selectedSubService) {
-                    throw new Error('Không tìm thấy thông tin dịch vụ con');
-                }
-                
                 // Get customer info for booking
                 const customerResponse = await fetch(`/api/customer/full-record/${currentNextAppPatient.cusId}`);
                 if (!customerResponse.ok) throw new Error('Cannot get customer info');
                 
                 const customerData = await customerResponse.json();
                 
-                // Prepare booking data
+                // Prepare service list for note
+                const serviceNames = selectedServices.map(service => service.subName).join(', ');
+                const totalPrice = selectedServices.reduce((total, service) => total + service.subPrice, 0);
+                
+                // Prepare booking data with multiple services info
                 const bookingData = {
                     fullName: customerData.cusFullName,
                     gender: customerData.cusGender === 'M' ? 'nam' : 'nu',
@@ -4337,12 +4431,13 @@
                     appointmentDate: appointmentDate,
                     startTime: startTime.trim(),
                     endTime: endTime.trim(),
-                    note: note || `Tái khám theo lịch hẹn - ${selectedSubService.subName}`,
+                    note: note || `Tái khám theo lịch hẹn - Dịch vụ: ${serviceNames} (Tổng: ${totalPrice.toLocaleString()}đ)`,
                     bookType: 'follow-up',
                     serId: currentNextAppPatient.serId // Use current patient's service ID
                 };
                 
                 console.log('Booking data:', bookingData);
+                console.log('Selected services:', selectedServices);
                 
                 // Create booking
                 const response = await fetch('/api/booking', {
@@ -4361,7 +4456,9 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showNotification(`✅ Đã đặt lịch hẹn lại thành công cho dịch vụ: ${selectedSubService.subName}! Email xác nhận đã được gửi cho bệnh nhân.`, 'success');
+                    const serviceCount = selectedServices.length;
+                    const serviceText = serviceCount === 1 ? 'dịch vụ' : `${serviceCount} dịch vụ`;
+                    showNotification(`✅ Đã đặt lịch hẹn lại thành công cho ${serviceText}: ${serviceNames}! Email xác nhận đã được gửi cho bệnh nhân.`, 'success');
                     closeNextAppointmentModal();
                     
                     // Refresh patient list to show updated data
@@ -4378,12 +4475,62 @@
             }
         };
 
+        // Get selected services
+        function getSelectedServices() {
+            const selectedServices = [];
+            const checkboxes = document.querySelectorAll('#nextAppServiceList .service-checkbox:checked');
+            
+            checkboxes.forEach(checkbox => {
+                selectedServices.push({
+                    subId: parseInt(checkbox.value),
+                    subName: checkbox.dataset.name,
+                    subPrice: parseInt(checkbox.dataset.price)
+                });
+            });
+            
+            return selectedServices;
+        }
+
+        // Update selected services summary
+        function updateSelectedServicesSummary() {
+            const selectedServices = getSelectedServices();
+            const summaryDiv = document.getElementById('selectedServicesSummary');
+            const summaryText = document.getElementById('summaryText');
+            
+            if (selectedServices.length === 0) {
+                summaryDiv.style.display = 'none';
+            } else {
+                const count = selectedServices.length;
+                const totalPrice = selectedServices.reduce((total, service) => total + service.subPrice, 0);
+                const serviceText = count === 1 ? 'dịch vụ' : 'dịch vụ';
+                
+                summaryText.textContent = `Đã chọn ${count} ${serviceText} - Tổng: ${totalPrice.toLocaleString()}đ`;
+                summaryDiv.style.display = 'block';
+            }
+        }
+
+        // Add event listener to service checkboxes
+        function addServiceCheckboxListeners() {
+            const checkboxes = document.querySelectorAll('#nextAppServiceList .service-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedServicesSummary);
+            });
+        }
+
         // Clear next appointment form
         window.clearNextAppointmentForm = function() {
             document.getElementById('nextAppDate').value = '';
             document.getElementById('nextAppTime').value = '';
-            document.getElementById('nextAppService').value = '';
             document.getElementById('nextAppNote').value = '';
+            
+            // Clear all checkboxes
+            const checkboxes = document.querySelectorAll('#nextAppServiceList .service-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Update summary
+            updateSelectedServicesSummary();
             
             showNotification('🗑️ Đã xóa form hẹn khám lại', 'info');
         };
