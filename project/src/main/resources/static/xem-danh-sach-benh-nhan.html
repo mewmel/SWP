@@ -219,6 +219,14 @@
             background: #2563eb;
         }
 
+        .btn-edit[onclick*="nextAppointment"] {
+            background: #10b981;
+        }
+
+        .btn-edit[onclick*="nextAppointment"]:hover {
+            background: #059669;
+        }
+
         .btn-disabled {
             background: #f1f5f9;
             color: #64748b;
@@ -237,6 +245,61 @@
             background-color: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
+        }
+
+        .modal.flex {
+            display: flex;
+        }
+
+        /* Service Checkbox List Styles */
+        .service-checkbox-list {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            padding: 0.5rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .service-checkbox-item {
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .service-checkbox-item:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .service-checkbox-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .service-checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin-right: 0.75rem;
+            accent-color: #10b981;
+        }
+
+        .service-checkbox-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin: 0;
+            width: 100%;
+        }
+
+        .service-checkbox-item input[type="checkbox"]:checked + div {
+            color: #047857;
+        }
+
+        .service-checkbox-item input[type="checkbox"]:checked {
+            background-color: #10b981;
         }
 
         .modal-content {
@@ -1944,6 +2007,81 @@
         </div>
     </div>
 
+    <!-- Next Appointment Modal -->
+    <div id="nextAppointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-plus"></i> Hẹn khám lại cho bệnh nhân</h3>
+                <span class="close" onclick="closeNextAppointmentModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- Patient Summary -->
+                <div class="patient-summary" style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #3b82f6;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div class="patient-avatar" style="width: 50px; height: 50px; background: #3b82f6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h4 id="nextAppPatientName" style="margin: 0; color: #1e293b; font-size: 1.1rem;"></h4>
+                            <p id="nextAppPatientInfo" style="margin: 0; color: #64748b; font-size: 0.9rem;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointment Form -->
+                <div class="appointment-form">
+                    <div class="record-grid">
+                        <div class="record-section">
+                            <label><i class="fas fa-calendar-alt"></i> Ngày hẹn:</label>
+                            <input type="date" id="nextAppDate" class="form-control" min="">
+                        </div>
+                        <div class="record-section">
+                            <label><i class="fas fa-clock"></i> Giờ hẹn:</label>
+                            <select id="nextAppTime" class="form-control">
+                                <option value="">-- Chọn giờ --</option>
+                                <option value="08:00-09:00">08:00 - 09:00</option>
+                                <option value="09:00-10:00">09:00 - 10:00</option>
+                                <option value="10:00-11:00">10:00 - 11:00</option>
+                                <option value="11:00-12:00">11:00 - 12:00</option>
+                                <option value="14:00-15:00">14:00 - 15:00</option>
+                                <option value="15:00-16:00">15:00 - 16:00</option>
+                                <option value="16:00-17:00">16:00 - 17:00</option>
+                            </select>
+                        </div>
+                    </div>
+                                                        <div class="record-section">
+                                        <label><i class="fas fa-medical-kit"></i> Dịch vụ để hẹn lại:</label>
+                                        <div id="nextAppServiceList" class="service-checkbox-list" style="border: 1px solid #ddd; border-radius: 4px; padding: 0.5rem; max-height: 200px; overflow-y: auto; background: white;">
+                                            <div class="loading-services" style="text-align: center; padding: 1rem; color: #666;">
+                                                <i class="fas fa-spinner fa-spin"></i> Đang tải dịch vụ...
+                                            </div>
+                                        </div>
+                                        <div id="selectedServicesSummary" style="margin-top: 0.5rem; padding: 0.5rem; background: #f0f9ff; border-radius: 4px; border: 1px solid #0ea5e9; color: #0369a1; font-size: 0.9rem; display: none;">
+                                            <i class="fas fa-info-circle"></i> <span id="summaryText">Chưa chọn dịch vụ nào</span>
+                                        </div>
+                                        <small class="text-muted">Có thể chọn nhiều dịch vụ</small>
+                                    </div>
+                    <div class="record-section">
+                        <label><i class="fas fa-sticky-note"></i> Ghi chú hẹn lại:</label>
+                        <textarea id="nextAppNote" rows="3" class="form-control" 
+                            placeholder="Ghi chú về lịch hẹn tiếp theo (lý do tái khám, chuẩn bị gì...)"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeNextAppointmentModal()">
+                    <i class="fas fa-times"></i> Hủy
+                </button>
+                <button class="btn-secondary" onclick="clearNextAppointmentForm()">
+                    <i class="fas fa-undo"></i> Xóa form
+                </button>
+                <button class="btn-primary" onclick="scheduleNextAppointment()" style="background: #10b981;">
+                    <i class="fas fa-calendar-check"></i> Đặt lịch hẹn lại
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/doctor-common.js"></script>
     <script src="js/script.js"></script>
     <script>
@@ -1994,6 +2132,7 @@
                                 customerData.bookStatus = booking.bookStatus;
                                 customerData.lastVisit = booking.createdAt;
                                 customerData.bookId = booking.bookId;
+                                customerData.serId = booking.serId; // Add serId from booking
                                 
                                 uniqueCustomers.set(booking.cusId, customerData);
                             }
@@ -2032,7 +2171,9 @@
                     cusOccupation: 'Con sen',
                     emergencyContact: 'Mơ',
                     lastVisit: '2024-06-25',
-                    bookStatus: 'completed'
+                    bookStatus: 'completed',
+                    serId: 1, // Add sample serId
+                    bookId: 1 // Add sample bookId
                 }
             ];
             filteredPatients = [...allPatients];
@@ -2104,6 +2245,9 @@
                                     <i class="fas fa-clock"></i> Chưa checkout
                                    </button>`
                             }
+                            <button class="btn-action btn-edit" onclick="openNextAppointmentModal(${patient.cusId}, '${patient.cusFullName}', 'SĐT: ${formatPhoneNumber(patient.cusPhone)} - ${genderText}', ${patient.serId})">
+                                <i class="fas fa-calendar-plus"></i> Hẹn khám lại
+                            </button>
                         </div>
                     </td>
                 `;
@@ -4103,10 +4247,293 @@
         // Update close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('patientModal');
+            const nextAppModal = document.getElementById('nextAppointmentModal');
             if (event.target === modal) {
                 closeModal();
             }
+            if (event.target === nextAppModal) {
+                closeNextAppointmentModal();
+            }
         }
+
+        // ========== NEXT APPOINTMENT FUNCTIONS ==========
+        
+        let currentNextAppPatient = null;
+
+        // Open next appointment modal for specific patient
+        window.openNextAppointmentModal = function(cusId, patientName, patientInfo, serId) {
+            currentNextAppPatient = { cusId, patientName, patientInfo, serId };
+            
+            // Update patient info in modal
+            document.getElementById('nextAppPatientName').textContent = patientName;
+            document.getElementById('nextAppPatientInfo').textContent = patientInfo;
+            
+            // Initialize form
+            initializeNextAppointmentForm();
+            
+            // Show modal
+            document.getElementById('nextAppointmentModal').classList.add('flex');
+        };
+
+        // Close next appointment modal
+        window.closeNextAppointmentModal = function() {
+            document.getElementById('nextAppointmentModal').classList.remove('flex');
+            currentNextAppPatient = null;
+            clearNextAppointmentForm();
+        };
+
+        // Initialize next appointment form
+        function initializeNextAppointmentForm() {
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            const nextAppDate = document.getElementById('nextAppDate');
+            if (nextAppDate) {
+                nextAppDate.setAttribute('min', today);
+                nextAppDate.value = '';
+            }
+            
+            // Clear other fields
+            document.getElementById('nextAppTime').value = '';
+            document.getElementById('nextAppNote').value = '';
+            
+            // Clear any existing checkboxes
+            const checkboxes = document.querySelectorAll('#nextAppServiceList .service-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Clear summary
+            const summaryDiv = document.getElementById('selectedServicesSummary');
+            if (summaryDiv) {
+                summaryDiv.style.display = 'none';
+            }
+            
+            // Load services
+            loadServicesForNextAppointment();
+        }
+
+        // Load SubServices for next appointment (filtered by current patient's service)
+        async function loadServicesForNextAppointment() {
+            try {
+                if (!currentNextAppPatient || !currentNextAppPatient.serId) {
+                    throw new Error('Không tìm thấy thông tin dịch vụ của bệnh nhân');
+                }
+                
+                const response = await fetch(`/api/subservices/by-service/${currentNextAppPatient.serId}`);
+                if (!response.ok) throw new Error('Failed to load subservices');
+                
+                const subServices = await response.json();
+                const serviceContainer = document.getElementById('nextAppServiceList');
+                
+                if (serviceContainer) {
+                    if (subServices.length > 0) {
+                        let serviceHtml = '';
+                        
+                        subServices.forEach(subService => {
+                            serviceHtml += `
+                                <div class="service-checkbox-item" style="margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 4px; background: #f8fafc;">
+                                    <label style="display: flex; align-items: center; cursor: pointer; margin: 0;">
+                                        <input type="checkbox" 
+                                               value="${subService.subId}" 
+                                               data-name="${subService.subName}"
+                                               data-price="${subService.subPrice}"
+                                               class="service-checkbox" 
+                                               style="margin-right: 0.5rem;">
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 500; color: #2d3748;">${subService.subName}</div>
+                                            <div style="font-size: 0.9rem; color: #10b981; font-weight: 600;">${subService.subPrice.toLocaleString()}đ</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            `;
+                        });
+                        
+                        serviceContainer.innerHTML = serviceHtml;
+                        
+                        // Add event listeners to checkboxes
+                        setTimeout(() => {
+                            addServiceCheckboxListeners();
+                            updateSelectedServicesSummary();
+                        }, 100);
+                    } else {
+                        serviceContainer.innerHTML = `
+                            <div style="text-align: center; padding: 1rem; color: #666;">
+                                <i class="fas fa-info-circle"></i> Không có dịch vụ nào
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading subservices:', error);
+                const serviceContainer = document.getElementById('nextAppServiceList');
+                if (serviceContainer) {
+                    serviceContainer.innerHTML = `
+                        <div style="text-align: center; padding: 1rem; color: #ef4444;">
+                            <i class="fas fa-exclamation-triangle"></i> Không thể tải danh sách dịch vụ
+                        </div>
+                    `;
+                }
+                showNotification('Không thể tải danh sách dịch vụ!', 'error');
+            }
+        }
+
+        // Schedule next appointment
+        window.scheduleNextAppointment = async function() {
+            if (!currentNextAppPatient) {
+                showNotification('Không tìm thấy thông tin bệnh nhân!', 'error');
+                return;
+            }
+
+            const docId = localStorage.getItem('docId');
+            
+            // Get form data
+            const appointmentDate = document.getElementById('nextAppDate').value;
+            const appointmentTime = document.getElementById('nextAppTime').value;
+            const selectedServices = getSelectedServices();
+            const note = document.getElementById('nextAppNote').value;
+            
+            // Validation
+            if (!appointmentDate || !appointmentTime || selectedServices.length === 0) {
+                showNotification('Vui lòng điền đầy đủ thông tin: ngày, giờ và ít nhất một dịch vụ!', 'error');
+                return;
+            }
+            
+            if (!docId) {
+                showNotification('Không tìm thấy thông tin bác sĩ!', 'error');
+                return;
+            }
+            
+            // Parse time range
+            const [startTime, endTime] = appointmentTime.split('-');
+            
+            try {
+                // Get customer info for booking
+                const customerResponse = await fetch(`/api/customer/full-record/${currentNextAppPatient.cusId}`);
+                if (!customerResponse.ok) throw new Error('Cannot get customer info');
+                
+                const customerData = await customerResponse.json();
+                
+                // Prepare service list for note
+                const serviceNames = selectedServices.map(service => service.subName).join(', ');
+                const totalPrice = selectedServices.reduce((total, service) => total + service.subPrice, 0);
+                
+                // Prepare booking data with multiple services info
+                const bookingData = {
+                    fullName: customerData.cusFullName,
+                    gender: customerData.cusGender === 'M' ? 'nam' : 'nu',
+                    dob: customerData.cusDate,
+                    phone: customerData.cusPhone,
+                    email: customerData.cusEmail,
+                    address: customerData.cusAddress || '',
+                    occupation: customerData.cusOccupation || '',
+                    emergencyContact: customerData.emergencyContact || '',
+                    docId: parseInt(docId),
+                    appointmentDate: appointmentDate,
+                    startTime: startTime.trim(),
+                    endTime: endTime.trim(),
+                    note: note || `Tái khám theo lịch hẹn - Dịch vụ: ${serviceNames} (Tổng: ${totalPrice.toLocaleString()}đ)`,
+                    bookType: 'follow-up',
+                    serId: currentNextAppPatient.serId // Use current patient's service ID
+                };
+                
+                console.log('Booking data:', bookingData);
+                console.log('Selected services:', selectedServices);
+                
+                // Create booking
+                const response = await fetch('/api/booking', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Không thể tạo lịch hẹn');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const serviceCount = selectedServices.length;
+                    const serviceText = serviceCount === 1 ? 'dịch vụ' : `${serviceCount} dịch vụ`;
+                    showNotification(`✅ Đã đặt lịch hẹn lại thành công cho ${serviceText}: ${serviceNames}! Email xác nhận đã được gửi cho bệnh nhân.`, 'success');
+                    closeNextAppointmentModal();
+                    
+                    // Refresh patient list to show updated data
+                    setTimeout(() => {
+                        loadPatientDataFromAPI();
+                    }, 1000);
+                } else {
+                    throw new Error('Booking creation failed');
+                }
+                
+            } catch (error) {
+                console.error('Error creating next appointment:', error);
+                showNotification('❌ Lỗi khi tạo lịch hẹn: ' + error.message, 'error');
+            }
+        };
+
+        // Get selected services
+        function getSelectedServices() {
+            const selectedServices = [];
+            const checkboxes = document.querySelectorAll('#nextAppServiceList .service-checkbox:checked');
+            
+            checkboxes.forEach(checkbox => {
+                selectedServices.push({
+                    subId: parseInt(checkbox.value),
+                    subName: checkbox.dataset.name,
+                    subPrice: parseInt(checkbox.dataset.price)
+                });
+            });
+            
+            return selectedServices;
+        }
+
+        // Update selected services summary
+        function updateSelectedServicesSummary() {
+            const selectedServices = getSelectedServices();
+            const summaryDiv = document.getElementById('selectedServicesSummary');
+            const summaryText = document.getElementById('summaryText');
+            
+            if (selectedServices.length === 0) {
+                summaryDiv.style.display = 'none';
+            } else {
+                const count = selectedServices.length;
+                const totalPrice = selectedServices.reduce((total, service) => total + service.subPrice, 0);
+                const serviceText = count === 1 ? 'dịch vụ' : 'dịch vụ';
+                
+                summaryText.textContent = `Đã chọn ${count} ${serviceText} - Tổng: ${totalPrice.toLocaleString()}đ`;
+                summaryDiv.style.display = 'block';
+            }
+        }
+
+        // Add event listener to service checkboxes
+        function addServiceCheckboxListeners() {
+            const checkboxes = document.querySelectorAll('#nextAppServiceList .service-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedServicesSummary);
+            });
+        }
+
+        // Clear next appointment form
+        window.clearNextAppointmentForm = function() {
+            document.getElementById('nextAppDate').value = '';
+            document.getElementById('nextAppTime').value = '';
+            document.getElementById('nextAppNote').value = '';
+            
+            // Clear all checkboxes
+            const checkboxes = document.querySelectorAll('#nextAppServiceList .service-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Update summary
+            updateSelectedServicesSummary();
+            
+            showNotification('🗑️ Đã xóa form hẹn khám lại', 'info');
+        };
     </script>
 </body>
 
