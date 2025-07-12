@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (notificationWrapper) notificationWrapper.style.display = 'none';
     }
 
+
+
     // ========== ĐĂNG XUẤT ==========
 
     const logoutBtn = document.querySelector('.logout-btn');
@@ -522,6 +524,8 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelector('.tab-btn').classList.add('active');
             document.getElementById('currentTab').classList.add('active');
+
+
 
             const modal = document.getElementById('patientModal');
             modal.style.display = 'block';
@@ -1420,5 +1424,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // Patient List functionality is defined outside DOMContentLoaded for global access
+
+
 
 });
