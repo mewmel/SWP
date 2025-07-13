@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Render từng booking
         for (const booking of bookings) {
-            let info = { cusName: '', cusPhone: '', cusEmail: '', serName: '', lastVisitDate: '' };
+            let info = { cusName: '', cusPhone: '', cusEmail: '', serName: '' };
             try {
                 const res = await fetch('/api/booking/patient-service/' + booking.bookId);
                 if (res.ok) info = await res.json();
@@ -176,11 +176,6 @@ fetch(`/api/booking-steps/${bookId}/subservice-of-visit`)
         document.getElementById('followUpService').textContent = 'Không lấy được bước điều trị';
         console.error('Error fetching follow-up service:', err);
     });
-
-        // Ngày hẹn
-        document.getElementById('previousVisit').textContent = info.lastVisitDate
-        ? new Date(info.lastVisitDate).toLocaleDateString('vi-VN')
-        : '--/--/----';
 
         // Ghi chú
         document.getElementById('detailNote').textContent = booking.note || 'Không có ghi chú';

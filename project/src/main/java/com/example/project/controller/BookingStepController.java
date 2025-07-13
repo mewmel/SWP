@@ -74,7 +74,7 @@ public class BookingStepController {
     }
 
 
-    @GetMapping("/booking-steps/today-performed-at")
+    @GetMapping("/today-performed-at")
     public List<LocalDateTime> getBookingStepPerformedAtToday() {
         LocalDate today = LocalDate.now();
         LocalDateTime start = today.atStartOfDay();
@@ -188,9 +188,7 @@ public class BookingStepController {
         }
         // Có thể trả luôn object, hoặc custom DTO (tùy bảo mật)
         return ResponseEntity.ok(stepOpt.get());
-    }
-
-        
+    }        
 
         
     @GetMapping("/test-results/{bookId}")
@@ -198,6 +196,37 @@ public class BookingStepController {
         return bookingStepService.getTestResultsForBooking(bookId);
     }
 
+
+    @PostMapping("/create-step-for-initial-booking")
+    public ResponseEntity<?> createStepForInitialBooking(@RequestBody Map<String, Object> req) {
+        try {
+            // Lấy các trường từ request body
+            Integer bookId = (Integer) req.get("bookId");
+            Integer subId = (Integer) req.get("subId");
+            String stepStatus = (String) req.get("stepStatus");
+
+            // Validate
+            if (bookId == null || subId == null || stepStatus == null) {
+                return ResponseEntity.badRequest().body("Thiếu thông tin bắt buộc!");
+            }
+
+            BookingStep step = new BookingStep();
+            step.setBookId(bookId);
+            step.setSubId(subId);
+            step.setStepStatus(stepStatus);
+
+            // Các trường còn lại để null, backend sẽ cập nhật khi thực hiện
+
+            BookingStep saved = bookingStepRepo.save(step);
+
+            return ResponseEntity.ok(Map.of(
+                "bookingStepId", saved.getBookingStepId()
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Không thể tạo bước dịch vụ: " + e.getMessage());
+        }
+    }    
 
 
 }

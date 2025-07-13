@@ -50,9 +50,9 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query("SELECT b FROM Booking b " +
           "WHERE b.docId = :docId " +
-          "AND b.bookStatus IN ('confirmed', 'completed') " +
+          "AND b.bookStatus IN ('pending', 'confirmed', 'completed') " +
           "AND b.createdAt BETWEEN :startOfDay AND :endOfDay")
-    List<Booking> findConfirmedBookingsToday(
+    List<Booking> findBookingsToday(
         @Param("docId") Integer docId,
         @Param("startOfDay") LocalDateTime startOfDay,
         @Param("endOfDay") LocalDateTime endOfDay
@@ -61,20 +61,21 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
 @Query("""
 SELECT new com.example.project.dto.BookingPatientService(
-  b.bookId, c.cusFullName, c.cusPhone, c.cusEmail, s.serName,
-  (
-    SELECT max(b2.createdAt)
-    FROM Booking b2
-    WHERE b2.cusId = c.cusId
-      AND b2.createdAt < b.createdAt
-  )
+    b.bookId,
+    c.cusFullName,
+    c.cusPhone,
+    c.cusEmail,
+    s.serName,
+    w.startTime       
 )
 FROM Booking b
 JOIN Customer c ON b.cusId = c.cusId
 JOIN Service s ON b.serId = s.serId
+JOIN WorkSlot w ON b.slotId = w.slotId
 WHERE b.bookId = :bookId
 """)
 BookingPatientService findBookingPatientServiceByBookId(@Param("bookId") Integer bookId);
+
 
 
 }

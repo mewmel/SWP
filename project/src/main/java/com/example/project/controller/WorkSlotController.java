@@ -1,7 +1,11 @@
 package com.example.project.controller;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +54,33 @@ public class WorkSlotController {
         LocalDate toDate = LocalDate.parse(to);
         return workSlotRepository.findApprovedSlotsByDoctorAndDateRange(docId, fromDate, toDate);
     }
+
+@PostMapping("/get-slot-id-by-date-time")
+public ResponseEntity<?> getSlotIdByDateTime(@RequestBody Map<String, Object> req) {
+    try {
+        Integer docId = Integer.parseInt(String.valueOf(req.get("docId")));
+        LocalDate workDate = LocalDate.parse(String.valueOf(req.get("workDate")));
+        String startTime = String.valueOf(req.get("startTime")); // VD: "10:00:00"
+        String endTime = String.valueOf(req.get("endTime"));     // VD: "11:00:00"
+
+        Optional<WorkSlot> slotOpt = workSlotRepository
+            .findByDocIdAndWorkDateAndStartTimeAndEndTime(docId, workDate, startTime, endTime);
+
+        if (slotOpt.isPresent()) {
+            return ResponseEntity.ok(Collections.singletonMap("slotId", slotOpt.get().getSlotId()));
+        } else {
+            Map<String, Object> res = new HashMap<>();
+            res.put("slotId", null);
+            res.put("message", "Không tìm thấy khung giờ phù hợp!");
+            return ResponseEntity.ok(res);
+        }
+    } catch (Exception e) {
+        Map<String, Object> res = new HashMap<>();
+        res.put("slotId", null);
+        res.put("message", "Dữ liệu đầu vào không hợp lệ! " + e.getMessage());
+        return ResponseEntity.badRequest().body(res);
+    }
+}
 
 
 

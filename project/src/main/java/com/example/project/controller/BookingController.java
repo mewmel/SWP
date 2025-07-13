@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public class BookingController {
     private BookingRepository bookingRepository;
 
 
+    // API tạo booking và tài khoản khách hàng mới nếu cần
     @PostMapping("/booking")
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest req) {
         boolean isNewAccount = bookingService.createBookingAndAccount(req);
@@ -137,13 +139,13 @@ public class BookingController {
 
     // API lấy danh sách booking đã xác nhận trong ngày hôm nay của bác sĩ
     // GET /api/booking/doctor/{docId}/confirmed-today
-@GetMapping("/booking/doctor/{docId}/confirmed-today")
+@GetMapping("/booking/doctor/{docId}/today")
 public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Integer docId) {
     LocalDate today = LocalDate.now();
     LocalDateTime startOfDay = today.atStartOfDay();         // 00:00:00
     LocalDateTime endOfDay = today.atTime(LocalTime.MAX);    // 23:59:59.999999999
 
-    List<Booking> bookings = bookingRepository.findConfirmedBookingsToday(docId, startOfDay, endOfDay);
+    List<Booking> bookings = bookingRepository.findBookingsToday(docId, startOfDay, endOfDay);
     return ResponseEntity.ok(bookings);
 }
 
@@ -188,6 +190,37 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
         boolean ok = bookingService.updateStatus(bookId, bookingUpdate.getBookStatus());
         if (ok) return ResponseEntity.ok().build();
         return ResponseEntity.status(404).body("Booking not found");
+    }
+
+
+    @PostMapping("/booking/create-initial-booking")
+    public ResponseEntity<?> createInitialBooking(@RequestBody Map<String, Object> bookingData) {
+        try {
+            Booking booking = new Booking();
+            booking.setCusId((Integer) bookingData.get("cusId"));
+            booking.setDocId((Integer) bookingData.get("docId"));
+            booking.setSlotId((Integer) bookingData.get("slotId"));
+            booking.setNote((String) bookingData.get("note"));
+            booking.setBookType((String) bookingData.get("bookType"));
+            booking.setSerId((Integer) bookingData.get("serId"));
+
+            // Thiết lập các field mặc định
+            booking.setBookStatus("confirmed"); // hoặc confirmed tuỳ logic
+            booking.setCreatedAt(LocalDateTime.now());
+            // // Nếu có truyền drugId thì lấy luôn
+            // if (bookingData.get("drugId") != null) {
+            //     booking.setDrugId((Integer) bookingData.get("drugId"));
+            // }
+
+            // Lưu vào DB
+            Booking saved = bookingRepository.save(booking);
+
+            // Trả về bookingId cho FE
+            return ResponseEntity.ok(Map.of("bookId", saved.getBookId()));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Không thể tạo lịch hẹn: " + e.getMessage());
+        }
     }
 
 }

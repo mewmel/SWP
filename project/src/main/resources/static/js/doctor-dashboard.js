@@ -34,12 +34,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    async function loadTodayConfirmedBookings() {
+    async function loadTodayBookings() {
         const docId = localStorage.getItem('docId');
         if (!docId) return;
 
         try {
-            const response = await fetch(`/api/booking/doctor/${docId}/confirmed-today`);
+            const response = await fetch(`/api/booking/doctor/${docId}/today`);
             if (!response.ok) throw new Error('Network error');
             const bookings = await response.json();
             const scheduleList = document.querySelector('.schedule-list');
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const clone = sample.cloneNode(true);
 
                 // Call API để lấy tên bệnh nhân và dịch vụ bằng bookId
-                let info = { cusName: 'Ẩn danh', serName: 'Dịch vụ' };
+                let info = { cusName: 'Ẩn danh', serName: 'Dịch vụ' ,startTime: '--:--'};
                 try {
                     const infoRes = await fetch(`/api/booking/patient-service/${b.bookId}`);
                     if (infoRes.ok) {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 clone.dataset.status = b.bookStatus || '';
 
                 // Time
-                clone.querySelector('.time').textContent = b.createdAt ? b.createdAt.slice(11, 16) : '--:--';
+                clone.querySelector('.time').textContent = info.startTime ? info.startTime.slice(0, 5) : '--:--';
 
                 // Tên BN
                 clone.querySelector('.patient-name').textContent = info.cusName || 'Ẩn danh';
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // Cập nhật lịch hẹn hôm nay khi trang được tải 
-    loadTodayConfirmedBookings();
+    loadTodayBookings();
 
 
     // Show notification
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
         showNotification("✅ Đã check-out bệnh nhân thành công!", "success");
-        loadTodayConfirmedBookings();
+        loadTodayBookings();
     };
 
 

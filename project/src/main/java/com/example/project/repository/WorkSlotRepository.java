@@ -42,6 +42,14 @@ public interface WorkSlotRepository extends JpaRepository<WorkSlot, Integer> {
     );
     // Lấy danh sách các khung giờ làm việc của bác sĩ trong tuần
 
+
+    @Query(value = "SELECT * FROM WorkSlot w WHERE w.docId = :docId AND w.workDate = :workDate AND w.startTime = CAST(:startTime AS TIME) AND w.endTime = CAST(:endTime AS TIME)", nativeQuery = true)
+Optional<WorkSlot> findByDocIdAndWorkDateAndStartTimeAndEndTime(
+    @Param("docId") Integer docId,
+    @Param("workDate") LocalDate workDate,
+    @Param("startTime") String startTime,
+    @Param("endTime") String endTime
+);
 }
 
 
