@@ -16,6 +16,10 @@ import com.example.project.entity.Booking;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
+    // Lấy booking theo ID
+    Optional<Booking> findByBookId(Integer id);
+
+    // Lấy booking theo khách hàng, sắp xếp theo ID giảm dần
     List<Booking> findByCusIdOrderByBookIdDesc(Integer cusId);
 
     // Lấy booking theo bác sĩ, sắp xếp theo ngày và giờ

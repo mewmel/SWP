@@ -107,11 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     <i class="fas fa-times"></i> Không đến khám
                 </button>
                 `;
-
-                    // } else if (b.bookStatus === 'completed') {
-                    //     actions.innerHTML = `<button class="btn-record" onclick="window.viewPatientRecord('${b.cusId}')">
-                    //     <i class="fas fa-file-medical"></i> Xem hồ sơ
-                    // </button>`;
                 } else {
                     actions.innerHTML = '';
                 }
@@ -167,9 +162,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    window.editPatientFromList = function (patientId) {
+    window.editPatientFromList = function (patientId, bookId) {
         window.closePatientListModal();
-        window.viewPatientRecord(patientId);
+        window.viewPatientRecord(patientId, bookId);
     };
 
     window.searchPatients = function () {
@@ -305,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // 2. Đổi nút/action
         const actionDiv = appointmentItem.querySelector('.appointment-actions');
         actionDiv.innerHTML = `
-            <button class="btn-record" onclick="window.viewPatientRecord('${cusId}')">
+            <button class="btn-record" onclick="window.viewPatientRecord('${cusId}', '${bookId}')">
                 <i class="fas fa-file-medical"></i> Xem hồ sơ
             </button>
         `;
@@ -459,10 +454,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // Update viewPatientRecord function to work with new database-matching structure
-    window.viewPatientRecord = async function (cusId) {
+    window.viewPatientRecord = async function (cusId, bookId) {
         try {
             // 1. Gọi API
-            const res = await fetch(`/api/customer/full-record/${cusId}`);
+            const res = await fetch(`/api/customer/full-record/${cusId}, ${bookId}`);
             if (!res.ok) {
                 return alert("Không thể tải dữ liệu bệnh nhân!");
             }

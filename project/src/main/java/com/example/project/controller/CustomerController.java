@@ -1,6 +1,5 @@
 package com.example.project.controller;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -73,9 +72,8 @@ public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @Reques
     return ResponseEntity.ok(saved);
 }
 
-
-    @GetMapping("/full-record/{cusId}")
-public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) {
+    @GetMapping("/full-record/{cusId}, {bookId}")
+public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId, @PathVariable Integer bookId) {
     try {
     // 1. Tìm customer
     Optional<Customer> optional = customerRepository.findById(cusId);
@@ -85,15 +83,12 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId) 
     Customer customer = optional.get();
 
     // 2. Lấy booking hiện tại (ví dụ lấy booking có status = 'confirmed' hoặc 'ongoing', mới nhất)//sửa lại thành ongoing
-    Booking booking = bookingRepository
-        .findLatestBooking(
-            cusId, Arrays.asList("confirmed", "completed") // Chỉ lấy các trạng thái này
-        )
-        .orElse(null);
+    Booking booking = bookingRepository.findByBookId(bookId)
+        .orElse(null );
 
-    // 3. Lấy hồ sơ bệnh án mới nhất
+    // 3. Lấy hồ sơ bệnh án 
     MedicalRecord medicalRecord = medicalRecordRepository
-        .findTopByCusIdOrderByCreatedAtDesc(cusId)
+        .findByCusId(cusId)
         .orElse(null);
 
     // 4. Map sang DTO
