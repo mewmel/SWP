@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         cusId,
                         docId,
                         serId,
-                        recordStatus,
+                        recordStatus:'active',
                     })
                 });
 

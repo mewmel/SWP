@@ -26,54 +26,39 @@ function showNotification(message, type) {
             loadPatientDataFromAPI();
         });
 
-        // Load patient data from API
+        // Load patient data from API - ✅ SỬ DỤNG API MỚI
         async function loadPatientDataFromAPI() {
             try {
-                console.log('Loading patients for doctor:', currentDoctorId);
+                console.log('🔍 Loading patients with medical records for doctor:', currentDoctorId);
                 
-                // Get all bookings for current doctor
-                const response = await fetch(`/api/booking/doctor/${currentDoctorId}`);
+                // ✅ Gọi API mới - chỉ 1 lần call duy nhất!
+                console.log('📡 DEBUG: Calling API:', `/api/medical-records/patients-by-doctor/${currentDoctorId}`);
+                const response = await fetch(`/api/medical-records/patients-by-doctor/${currentDoctorId}`);
+                console.log('📡 DEBUG: API Response status:', response.status);
+                console.log('📡 DEBUG: API Response ok:', response.ok);
+                
                 if (!response.ok) {
-                    throw new Error('Failed to fetch bookings');
+                    const errorText = await response.text();
+                    console.error('❌ DEBUG: API Error response:', errorText);
+                    throw new Error('Failed to fetch patients with medical records: ' + response.status);
                 }
                 
-                const bookings = await response.json();
-                console.log('Fetched bookings:', bookings);
+                const patients = await response.json();
+                console.log('📋 DEBUG: Raw API response:', patients);
+                console.log('📋 DEBUG: Response type:', typeof patients);
+                console.log('📋 DEBUG: Is array:', Array.isArray(patients));
+                console.log('📋 DEBUG: Length:', patients?.length || 'N/A');
                 
-                // Extract unique customer IDs and get customer details
-                const uniqueCustomers = new Map();
-                
-                for (const booking of bookings) {
-                    if (!uniqueCustomers.has(booking.cusId)) {
-                        try {
-                            // Get customer full record
-                            const customerResponse = await fetch(`/api/customer/full-record/${booking.cusId}`);
-                            if (customerResponse.ok) {
-                                const customerData = await customerResponse.json();
-                                
-                                // Add booking status info
-                                customerData.bookStatus = booking.bookStatus;
-                                customerData.lastVisit = booking.createdAt;
-                                customerData.bookId = booking.bookId;
-                                customerData.serId = booking.serId; // Add serId from booking
-                                
-                                uniqueCustomers.set(booking.cusId, customerData);
-                            }
-                        } catch (error) {
-                            console.error(`Error fetching customer ${booking.cusId}:`, error);
-                        }
-                    }
-                }
-                
-                // Convert map to array
-                allPatients = Array.from(uniqueCustomers.values());
+                // Gán trực tiếp vào variables
+                allPatients = patients || [];
                 filteredPatients = [...allPatients];
                 
-                console.log('Loaded patients:', allPatients);
+                console.log('✅ DEBUG: Final allPatients:', allPatients);
+                console.log('📊 DEBUG: Total patients with medical records loaded:', allPatients.length);
                 renderPatientList();
                 
             } catch (error) {
-                console.error('Error loading patient data:', error);
+                console.error('❌ Error loading patient data:', error);
                 // Fallback to sample data if API fails
                 loadSampleData();
             }
@@ -105,10 +90,22 @@ function showNotification(message, type) {
 
         // Render patient list
         function renderPatientList() {
+            console.log('🎨 DEBUG: renderPatientList() called');
+            console.log('📋 DEBUG: filteredPatients.length:', filteredPatients.length);
+            console.log('📋 DEBUG: filteredPatients data:', filteredPatients);
+            
             const tableBody = document.getElementById('patientTableBody');
+            console.log('🔍 DEBUG: tableBody element found:', !!tableBody);
+            
+            if (!tableBody) {
+                console.error('❌ DEBUG: patientTableBody element not found!');
+                return;
+            }
+            
             tableBody.innerHTML = '';
 
             if (filteredPatients.length === 0) {
+                console.log('📋 DEBUG: No patients to display - showing empty message');
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="7" style="text-align: center; padding: 2rem; color: #64748b;">
@@ -119,6 +116,8 @@ function showNotification(message, type) {
                 `;
                 return;
             }
+            
+            console.log('👥 DEBUG: Rendering', filteredPatients.length, 'patients');
 
             filteredPatients.forEach(patient => {
                 const age = calculateAge(patient.cusDate);
@@ -309,12 +308,12 @@ function showNotification(message, type) {
             }
         }
 
-        // Enhanced patient record viewing with multiple API calls
+        // Enhanced patient record viewing - ✅ FIXED: Sử dụng dữ liệu đã load  
         async function viewPatientRecord(cusId, bookId) {
             try {
                 showLoading();
                 
-                console.log('Loading patient record for cusId:', cusId, 'bookId:', bookId);
+                console.log('🔍 Loading patient record for cusId:', cusId, 'bookId:', bookId);
                 
                 // Show modal first
                 document.getElementById('patientModal').style.display = 'block';
@@ -322,17 +321,23 @@ function showNotification(message, type) {
                 // Store for later use
                 currentPatientData = { cusId, bookId };
                 
-                // Get patient data first
-                const customerResponse = await fetch(`/api/customer/full-record/${cusId}`);
-                if (!customerResponse.ok) {
-                    throw new Error('Failed to fetch patient data');
+                // ✅ FIX: Lấy patient data từ danh sách đã load thay vì gọi API
+                console.log('🔍 DEBUG: Searching for patient in allPatients with cusId:', cusId);
+                console.log('📋 DEBUG: allPatients array:', allPatients);
+                console.log('📋 DEBUG: allPatients.length:', allPatients.length);
+                
+                let patientData = allPatients.find(p => p.cusId === cusId);
+                console.log('🎯 DEBUG: Found patient data:', patientData);
+                
+                if (!patientData) {
+                    console.error('❌ DEBUG: Patient not found in loaded list for cusId:', cusId);
+                    throw new Error('Patient not found in loaded list');
                 }
-
-                const patientData = await customerResponse.json();
+                
                 patientData.bookId = bookId;
                 currentPatientData = patientData;
 
-                console.log('Patient data loaded:', patientData);
+                console.log('✅ Patient data from loaded list:', patientData);
 
                 // Populate basic patient information
                 populatePatientInfo(patientData);
@@ -356,7 +361,7 @@ function showNotification(message, type) {
                 hideLoading();
                 
             } catch (error) {
-                console.error('Error loading patient record:', error);
+                console.error('❌ Error loading patient record:', error);
                 hideLoading();
                 showErrorMessage('Không thể tải hồ sơ bệnh nhân. Vui lòng thử lại sau.');
             }
@@ -1775,12 +1780,12 @@ function showNotification(message, type) {
         }
 
         // ========== ENHANCED VIEWPATIENTRECORD FUNCTION ==========
-        // Enhanced patient record viewing with multiple API calls
+        // Enhanced patient record viewing - ✅ FIXED: Sử dụng dữ liệu đã load
         async function viewPatientRecord(cusId, bookId) {
             try {
                 showLoading();
                 
-                console.log('Loading patient record for cusId:', cusId, 'bookId:', bookId);
+                console.log('🔍 Loading patient record for cusId:', cusId, 'bookId:', bookId);
                 
                 // Show modal first
                 document.getElementById('patientModal').style.display = 'block';
@@ -1788,17 +1793,16 @@ function showNotification(message, type) {
                 // Store for later use
                 currentPatientData = { cusId, bookId };
                 
-                // Get patient data first
-                const customerResponse = await fetch(`/api/customer/full-record/${cusId}`);
-                if (!customerResponse.ok) {
-                    throw new Error('Failed to fetch patient data');
+                // ✅ FIX: Lấy patient data từ danh sách đã load thay vì gọi API
+                let patientData = allPatients.find(p => p.cusId === cusId);
+                if (!patientData) {
+                    throw new Error('Patient not found in loaded list');
                 }
 
-                const patientData = await customerResponse.json();
                 patientData.bookId = bookId;
                 currentPatientData = patientData;
 
-                console.log('Patient data loaded:', patientData);
+                console.log('✅ Patient data from loaded list:', patientData);
 
                 // Populate basic patient information
                 populatePatientInfo(patientData);
@@ -1822,7 +1826,7 @@ function showNotification(message, type) {
                 hideLoading();
                 
             } catch (error) {
-                console.error('Error loading patient record:', error);
+                console.error('❌ Error loading patient record:', error);
                 hideLoading();
                 showErrorMessage('Không thể tải hồ sơ bệnh nhân. Vui lòng thử lại sau.');
             }

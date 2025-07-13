@@ -42,7 +42,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadBookings() {
         const doctorId = localStorage.getItem('docId');
-        if (!doctorId) return;
+        if (!doctorId) {
+            console.error('❌ Doctor ID not found in localStorage. Please login first.');
+            showError('Vui lòng đăng nhập lại!');
+            return;
+        }
+        
+        console.log('👨‍⚕️ Loading bookings for doctor ID:', doctorId);
 
         const container = document.getElementById('appointmentsList');
         const noAppointments = document.getElementById('noAppointments');
@@ -57,9 +63,22 @@ document.addEventListener('DOMContentLoaded', function () {
         let bookings = [];
         try {
             const res = await fetch(`/api/booking/doctor/${doctorId}`);
-            if (res.ok) bookings = await res.json();
+            if (res.ok) {
+                bookings = await res.json();
+                console.log('🔍 DEBUG: Fetched bookings from API:', bookings);
+                console.log('📋 DEBUG: First booking sample:', bookings[0]);
+                console.log('📊 DEBUG: Booking status breakdown:', 
+                    bookings.reduce((acc, b) => {
+                        acc[b.bookStatus] = (acc[b.bookStatus] || 0) + 1;
+                        return acc;
+                    }, {})
+                );
+            } else {
+                console.error('❌ API returned error status:', res.status);
+            }
         } catch (e) {
             bookings = [];
+            console.error('❌ DEBUG: Error fetching bookings:', e);
         }
 
         currentBookings = bookings;
@@ -72,59 +91,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (noAppointments) noAppointments.style.display = 'none';
         }
 
-        // Render từng booking
+        // Render từng booking using helper function
         for (const booking of bookings) {
-            let info = { cusName: '', cusPhone: '', cusEmail: '', serName: '' };
-            try {
-                const res = await fetch('/api/booking/patient-service/' + booking.bookId);
-                if (res.ok) info = await res.json();
-            } catch (err) { }
-
-            const card = template.cloneNode(true);
-            card.classList.remove('template');
-            card.style.display = 'block';
-            card.dataset.bookingId = booking.bookId;
-
-            // Info chính
-            card.querySelector('#patientName').textContent = info.cusName || 'N/A';
-            card.querySelector('#appointmentTime').textContent = booking.createdAt;
-            card.querySelector('#serviceName').textContent = info.serName || 'N/A';
-            card.querySelector('#customerId').textContent = booking.cusId || 'N/A';
-
-            // Status
-            const statusBadge = card.querySelector('#statusBadge');
-            statusBadge.textContent = getStatusText(booking.bookStatus);
-            statusBadge.className = 'status-badge ' + statusCssClass(booking.bookStatus);
-
-            // Note
-            const noteDiv = card.querySelector('#appointmentNote');
-            if (booking.note) {
-                noteDiv.style.display = 'block';
-                card.querySelector('#noteText').textContent = booking.note;
-            } else {
-                noteDiv.style.display = 'none';
-            }
-
-            // Button View
-            card.querySelector('#btnView').onclick = function (e) {
-                e.stopPropagation();
-                currentBookId = booking.bookId;
-                showBookingDetail(booking.bookId, info, booking);
-            };
-
-            // Button Confirm
-            const btnConfirm = card.querySelector('#btnConfirm');
-            if (booking.bookStatus === 'pending') {
-                btnConfirm.style.display = 'inline-flex';
-                btnConfirm.onclick = function (e) {
-                    e.stopPropagation();
-                    confirmBooking(booking.bookId);
-                }
-            } else {
-                btnConfirm.style.display = 'none';
-            }
-
-            container.appendChild(card);
+            await renderBookingCard(booking, container, template);
         }
 
         updatePendingCount();
@@ -224,29 +193,181 @@ fetch(`/api/booking-steps/${bookId}/subservice-of-visit`)
     }
 
     function filterBookings() {
-        const statusFilter = document.getElementById('statusFilter').value;
-        const dateFilter = document.getElementById('dateFilter').value;
-        let filtered = currentBookings;
-        if (statusFilter !== 'all') {
-            filtered = filtered.filter(booking => booking.bookStatus === statusFilter);
-        }
-        if (dateFilter) {
-            filtered = filtered.filter(booking => {
-                const bookingDate = new Date(booking.createdAt).toISOString().split('T')[0];
-                return bookingDate === dateFilter;
+        try {
+            console.log('🔍 Filtering bookings...');
+            
+            // Check if filter elements exist
+            const statusFilterElement = document.getElementById('statusFilter');
+            const dateFilterElement = document.getElementById('dateFilter');
+            
+            if (!statusFilterElement || !dateFilterElement) {
+                console.error('❌ Filter elements not found!');
+                return;
+            }
+            
+            const statusFilter = statusFilterElement.value;
+            const dateFilter = dateFilterElement.value;
+            
+            console.log('📋 Filter values:', { 
+                status: statusFilter, 
+                date: dateFilter 
             });
+            console.log('📋 Total bookings:', currentBookings.length);
+            
+            // Check if we have bookings to filter
+            if (!currentBookings || currentBookings.length === 0) {
+                console.warn('⚠️ No bookings to filter');
+                displayBookings([]);
+                return;
+            }
+            
+            let filtered = [...currentBookings]; // Copy array
+            
+            // Filter by status
+            if (statusFilter && statusFilter !== 'all') {
+                filtered = filtered.filter(booking => booking.bookStatus === statusFilter);
+                console.log('📋 After status filter:', filtered.length);
+            }
+            
+            // Filter by date
+            if (dateFilter) {
+                filtered = filtered.filter(booking => {
+                    if (!booking.createdAt) return false;
+                    try {
+                        const bookingDate = new Date(booking.createdAt).toISOString().split('T')[0];
+                        return bookingDate === dateFilter;
+                    } catch (e) {
+                        console.error('Error parsing date:', booking.createdAt);
+                        return false;
+                    }
+                });
+                console.log('📋 After date filter:', filtered.length);
+            }
+            
+            console.log('✅ Applying filters, showing', filtered.length, 'bookings');
+            displayBookings(filtered);
+            
+        } catch (error) {
+            console.error('❌ Error in filterBookings:', error);
         }
-        displayBookings(filtered);
     }
 
-    function displayBookings(bookings) {
+    // ===== HELPER FUNCTION: RENDER SINGLE BOOKING CARD =====
+    async function renderBookingCard(booking, container, template) {
+        console.log('🔍 DEBUG: Processing booking:', booking);
+        console.log('📋 DEBUG: Booking type:', booking.bookType);
+        
+        let info = { cusName: '', cusPhone: '', cusEmail: '', serName: '' };
+        try {
+            const res = await fetch('/api/booking/patient-service/' + booking.bookId);
+            if (res.ok) info = await res.json();
+        } catch (err) { 
+            console.error('Error fetching patient info:', err);
+        }
+
+        const card = template.cloneNode(true);
+        card.classList.remove('template');
+        card.style.display = 'block';
+        card.dataset.bookingId = booking.bookId;
+
+        // Info chính
+        card.querySelector('#patientName').textContent = info.cusName || 'N/A';
+        card.querySelector('#appointmentTime').textContent = booking.createdAt;
+        card.querySelector('#serviceName').textContent = info.serName || 'N/A';
+        card.querySelector('#customerId').textContent = booking.cusId || 'N/A';
+
+        // ✅ THÊM: Xử lý booking type (initial/follow-up)
+        const bookingTypeMap = {
+            'initial': 'Khám lần đầu',
+            'follow-up': 'Tái khám',
+            'consultation': 'Tư vấn'
+        };
+        const bookingTypeBadge = card.querySelector('#bookingTypeBadge');
+        const bookingTypeText = card.querySelector('#bookingType');
+        
+        if (booking.bookType) {
+            bookingTypeText.textContent = bookingTypeMap[booking.bookType] || booking.bookType;
+            
+            // Thêm class tương ứng cho styling
+            if (booking.bookType === 'initial') {
+                bookingTypeBadge.classList.add('initial');
+                bookingTypeBadge.classList.remove('follow-up');
+            } else if (booking.bookType === 'follow-up') {
+                bookingTypeBadge.classList.add('follow-up');
+                bookingTypeBadge.classList.remove('initial');
+            }
+        } else {
+            bookingTypeText.textContent = 'Khám lần đầu'; // Default
+            bookingTypeBadge.classList.add('initial');
+        }
+
+        // Status
+        const statusBadge = card.querySelector('#statusBadge');
+        statusBadge.textContent = getStatusText(booking.bookStatus);
+        statusBadge.className = 'status-badge ' + statusCssClass(booking.bookStatus);
+
+        // Note
+        const noteDiv = card.querySelector('#appointmentNote');
+        if (booking.note) {
+            noteDiv.style.display = 'block';
+            card.querySelector('#noteText').textContent = booking.note;
+        } else {
+            noteDiv.style.display = 'none';
+        }
+
+        // Button View
+        card.querySelector('#btnView').onclick = function (e) {
+            e.stopPropagation();
+            currentBookId = booking.bookId;
+            showBookingDetail(booking.bookId, info, booking);
+        };
+
+        // Button Confirm
+        const btnConfirm = card.querySelector('#btnConfirm');
+        if (booking.bookStatus === 'pending') {
+            btnConfirm.style.display = 'inline-flex';
+            btnConfirm.onclick = function (e) {
+                e.stopPropagation();
+                confirmBooking(booking.bookId);
+            }
+        } else {
+            btnConfirm.style.display = 'none';
+        }
+
+        container.appendChild(card);
+    }
+
+    async function displayBookings(bookings) {
+        console.log('🎨 Displaying', bookings.length, 'bookings');
+        
         const container = document.getElementById('appointmentsList');
         const template = document.getElementById('bookingTemplate');
+        const noAppointments = document.getElementById('noAppointments');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        // Hide loading and clear old cards
+        if (loadingSpinner) loadingSpinner.style.display = 'none';
         container.querySelectorAll('.appointment-card:not(.template)').forEach(card => card.remove());
-        for (const booking of bookings) {
-            // Có thể reuse code render ở loadBookings nếu muốn
+        
+        // Show/hide no appointments message
+        if (bookings.length === 0) {
+            if (noAppointments) noAppointments.style.display = 'block';
+            document.getElementById('pendingCount').textContent = '0';
+            return;
+        } else {
+            if (noAppointments) noAppointments.style.display = 'none';
         }
-        document.getElementById('pendingCount').textContent = bookings.filter(b => b.bookStatus === 'pending').length;
+        
+        // Render each booking
+        for (const booking of bookings) {
+            await renderBookingCard(booking, container, template);
+        }
+        
+        // Update pending count
+        const pendingCount = bookings.filter(b => b.bookStatus === 'pending').length;
+        document.getElementById('pendingCount').textContent = pendingCount;
+        
+        console.log('✅ Successfully displayed', bookings.length, 'bookings');
     }
 
     function updatePendingCount() {
@@ -294,6 +415,22 @@ fetch(`/api/booking-steps/${bookId}/subservice-of-visit`)
         else alert(msg);
     }
 
+    // ====== DEBUG HELPERS ======
+    window.debugFilter = function() {
+        console.log('🔧 DEBUG: Filter debug info:');
+        console.log('📋 Current bookings:', currentBookings);
+        console.log('📊 Status breakdown:', 
+            currentBookings.reduce((acc, b) => {
+                acc[b.bookStatus] = (acc[b.bookStatus] || 0) + 1;
+                return acc;
+            }, {})
+        );
+        console.log('🎛️ Filter elements:', {
+            statusFilter: document.getElementById('statusFilter'),
+            dateFilter: document.getElementById('dateFilter')
+        });
+    };
+
     // ====== CLOSE MODAL WHEN CLICK OUTSIDE ======
     window.onclick = function (event) {
         const modal = document.getElementById('appointmentDetailModal');
@@ -305,5 +442,7 @@ fetch(`/api/booking-steps/${bookId}/subservice-of-visit`)
             if (modal && modal.classList.contains('show')) closeDetailModal();
         }
     });
-
+    
+    // Auto-load bookings when page loads
+    loadBookings();
 });

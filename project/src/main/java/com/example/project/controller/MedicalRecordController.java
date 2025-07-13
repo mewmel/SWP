@@ -1,6 +1,7 @@
 package com.example.project.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class MedicalRecordController {
     @Autowired
     private MedicalRecordService medicalRecordService;
 
-        @GetMapping("/exist")
+    @GetMapping("/exist")
     public Map<String, Object> checkMedicalRecordExist(
             @RequestParam Integer cusId,
             @RequestParam Integer serId) {
@@ -35,6 +36,17 @@ public class MedicalRecordController {
         Map<String, Object> resp = new HashMap<>();
         resp.put("exists", exists);
         return resp;
+    }
+
+    // ✅ API MỚI: Lấy danh sách bệnh nhân có medical record của doctor
+    @GetMapping("/patients-by-doctor/{docId}")
+    public ResponseEntity<List<Map<String, Object>>> getPatientsWithMedicalRecordsByDoctor(@PathVariable Integer docId) {
+        try {
+            List<Map<String, Object>> patients = medicalRecordService.getPatientsWithMedicalRecordsByDoctor(docId);
+            return ResponseEntity.ok(patients);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
 @PostMapping("/create/{serId}")

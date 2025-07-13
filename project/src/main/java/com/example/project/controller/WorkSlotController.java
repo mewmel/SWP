@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class WorkSlotController {
     private final WorkSlotService workSlotService;
 
-        @Autowired
+    @Autowired
     private WorkSlotRepository workSlotRepository;
 
     @PostMapping("/week-bulk")
@@ -45,7 +45,7 @@ public class WorkSlotController {
      * @param startOfWeek Ngày bắt đầu tuần (thường là thứ 2)
      * @return Danh sách các khung giờ làm việc
      */
- @GetMapping("/{docId}/slots")
+    @GetMapping("/{docId}/slots")
     public List<WorkSlot> getApprovedWorkSlotsForDoctor(
             @PathVariable Integer docId,
             @RequestParam("from") String from,
@@ -55,34 +55,56 @@ public class WorkSlotController {
         return workSlotRepository.findApprovedSlotsByDoctorAndDateRange(docId, fromDate, toDate);
     }
 
-@PostMapping("/get-slot-id-by-date-time")
-public ResponseEntity<?> getSlotIdByDateTime(@RequestBody Map<String, Object> req) {
-    try {
-        Integer docId = Integer.parseInt(String.valueOf(req.get("docId")));
-        LocalDate workDate = LocalDate.parse(String.valueOf(req.get("workDate")));
-        String startTime = String.valueOf(req.get("startTime")); // VD: "10:00:00"
-        String endTime = String.valueOf(req.get("endTime"));     // VD: "11:00:00"
-
-        Optional<WorkSlot> slotOpt = workSlotRepository
-            .findByDocIdAndWorkDateAndStartTimeAndEndTime(docId, workDate, startTime, endTime);
-
-        if (slotOpt.isPresent()) {
-            return ResponseEntity.ok(Collections.singletonMap("slotId", slotOpt.get().getSlotId()));
-        } else {
-            Map<String, Object> res = new HashMap<>();
-            res.put("slotId", null);
-            res.put("message", "Không tìm thấy khung giờ phù hợp!");
-            return ResponseEntity.ok(res);
+    /**
+     * ✅ API MỚI: Lấy slotId dựa trên thông tin khung giờ làm việc
+     * @param requestData chứa docId, workDate, startTime, endTime
+     * @return Map chứa slotId hoặc lỗi
+     */
+    @PostMapping("/get-slot-id-by-date-time")
+    public ResponseEntity<Map<String, Object>> getSlotIdByDateTime(@RequestBody Map<String, Object> requestData) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // Extract parameters from request
+            Integer docId = (Integer) requestData.get("docId");
+            String workDate = (String) requestData.get("workDate");
+            String startTime = (String) requestData.get("startTime");
+            String endTime = (String) requestData.get("endTime");
+            
+            // Validate input
+            if (docId == null || workDate == null || startTime == null || endTime == null) {
+                response.put("error", "Missing required parameters: docId, workDate, startTime, endTime");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // Parse date
+            LocalDate parsedWorkDate = LocalDate.parse(workDate);
+            
+            // Find WorkSlot using the existing repository method
+            Optional<WorkSlot> workSlotOpt = workSlotRepository.findByDocIdAndWorkDateAndStartTimeAndEndTime(
+                docId, parsedWorkDate, startTime, endTime);
+            
+            if (workSlotOpt.isPresent()) {
+                WorkSlot workSlot = workSlotOpt.get();
+                
+                // Check if slot is approved
+                if (!"approved".equals(workSlot.getSlotStatus())) {
+                    response.put("error", "Khung giờ chưa được duyệt hoặc đã bị hủy");
+                    return ResponseEntity.badRequest().body(response);
+                }
+                
+                response.put("slotId", workSlot.getSlotId());
+                response.put("maxPatient", workSlot.getMaxPatient());
+                response.put("slotStatus", workSlot.getSlotStatus());
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("error", "Không tìm thấy khung giờ làm việc phù hợp");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+        } catch (Exception e) {
+            response.put("error", "Lỗi hệ thống: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
         }
-    } catch (Exception e) {
-        Map<String, Object> res = new HashMap<>();
-        res.put("slotId", null);
-        res.put("message", "Dữ liệu đầu vào không hợp lệ! " + e.getMessage());
-        return ResponseEntity.badRequest().body(res);
     }
-}
-
-
-
-
 }
