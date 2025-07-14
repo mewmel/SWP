@@ -13,12 +13,9 @@ const timeSessions = {
     'CN': { morning: ['08:00-12:00'], afternoon: [] }
 };
 
-// Biến động: danh sách bác sĩ và schedule
 let doctors = [];
 let doctorSchedules = {};
 let currentWeekStartDate = null;
-
-// === Biến toàn cục cho tuần (dạng Date object) ===
 let currentWeekStartDateObj = null;
 
 // ======== HÀM HIỂN THỊ LOADING ========
@@ -30,19 +27,15 @@ function hideLoading() {
 }
 
 // ----- HÀM XỬ LÝ TUẦN (CHUẨN LỊCH WINDOWS, ĐÚNG NGÀY MONDAY ĐANG HIỂN THỊ) -----
-
-// Lấy ngày Thứ 2 gần nhất của 1 ngày bất kỳ (luôn trả về object mới, không thay đổi biến truyền vào)
 function getMondayOfDate(date) {
     const d = new Date(date);
     d.setHours(0,0,0,0);
     const day = d.getDay();
-    // day === 0 là Chủ nhật => lùi về thứ 2 trước đó (6 ngày)
     const diff = d.getDate() - day + (day === 0 ? -6 : 1);
     d.setDate(diff);
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
-// Lấy mảng các ngày Thứ 2 đầu tuần của tháng (có thể kéo từ cuối tháng trước sang)
 function getMonthWeeks(year, month) {
     let weeks = [];
     let firstDayOfMonth = new Date(year, month, 1);
@@ -51,7 +44,6 @@ function getMonthWeeks(year, month) {
     while (true) {
         weeks.push(new Date(monday));
         monday.setDate(monday.getDate() + 7);
-        // Khi monday đã sang hẳn tháng sau, break
         if (monday.getMonth() > month || (monday.getMonth() < month && monday.getFullYear() > year)) {
             break;
         }
@@ -59,7 +51,6 @@ function getMonthWeeks(year, month) {
     return weeks;
 }
 
-// Xác định tuần thứ mấy trong tháng (tuần lịch, không phải tuần ISO)
 function getWeekOfMonth(date) {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -70,10 +61,9 @@ function getWeekOfMonth(date) {
         end.setDate(end.getDate() + 7);
         if (date >= start && date < end) return i + 1;
     }
-    return weeks.length; // fallback
+    return weeks.length;
 }
 
-// Trả về string: "Tuần x - dd Tháng mm, yyyy" (ngày là thứ 2 đầu tuần, đúng tuần lịch)
 function formatWeekDisplay(monday) {
     const start = new Date(monday);
     const year = start.getFullYear();
@@ -84,12 +74,10 @@ function formatWeekDisplay(monday) {
     return `Tuần ${weekNumber} - ${start.getDate()} Tháng ${start.getMonth() + 1}, ${start.getFullYear()}`;
 }
 
-// Update hiển thị tuần lên giao diện
 function updateWeekDisplay() {
     document.getElementById('currentWeekDisplay').textContent = formatWeekDisplay(currentWeekStartDateObj);
 }
 
-// Hàm lấy ngày đầu tuần (yyyy-mm-dd) dùng cho API - KHÔNG DÙNG toISOString() để tránh lệch ngày!
 function extractWeekStartDate() {
     const d = currentWeekStartDateObj;
     const yyyy = d.getFullYear();
@@ -98,37 +86,67 @@ function extractWeekStartDate() {
     return `${yyyy}-${mm}-${dd}`;
 }
 
-// Fetch danh sách bác sĩ từ backend và khởi tạo schedule
-function fetchDoctorsAndInit() {
+function extractWeekEndDate() {
+    const d = new Date(currentWeekStartDateObj);
+    d.setDate(d.getDate() + 6);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+async function fetchDoctorExistingSlots(doctorId) {
+    const from = extractWeekStartDate();
+    const to = extractWeekEndDate();
+    try {
+        const res = await fetch(`/api/doctors/${doctorId}/all-slots?from=${from}&to=${to}`);
+        if (!res.ok) return [];
+        return await res.json();
+    } catch (e) {
+        return [];
+    }
+}
+
+async function fetchDoctorsAndInit() {
     showLoading();
-    fetch('/api/doctors')
-        .then(res => res.json())
-        .then(data => {
-            doctors = data.map(d => ({
-                id: d.id || d.docId,
-                name: d.fullName || d.docFullName || d.name
-            }));
-            if (doctors.length === 0) {
-                hideLoading();
-                showSuccessMessage('Không có bác sĩ nào trong hệ thống!');
-                renderDoctorCards();
-                return;
-            }
-            doctorSchedules = {};
-            doctors.forEach(doctor => {
-                doctorSchedules[doctor.id] = {};
-                days.forEach(day => {
-                    doctorSchedules[doctor.id][day] = { morning: false, afternoon: false };
-                });
+    try {
+        const res = await fetch('/api/doctors');
+        const data = await res.json();
+        doctors = data.map(d => ({
+            id: d.id || d.docId,
+            name: d.fullName || d.docFullName || d.name
+        }));
+        doctorSchedules = {};
+        for (const doctor of doctors) {
+            doctorSchedules[doctor.id] = {};
+            days.forEach(day => {
+                doctorSchedules[doctor.id][day] = { morning: false, afternoon: false, scheduledMorning: false, scheduledAfternoon: false };
             });
-            renderDoctorCards();
-            hideLoading();
-        })
-        .catch((e) => {
-            hideLoading();
-            showSuccessMessage('Không thể tải danh sách bác sĩ từ server! ' + e);
-            renderDoctorCards();
-        });
+            const slots = await fetchDoctorExistingSlots(doctor.id);
+            slots.forEach(slot => {
+                const date = new Date(slot.workDate);
+                let dayCode = '';
+                switch(date.getDay()) {
+                    case 0: dayCode = 'CN'; break;
+                    case 1: dayCode = 'T2'; break;
+                    case 2: dayCode = 'T3'; break;
+                    case 3: dayCode = 'T4'; break;
+                    case 4: dayCode = 'T5'; break;
+                    case 5: dayCode = 'T6'; break;
+                    case 6: dayCode = 'T7'; break;
+                }
+                if (!dayCode) return;
+                const start = slot.startTime.substring(0,5);
+                if (start === "08:00") doctorSchedules[doctor.id][dayCode].scheduledMorning = true;
+                if (start === "14:00") doctorSchedules[doctor.id][dayCode].scheduledAfternoon = true;
+            });
+        }
+        renderDoctorCards();
+    } catch(e) {
+        showSuccessMessage('Không thể tải danh sách bác sĩ từ server! ' + e);
+        renderDoctorCards();
+    }
+    hideLoading();
 }
 
 function renderDoctorCards() {
@@ -189,31 +207,33 @@ function renderDayTimeSlots(doctorId, day, dayIndex) {
     const sessions = timeSessions[day];
     let slotsHTML = '';
 
-    // Morning shift
     if (sessions.morning.length > 0) {
         const isMorningSelected = doctorSchedules[doctorId]?.[day]?.morning || false;
+        const isMorningScheduled = doctorSchedules[doctorId]?.[day]?.scheduledMorning || false;
         const slotClass = dayIndex >= 5 ? 'weekend-slot' : 'morning-slot';
 
         slotsHTML += `
-      <div class="time-slot ${slotClass} ${isMorningSelected ? 'selected' : ''}" 
+      <div class="time-slot ${slotClass} ${isMorningSelected ? 'selected' : ''} ${isMorningScheduled ? 'scheduled' : ''}" 
            data-doctor="${doctorId}" data-day="${day}" data-shift="morning"
            onclick="toggleTimeSlot(this)">
         <p class="slot-time">🌅 Ca sáng</p>
         <p class="slot-hours">08:00-12:00</p>
+        ${isMorningScheduled ? '<i class="fa fa-check slot-check"></i>' : ''}
       </div>
     `;
     }
 
-    // Afternoon shift
     if (sessions.afternoon.length > 0) {
         const isAfternoonSelected = doctorSchedules[doctorId]?.[day]?.afternoon || false;
+        const isAfternoonScheduled = doctorSchedules[doctorId]?.[day]?.scheduledAfternoon || false;
 
         slotsHTML += `
-      <div class="time-slot afternoon-slot ${isAfternoonSelected ? 'selected' : ''}" 
+      <div class="time-slot afternoon-slot ${isAfternoonSelected ? 'selected' : ''} ${isAfternoonScheduled ? 'scheduled' : ''}" 
            data-doctor="${doctorId}" data-day="${day}" data-shift="afternoon"
            onclick="toggleTimeSlot(this)">
         <p class="slot-time">🌆 Ca chiều</p>
         <p class="slot-hours">14:00-17:00</p>
+        ${isAfternoonScheduled ? '<i class="fa fa-check slot-check"></i>' : ''}
       </div>
     `;
     }
@@ -226,6 +246,9 @@ window.toggleTimeSlot = function(element) {
     const day = element.getAttribute('data-day');
     const shift = element.getAttribute('data-shift');
     const isSelected = element.classList.contains('selected');
+    if (element.classList.contains('scheduled')) {
+        return;
+    }
 
     if (isSelected) {
         element.classList.remove('selected');
@@ -282,11 +305,15 @@ function updateStats() {
         let hasAnyShift = false;
         days.forEach(day => {
             const sessions = timeSessions[day];
-            if (sessions.morning.length > 0 && doctorSchedules[doctor.id]?.[day]?.morning) {
+            if (sessions.morning.length > 0 && (
+                doctorSchedules[doctor.id]?.[day]?.morning || doctorSchedules[doctor.id]?.[day]?.scheduledMorning
+            )) {
                 totalShifts++;
                 hasAnyShift = true;
             }
-            if (sessions.afternoon.length > 0 && doctorSchedules[doctor.id]?.[day]?.afternoon) {
+            if (sessions.afternoon.length > 0 && (
+                doctorSchedules[doctor.id]?.[day]?.afternoon || doctorSchedules[doctor.id]?.[day]?.scheduledAfternoon
+            )) {
                 totalShifts++;
                 hasAnyShift = true;
             }
@@ -303,26 +330,27 @@ function updateStats() {
 }
 
 // --- HÀM LƯU LỊCH (POST ĐÚNG NGÀY ĐẦU TUẦN) ---
+// Giữ nguyên vị trí scroll khi update UI sau khi lưu
 function saveAllSchedule() {
     showLoading();
 
-    // Lấy ngày đầu tuần từ currentWeekStartDateObj
     currentWeekStartDate = extractWeekStartDate();
-
-    // LẤY maId từ localStorage
     const maId = localStorage.getItem('maId');
 
     const payload = doctors.map(doctor => ({
         docId: doctor.id,
-        maId: maId ? parseInt(maId) : null, // BỔ SUNG maId vào payload
+        maId: maId ? parseInt(maId) : null,
         weekStartDate: currentWeekStartDate,
         shifts: days.map(day => ({
             weekday: day,
             morning: !!doctorSchedules[doctor.id][day].morning,
             afternoon: !!doctorSchedules[doctor.id][day].afternoon,
-            maxPatient: 5 // hoặc lấy theo từng bác sĩ nếu có
+            maxPatient: 5
         }))
     }));
+
+    // Lưu vị trí scroll trước khi render lại
+    const scrollY = window.scrollY;
 
     fetch('/api/workslots/week-bulk', {
         method: 'POST',
@@ -332,8 +360,24 @@ function saveAllSchedule() {
         .then(res => {
             hideLoading();
             if (res.ok) {
+                doctors.forEach(doctor => {
+                    days.forEach(day => {
+                        if (doctorSchedules[doctor.id][day].morning) {
+                            doctorSchedules[doctor.id][day].scheduledMorning = true;
+                            doctorSchedules[doctor.id][day].morning = false;
+                        }
+                        if (doctorSchedules[doctor.id][day].afternoon) {
+                            doctorSchedules[doctor.id][day].scheduledAfternoon = true;
+                            doctorSchedules[doctor.id][day].afternoon = false;
+                        }
+                    });
+                });
+                renderDoctorCards();
+                // Set lại vị trí scroll như trước khi bấm lưu
+                setTimeout(() => {
+                    window.scrollTo(0, scrollY);
+                }, 50);
                 showSuccessMessage('Đã lưu lịch làm việc cho tất cả bác sĩ thành công!');
-                updateStats();
             } else {
                 return res.text().then(txt => { throw new Error(txt); });
             }
@@ -370,26 +414,27 @@ function showSuccessMessage(message) {
 document.getElementById('saveAllScheduleBtn').addEventListener('click', saveAllSchedule);
 
 document.getElementById('resetScheduleBtn').addEventListener('click', function() {
-    if (confirm('Bạn có chắc chắn muốn đặt lại tất cả lịch làm việc?')) {
+    if (confirm('Bạn có chắc chắn muốn bỏ chọn các ca vừa chọn (xanh đậm)?')) {
         doctors.forEach(doctor => {
             days.forEach(day => {
-                const sessions = timeSessions[day];
-                if (sessions.morning.length > 0) {
+                if (!doctorSchedules[doctor.id][day].scheduledMorning) {
                     doctorSchedules[doctor.id][day].morning = false;
                 }
-                if (sessions.afternoon.length > 0) {
+                if (!doctorSchedules[doctor.id][day].scheduledAfternoon) {
                     doctorSchedules[doctor.id][day].afternoon = false;
                 }
             });
         });
         renderDoctorCards();
-        showSuccessMessage('Đã đặt lại tất cả lịch làm việc!');
+        showSuccessMessage('Đã bỏ chọn các ca chưa lưu!');
+        // XÓA DÒNG CUỘN LÊN, GIỜ SẼ KHÔNG TỰ ĐỘNG CUỘN NỮA
+        // document.getElementById('schedule-section').scrollIntoView({behavior: 'smooth'});
     }
 });
 
 document.getElementById('selectAllBtn').addEventListener('click', function() {
     document.querySelectorAll('.time-slot').forEach(slot => {
-        if (!slot.classList.contains('selected')) {
+        if (!slot.classList.contains('selected') && !slot.classList.contains('scheduled')) {
             slot.classList.add('selected');
             const doctor = slot.getAttribute('data-doctor');
             const day = slot.getAttribute('data-day');
@@ -403,7 +448,7 @@ document.getElementById('selectAllBtn').addEventListener('click', function() {
 
 document.getElementById('clearAllBtn').addEventListener('click', function() {
     document.querySelectorAll('.time-slot').forEach(slot => {
-        if (slot.classList.contains('selected')) {
+        if (slot.classList.contains('selected') && !slot.classList.contains('scheduled')) {
             slot.classList.remove('selected');
             const doctor = slot.getAttribute('data-doctor');
             const day = slot.getAttribute('data-day');
@@ -415,26 +460,28 @@ document.getElementById('clearAllBtn').addEventListener('click', function() {
     updateStats();
 });
 
-// ==== XỬ LÝ CHUYỂN TUẦN BẰNG MŨI TÊN CHUẨN LỊCH WINDOWS ====
 document.getElementById('prevWeek').addEventListener('click', function() {
     let prev = new Date(currentWeekStartDateObj);
     prev.setDate(prev.getDate() - 7);
     currentWeekStartDateObj = getMondayOfDate(prev);
     updateWeekDisplay();
+    fetchDoctorsAndInit();
 });
 document.getElementById('nextWeek').addEventListener('click', function() {
     let next = new Date(currentWeekStartDateObj);
     next.setDate(next.getDate() + 7);
     currentWeekStartDateObj = getMondayOfDate(next);
     updateWeekDisplay();
+    fetchDoctorsAndInit();
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Khởi tạo ngày đầu tuần là Thứ 2 gần nhất, có thể là cuối tháng trước
     currentWeekStartDateObj = getMondayOfDate(new Date());
     updateWeekDisplay();
-
     fetchDoctorsAndInit();
+
+    // Khi reload, luôn scroll về đầu trang (nếu muốn giữ nguyên vị trí thì comment dòng này lại)
+    window.scrollTo(0, 0);
 
     const style = document.createElement('style');
     style.textContent = `
@@ -454,6 +501,26 @@ document.addEventListener('DOMContentLoaded', function() {
       margin: 0;
       margin-top: 2px;
     }
+    .time-slot.scheduled {
+      background: linear-gradient(90deg, #38bdf8 0%, #2563eb 100%);
+      color: #fff;
+      font-weight: 500;
+      border: none;
+      box-shadow: 0 2px 6px #2563eb22;
+      position: relative;
+      pointer-events: none;
+      opacity: 1;
+    }
+    .time-slot.scheduled .slot-check {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      color: #fff;
+      font-size: 18px;
+    }
+    .time-slot.scheduled p {
+      color: #fff !important;
+    }
   `;
     document.head.appendChild(style);
 });
@@ -467,7 +534,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy tên manager từ localStorage
     const maFullName = localStorage.getItem('maFullName');
     if (maFullName) {
         const el = document.querySelector('.doctor-user-name');

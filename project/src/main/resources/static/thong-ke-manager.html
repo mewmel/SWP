@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thống kê - Dashboard Manager</title>
+    <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="css/doctor-common.css">
     <link rel="stylesheet" href="css/manager-common.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -204,7 +205,7 @@
             .stats-grid {
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             }
-
+            
             .chart-half {
                 grid-column: span 1;
             }
@@ -214,16 +215,16 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-
+            
             .chart-wide,
             .chart-half {
                 grid-column: span 1;
             }
-
+            
             .time-filter {
                 flex-wrap: wrap;
             }
-
+            
             .quick-stats {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -233,7 +234,7 @@
             .chart-card {
                 padding: 16px;
             }
-
+            
             .quick-stats {
                 grid-template-columns: 1fr;
             }
@@ -248,6 +249,10 @@
                 <i class="fas fa-users-cog"></i>
                 Quản lý bác sĩ
             </a>
+            <a href="quan-ly-benh-nhan.html" class="nav-link ">
+                    <i class="fas fa-users-cog"></i>
+                    Quản lý bệnh nhân
+                </a>
             <a href="sap-xep-lich-bac-si.html" class="nav-link">
                 <i class="fas fa-calendar-plus"></i>
                 Sắp xếp lịch làm
@@ -257,21 +262,19 @@
                 Thống kê
             </a>
         </nav>
-
-        <div class="doctor-header-right">
-            <div class="doctor-user-info">
-                <div class="doctor-user-details">
-                    <span class="doctor-welcome-text">Chào mừng</span>
-                    <span class="doctor-user-name">Quản lý</span>
+        
+        <div class="user-profile">
+                    <div class="user-info">
+                        <p class="user-name">BS. Nguyễn Ngọc Khánh Linh</p>
+                        <p class="user-role">Manager</p>
+                    </div>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <button class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
                 </div>
-                <div class="doctor-user-avatar">
-                    <i class="fas fa-user-tie"></i>
-                </div>
-            </div>
-            <button class="doctor-logout-btn" title="Đăng xuất">
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
-        </div>
     </div>
 </header>
 
@@ -305,7 +308,7 @@
                 <i class="fas fa-calendar-check"></i>
             </div>
         </div>
-
+        
         <div class="stat-card">
             <div class="stat-content">
                 <div class="stat-label">Doanh thu</div>
@@ -319,7 +322,7 @@
                 <i class="fas fa-money-bill-wave"></i>
             </div>
         </div>
-
+        
         <div class="stat-card">
             <div class="stat-content">
                 <div class="stat-label">Tỷ lệ hoàn thành</div>
@@ -333,7 +336,7 @@
                 <i class="fas fa-tasks"></i>
             </div>
         </div>
-
+        
         <div class="stat-card">
             <div class="stat-content">
                 <div class="stat-label">Đánh giá trung bình</div>
@@ -426,59 +429,59 @@
             </div>
             <table class="performance-table">
                 <thead>
-                <tr>
-                    <th>Hạng</th>
-                    <th>Bác sĩ</th>
-                    <th>Lịch hẹn</th>
-                    <th>Đánh giá</th>
-                    <th>Hiệu suất</th>
-                </tr>
+                    <tr>
+                        <th>Hạng</th>
+                        <th>Bác sĩ</th>
+                        <th>Lịch hẹn</th>
+                        <th>Đánh giá</th>
+                        <th>Hiệu suất</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td><span class="rank-badge rank-1">1</span></td>
-                    <td>BS. Nguyễn Văn A</td>
-                    <td>89</td>
-                    <td>4.9⭐</td>
-                    <td>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 95%"></div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="rank-badge rank-2">2</span></td>
-                    <td>BS. Trần Thị B</td>
-                    <td>76</td>
-                    <td>4.8⭐</td>
-                    <td>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 88%"></div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="rank-badge rank-3">3</span></td>
-                    <td>BS. Lê Văn C</td>
-                    <td>71</td>
-                    <td>4.7⭐</td>
-                    <td>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 82%"></div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="rank-badge rank-other">4</span></td>
-                    <td>BS. Phạm Thị D</td>
-                    <td>65</td>
-                    <td>4.6⭐</td>
-                    <td>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 78%"></div>
-                        </div>
-                    </td>
-                </tr>
+                    <tr>
+                        <td><span class="rank-badge rank-1">1</span></td>
+                        <td>BS. Nguyễn Văn A</td>
+                        <td>89</td>
+                        <td>4.9⭐</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 95%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-badge rank-2">2</span></td>
+                        <td>BS. Trần Thị B</td>
+                        <td>76</td>
+                        <td>4.8⭐</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 88%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-badge rank-3">3</span></td>
+                        <td>BS. Lê Văn C</td>
+                        <td>71</td>
+                        <td>4.7⭐</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 82%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-badge rank-other">4</span></td>
+                        <td>BS. Phạm Thị D</td>
+                        <td>65</td>
+                        <td>4.6⭐</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 78%"></div>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -522,211 +525,211 @@
 </div>
 
 <script>
-    // Chart.js Configuration and Data
-    const chartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    usePointStyle: true,
-                    padding: 20
+// Chart.js Configuration and Data
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'bottom',
+            labels: {
+                usePointStyle: true,
+                padding: 20
+            }
+        }
+    }
+};
+
+// Appointment Trend Chart
+const appointmentTrendCtx = document.getElementById('appointmentTrendChart').getContext('2d');
+new Chart(appointmentTrendCtx, {
+    type: 'line',
+    data: {
+        labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+        datasets: [{
+            label: 'Lịch hẹn mới',
+            data: [12, 19, 15, 25, 22, 18, 8, 14, 21, 17, 28, 24, 16, 10],
+            borderColor: '#4A90E2',
+            backgroundColor: 'rgba(74, 144, 226, 0.1)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Lịch hoàn thành',
+            data: [10, 17, 14, 23, 20, 16, 7, 12, 19, 15, 26, 22, 14, 9],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        ...chartOptions,
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: '#f1f5f9'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
                 }
             }
         }
-    };
+    }
+});
 
-    // Appointment Trend Chart
-    const appointmentTrendCtx = document.getElementById('appointmentTrendChart').getContext('2d');
-    new Chart(appointmentTrendCtx, {
-        type: 'line',
-        data: {
-            labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
-            datasets: [{
-                label: 'Lịch hẹn mới',
-                data: [12, 19, 15, 25, 22, 18, 8, 14, 21, 17, 28, 24, 16, 10],
-                borderColor: '#4A90E2',
-                backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                tension: 0.4,
-                fill: true
-            }, {
-                label: 'Lịch hoàn thành',
-                data: [10, 17, 14, 23, 20, 16, 7, 12, 19, 15, 26, 22, 14, 9],
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            ...chartOptions,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: '#f1f5f9'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
+// Service Revenue Chart
+const serviceRevenueCtx = document.getElementById('serviceRevenueChart').getContext('2d');
+new Chart(serviceRevenueCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['IVF', 'IUI', 'Tư vấn', 'Xét nghiệm', 'Khác'],
+        datasets: [{
+            data: [45, 25, 15, 10, 5],
+            backgroundColor: [
+                '#4A90E2',
+                '#10b981',
+                '#f59e0b',
+                '#8b5cf6',
+                '#64748b'
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+        }]
+    },
+    options: {
+        ...chartOptions,
+        cutout: '60%'
+    }
+});
+
+// Doctor Performance Chart
+const doctorPerformanceCtx = document.getElementById('doctorPerformanceChart').getContext('2d');
+new Chart(doctorPerformanceCtx, {
+    type: 'radar',
+    data: {
+        labels: ['Lịch hẹn', 'Đánh giá', 'Hoàn thành', 'Tương tác', 'Chuyên môn'],
+        datasets: [{
+            label: 'BS. Nguyễn Văn A',
+            data: [95, 92, 96, 88, 94],
+            borderColor: '#4A90E2',
+            backgroundColor: 'rgba(74, 144, 226, 0.2)',
+            pointBackgroundColor: '#4A90E2'
+        }, {
+            label: 'Trung bình',
+            data: [75, 78, 82, 70, 80],
+            borderColor: '#64748b',
+            backgroundColor: 'rgba(100, 116, 139, 0.1)',
+            pointBackgroundColor: '#64748b'
+        }]
+    },
+    options: {
+        ...chartOptions,
+        scales: {
+            r: {
+                beginAtZero: true,
+                max: 100,
+                grid: {
+                    color: '#f1f5f9'
                 }
             }
         }
-    });
+    }
+});
 
-    // Service Revenue Chart
-    const serviceRevenueCtx = document.getElementById('serviceRevenueChart').getContext('2d');
-    new Chart(serviceRevenueCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['IVF', 'IUI', 'Tư vấn', 'Xét nghiệm', 'Khác'],
-            datasets: [{
-                data: [45, 25, 15, 10, 5],
-                backgroundColor: [
-                    '#4A90E2',
-                    '#10b981',
-                    '#f59e0b',
-                    '#8b5cf6',
-                    '#64748b'
-                ],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            ...chartOptions,
-            cutout: '60%'
-        }
-    });
-
-    // Doctor Performance Chart
-    const doctorPerformanceCtx = document.getElementById('doctorPerformanceChart').getContext('2d');
-    new Chart(doctorPerformanceCtx, {
-        type: 'radar',
-        data: {
-            labels: ['Lịch hẹn', 'Đánh giá', 'Hoàn thành', 'Tương tác', 'Chuyên môn'],
-            datasets: [{
-                label: 'BS. Nguyễn Văn A',
-                data: [95, 92, 96, 88, 94],
-                borderColor: '#4A90E2',
-                backgroundColor: 'rgba(74, 144, 226, 0.2)',
-                pointBackgroundColor: '#4A90E2'
-            }, {
-                label: 'Trung bình',
-                data: [75, 78, 82, 70, 80],
-                borderColor: '#64748b',
-                backgroundColor: 'rgba(100, 116, 139, 0.1)',
-                pointBackgroundColor: '#64748b'
-            }]
-        },
-        options: {
-            ...chartOptions,
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 100,
-                    grid: {
-                        color: '#f1f5f9'
-                    }
+// Schedule Utilization Chart
+const scheduleUtilizationCtx = document.getElementById('scheduleUtilizationChart').getContext('2d');
+new Chart(scheduleUtilizationCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'],
+        datasets: [{
+            label: 'Đã đặt (%)',
+            data: [85, 92, 78, 96, 88, 65, 45],
+            backgroundColor: '#4A90E2',
+            borderRadius: 4
+        }]
+    },
+    options: {
+        ...chartOptions,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                grid: {
+                    color: '#f1f5f9'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
                 }
             }
         }
-    });
+    }
+});
 
-    // Schedule Utilization Chart
-    const scheduleUtilizationCtx = document.getElementById('scheduleUtilizationChart').getContext('2d');
-    new Chart(scheduleUtilizationCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'],
-            datasets: [{
-                label: 'Đã đặt (%)',
-                data: [85, 92, 78, 96, 88, 65, 45],
-                backgroundColor: '#4A90E2',
-                borderRadius: 4
-            }]
-        },
-        options: {
-            ...chartOptions,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    grid: {
-                        color: '#f1f5f9'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
+// Monthly Comparison Chart
+const monthlyComparisonCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
+new Chart(monthlyComparisonCtx, {
+    type: 'bar',
+    data: {
+        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
+        datasets: [{
+            label: 'Năm nay',
+            data: [180, 220, 195, 250, 285, 320],
+            backgroundColor: '#4A90E2',
+            borderRadius: 4
+        }, {
+            label: 'Năm trước',
+            data: [160, 200, 185, 230, 265, 290],
+            backgroundColor: '#94a3b8',
+            borderRadius: 4
+        }]
+    },
+    options: {
+        ...chartOptions,
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: '#f1f5f9'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
                 }
             }
         }
+    }
+});
+
+// Time filter functionality
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        // In a real application, this would trigger data refresh
+        console.log('Filter changed to:', this.dataset.period);
     });
+});
 
-    // Monthly Comparison Chart
-    const monthlyComparisonCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
-    new Chart(monthlyComparisonCtx, {
-        type: 'bar',
-        data: {
-            labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
-            datasets: [{
-                label: 'Năm nay',
-                data: [180, 220, 195, 250, 285, 320],
-                backgroundColor: '#4A90E2',
-                borderRadius: 4
-            }, {
-                label: 'Năm trước',
-                data: [160, 200, 185, 230, 265, 290],
-                backgroundColor: '#94a3b8',
-                borderRadius: 4
-            }]
-        },
-        options: {
-            ...chartOptions,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: '#f1f5f9'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
-
-    // Time filter functionality
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-
-            // In a real application, this would trigger data refresh
-            console.log('Filter changed to:', this.dataset.period);
+// Animate progress bars on load
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        document.querySelectorAll('.progress-fill').forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
         });
-    });
-
-    // Animate progress bars on load
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(() => {
-            document.querySelectorAll('.progress-fill').forEach(bar => {
-                const width = bar.style.width;
-                bar.style.width = '0%';
-                setTimeout(() => {
-                    bar.style.width = width;
-                }, 100);
-            });
-        }, 500);
-    });
+    }, 500);
+});
 </script>
 </body>
-</html>
+</html> 

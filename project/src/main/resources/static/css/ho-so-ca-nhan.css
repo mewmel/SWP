@@ -587,6 +587,125 @@ input:checked + .slider:before {
     border-color: var(--primary-color);
 }
 
+/* Custom styling for change password buttons */
+.change-password-section .btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    min-width: auto;
+    height: 36px;
+}
+
+.change-password-section .btn i {
+    font-size: 0.8rem;
+}
+
+.change-password-section .form-group[style*="grid-column"] {
+    margin-top: var(--spacing-md);
+}
+
+.change-password-section .form-group[style*="grid-column"] > div {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-start;
+}
+
+.change-password-section .btn-secondary {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.change-password-section .btn-secondary:hover {
+    background: #e9ecef;
+    color: #495057;
+    transform: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.change-password-section .btn-primary {
+    background: var(--primary-color);
+    min-width: 130px;
+}
+
+.change-password-section .btn-primary:hover {
+    background: #2980b9;
+    transform: none;
+    box-shadow: 0 2px 4px rgba(74, 144, 226, 0.3);
+}
+
+.change-password-section h4 {
+    color: var(--text-color);
+    margin-bottom: var(--spacing-lg);
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: var(--spacing-sm);
+}
+
+/* Notification styles for password change */
+.profile-notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 12px 20px 12px 35px; /* Make room for the pulse dot */
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: white;
+    z-index: 9999;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid transparent;
+    backdrop-filter: blur(10px);
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+.profile-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.profile-notification.success {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    border-left-color: #1e8449;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.profile-notification.error {
+    background: linear-gradient(135deg, #e74c3c 0%, #ec7063 100%);
+    border-left-color: #c0392b;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.profile-notification::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: translateY(-50%) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateY(-50%) scale(1.2);
+        opacity: 1;
+    }
+}
+
 @media (max-width: 1024px) {
     .profile-grid {
         grid-template-columns: 1fr;
@@ -642,6 +761,25 @@ input:checked + .slider:before {
         flex-direction: column;
         gap: var(--spacing-sm);
     }
+
+    .change-password-section .form-group[style*="grid-column"] > div {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .change-password-section .btn {
+        min-width: auto;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .profile-notification {
+        right: 15px;
+        left: 15px;
+        max-width: none;
+        top: 90px;
+        font-size: 0.85rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -675,5 +813,29 @@ input:checked + .slider:before {
         flex-direction: column;
         gap: var(--spacing-sm);
         align-items: flex-start;
+    }
+
+    .change-password-section .btn {
+        font-size: 0.85rem;
+        height: 34px;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .change-password-section .btn i {
+        font-size: 0.75rem;
+    }
+
+    .profile-notification {
+        right: 10px;
+        left: 10px;
+        top: 85px;
+        font-size: 0.8rem;
+        padding: 10px 15px 10px 30px;
+    }
+
+    .profile-notification::before {
+        left: 10px;
+        width: 6px;
+        height: 6px;
     }
 } 

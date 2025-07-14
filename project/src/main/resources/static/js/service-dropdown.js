@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     serviceSelect.appendChild(option);
                 }
             });
+            
+            // Trigger custom event khi services đã load xong
+            const servicesLoadedEvent = new CustomEvent('servicesLoaded', { 
+                detail: { serviceSelect: serviceSelect }
+            });
+            document.dispatchEvent(servicesLoadedEvent);
         })
         .catch(error => {
             console.error('Lỗi lấy danh sách dịch vụ:', error);

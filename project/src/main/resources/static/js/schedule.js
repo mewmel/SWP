@@ -136,12 +136,33 @@ document.addEventListener('DOMContentLoaded', function() {
         return dayElement;
     }
 
-    // Hàm hiển thị popup chi tiết sự kiện trong ngày
+    // Hàm hiển thị popup chi tiết sự kiện trong ngày - mỗi sự kiện 1 dòng, chỉ 1 dòng Giờ ở cuối
     function showDayDetails(day, events) {
         const monthName = monthNames[currentMonth];
         if (events.length > 0) {
-            let eventsList = events.map(event => `• ${event.title}`).join('\n');
-            alert(`Ngày ${day} ${monthName} ${currentYear}\n\nSự kiện:\n${eventsList}`);
+            let eventDetailsList = events.map((event, idx) => {
+                let statusVi = '';
+                if (event.stepStatus === 'inactive') statusVi = 'Chưa khám';
+                else if (event.stepStatus === 'pending') statusVi = 'Đang khám';
+                else if (event.stepStatus === 'completed') statusVi = 'Đã khám xong';
+                else if (event.stepStatus) statusVi = event.stepStatus;
+                let line = `Sự kiện ${idx + 1}: ${event.title}`;
+                if (statusVi) line += ` \nTrạng thái: ${statusVi}`;
+                return line;
+            }).join('\n');
+
+            // Lấy giờ performedAt đầu tiên có trong danh sách events
+            let timeStr = "";
+            for (const event of events) {
+                if (event.performedAt) {
+                    const date = new Date(event.performedAt);
+                    timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    break;
+                }
+            }
+            let timeBlock = timeStr ? `\nGiờ: ${timeStr}` : "";
+
+            alert(`Ngày ${day} ${monthName} ${currentYear}\n\n${eventDetailsList}${timeBlock}`);
         } else {
             alert(`Ngày ${day} ${monthName} ${currentYear}\n\nKhông có sự kiện nào.`);
         }
@@ -290,9 +311,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         else if (step.subName && step.subName.toLowerCase().includes('xét nghiệm')) type = 'test';
                         else if (step.subName && step.subName.toLowerCase().includes('siêu âm')) type = 'test';
 
+                        // Ghi chú: Thêm serviceName và performedAt vào event để show popup chi tiết
                         eventsData[eventsKey][day].push({
                             type: type,
-                            title: step.subName || "Bước điều trị"
+                            title: step.subName || "Bước điều trị",
+                            serviceName: step.serName || step.serviceName || step.serNameVi || "", // tuỳ backend trả về tên nào
+                            performedAt: step.performedAt || "",
+                            stepStatus: step.stepStatus || ""
                         });
                     });
                     fetchDone++;
@@ -303,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-// THÊM HÀM NÀY để load lịch cho đúng khách hàng
+    // THÊM HÀM NÀY để load lịch cho đúng khách hàng
     function loadScheduleForCustomer(cusId) {
         // Chỉ xoá sạch eventsData ở đây!
         Object.keys(eventsData).forEach(key => delete eventsData[key]);
@@ -328,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             title: title
                         });
                     }
-                    if (b.bookStatus === 'confirmed') {
+                    if (b.bookStatus === 'completed'|| b.bookStatus === 'confirmed') {
                         bookingIds.push(b.bookId);
                     }
                 });
@@ -344,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-// GIẢ SỬ bạn đã lấy được cusId (ví dụ lấy từ localStorage hoặc server truyền vào)
+    // GIẢ SỬ bạn đã lấy được cusId (ví dụ lấy từ localStorage hoặc server truyền vào)
     const cusId = localStorage.getItem('cusId');
     if (cusId) {
         loadScheduleForCustomer(cusId);

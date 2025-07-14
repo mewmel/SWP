@@ -150,10 +150,53 @@ document.addEventListener('DOMContentLoaded', function() {
             const stageName = (currentStage > 0 && currentStage <= steps.length) ? steps[currentStage-1].subName : '';
             document.getElementById('progress-text').textContent =
                 `Giai đoạn ${currentStage}/${totalStage} - ${stageName}`;
+
+            // === THÔNG BÁO SIDEBAR: Dịch vụ ngày mai & Lịch trình hôm nay - CHỐNG TRÙNG ===
+            const todayObj = new Date();
+            todayObj.setHours(0,0,0,0);
+            const tomorrowObj = new Date(todayObj);
+            tomorrowObj.setDate(todayObj.getDate() + 1);
+
+            let todaySteps = [];
+            let tomorrowSteps = [];
+
+            steps.forEach(s => {
+                const d = new Date(s.performedAt);
+                d.setHours(0,0,0,0);
+                if (d.getTime() === todayObj.getTime()) {
+                    todaySteps.push(s);
+                } else if (d.getTime() === tomorrowObj.getTime()) {
+                    tomorrowSteps.push(s);
+                }
+            });
+
+            let notiHtml = '';
+
+            if (tomorrowSteps.length > 0) {
+                notiHtml += `<div style="font-weight:bold;">Dịch vụ ngày mai:</div>`;
+                tomorrowSteps.forEach(s => {
+                    const timeStr = new Date(s.performedAt).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+                    notiHtml += `<div class="notification-item"><div class="notification-time">${timeStr}</div><span>${s.subName || ''}</span></div>`;
+                });
+            }
+            if (todaySteps.length > 0) {
+                notiHtml += `<div style="font-weight:bold; margin-top:8px;">Lịch trình hôm nay:</div>`;
+                todaySteps.forEach(s => {
+                    const timeStr = new Date(s.performedAt).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+                    notiHtml += `<div class="notification-item"><div class="notification-time">${timeStr}</div><span>${s.subName || ''}</span></div>`;
+                });
+            }
+            if (!tomorrowSteps.length && !todaySteps.length) {
+                notiHtml = `<div class="notification-item">Không có thông báo nào hôm nay và ngày mai.</div>`;
+            }
+            const notiContainer = document.querySelector('.notifications-list');
+            if (notiContainer) notiContainer.innerHTML = notiHtml;
+            // === END: THÔNG BÁO SIDEBAR ===
         })
         .catch(e => {
             console.error('Lỗi lấy timeline:', e);
         });
+
     function setTimelineWeekLabel(date = new Date()) {
         // Tính tuần trong tháng
         const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);

@@ -16,38 +16,38 @@ document.addEventListener('DOMContentLoaded', function() {
     let cusId = null;
 
 // --- CHỨC NĂNG CHUYỂN ĐỔI TAB ---
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
 
 // Hàm chuyển đổi tab
-    function switchTab(targetTab) {
-        // Xóa class active khỏi tất cả tab buttons
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-
-        // Xóa class active khỏi tất cả tab contents
-        tabContents.forEach(content => content.classList.remove('active'));
-
-        // Thêm class active cho tab button được click
-        const activeButton = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
-        if (activeButton) {
-            activeButton.classList.add('active');
-        }
-
-        // Hiển thị tab content tương ứng
-        const activeContent = document.getElementById(targetTab);
-        if (activeContent) {
-            activeContent.classList.add('active');
-        }
+function switchTab(targetTab) {
+    // Xóa class active khỏi tất cả tab buttons
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Xóa class active khỏi tất cả tab contents
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    // Thêm class active cho tab button được click
+    const activeButton = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
     }
+    
+    // Hiển thị tab content tương ứng
+    const activeContent = document.getElementById(targetTab);
+    if (activeContent) {
+        activeContent.classList.add('active');
+    }
+}
 
 // Thêm event listener cho tất cả tab buttons
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetTab = this.getAttribute('data-tab');
-            switchTab(targetTab);
-        });
+tabButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetTab = this.getAttribute('data-tab');
+        switchTab(targetTab);
     });
+});
 
 
 
@@ -103,91 +103,172 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- CHỨC NĂNG ĐỔI MẬT KHẨU ---
+    // 1. Lấy phần tử
     const currentInput = document.getElementById("currentPassword");
-    const newGroup = document.getElementById("newPasswordGroup");
-    const verifyBtn = document.getElementById("btnVerify");
-    const changeBtn = document.getElementById("btnChange");
+    const verifyBtn = document.getElementById("btnVerifyPassword");
+    const currentStep = document.getElementById("currentPasswordStep");
+    const changePasswordForm = document.getElementById("changePasswordForm");
+    const backBtn = document.getElementById("btnBackToStep1");
+    const otpInput = document.getElementById("otpCode");
+    const newPassInput = document.getElementById("newPassword");
+    const confirmInput = document.getElementById("confirmNewPassword");
 
-    let currentPasswordCache = ""; // Lưu tạm để gửi kèm khi đổi
+    let currentPasswordCache = "";
 
-    // Bước 1: Xác thực mật khẩu hiện tại
-    verifyBtn.addEventListener("click", async () => {
-        const currentPassword = currentInput.value.trim();
-        if (!currentPassword) return showNotification("Vui lòng nhập mật khẩu hiện tại!", 'warning');
-        // LẤY ID CUSTOMER
-        const cusId = localStorage.getItem('cusId');
-        if (!cusId) return showNotification("Không tìm thấy thông tin người dùng!", 'error');
+    // Hàm chuyển đổi giữa các bước
+    function showStep1() {
+        currentStep.style.display = "block";
+        changePasswordForm.style.display = "none";
+    }
 
-        try {
-            const res = await fetch(`/api/auth/${cusId}/verify-cus-password`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ currentPassword })
-            });
+    function showStep2() {
+        currentStep.style.display = "none";
+        changePasswordForm.style.display = "block";
+    }
 
-            if (res.ok) {
-                currentPasswordCache = currentPassword;          // Lưu lại
-                document.getElementById("currentPasswordGroup").style.display = "none";
-                newGroup.style.display = "block";                // Mở form mới
-                showNotification("Mật khẩu đã được xác thực!", 'success');
-            } else {
-                const errorMsg = await res.text();
-                showNotification(errorMsg || "Mật khẩu hiện tại không đúng!", 'error');
+    // Bước 1: xác thực mật khẩu cũ và gửi OTP
+    if (verifyBtn) {
+        verifyBtn.addEventListener("click", async () => {
+            const current = currentInput.value.trim();
+            if (!current) {
+                showNotification("Vui lòng nhập mật khẩu hiện tại!", "error");
+                return;
             }
-        } catch (err) {
-            console.error(err);
-            showNotification("Không thể kết nối tới máy chủ!", 'error');
-        }
-    });
 
-    // Bước 2: Gửi mật khẩu mới
-    changeBtn.addEventListener("click", async () => {
-        const newPassword = document.getElementById("newPassword").value.trim();
-        const confirm = document.getElementById("changeConfirmPassword").value.trim();
-
-        if (!newPassword || !confirm) return showNotification("Vui lòng nhập đủ hai ô!", 'warning');
-        if (newPassword !== confirm) return showNotification("Mật khẩu mới không khớp!", 'warning');
-
-        // LẤY ID CUSTOMER
-        const cusId = localStorage.getItem('cusId');
-        if (!cusId) return showNotification("Không tìm thấy thông tin người dùng!", 'error');
-
-        try {
-            // SỬA: Thêm cusId vào đường dẫn
-            const res = await fetch(`/api/auth/${cusId}/change-cus-password`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    currentPassword: currentPasswordCache,
-                    newPassword: newPassword
-                })
-            });
-
-            if (res.ok) {
-                showNotification("Đổi mật khẩu thành công!", 'success');
-                // Reset form
-                document.getElementById("currentPasswordGroup").style.display = "block";
-                document.getElementById("newPasswordGroup").style.display = "none";
-                document.getElementById("currentPassword").value = "";
-                document.getElementById("newPassword").value = "";
-                document.getElementById("changeConfirmPassword").value = "";
-                currentPasswordCache = "";
-            } else {
-                const errorMsg = await res.text();
-                showNotification(errorMsg || "Đổi mật khẩu thất bại!", 'error');
+            const cusId = localStorage.getItem("cusId");
+            const email = localStorage.getItem("cusEmail");
+            if (!cusId || !email) {
+                showNotification("Không tìm thấy thông tin người dùng!", "error");
+                return;
             }
-        } catch (err) {
-            console.error(err);
-            showNotification("Không thể kết nối tới máy chủ!", 'error');
-        }
-    });
+
+            // Disable button và show loading
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+
+            try {
+                // 1.1 verify mật khẩu cũ
+                let res = await fetch(`/api/auth/${cusId}/verify-cus-password`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ currentPassword: current })
+                });
+                
+                if (!res.ok) {
+                    const msg = await res.text();
+                    showNotification(msg || "Mật khẩu hiện tại không đúng!", "error");
+                    return;
+                }
+
+                // 1.2 gọi API đổi-password với otp=null để trigger gửi mail
+                res = await fetch(`/api/auth/${email}/change-cus-password`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        currentPassword: current,
+                        newPassword: "",  // bất kỳ, vì service chỉ check otp
+                        otp: null
+                    })
+                });
+                
+                const text = await res.text();
+                if (!res.ok || text !== "OTP_SENT") {
+                    showNotification(text || "Không thể gửi OTP, thử lại sau!", "error");
+                    return;
+                }
+
+                // 1.3 hiển thị form đổi mật khẩu
+                currentPasswordCache = current;
+                showStep2();
+                showNotification("Mã OTP đã được gửi đến email của bạn.", "success");
+                
+            } catch (err) {
+                console.error(err);
+                showNotification("Lỗi kết nối tới máy chủ!", "error");
+            } finally {
+                // Reset button
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = 'Tiếp tục';
+            }
+        });
+    }
+
+    // Nút quay lại bước 1
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            showStep1();
+            changePasswordForm.reset();
+            currentPasswordCache = "";
+        });
+    }
+
+    // Bước 2: submit form đổi mật khẩu
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const otp = otpInput.value.trim();
+            const newPass = newPassInput.value.trim();
+            const conf = confirmInput.value.trim();
+            const email = localStorage.getItem("cusEmail");
+
+            if (!otp || !newPass || !conf) {
+                showNotification("Vui lòng nhập đầy đủ OTP và mật khẩu mới!", "error");
+                return;
+            }
+            if (newPass !== conf) {
+                showNotification("Mật khẩu mới không khớp!", "error");
+                return;
+            }
+
+            // Disable submit button
+            const submitBtn = changePasswordForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đổi mật khẩu...';
+            }
+
+            try {
+                const res = await fetch(`/api/auth/${email}/change-cus-password`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        currentPassword: currentPasswordCache,
+                        newPassword: newPass,
+                        otp: otp
+                    })
+                });
+                
+                const text = await res.text();
+
+                if (res.ok) {
+                    showNotification("Đổi mật khẩu thành công!", "success");
+                    showStep1();
+                    currentInput.value = "";
+                    changePasswordForm.reset();
+                    currentPasswordCache = "";
+                } else {
+                    showNotification(text || "Đổi mật khẩu thất bại!", "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showNotification("Lỗi kết nối tới máy chủ!", "error");
+            } finally {
+                // Reset submit button
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-key"></i> Đổi mật khẩu';
+                }
+            }
+        });
+    }
 
 
     // --- UPDATE DỮ LIỆU KHI LƯU ---
     const saveBtn = document.querySelector('.btn.btn-primary');
     if (saveBtn) {
         saveBtn.addEventListener('click', function(e) {
-            e.preventDefault();
+                e.preventDefault();
             const currentCusId = cusId || localStorage.getItem('cusId');
             if (!currentCusId) {
                 showNotification('Không xác định được người dùng. Vui lòng đăng nhập lại!', 'error');
@@ -247,11 +328,11 @@ function showNotification(message, type = 'success') {
     notification.className = `profile-notification ${type}`;
     notification.textContent = message;
     document.body.appendChild(notification);
-
+    
     setTimeout(() => {
         notification.classList.add('show');
     }, 10);
-
+    
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => {
@@ -259,7 +340,6 @@ function showNotification(message, type = 'success') {
         }, 300);
     }, 3000);
 }
-
 // CSS đã được chuyển sang styles.css
 // Add notification styles
 const style = document.createElement('style');
@@ -327,3 +407,4 @@ style.textContent = `
          }
      `;
 document.head.appendChild(style);
+// CSS đã được chuyển sang styles.css

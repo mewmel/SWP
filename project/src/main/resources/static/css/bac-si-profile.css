@@ -543,7 +543,7 @@ textarea.form-input {
         text-align: center;
         gap: 24px;
     }
-
+    
     .profile-avatar-section {
         flex-direction: column;
         align-items: center;
@@ -554,25 +554,25 @@ textarea.form-input {
     .profile-header-content {
         padding: 24px;
     }
-
+    
     .profile-header-info h1 {
         font-size: 24px;
     }
-
+    
     .profile-badges {
         justify-content: center;
     }
-
+    
     .form-grid {
         grid-template-columns: 1fr;
     }
-
+    
     .section-header {
         flex-direction: column;
         gap: 12px;
         align-items: flex-start;
     }
-
+    
     .stats-grid-small {
         grid-template-columns: 1fr;
     }
@@ -582,19 +582,19 @@ textarea.form-input {
     .profile-header-content {
         padding: 20px;
     }
-
+    
     .profile-avatar {
         width: 80px;
         height: 80px;
         font-size: 32px;
     }
-
+    
     .avatar-upload {
         width: 28px;
         height: 28px;
         font-size: 12px;
     }
-
+    
     .section-content {
         padding: 16px;
     }
@@ -606,13 +606,13 @@ textarea.form-input {
         background: #f8fafc !important;
         color: #1e293b !important;
     }
-
+    
     .btn, .avatar-upload {
         display: none !important;
     }
-
+    
     .profile-section {
         break-inside: avoid;
         margin-bottom: 20px;
     }
-}
+} 

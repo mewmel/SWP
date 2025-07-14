@@ -1205,14 +1205,14 @@ body {
 
 /* Additional responsive styles for enhanced modal */
 @media (max-width: 900px) {
-    .calendar-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .calendar-grid { 
+        grid-template-columns: repeat(3, 1fr); 
     }
 }
 
 @media (max-width: 600px) {
-    .calendar-grid {
-        grid-template-columns: repeat(1, 1fr);
+    .calendar-grid { 
+        grid-template-columns: repeat(1, 1fr); 
     }
 }
 
@@ -1312,4 +1312,13 @@ body {
         transform: translateX(100%);
         opacity: 0;
     }
+}
+
+
+.shift-button.selected {
+    background-color: #43e97b; /* Màu nổi bật, có thể đổi */
+    color: white;
+    border: 2px solid #28a745;
+    box-shadow: 0 0 10px #43e97b99;
+    font-weight: bold;
 }

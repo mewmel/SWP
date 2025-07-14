@@ -1661,11 +1661,11 @@ select:focus {
         width: 95%;
         max-width: 1200px;
     }
-
+    
     .large-modal .modal-body {
         padding: 2rem;
     }
-
+    
     .info-row {
         gap: 2rem;
     }
@@ -1677,49 +1677,49 @@ select:focus {
         max-height: 85vh;
         margin: 3vh auto;
     }
-
+    
     .large-modal .modal-body {
         padding: 1.5rem;
     }
-
+    
     .info-row {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-
+    
     .patient-header {
         gap: 1rem;
         padding: 1.5rem;
         flex-direction: column;
         text-align: center;
     }
-
+    
     .record-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-
+    
     .record-tabs {
         flex-wrap: wrap;
         gap: 0.25rem;
     }
-
+    
     .tab-btn {
         padding: 0.75rem 1rem;
         font-size: 0.9rem;
     }
-
+    
     .result-grid {
         grid-template-columns: 1fr;
         gap: 0.75rem;
     }
-
+    
     .sub-service-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.75rem;
     }
-
+    
     .sub-service-details {
         align-items: flex-start;
         width: 100%;
@@ -1734,24 +1734,24 @@ select:focus {
         margin: 2.5vh auto 0;
         border-radius: 8px 8px 0 0;
     }
-
+    
     .large-modal .modal-body {
         padding: 1rem;
     }
-
+    
     .patient-header {
         padding: 1rem;
         margin-bottom: 1rem;
     }
-
+    
     .patient-details h4 {
         font-size: 1.2rem;
     }
-
+    
     .info-item span {
         font-size: 0.9rem;
     }
-
+    
     .booking-info,
     .medical-record-info,
     .booking-steps,
@@ -1759,11 +1759,11 @@ select:focus {
         padding: 1rem;
         margin-bottom: 1rem;
     }
-
+    
     .record-section {
         margin-bottom: 1rem;
     }
-
+    
     .modal-footer {
         padding: 1.5rem;
         flex-direction: column;
@@ -1773,7 +1773,7 @@ select:focus {
         z-index: 10;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     }
-
+    
     .btn-primary,
     .btn-secondary,
     .btn-print {
@@ -2531,33 +2531,33 @@ select:focus {
     .prescription-header {
         padding: 1rem;
     }
-
+    
     .prescription-info .record-grid {
         grid-template-columns: 1fr;
     }
-
+    
     .prescription-section-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
     }
-
+    
     .drug-header {
         padding: 0.75rem 1rem;
     }
-
+    
     .drug-content {
         padding: 1rem;
     }
-
+    
     .summary-stats {
         grid-template-columns: repeat(3, 1fr);
     }
-
+    
     .prescription-actions {
         flex-direction: column;
     }
-
+    
     .prescription-actions .btn-secondary,
     .prescription-actions .btn-print,
     .prescription-actions .btn-primary {

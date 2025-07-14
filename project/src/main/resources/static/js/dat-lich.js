@@ -289,8 +289,8 @@ function showBookingSuccess() {
     const steps = document.querySelectorAll('.progress-step');
 
     setTimeout(() => {
-        steps[2].classList.remove('active');
-        steps[2].classList.add('completed');
+        steps[1].classList.remove('active');
+        steps[1].classList.add('completed');
         setTimeout(() => {
             loadingContent.style.display = 'none';
             successContent.style.display = 'block';

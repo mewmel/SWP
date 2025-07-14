@@ -868,23 +868,23 @@ body {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-
+    
     .blog-layout {
         flex-direction: column;
         gap: 1.5rem;
     }
-
+    
     .sidebar {
         width: 100%;
         min-width: auto;
     }
-
+    
     .sidebar-content {
         flex-direction: row;
         overflow-x: auto;
         gap: 1rem;
     }
-
+    
     .sidebar-card {
         min-width: 280px;
         flex-shrink: 0;
@@ -895,44 +895,44 @@ body {
     .nav {
         display: none;
     }
-
+    
     .search-box {
         display: none;
     }
-
+    
     .mobile-menu-btn {
         display: block;
     }
-
+    
     .header-container {
         padding: 1rem;
     }
-
+    
     .blog-layout {
         padding: 1rem;
         flex-direction: column;
         gap: 1rem;
     }
-
+    
     .editor-header {
         flex-direction: column;
         gap: 1rem;
         align-items: stretch;
     }
-
+    
     .editor-actions {
         justify-content: center;
         flex-wrap: wrap;
     }
-
+    
     .toolbar {
         justify-content: center;
     }
-
+    
     .sidebar-content {
         flex-direction: column;
     }
-
+    
     .sidebar-card {
         min-width: auto;
     }
@@ -1648,11 +1648,11 @@ body {
 }
 
 @keyframes slideIn {
-    from {
+    from { 
         opacity: 0;
         transform: translateY(-20px);
     }
-    to {
+    to { 
         opacity: 1;
         transform: translateY(0);
     }
