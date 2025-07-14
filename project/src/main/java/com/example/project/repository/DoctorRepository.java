@@ -8,5 +8,5 @@ import com.example.project.entity.Doctor;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Integer>{
    Optional<Doctor> findByDocEmail(String docEmail);
-   Optional<Doctor> findById(Integer docId);
+   Optional<Doctor> findByDocId(Integer docId);
 }

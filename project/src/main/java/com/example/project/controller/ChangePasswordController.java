@@ -41,21 +41,34 @@ public class ChangePasswordController {
     }
 
     // API đổi mật khẩu
-    @PutMapping("/{id}/change-cus-password")
-    public ResponseEntity<String> changePassword(@PathVariable Integer id, @RequestBody ChangePasswordRequest request) {
+    @PutMapping("/{email}/change-cus-password")
+    public ResponseEntity<String> changePassword(@PathVariable String email, @RequestBody ChangePasswordRequest request) {
         String currentPassword = request.getCurrentPassword();
         String newPassword = request.getNewPassword();
+        String otp = request.getOtp();
 
-        if (currentPassword == null || newPassword == null) {
-            return ResponseEntity.badRequest().body("Thiếu thông tin mật khẩu!");
-        }
+    if (currentPassword == null) {
+        return ResponseEntity
+            .badRequest()
+            .body("Thiếu mật khẩu hiện tại!");
+    }
 
-        String result = customerService.changeCusPassword(id, currentPassword, newPassword);
+    // 1. Gọi service; nếu otp == null thì service sẽ gửi mail và trả "OTP_SENT"
+    String result = customerService.changeCusPassword(
+        email, currentPassword, newPassword, otp
+    );
 
+    // 2. Đáp lại tuỳ theo kết quả
+    if ("OTP_SENT".equals(result)) {
+        return ResponseEntity.ok("OTP_SENT");
+    }
         if ("success".equals(result)) {
             return ResponseEntity.ok("Đổi mật khẩu thành công!");
         } else {
             return ResponseEntity.badRequest().body(result);
         }
     }
+
+
+
 }

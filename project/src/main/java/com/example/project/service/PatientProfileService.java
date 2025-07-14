@@ -1,19 +1,24 @@
 package com.example.project.service;
 
-import com.example.project.dto.PatientDashboardDto;
-import com.example.project.dto.PatientProfileDto;
-import com.example.project.entity.Booking;
-import com.example.project.entity.Doctor;
-import com.example.project.entity.BookingStep;
-import com.example.project.entity.SubService;
-import com.example.project.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.project.dto.PatientDashboardDto;
+import com.example.project.dto.PatientProfileDto;
+import com.example.project.entity.Booking;
+import com.example.project.entity.BookingStep;
+import com.example.project.entity.Doctor;
+import com.example.project.entity.SubService;
+import com.example.project.repository.BookingRepository;
+import com.example.project.repository.BookingStepRepository;
+import com.example.project.repository.DoctorRepository;
+import com.example.project.repository.ServiceRepository;
+import com.example.project.repository.SubServiceRepository;
 
 @Service
 public class PatientProfileService {
@@ -29,7 +34,7 @@ public class PatientProfileService {
     private SubServiceRepository subServiceRepository;
 
     public PatientProfileDto getPatientProfile(Integer cusId) {
-        List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAtDesc(cusId);
+        List<Booking> bookings = bookingRepository.findByCusIdOrderByBookIdDesc(cusId);
         if (bookings.isEmpty()) throw new RuntimeException("Không có booking nào!");
 
         Booking latestBooking = bookings.get(0);
@@ -60,7 +65,7 @@ public class PatientProfileService {
     }
 
     public PatientDashboardDto getPatientDashboard(Integer cusId) {
-        List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAtDesc(cusId);
+        List<Booking> bookings = bookingRepository.findByCusIdOrderByBookIdDesc(cusId);
         if (bookings.isEmpty()) {
             return new PatientDashboardDto(null, null, null, null);
         }

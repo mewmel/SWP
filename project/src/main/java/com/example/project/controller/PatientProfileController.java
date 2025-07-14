@@ -1,8 +1,18 @@
 package com.example.project.controller;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.project.dto.BookingStepDto;
-import com.example.project.dto.PatientProfileDto;
 import com.example.project.dto.PatientDashboardDto;
+import com.example.project.dto.PatientProfileDto;
 import com.example.project.entity.Booking;
 import com.example.project.entity.BookingStep;
 import com.example.project.entity.SubService;
@@ -10,12 +20,6 @@ import com.example.project.repository.BookingRepository;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.PatientProfileService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/patient-profile")
@@ -44,7 +48,7 @@ public class PatientProfileController {
 
     @GetMapping("/steps/{cusId}")
     public List<BookingStepDto> getBookingSteps(@PathVariable Integer cusId) {
-        List<Booking> bookings = bookingRepo.findByCusIdOrderByCreatedAtDesc(cusId);
+        List<Booking> bookings = bookingRepo.findByCusIdOrderByBookIdDesc(cusId);
         if (bookings.isEmpty()) return List.of();
         Booking latestBooking = bookings.get(0);
 
@@ -62,7 +66,7 @@ public class PatientProfileController {
 
     @GetMapping("/all-steps/{cusId}")
     public List<BookingStepDto> getSteps(@PathVariable Integer cusId) {
-        List<Booking> bookings = bookingRepo.findByCusIdOrderByCreatedAtDesc(cusId);
+        List<Booking> bookings = bookingRepo.findByCusIdOrderByBookIdDesc(cusId);
         if (bookings.isEmpty()) return List.of();
         Booking latestBooking = bookings.get(0);
 

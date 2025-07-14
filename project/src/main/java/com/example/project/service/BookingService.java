@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 import com.example.project.dto.BookingRequest;
 import com.example.project.entity.Booking;
 import com.example.project.entity.Customer;
-import com.example.project.entity.WorkSlot;
 import com.example.project.entity.Doctor;
+import com.example.project.entity.WorkSlot;
 import com.example.project.repository.BookingRepository;
 import com.example.project.repository.CustomerRepository;
-import com.example.project.repository.WorkSlotRepository;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.repository.ServiceRepository;
+import com.example.project.repository.WorkSlotRepository;
 
 @Service
 public class BookingService {
@@ -86,11 +86,13 @@ public class BookingService {
 
         if (startTimeStr != null) {
             startTimeStr = startTimeStr.trim();
-            if (startTimeStr.length() == 8) startTimeStr = startTimeStr.substring(0, 5);
+            if (startTimeStr.length() == 8)
+                startTimeStr = startTimeStr.substring(0, 5);
         }
         if (endTimeStr != null) {
             endTimeStr = endTimeStr.trim();
-            if (endTimeStr.length() == 8) endTimeStr = endTimeStr.substring(0, 5);
+            if (endTimeStr.length() == 8)
+                endTimeStr = endTimeStr.substring(0, 5);
         }
 
         LocalDate workDate = LocalDate.parse(req.getAppointmentDate());
@@ -102,8 +104,7 @@ public class BookingService {
                 req.getDocId(),
                 workDate,
                 startTime.toString(),
-                endTime.toString()
-        );
+                endTime.toString());
         if (optSlot.isEmpty()) {
             // Không gửi mail khi đặt lịch thất bại
             throw new RuntimeException("Không tìm thấy khung giờ phù hợp!");
@@ -135,14 +136,15 @@ public class BookingService {
     }
 
     // Gửi email cho tài khoản mới và xác nhận đặt lịch (có mật khẩu)
-    private void sendNewAccountAndBookingEmail(Customer customer, String password, BookingRequest req, String doctorName, String serviceName) {
+    private void sendNewAccountAndBookingEmail(Customer customer, String password, BookingRequest req,
+            String doctorName, String serviceName) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(customer.getCusEmail());
         msg.setSubject("Tạo tài khoản & Đặt lịch thành công trên FertilityEHR");
 
         StringBuilder body = new StringBuilder();
         body.append("Bạn đã được tạo tài khoản tự động trên hệ thống phòng khám FertilityEHR.\n")
-                .append("Tên đăng nhập: ").append(customer.getCusEmail()).append("\n")
+                .append("Email đăng nhập: ").append(customer.getCusEmail()).append("\n")
                 .append("Mật khẩu: ").append(password).append("\n")
                 .append("Vui lòng đăng nhập và đổi mật khẩu sau khi nhận được email này.\n\n")
                 .append("THÔNG TIN ĐẶT LỊCH KHÁM:\n")
@@ -152,7 +154,8 @@ public class BookingService {
     }
 
     // Gửi email xác nhận đặt lịch (không gửi tài khoản/mật khẩu)
-    private void sendBookingConfirmationEmail(Customer customer, BookingRequest req, String doctorName, String serviceName) {
+    private void sendBookingConfirmationEmail(Customer customer, BookingRequest req, String doctorName,
+            String serviceName) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(customer.getCusEmail());
         msg.setSubject("Xác nhận đặt lịch khám trên FertilityEHR");
@@ -178,5 +181,30 @@ public class BookingService {
         return sb.toString();
     }
 
+    // Cập nhật ghi chú và trạng thái booking
+    public boolean updateNoteAndStatus(Integer bookId, String status, String note) {
+        Optional<Booking> optBooking = bookingRepo.findById(bookId);
+        if (optBooking.isPresent()) {
+            Booking booking = optBooking.get();
+            booking.setBookStatus(status);
+            booking.setNote(note);
+            bookingRepo.save(booking);
+            return true;
+        }
+        return false;
+    }
+
+    // Cập nhật trạng thái booking
+    public boolean updateStatus(Integer bookId, String status) {
+        Optional<Booking> optBooking = bookingRepo.findById(bookId);
+        if (optBooking.isPresent()) {
+            Booking booking = optBooking.get();
+            // Validate status value
+            booking.setBookStatus(status);
+            bookingRepo.save(booking);
+            return true;
+        }
+        return false; // Booking không tồn tại
+    }
 
 }

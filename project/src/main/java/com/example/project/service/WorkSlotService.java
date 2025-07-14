@@ -1,18 +1,20 @@
 package com.example.project.service;
 
-import com.example.project.dto.DoctorWeekScheduleDTO;
-import com.example.project.dto.WorkSlotBookingDTO;
-import com.example.project.entity.WorkSlot;
-import com.example.project.repository.BookingRepository;
-import com.example.project.repository.WorkSlotRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import com.example.project.dto.DoctorWeekScheduleDTO;
+import com.example.project.dto.WorkSlotBookingDTO;
+import com.example.project.entity.WorkSlot;
+import com.example.project.repository.BookingRepository;
+import com.example.project.repository.WorkSlotRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

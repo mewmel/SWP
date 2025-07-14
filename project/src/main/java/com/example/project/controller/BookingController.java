@@ -1,9 +1,11 @@
 package com.example.project.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.project.dto.PatientProfileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.project.dto.BookingPatientService;
 import com.example.project.dto.BookingRequest;
 import com.example.project.entity.Booking;
 import com.example.project.repository.BookingRepository;
 import com.example.project.service.BookingService;
+
 
 
 @RestController
@@ -32,22 +36,11 @@ public class BookingController {
     @Autowired
     private BookingRepository bookingRepository;
 
+
     @PostMapping("/booking")
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest req) {
         boolean isNewAccount = bookingService.createBookingAndAccount(req);
         return ResponseEntity.ok(java.util.Map.of("success", true, "newAccount", isNewAccount));
-    }
-
-    // API lấy danh sách booking theo docId
-    @GetMapping("/booking/doctor/{docId}")
-    public ResponseEntity<List<Booking>> getBookingsByDoctor(@PathVariable Integer docId) {
-        try {
-            List<Booking> bookings = bookingRepository.findByDocIdOrderByCreatedAt(docId);
-            return ResponseEntity.ok(bookings);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
     }
 
     // API lấy chi tiết một booking theo bookId
@@ -90,10 +83,6 @@ public class BookingController {
                 return ResponseEntity.badRequest().body("Status must be 'confirmed' or 'rejected'");
             }
 
-            // Nếu reject thì bắt buộc phải có doctorNote
-            if ("rejected".equals(status) && (note == null || note.trim().isEmpty())) {
-                return ResponseEntity.badRequest().body("Doctor note is required for rejection");
-            }
 
             // Update trạng thái
             booking.setBookStatus(status);
@@ -118,7 +107,7 @@ public class BookingController {
             @PathVariable Integer docId,
             @RequestParam String status) {
         try {
-            List<Booking> bookings = bookingRepository.findByDocIdAndBookStatusOrderByCreatedAt(docId, status);
+            List<Booking> bookings = bookingRepository.findByDocIdAndBookStatusOrderByBookId(docId, status);
             return ResponseEntity.ok(bookings);
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,9 +131,63 @@ public class BookingController {
 
     @GetMapping("/booking/by-customer/{cusId}")
     public ResponseEntity<List<Booking>> getBookingsByCustomer(@PathVariable Integer cusId) {
-        List<Booking> bookings = bookingRepository.findByCusIdOrderByCreatedAt(cusId);
+        List<Booking> bookings = bookingRepository.findByCusIdOrderByBookIdDesc(cusId);
         return ResponseEntity.ok(bookings);
     }
 
+    // API lấy danh sách booking đã xác nhận trong ngày hôm nay của bác sĩ
+    // GET /api/booking/doctor/{docId}/confirmed-today
+@GetMapping("/booking/doctor/{docId}/confirmed-today")
+public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Integer docId) {
+    LocalDate today = LocalDate.now();
+    LocalDateTime startOfDay = today.atStartOfDay();         // 00:00:00
+    LocalDateTime endOfDay = today.atTime(LocalTime.MAX);    // 23:59:59.999999999
+
+    List<Booking> bookings = bookingRepository.findConfirmedBookingsToday(docId, startOfDay, endOfDay);
+    return ResponseEntity.ok(bookings);
+}
+
+
+    // dùng để update khi đã khám xong
+    // PUT /api/booking/note-status/{bookId}
+    @PutMapping("/booking/update-note-status/{bookId}")
+    public ResponseEntity<?> updateBookingNoteStatus(@PathVariable Integer bookId, @RequestBody Booking bookingUpdate) {
+        boolean ok = bookingService.updateNoteAndStatus(bookId, bookingUpdate.getBookStatus(), bookingUpdate.getNote());
+        if (ok) return ResponseEntity.ok().build();
+        return ResponseEntity.status(404).body("Booking not found");
+    }
+
+
+        // API lấy danh sách booking theo docId
+    @GetMapping("/booking/doctor/{docId}")
+    public ResponseEntity<List<Booking>> getBookingsByDoctor(@PathVariable Integer docId) {
+        try {
+            List<Booking> bookings = bookingRepository.findByDocIdOrderByCreatedAt(docId);
+            return ResponseEntity.ok(bookings);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+    
+    // Lấy thông tin tên khách hàng và tên dịch vụ của 1 booking theo bookId
+    //PUT /api/booking/patient-service/{bookId}
+@GetMapping("/booking/patient-service/{bookId}")
+    public ResponseEntity<?> getBookingPatientService(@PathVariable Integer bookId) {
+        BookingPatientService dto = bookingRepository.findBookingPatientServiceByBookId(bookId);
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(dto);
+    }
+
+// dùng để update khi có đến khám
+    // PUT /api/booking/update-status/{bookId}
+    @PutMapping("/booking/update-status/{bookId}")
+    public ResponseEntity<?> updateBookingStatus(@PathVariable Integer bookId, @RequestBody Booking bookingUpdate) {
+        boolean ok = bookingService.updateStatus(bookId, bookingUpdate.getBookStatus());
+        if (ok) return ResponseEntity.ok().build();
+        return ResponseEntity.status(404).body("Booking not found");
+    }
 
 }

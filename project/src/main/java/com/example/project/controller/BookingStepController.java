@@ -1,18 +1,36 @@
 package com.example.project.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.project.dto.BookingStepInfo;
 import com.example.project.dto.BookingStepResultDTO;
+import com.example.project.dto.TestResult;
+import com.example.project.dto.VisitSubService;
 import com.example.project.entity.BookingStep;
 import com.example.project.entity.SubService;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.BookingStepService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/booking-steps")
@@ -21,13 +39,16 @@ public class BookingStepController {
     private BookingStepRepository bookingStepRepo;
     @Autowired
     private SubServiceRepository subServiceRepo;
+
+
+
     @Autowired
-    private BookingStepService bookingStepService; // Thêm dòng này
+    private BookingStepService bookingStepService;
 
     // Trả về danh sách BookingStep kèm tên bước cho 1 bookingId
-    @GetMapping("/by-booking/{bookingId}")
-    public List<Map<String, Object>> getStepsByBooking(@PathVariable Integer bookingId) {
-        List<BookingStep> steps = bookingStepRepo.findByBookId(bookingId);
+    @GetMapping("/by-booking/{bookId}")
+    public List<Map<String, Object>> getStepsByBooking(@PathVariable Integer bookId) {
+        List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
         List<Map<String, Object>> result = new ArrayList<>();
         for (BookingStep step : steps) {
             SubService sub = subServiceRepo.findById(step.getSubId()).orElse(null);
@@ -37,20 +58,22 @@ public class BookingStepController {
             map.put("performedAt", step.getPerformedAt());
             map.put("result", step.getResult());
             map.put("note", step.getNote());
+            map.put("stepStatus", step.getStepStatus());
             result.add(map);
         }
         return result;
     }
 
     // Endpoint tạo BookingStep cho booking đã xác nhận
-    @PostMapping("/create/{bookingId}")
-    public Map<String, Object> createStepForBooking(@PathVariable Integer bookingId) {
-        bookingStepService.createStepForConfirmedBooking(bookingId);
+    @PostMapping("/create/{bookId}")
+    public Map<String, Object> createStepForBooking(@PathVariable Integer bookId) {
+        bookingStepService.createStepForConfirmedBooking(bookId);
         Map<String, Object> resp = new HashMap<>();
         resp.put("status", "success");
-        resp.put("message", "Đã tạo bước điều trị cho booking " + bookingId);
+        resp.put("message", "Đã tạo bước điều trị cho booking " + bookId);
         return resp;
     }
+
 
     @GetMapping("/booking-steps/today-performed-at")
     public List<LocalDateTime> getBookingStepPerformedAtToday() {
@@ -79,4 +102,103 @@ public class BookingStepController {
             return dto;
         }).collect(Collectors.toList());
     }
+
+
+
+
+        // Trả về danh sách BookingStep theo bookingId bên doctor dashboard- để hiện bên xác nhận lịch
+    @GetMapping("/{bookId}")
+        public List<BookingStepInfo> getBookingStepsByBooking(@PathVariable Integer bookId) {
+            List<Object[]> rows = bookingStepRepo.findInactiveStepDTOByBookId(bookId);
+            // Map từ Object[] sang BookingStepInfo
+            return rows.stream().map(r -> new BookingStepInfo(
+                    (Integer) r[0],         // bookingStepId
+                    (Integer) r[1],         // subId
+                    (String)  r[2],         // subName
+                    (String)  r[3],         // result
+                    (String)  r[4],         // note
+                    r[5] == null ? null : ((Number) r[5]).intValue(), // drugId (nullable)
+                    (String)  r[6]          // stepStatus
+            )).collect(Collectors.toList());
+        }    
+
+    @GetMapping("/{bookId}/subservice-of-visit")
+    public List<SubService> getSubServiceOfVisit(@PathVariable Integer bookId) {
+        VisitSubService dto = bookingStepService.getSubServicesForBooking(bookId);
+
+        // Lấy group theo visitNumber (lần khám hiện tại)
+        List<SubService> currentVisitSubs = dto.getSubServicesGrouped().get(dto.getVisitNumber());
+
+        // Nếu chưa có (ví dụ chưa thực hiện lần khám này), trả về empty list
+        return currentVisitSubs != null ? currentVisitSubs : List.of();
+    }
+
+        // Cập nhật BookingStep với bookingId
+        @PutMapping("/update-with-booking/{bookId}/{subId}")
+        public ResponseEntity<?> updateBookingStepWithBooking(@PathVariable Integer bookId, @PathVariable Integer subId, @RequestBody BookingStep req) {
+            boolean updated = bookingStepService.updateBookingStepWithBooking(bookId, subId, req);
+            if (updated) {
+                return ResponseEntity.ok().body("Cập nhật thành công !");
+            } else {
+                return ResponseEntity.badRequest().body("Không thể cập nhật");
+            }
+        }
+
+
+
+    @PostMapping("/save-test-results")
+        public ResponseEntity<?> saveTestResults(@RequestBody List<TestResult> testResults) {
+            try {
+                bookingStepService.saveTestResults(testResults);
+                return ResponseEntity.ok(Map.of("message", "OK"));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(500).body(Map.of("message", "Error", "error", e.getMessage()));
+            }
+        }
+
+
+
+    // Cập nhật trạng thái của bước điều trị thành "pending"
+    // Ví dụ: khi bác sĩ không thể thực hiện bước điều trị ngay lập tức    
+    @PutMapping("/set-pending/{bookId}/{subId}")
+    public ResponseEntity<?> setStepPending(
+            @PathVariable Integer bookId,
+            @PathVariable Integer subId,
+            @RequestBody Map<String, Object> reqBody
+    ) {
+        boolean updated = bookingStepService.setStepPending(bookId, subId, reqBody);
+        if (updated) {
+            return ResponseEntity.ok().body("Cập nhật trạng thái pending thành công!");
+        } else {
+            // Trả về 400 Bad Request + message
+            return ResponseEntity.badRequest().body("Không thể cập nhật trạng thái pending!");
+        }
+    }
+
+    // Lấy kết quả xét nghiệm cho bước điều trị
+    // Ví dụ: check để xem đủ điều kiện checkout chưa
+    @GetMapping("/check-test-result/{bookId}/{subId}")
+    public ResponseEntity<?> getBookingStep(
+        @PathVariable Integer bookId,
+        @PathVariable Integer subId
+    ) {
+        Optional<BookingStep> stepOpt = bookingStepRepo.findByBookIdAndSubId(bookId, subId);
+        if (stepOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        // Có thể trả luôn object, hoặc custom DTO (tùy bảo mật)
+        return ResponseEntity.ok(stepOpt.get());
+    }
+
+        
+
+        
+    @GetMapping("/test-results/{bookId}")
+    public List<TestResult> getTestResultsForBooking(@PathVariable Integer bookId) {
+        return bookingStepService.getTestResultsForBooking(bookId);
+    }
+
+
+
 }

@@ -11,5 +11,4 @@ public class WorkSlotBookingDTO {
     private String endTime;
     private Integer maxPatient;
     private Integer currentBooking;
-    // ... các trường khác nếu cần
 }
