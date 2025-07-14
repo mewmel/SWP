@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.project.dto.CusFullRecord;
+import com.example.project.dto.CusCurrentBooking;
 import com.example.project.entity.Booking;
 import com.example.project.entity.Customer;
 import com.example.project.entity.Drug;
@@ -79,7 +79,7 @@ public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @Reques
 }
 
     @GetMapping("/full-record/{cusId}, {bookId}")
-public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId, @PathVariable Integer bookId) {
+public ResponseEntity<CusCurrentBooking> getFullRecord(@PathVariable Integer cusId, @PathVariable Integer bookId) {
     try {
     // 1. Tìm customer
     Optional<Customer> optional = customerRepository.findById(cusId);
@@ -98,7 +98,7 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId, 
         .orElse(null);
 
     // 4. Map sang DTO
-    CusFullRecord dto = new CusFullRecord();
+    CusCurrentBooking dto = new CusCurrentBooking();
     dto.setCusId(customer.getCusId());
     dto.setCusFullName(customer.getCusFullName());
     dto.setCusGender(customer.getCusGender());
@@ -114,7 +114,7 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId, 
 
     // MedicalRecord
     if (medicalRecord != null) {
-        CusFullRecord.CurrentMedicalRecord medicalRecordDTO = new CusFullRecord.CurrentMedicalRecord();
+        CusCurrentBooking.CurrentMedicalRecord medicalRecordDTO = new CusCurrentBooking.CurrentMedicalRecord();
         medicalRecordDTO.setRecordId(medicalRecord.getRecordId());
         medicalRecordDTO.setDiagnosis(medicalRecord.getDiagnosis());
         medicalRecordDTO.setTreatmentPlan(medicalRecord.getTreatmentPlan());
@@ -133,7 +133,7 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId, 
 
     // Booking
     if (booking != null) {
-        CusFullRecord.CurrentBooking bookingDTO = new CusFullRecord.CurrentBooking();
+        CusCurrentBooking.CurrentBooking bookingDTO = new CusCurrentBooking.CurrentBooking();
         bookingDTO.setBookId(booking.getBookId());
         bookingDTO.setBookType(booking.getBookType());
         bookingDTO.setBookStatus(booking.getBookStatus());
@@ -165,11 +165,11 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId, 
 }
 
 @PutMapping("/update-full-record/{cusId}")
-public ResponseEntity<?> updateFullRecord(@PathVariable Integer cusId, @RequestBody CusFullRecord updateDto) {
+public ResponseEntity<?> updateFullRecord(@PathVariable Integer cusId, @RequestBody CusCurrentBooking updateDto) {
     try {
         // 1. Update Booking (nếu có truyền currentBooking)
         if (updateDto.getCurrentBooking() != null) {
-            CusFullRecord.CurrentBooking b = updateDto.getCurrentBooking();
+            CusCurrentBooking.CurrentBooking b = updateDto.getCurrentBooking();
             if (b.getBookId() > 0) {
                 Optional<Booking> bookingOpt = bookingRepository.findById(b.getBookId());
                 if (bookingOpt.isPresent()) {
@@ -184,7 +184,7 @@ public ResponseEntity<?> updateFullRecord(@PathVariable Integer cusId, @RequestB
 
         // 2. Update MedicalRecord (nếu có truyền currentMedicalRecord)
         if (updateDto.getCurrentMedicalRecord() != null) {
-            CusFullRecord.CurrentMedicalRecord mr = updateDto.getCurrentMedicalRecord();
+            CusCurrentBooking.CurrentMedicalRecord mr = updateDto.getCurrentMedicalRecord();
             if (mr.getRecordId() > 0) {
                 Optional<MedicalRecord> mrOpt = medicalRecordRepository.findById(mr.getRecordId());
                 if (mrOpt.isPresent()) {

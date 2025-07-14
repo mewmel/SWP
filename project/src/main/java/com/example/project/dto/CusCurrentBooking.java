@@ -1,7 +1,6 @@
 package com.example.project.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class CusFullRecord {
+public class CusCurrentBooking {
 
     private Integer cusId;
     private String cusFullName;
@@ -25,10 +24,11 @@ public class CusFullRecord {
     private String emergencyContact;
     private String cusStatus;
     private CurrentMedicalRecord currentMedicalRecord;
+    private CurrentBooking currentBooking;
     private Integer drugId; 
-    private List<FullBookingWithStep> fullBookingWithStep;
-
-
+    // private DrugItemWithBooking currentDrugItem;
+    
+    
     @Getter
     @Setter
     public static class CurrentMedicalRecord {
@@ -43,13 +43,11 @@ public class CusFullRecord {
 
     @Getter
     @Setter
-    public static class FullBookingWithStep {
+    public static class CurrentBooking {
     private int bookId;
     private String bookType;
     private String bookStatus;
     private String note;
     private String serName;
-    private List<String> subName; // Danh sách các bước trong booking này
     }
-
 }
