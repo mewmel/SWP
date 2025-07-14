@@ -75,10 +75,6 @@ public class BookingController {
 
             Booking booking = bookingOpt.get();
 
-            // Chỉ cho phép chuyển từ pending sang confirmed/rejected
-            if (!"pending".equals(booking.getBookStatus())) {
-                return ResponseEntity.badRequest().body("Booking is not in pending status");
-            }
 
             // Validate status value
             if (!"confirmed".equals(status) && !"rejected".equals(status)) {

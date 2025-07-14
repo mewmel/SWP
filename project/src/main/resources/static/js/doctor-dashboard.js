@@ -223,41 +223,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ========== PATIENT STATUS MANAGEMENT ==========
 
-    window.checkout = async function (bookId, cusId) {
-        const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
-        if (!appointmentItem) return;
+window.checkout = async function (bookId, cusId, bookType) {
+    const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
+    if (!appointmentItem) return;
 
-        const subIds = await getSubServiceIds(bookId);
+    let subIds = [];
+    if (bookType === 'follow-up') {
+        subIds = await getSubServiceIds(bookId);
+    } else if (bookType === 'initial') {
+        subIds = await getSubServiceIdsForInitial(bookId);
+    }
 
-        let allCompleted = true;
-        for (const subId of subIds) {
-            const res = await fetch(`/api/booking-steps/check-test-result/${bookId}/${subId}`);
-            const step = await res.json();
-            if (step.stepStatus !== 'completed') {
-                allCompleted = false;
-                break;
-            }
+    let allCompleted = true;
+    for (const subId of subIds) {
+        const res = await fetch(`/api/booking-steps/check-test-result/${bookId}/${subId}`);
+        const step = await res.json();
+        if (step.stepStatus !== 'completed') {
+            allCompleted = false;
+            break;
         }
-        if (!allCompleted) {
-            showNotification("❌ Vui lòng hoàn thành tất cả các xét nghiệm/bước trước khi checkout!", "error");
-            return;
-        }
-        await fetch(`/api/booking/update-status/${bookId}`, {
-            method: 'PUT',
-            body: JSON.stringify({ bookStatus: 'completed' }),
-            headers: { 'Content-Type': 'application/json' }
-        });
+    }
+    if (!allCompleted) {
+        showNotification("❌ Vui lòng hoàn thành tất cả các xét nghiệm/bước trước khi checkout!", "error");
+        return;
+    }
+    await fetch(`/api/booking/update-status/${bookId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ bookStatus: 'completed' }),
+        headers: { 'Content-Type': 'application/json' }
+    });
 
+    showNotification("✅ Đã check-out bệnh nhân thành công!", "success");
+    closeModal();
+    loadTodayBookings();
+};
 
-        // Update status badge
-        const statusBadge = appointmentItem.querySelector('.status-badge');
-        statusBadge.textContent = 'Đã khám xong';
-        statusBadge.className = 'status-badge completed';
-
-
-        showNotification("✅ Đã check-out bệnh nhân thành công!", "success");
-        loadTodayBookings();
-    };
 
 
 
@@ -456,6 +456,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('emergencyContact').textContent = patientData.emergencyContact || 'Không rõ';
             document.getElementById('patientStatus').textContent = (patientData.cusStatus === 'active'
                 ? 'Hoạt động' : 'Không hoạt động');
+            document.getElementById('prescriptionNumber').textContent = patientData.drugId || 'Không rõ';
 
             // 3. Booking hiện tại
             if (patientData.currentBooking) {
@@ -466,8 +467,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('serviceName').textContent = patientData.currentBooking.serName || '';
             }
             // Load sub-services cho booking này
-            if (patientData.currentBooking.bookId) {
+            if (patientData.currentBooking.bookId && patientData.currentBooking.bookType === 'initial') {
                 setupServiceSelection(patientData.currentBooking.bookId);
+            }
+            if (patientData.currentBooking.bookId && patientData.currentBooking.bookType === 'follow-up') {
+                setupServiceSelectionForFollowUp(patientData.currentBooking.bookId);
             }
 
 
@@ -486,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // 5. (Ví dụ) Cập nhật UI badge trạng thái cuộc hẹn
             const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
             const statusBadge = appointmentItem?.querySelector('.status-badge');
-            const curStatus = statusBadge?.textContent || 'Không xác định';
+            const curStatus = statusBadge?.textContent || 'Đang khám';
             document.getElementById('currentStatus').textContent = curStatus;
             document.getElementById('currentStatus').className =
                 'status-badge ' + (curStatus === 'Đã khám' ? 'completed' : 'waiting');
@@ -505,12 +509,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const modal = document.getElementById('patientModal');
             modal.style.display = 'block';
             modal.dataset.patientId = cusId;
+            modal.dataset.bookType = patientData.currentBooking.bookType || '';
             modal.dataset.bookId = patientData.currentBooking.bookId || '';
 
             const btnCheckout = modal.querySelector('.btn-primary[onclick*="checkout"]');
             if (btnCheckout) {
                 btnCheckout.onclick = function () {
-                    window.checkout(modal.dataset.bookId, modal.dataset.patientId);
+                    window.checkout(modal.dataset.bookId, modal.dataset.patientId, modal.dataset.bookType);
                 }
             }
 
@@ -527,7 +532,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update close modal functions
     window.closeModal = function () {
         document.getElementById('patientModal').style.display = 'none';
-        localStorage.removeItem('drugId');
     };
 
     window.savePatientRecord = async function () {
@@ -548,17 +552,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-        // Nếu là "Khám lần đầu" mà KHÔNG đến khám → XÓA medical record nếu có (nếu có API xóa)
-        if (bookType === 'initial' && bookStatus !== 'completed') {
-            // Nếu có recordId thì lấy ra rồi xóa (nếu backend cho xóa, bạn tùy biến ở đây)
-            // await fetch(`/api/medical-records/${recordId}`, { method: 'DELETE' });
-            alert("Không tạo hồ sơ bệnh án vì bệnh nhân không đến khám!");
-            return;
-        }
-
-        // 2. Nếu đã đến khám → Lưu lần lượt 4 bảng
-        if (bookStatus !== 'completed') {
-            alert("Không thể lưu hồ sơ bệnh án vì bệnh nhân chưa đến khám!");
+        // Nếu là "tái khám" mà KHÔNG đến khám
+        if (bookType === 'follow-up' && bookStatus !== 'completed') {
+            await fetch(`/api/booking/update-status/${bookId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ bookStatus: 'pending' }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+            alert("Hãy xác nhận bệnh nhân đã đến khám thêm lần nữa trước khi lưu hồ sơ bệnh án!");
             return;
         }
 
@@ -1021,12 +1022,92 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    async function getSubServiceIds(bookId) {
+    async function getSubServiceIdsForInitial(bookId) {
+        const res = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit-follow-up`);
+        if (!res.ok) return [];
+        const subs = await res.json();
+        return Array.isArray(subs) ? subs.map(sub => sub.subId) : [];
+    }
+
+        async function getSubServiceIds(bookId) {
         const res = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit`);
         if (!res.ok) return [];
         const subs = await res.json();
         return Array.isArray(subs) ? subs.map(sub => sub.subId) : [];
     }
+
+    function setupServiceSelectionForFollowUp(bookId) {
+        const serviceSelect = document.getElementById('serviceSelect');
+        const stepForm = document.getElementById('stepForm');
+        const selectedServiceTitle = document.getElementById('selectedServiceTitle');
+        const emptyStepsDiv = document.getElementById('emptySteps');
+
+        // 1. Fetch subservice list
+        fetch(`/api/booking-steps/${bookId}/subservice-of-visit-follow-up`)
+            .then(res => {
+                if (!res.ok) throw new Error(`API lỗi: ${res.status}`);
+                return res.json();
+            })
+            .then(async subs => {
+                serviceSelect.innerHTML = '<option value="">-- Chọn dịch vụ/bước --</option>';
+                if (!Array.isArray(subs) || subs.length === 0) {
+                    serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
+                    emptyStepsDiv.style.display = '';
+                    return;
+                }
+                for (const sub of subs) {
+                    const opt = document.createElement('option');
+                    opt.value = sub.subId;
+                    opt.textContent = sub.subName;
+                    serviceSelect.appendChild(opt);
+
+                    try {
+                        await fetch(`/api/booking-steps/set-pending/${bookId}/${sub.subId}`, {
+                            method: 'PUT',
+                            body: JSON.stringify({
+                                stepStatus: 'pending',
+                                performedAt: new Date().toISOString(),
+                                note: 'Đang tiến hành...',
+                            }),
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    } catch (e) {
+                        console.error('Lỗi update step:', bookId, sub.subId, e);
+                    }
+                }
+
+                // **ĐÂY LÀ ĐIỂM QUAN TRỌNG NHẤT**
+                // Gán lại onchange sau khi render options!
+                serviceSelect.onchange = function () {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (this.value) {
+                        selectedSubId = this.value;
+                        selectedSubName = selectedOption.textContent;
+
+                        selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
+                        stepForm.style.display = 'block';
+                        document.getElementById('performedAt').value = getLocalDateTimeValue();
+                        document.getElementById('stepResult').value = '';
+                        document.getElementById('stepNote').value = '';
+                        document.getElementById('stepStatus').value = 'pending';
+                    } else {
+                        stepForm.style.display = 'none';
+                        selectedSubId = null;
+                        selectedSubName = '';
+                    }
+                };
+
+                // Nếu cần mặc định ẩn form
+                stepForm.style.display = 'none';
+            })
+            .catch(err => {
+                console.error('Lỗi lấy subservice:', err);
+                serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
+                emptyStepsDiv.style.display = '';
+            });
+    }
+
+
 
 
 

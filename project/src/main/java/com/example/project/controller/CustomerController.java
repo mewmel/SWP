@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.project.dto.CusFullRecord;
 import com.example.project.entity.Booking;
 import com.example.project.entity.Customer;
+import com.example.project.entity.Drug;
 import com.example.project.entity.MedicalRecord;
 import com.example.project.entity.Service;
 import com.example.project.repository.BookingRepository;
 import com.example.project.repository.CustomerRepository;
+import com.example.project.repository.DrugRepository;
 import com.example.project.repository.MedicalRecordRepository;
 import com.example.project.repository.ServiceRepository;
     
@@ -42,6 +44,10 @@ public class CustomerController {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    private DrugRepository drugRepository;
+
 
     // API lấy thông tin theo email (bổ sung)
     @GetMapping("/{email}")
@@ -139,6 +145,14 @@ public ResponseEntity<CusFullRecord> getFullRecord(@PathVariable Integer cusId, 
     }
     bookingDTO.setSerName(service != null ? service.getSerName() : null);
         dto.setCurrentBooking(bookingDTO);
+    }
+
+    // lấy drugId
+    Drug drug = drugRepository.findByBookId(booking.getBookId()).orElse(null);
+    if (drug != null) {
+        dto.setDrugId(drug.getDrugId());
+    } else {
+        dto.setDrugId(null);
     }
 
     return ResponseEntity.ok(dto);

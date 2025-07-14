@@ -3,6 +3,7 @@ package com.example.project.controller;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ import com.example.project.entity.SubService;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.BookingStepService;
+
+
 
 
 
@@ -131,6 +134,33 @@ public class BookingStepController {
         // Nếu chưa có (ví dụ chưa thực hiện lần khám này), trả về empty list
         return currentVisitSubs != null ? currentVisitSubs : List.of();
     }
+
+
+     @GetMapping("/{bookId}/subservice-of-visit-follow-up")
+public ResponseEntity<List<Map<String, Object>>> getFollowUpSubservices(@PathVariable Integer bookId) {
+    // 1. Lấy tất cả các BookingStep theo bookId
+    List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
+    if (steps.isEmpty()) return ResponseEntity.ok(Collections.emptyList());
+
+    // 2. Lấy subId list
+    List<Integer> subIds = steps.stream()
+            .map(BookingStep::getSubId)
+            .distinct()
+            .collect(Collectors.toList());
+
+    // 3. Lấy các SubService tương ứng
+    List<SubService> subServices = subServiceRepo.findAllBySubIdIn(subIds);
+
+    // 4. Trả về chỉ subId, subName (không trả nguyên object cho nhẹ)
+    List<Map<String, Object>> result = subServices.stream().map(sub -> {
+        Map<String, Object> item = new HashMap<>();
+        item.put("subId", sub.getSubId());
+        item.put("subName", sub.getSubName());
+        return item;
+    }).collect(Collectors.toList());
+
+    return ResponseEntity.ok(result);
+}
 
         // Cập nhật BookingStep với bookingId
         @PutMapping("/update-with-booking/{bookId}/{subId}")

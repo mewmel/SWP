@@ -14,4 +14,8 @@ public interface SubServiceRepository extends JpaRepository<SubService, Integer>
     @Query("SELECT s FROM SubService s WHERE s.serId = :serId AND LOWER(s.subName) LIKE CONCAT('%', LOWER(:keyword), '%')")
     List<SubService> findTestSubServices(@Param("serId") Integer serId, @Param("keyword") String keyword);
 
+
+List<SubService> findAllBySubIdIn(List<Integer> subIds);
+
+
 }

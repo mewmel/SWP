@@ -25,7 +25,7 @@ public class CusFullRecord {
     private String cusStatus;
     private CurrentMedicalRecord currentMedicalRecord;
     private CurrentBooking currentBooking;
-    // private String drugId; 
+    private Integer drugId; 
     // private DrugItemWithBooking currentDrugItem;
     
     
