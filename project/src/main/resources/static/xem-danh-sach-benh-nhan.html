@@ -1560,23 +1560,16 @@
                     <div class="filter-section">
                         <div class="filter-group">
                             <label for="searchInput">Tìm kiếm</label>
-                            <input type="text" id="searchInput" placeholder="Tên hoặc số điện thoại..."
+                            <input type="text" id="searchInput" placeholder="Tên bệnh nhân hoặc tên dịch vụ..."
                                 onkeyup="searchPatients()">
                         </div>
                         <div class="filter-group">
-                            <label for="statusFilter">Trạng thái</label>
+                            <label for="statusFilter">Trạng thái hồ sơ</label>
                             <select id="statusFilter" onchange="filterPatients()">
                                 <option value="all">Tất cả</option>
-                                <option value="completed">Đã checkout</option>
-                                <option value="pending">Chưa checkout</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="genderFilter">Giới tính</label>
-                            <select id="genderFilter" onchange="filterPatients()">
-                                <option value="all">Tất cả</option>
-                                <option value="F">Nữ</option>
-                                <option value="M">Nam</option>
+                                <option value="active">Đang điều trị</option>
+                                <option value="closed">Đã đóng</option>
+                                <option value="pending">Chờ xử lý</option>
                             </select>
                         </div>
                     </div>
@@ -1587,9 +1580,7 @@
                             <thead>
                                 <tr>
                                     <th>Bệnh nhân</th>
-                                    <th>Tuổi</th>
-                                    <th>Giới tính</th>
-                                    <th>Số điện thoại</th>
+                                    <th>Tên dịch vụ</th>
                                     <th>Lần khám cuối</th>
                                     <th>Trạng thái</th>
                                     <th>Thao tác</th>

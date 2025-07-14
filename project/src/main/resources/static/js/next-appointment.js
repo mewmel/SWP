@@ -80,8 +80,11 @@ function showNotification(message, type) {
                     emergencyContact: 'Mơ',
                     lastVisit: '2024-06-25',
                     bookStatus: 'completed',
-                    serId: 1, // Add sample serId
-                    bookId: 1 // Add sample bookId
+                    recordStatus: 'active', // Add recordStatus
+                    serviceName: 'Khám tiền đăng ký điều trị IVF-IUI', // Add serviceName
+                    serId: 1,
+                    bookId: 1,
+                    recordId: 1
                 }
             ];
             filteredPatients = [...allPatients];
@@ -108,7 +111,7 @@ function showNotification(message, type) {
                 console.log('📋 DEBUG: No patients to display - showing empty message');
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem; color: #64748b;">
+                        <td colspan="5" style="text-align: center; padding: 2rem; color: #64748b;">
                             <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
                             Không có bệnh nhân nào
                         </td>
@@ -120,20 +123,21 @@ function showNotification(message, type) {
             console.log('👥 DEBUG: Rendering', filteredPatients.length, 'patients');
 
             filteredPatients.forEach(patient => {
-                const age = calculateAge(patient.cusDate);
                 const lastVisit = formatDate(patient.lastVisit);
-                const genderText = patient.cusGender === 'F' ? 'Nữ' : 'Nam';
                 
-                // Determine status based on booking status
+                // Determine status based on recordStatus instead of bookStatus
                 let statusText, statusClass;
-                if (patient.bookStatus === 'completed') {
-                    statusText = 'Đã checkout';
+                if (patient.recordStatus === 'active') {
+                    statusText = 'Đang điều trị';
+                    statusClass = 'pending';
+                } else if (patient.recordStatus === 'closed') {
+                    statusText = 'Đã đóng';
                     statusClass = 'completed';
-                } else if (patient.bookStatus === 'confirmed') {
-                    statusText = 'Đã đến khám';
+                } else if (patient.recordStatus === 'pending') {
+                    statusText = 'Chờ xử lý';
                     statusClass = 'pending';
                 } else {
-                    statusText = 'Chưa checkout';
+                    statusText = patient.recordStatus || 'Không xác định';
                     statusClass = 'pending';
                 }
 
@@ -150,24 +154,22 @@ function showNotification(message, type) {
                             </div>
                         </div>
                     </td>
-                    <td>${age}</td>
-                    <td>${genderText}</td>
-                    <td>${formatPhoneNumber(patient.cusPhone)}</td>
+                    <td>${patient.serviceName || 'N/A'}</td>
                     <td>${lastVisit}</td>
                     <td>
                         <span class="status-badge ${statusClass}">${statusText}</span>
                     </td>
                     <td>
                         <div class="action-buttons">
-                            ${patient.bookStatus === 'completed' 
+                            ${patient.recordStatus === 'closed' 
                                 ? `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId})">
                                     <i class="fas fa-eye"></i> Xem hồ sơ
                                    </button>`
-                                : `<button class="btn-action btn-disabled" disabled>
-                                    <i class="fas fa-clock"></i> Chưa checkout
+                                : `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId})">
+                                    <i class="fas fa-edit"></i> Sửa hồ sơ
                                    </button>`
                             }
-                            <button class="btn-action btn-edit" onclick="openNextAppointmentModal(${patient.cusId}, '${patient.cusFullName}', 'SĐT: ${formatPhoneNumber(patient.cusPhone)} - ${genderText}', ${patient.serId})">
+                            <button class="btn-action btn-edit" onclick="openNextAppointmentModal(${patient.cusId}, '${patient.cusFullName}', 'Dịch vụ: ${patient.serviceName || 'N/A'}', ${patient.serId})">
                                 <i class="fas fa-calendar-plus"></i> Hẹn khám lại
                             </button>
                         </div>
@@ -245,24 +247,23 @@ function showNotification(message, type) {
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             const statusFilter = document.getElementById('statusFilter').value;
-            const genderFilter = document.getElementById('genderFilter').value;
             
             filteredPatients = allPatients.filter(patient => {
                 const searchMatch = searchTerm === '' || 
                     patient.cusFullName.toLowerCase().includes(searchTerm) ||
-                    patient.cusPhone.includes(searchTerm);
+                    (patient.serviceName && patient.serviceName.toLowerCase().includes(searchTerm));
                 
-                // Map status filter to bookStatus
+                // Map status filter to recordStatus instead of bookStatus
                 let statusMatch = true;
-                if (statusFilter === 'completed') {
-                    statusMatch = patient.bookStatus === 'completed';
+                if (statusFilter === 'active') {
+                    statusMatch = patient.recordStatus === 'active';
+                } else if (statusFilter === 'closed') {
+                    statusMatch = patient.recordStatus === 'closed';
                 } else if (statusFilter === 'pending') {
-                    statusMatch = patient.bookStatus !== 'completed';
+                    statusMatch = patient.recordStatus === 'pending';
                 }
                 
-                const genderMatch = genderFilter === 'all' || patient.cusGender === genderFilter;
-                
-                return searchMatch && statusMatch && genderMatch;
+                return searchMatch && statusMatch;
             });
             
             renderPatientList();
@@ -379,20 +380,27 @@ function showNotification(message, type) {
             document.getElementById('patientOccupation').textContent = patientData.cusOccupation || patientData.occupation || 'N/A';
             document.getElementById('emergencyContact').textContent = patientData.emergencyContact || 'N/A';
 
-            // Current status based on latest booking
+            // Current status based on recordStatus instead of bookStatus
             const statusElement = document.getElementById('currentStatus');
-            if (patientData.bookStatus) {
-                const statusText = getBookingStatusText(patientData.bookStatus);
-                const statusClass = getBookingStatusClass(patientData.bookStatus);
-                statusElement.textContent = statusText;
-                statusElement.className = `status-badge ${statusClass}`;
-            } else if (patientData.currentBooking) {
-                const statusText = getBookingStatusText(patientData.currentBooking.bookStatus);
-                const statusClass = getBookingStatusClass(patientData.currentBooking.bookStatus);
+            if (patientData.recordStatus) {
+                let statusText, statusClass;
+                if (patientData.recordStatus === 'active') {
+                    statusText = 'Đang điều trị';
+                    statusClass = 'pending';
+                } else if (patientData.recordStatus === 'closed') {
+                    statusText = 'Đã đóng';
+                    statusClass = 'completed';
+                } else if (patientData.recordStatus === 'pending') {
+                    statusText = 'Chờ xử lý';
+                    statusClass = 'pending';
+                } else {
+                    statusText = patientData.recordStatus;
+                    statusClass = 'pending';
+                }
                 statusElement.textContent = statusText;
                 statusElement.className = `status-badge ${statusClass}`;
             } else {
-                statusElement.textContent = 'Không có lịch hẹn';
+                statusElement.textContent = 'Không có hồ sơ';
                 statusElement.className = 'status-badge inactive';
             }
         }

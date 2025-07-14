@@ -90,6 +90,17 @@ public class MedicalRecordService {
                     com.example.project.entity.Service service = serviceRepository.findById(booking.getSerId()).orElse(null);
                     patientData.put("serviceName", service != null ? service.getSerName() : "N/A");
                     
+                    // Medical Record info - thêm recordStatus
+                    Optional<MedicalRecord> medicalRecordOpt = medicalRecordRepository.findTopByCusIdOrderByCreatedAtDesc(cusId);
+                    if (medicalRecordOpt.isPresent()) {
+                        MedicalRecord medicalRecord = medicalRecordOpt.get();
+                        patientData.put("recordStatus", medicalRecord.getRecordStatus());
+                        patientData.put("recordId", medicalRecord.getRecordId());
+                    } else {
+                        patientData.put("recordStatus", "pending");
+                        patientData.put("recordId", null);
+                    }
+                    
                     result.add(patientData);
                 }
             }
