@@ -48,6 +48,12 @@ function closeModal() {
         modal.style.display = 'none';
     });
 }
+
+// Common logout function for all doctor pages
+function logout() {
+    localStorage.clear();
+    window.location.href = 'index.html';
+}
 function closePatientListModal() {
     const patientModal = document.getElementById('patientListModal');
     if (patientModal) {
@@ -102,6 +108,26 @@ function updateDoctorUI(fullName) {
             userNameSpan.textContent = `BS. ${fullName}`;
         }
     }
+
+    // Update doctor name in doctor profile info (new addition)
+    const doctorNameElement = document.getElementById('doctorName');
+    if (doctorNameElement) {
+        doctorNameElement.textContent = `BS. ${fullName}`;
+    }
+
+    // Update profile doctor name (for profile page)
+    const profileDoctorNameElement = document.getElementById('profileDoctorName');
+    if (profileDoctorNameElement) {
+        profileDoctorNameElement.textContent = `BS. ${fullName}`;
+    }
+
+    // Also update any other doctor name elements
+    const doctorNameElements = document.querySelectorAll('.doctor-name');
+    doctorNameElements.forEach(element => {
+        if (!element.id) { // Only update elements without specific IDs to avoid double updating
+            element.textContent = `BS. ${fullName}`;
+        }
+    });
 
     if (notificationWrapper) {
         notificationWrapper.style.display = 'block';
@@ -180,3 +206,18 @@ function initializeDoctorDashboard() {
   }, 3000);
 }
 }
+
+// Auto-initialize for all doctor pages
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if this is a doctor page (by checking for doctor-specific elements)
+    const isDoctorPage = document.querySelector('.doctor-header') || 
+                        document.querySelector('.doctor-profile-info') ||
+                        document.querySelector('.doctor-name');
+    
+    if (isDoctorPage) {
+        // Give time for other scripts to load
+        setTimeout(() => {
+            checkDoctorLogin();
+        }, 500);
+    }
+});

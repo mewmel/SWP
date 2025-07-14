@@ -1,36 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
     // ========== GIỮ TRẠNG THÁI ĐĂNG NHẬP ==========
-    const authButtons = document.querySelector('.auth-buttons');
-    const userMenu = document.querySelector('.user-menu');
-    const userNameSpan = document.querySelector('.user-name');
-    const sidebarUsername = document.querySelector('.sidebar-username');
-    const notificationWrapper = document.querySelector('.notification-wrapper');
-
-    // Hiển thị đúng trạng thái đăng nhập khi load lại trang
-    const fullName = localStorage.getItem('docFullName');
-
-    if (fullName) {
-        if (authButtons) authButtons.style.display = 'none';
-        if (userMenu) userMenu.style.display = 'flex';
-        if (userNameSpan) userNameSpan.textContent = fullName;
-        if (sidebarUsername) sidebarUsername.textContent = fullName;
-        if (notificationWrapper) notificationWrapper.style.display = 'block';
-    } else {
-        if (authButtons) authButtons.style.display = 'flex';
-        if (userMenu) userMenu.style.display = 'none';
-        if (notificationWrapper) notificationWrapper.style.display = 'none';
-    }
+    // Sử dụng hàm chung từ doctor-common.js
+    // Không cần duplicate logic ở đây nữa
 
 
 
     // ========== ĐĂNG XUẤT ==========
-
+    // Sử dụng hàm logout chung từ doctor-common.js
     const logoutBtn = document.querySelector('.logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            localStorage.clear(); // <-- Sửa ở đây, không cần gọi hàm nào khác
-            window.location.href = "index.html";
+            logout(); // Gọi hàm chung
         });
     }
 
