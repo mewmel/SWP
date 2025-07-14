@@ -2312,127 +2312,6 @@ function showNotification(message, type) {
             }
         }
 
-
-                // // Get customer info for booking
-                // const customerResponse = await fetch(`/api/customer/full-record/${currentNextAppPatient.cusId}`);
-                // if (!customerResponse.ok) throw new Error('Cannot get customer info');
-                
-                // const customerData = await customerResponse.json();
-
-                // const recordId = customerData.recordId;
-                // const appointmentId = result.bookId;
-
-
-        // Schedule next appointment
-        // window.scheduleNextAppointment = async function() {
-        //     if (!currentNextAppPatient) {
-        //         showNotification('Không tìm thấy thông tin bệnh nhân!', 'error');
-        //         return;
-        //     }
-
-        //     const docId = localStorage.getItem('docId');
-            
-        //     // Get form data
-        //     const appointmentDate = document.getElementById('nextAppDate').value;
-        //     const appointmentTime = document.getElementById('nextAppTime').value;
-        //     const selectedServices = getSelectedServices();
-        //     const note = document.getElementById('nextAppNote').value;
-            
-        //     // Validation
-        //     if (!appointmentDate || !appointmentTime || selectedServices.length === 0) {
-        //         showNotification('Vui lòng điền đầy đủ thông tin: ngày, giờ và ít nhất một dịch vụ!', 'error');
-        //         return;
-        //     }
-            
-        //     if (!docId) {
-        //         showNotification('Không tìm thấy thông tin bác sĩ!', 'error');
-        //         return;
-        //     }
-            
-        //     // Parse time range
-        //     const [startTime, endTime] = appointmentTime.split('-');
-            
-        //     try {
-        //         const appointmentResponse = await fetch('/api/appointment', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 appointmentDate,
-        //                 startTime: startTime.trim(),
-        //                 endTime: endTime.trim(),
-        //             })
-        //         });
-        //         if (!appointmentResponse.ok) throw new Error('Cannot create appointment');
-
-        //         const appointmentData = await appointmentResponse.json();
-        //         const slotId = appointmentData.slotId;
-
-                
-        //         // Prepare service list for note
-        //         const serviceNames = selectedServices.map(service => service.subName).join(', ');
-        //         const totalPrice = selectedServices.reduce((total, service) => total + service.subPrice, 0);
-                
-        //         // Prepare booking data with multiple services info
-        //         const bookingData = {
-        //             cusId: currentNextAppPatient.cusId,
-        //             docId: parseInt(docId),
-        //             slotId: slotId, 
-        //             note: note || `Tái khám theo lịch hẹn - Dịch vụ: ${serviceNames} (Tổng: ${totalPrice.toLocaleString()}đ)`,
-        //             bookType: 'follow-up',
-        //             serId: currentNextAppPatient.serId // Use current patient's service ID
-        //         };
-                
-        //         console.log('Booking data:', bookingData);
-        //         console.log('Selected services:', selectedServices);
-                
-        //         // Create booking
-        //         const bookingResponse = await fetch('/api/booking/create-initial-booking', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify(bookingData)
-        //         });
-
-        //         if (!bookingResponse.ok) {
-        //             const errorText = await bookingResponse.text();
-        //             throw new Error(errorText || 'Không thể tạo lịch hẹn');
-        //         }
-
-        //         const bookingresult = await bookingResponse.json();
-        //         const bookId = bookingresult.bookingId;
-
-        //         const stepResponse = await fetch(`/api/booking-steps/create-step-for-initial-booking/${bookId}`, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 bookId: bookId,
-        //                 subId: selectedServices.map(service => service.subId),
-        //                 stepStatus: 'inactive',
-        //             })
-        //         });
-
-        //         if (stepResponse.ok) {
-        //             const serviceCount = selectedServices.length;
-        //             const serviceText = serviceCount === 1 ? 'dịch vụ' : `${serviceCount} dịch vụ`;
-        //             showNotification(`✅ Đã đặt lịch hẹn lại thành công cho ${serviceText}: ${serviceNames}! Email xác nhận đã được gửi cho bệnh nhân.`, 'success');
-        //             closeNextAppointmentModal();
-        //             // bổ sung thêm một cái là sau khi tạo lịch hẹn khám thành công thì gán bookId vào recordId ở cái bảng MedicalRecordBooking 
-        //         } else {
-        //             throw new Error('Booking creation failed');
-        //         }
-                
-        //     } catch (error) {
-        //         console.error('Error creating next appointment:', error);
-        //         showNotification('❌ Lỗi khi tạo lịch hẹn: ' + error.message, 'error');
-        //     }
-        // };
-
-
     // Schedule next appointment
     window.scheduleNextAppointment = async function() {
         if (!currentNextAppPatient) {
@@ -2470,12 +2349,6 @@ function showNotification(message, type) {
 
 
         try {
-            console.log({
-    docId,
-    workDate: appointmentDate,
-    startTime,
-    endTime
-});
             // 1. Lấy slotId theo ngày + startTime + endTime + docId
             const slotResponse = await fetch('/api/workslots/get-slot-id-by-date-time', {
                 method: 'POST',
@@ -2512,10 +2385,13 @@ function showNotification(message, type) {
                 slotId: slotId, 
                 note: note || `Tái khám theo lịch hẹn`,
                 bookType: 'follow-up',
-                serId: currentNextAppPatient.serId // giữ nguyên
+                serId: currentNextAppPatient.serId, // giữ nguyên
+                workDate: appointmentDate,
+                startTime: startTime,   
+                endTime: endTime,
             };
 
-            const bookingResponse = await fetch('/api/booking/create-initial-booking', {
+            const bookingResponse = await fetch('/api/booking/create-follow-up-booking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bookingData)
@@ -2550,7 +2426,7 @@ function showNotification(message, type) {
             document.getElementById('nextAppDate').value = '';
             document.getElementById('nextAppTime').value = '';
             document.getElementById('nextAppNote').value = '';
-            if (typeof resetServiceSelection === 'function') resetServiceSelection();
+            // if (typeof resetServiceSelection === 'function') resetServiceSelection();
 
         } catch (error) {
             console.error('Error creating next appointment:', error);

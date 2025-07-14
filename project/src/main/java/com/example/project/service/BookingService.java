@@ -3,6 +3,7 @@ package com.example.project.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -205,6 +206,71 @@ public class BookingService {
             return true;
         }
         return false; // Booking không tồn tại
+    }
+
+    // Hàm xử lý tạo booking + gửi mail
+    public Integer createFollowUpBooking(Map<String, Object> bookingData) {
+        // 1. Tạo Booking
+        Booking booking = new Booking();
+        booking.setCusId((Integer) bookingData.get("cusId"));
+        booking.setDocId((Integer) bookingData.get("docId"));
+        booking.setSlotId((Integer) bookingData.get("slotId"));
+        booking.setNote((String) bookingData.get("note"));
+        booking.setBookType((String) bookingData.get("bookType")); // "follow-up"
+        booking.setSerId((Integer) bookingData.get("serId"));
+        booking.setBookStatus("confirmed");
+        booking.setCreatedAt(LocalDateTime.now());
+
+        String workDate = (String) bookingData.get("workDate");
+        String startTime = (String) bookingData.get("startTime");
+        String endTime = (String) bookingData.get("endTime");
+
+        Booking saved = bookingRepo.save(booking);
+
+        // 2. Gửi email cho bệnh nhân
+        Customer customer = customerRepo.findById(booking.getCusId()).orElse(null);
+        Doctor doctor = doctorRepo.findById(booking.getDocId()).orElse(null);
+        com.example.project.entity.Service service = serviceRepo.findById(booking.getSerId()).orElse(null);
+
+        if (customer != null && doctor != null) {
+            sendFollowUpBookingEmail(saved, customer, doctor, service, workDate, startTime, endTime);
+        }
+
+        return saved.getBookId();
+    }
+
+        private void sendFollowUpBookingEmail(
+            Booking booking, Customer customer, Doctor doctor,
+            com.example.project.entity.Service service,
+            String workDate, String startTime, String endTime
+    ) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(customer.getCusEmail());
+        message.setSubject("Thông báo lịch tái khám mới");
+
+        // Format ngày giờ nếu cần (hoặc dùng raw)
+        String thoiGian = (workDate != null && startTime != null && endTime != null)
+            ? (workDate + " (" + startTime + " - " + endTime + ")")
+            : (booking.getCreatedAt() == null ? "" : booking.getCreatedAt().toString());
+
+        message.setText(
+            String.format(
+                "Chào bạn %s,\n\n"
+                + "Bác sĩ %s đã đặt lịch tái khám cho bạn tại phòng khám.\n\n"
+                + "Thông tin chi tiết:\n"
+                + "- Thời gian: %s\n"
+                + "- Dịch vụ: %s\n"
+                + "- Ghi chú: %s\n\n"
+                + "Vui lòng kiểm tra lại lịch cá nhân và đến đúng giờ hẹn.\n"
+                + "Xin cảm ơn!",
+                customer.getCusFullName(),
+                doctor.getDocFullName(),
+                thoiGian,
+                service == null ? "" : service.getSerName(),
+                booking.getNote() == null ? "" : booking.getNote()
+            )
+        );
+        mailSender.send(message);
     }
 
 }

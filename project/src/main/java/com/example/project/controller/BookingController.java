@@ -26,6 +26,7 @@ import com.example.project.service.BookingService;
 
 
 
+
 @RestController
 @RequestMapping("/api")
 public class BookingController {
@@ -189,34 +190,18 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
     }
 
 
-    @PostMapping("/booking/create-initial-booking")
-    public ResponseEntity<?> createInitialBooking(@RequestBody Map<String, Object> bookingData) {
+
+    @PostMapping("/booking/create-follow-up-booking")
+    public ResponseEntity<?> createFollowUpBooking(@RequestBody Map<String, Object> bookingData) {
         try {
-            Booking booking = new Booking();
-            booking.setCusId((Integer) bookingData.get("cusId"));
-            booking.setDocId((Integer) bookingData.get("docId"));
-            booking.setSlotId((Integer) bookingData.get("slotId"));
-            booking.setNote((String) bookingData.get("note"));
-            booking.setBookType((String) bookingData.get("bookType"));
-            booking.setSerId((Integer) bookingData.get("serId"));
-
-            // Thiết lập các field mặc định
-            booking.setBookStatus("confirmed"); // hoặc confirmed tuỳ logic
-            booking.setCreatedAt(LocalDateTime.now());
-            // // Nếu có truyền drugId thì lấy luôn
-            // if (bookingData.get("drugId") != null) {
-            //     booking.setDrugId((Integer) bookingData.get("drugId"));
-            // }
-
-            // Lưu vào DB
-            Booking saved = bookingRepository.save(booking);
-
-            // Trả về bookingId cho FE
-            return ResponseEntity.ok(Map.of("bookId", saved.getBookId()));
-
+            Integer bookId = bookingService.createFollowUpBooking(bookingData);
+            // Có thể trả thêm info nếu cần (VD: message, bookId,...)
+            return ResponseEntity.ok(Map.of("bookId", bookId));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Không thể tạo lịch hẹn: " + e.getMessage());
+            // Nếu muốn show rõ lỗi backend
+            return ResponseEntity.badRequest().body("Không thể tạo lịch tái khám: " + e.getMessage());
         }
     }
+
 
 }
