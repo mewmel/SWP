@@ -1,8 +1,8 @@
 ﻿USE [master]
 GO
-CREATE DATABASE [Healthcare_ServiceVer91]
+CREATE DATABASE [Healthcare_ServiceVer95]
 GO
-USE [Healthcare_ServiceVer91]
+USE [Healthcare_ServiceVer95]
 GO
 
 ----------------------------------------------------------------------------------------------------------
@@ -185,6 +185,16 @@ CREATE TABLE MedicalRecord (
 
 );
 GO
+CREATE TABLE MedicalRecordBooking (-- để biết được các booking thuộc dịch vụ nào thông qua hồ sơ bệnh án của chính cái dịch vụ đó
+    recordId	INT		NOT NULL		CONSTRAINT FK_MedicalRecordBooking_Record
+										FOREIGN KEY (recordId) REFERENCES MedicalRecord(recordId),
+
+    bookId		INT		NOT NULL		CONSTRAINT FK_MedicalRecordBooking_Booking
+										FOREIGN KEY (bookId) REFERENCES Booking(bookId),
+);
+-- -- UNIQUE constraint để 1 booking chỉ gắn 1 lần với 1 record:
+-- ALTER TABLE MedicalRecordBooking ADD CONSTRAINT UQ_RecordBooking UNIQUE (recordId, bookId);
+
 
 
 -- 10. Feedback cua khach hang sau khi dieu tri
@@ -234,10 +244,12 @@ GO
 
 CREATE TABLE DoctorAvatar (
     docAvatarId INT IDENTITY(1,1) PRIMARY KEY,
-    docId       INT NOT NULL CONSTRAINT FK_DoctorAvatar_Doctor
-                          FOREIGN KEY (docId) REFERENCES Doctor(docId),
-    imageId     INT NOT NULL CONSTRAINT FK_DoctorAvatar_Image
-                          FOREIGN KEY (imageId) REFERENCES Image(imageId)
+    docId       INT NOT NULL
+        CONSTRAINT FK_DoctorAvatar_Doctor FOREIGN KEY (docId) REFERENCES Doctor(docId),
+    imageId     INT NOT NULL
+        CONSTRAINT FK_DoctorAvatar_Image FOREIGN KEY (imageId) REFERENCES Image(imageId),
+    isActive    BIT NOT NULL DEFAULT 0 , -- 0: không dùng, 1: đang dùng làm đại diện
+	createdAt   DATETIME NOT NULL DEFAULT GETDATE()
 );
 GO
 
@@ -278,7 +290,7 @@ CREATE TABLE DrugItem (
     dosage          NVARCHAR(50)    NULL,                   -- Liều dùng, ví dụ: "2 viên/lần"
     frequency       NVARCHAR(50)    NULL,                   -- Tần suất: "3 lần/ngày"
     duration        NVARCHAR(50)    NULL,                   -- Thời gian dùng: "5 ngày"
-	drugItemNote    NVARCHAR(200)   NULL,
+	drugItemNote    NVARCHAR(200)   NULL
 
 );
 GO
@@ -367,44 +379,3 @@ VALUES
   (3, N'Thử β-hCG',                    N'Xét nghiệm kiểm tra thai sau IUI',               22, 200000),
   (3, N'Siêu âm túi thai',             N'Theo dõi sự phát triển của thai (nếu có)',      29, 250000);
 
-
-
-
-
-
-/*
-INSERT INTO WorkSlot (docId, maId, workDate, startTime, endTime, maxPatient, slotStatus) VALUES	
-
-(1, 1, '2025-07-3', '08:00', '09:00', 2, 'approved'),						
-(1, 1, '2025-07-2', '09:00', '10:00', 2, 'approved'),						
-(1, 1, '2025-07-2', '10:00', '11:00', 2, 'approved'),						
-(1, 1, '2025-07-2', '11:00', '12:00', 2, 'approved'),						
-						
-(2, 1, '2025-07-2', '14:00', '15:00', 2, 'approved'),						
-(2, 1, '2025-07-2', '15:00', '16:00', 2, 'approved'),						
-(2, 1, '2025-07-2', '16:00', '17:00', 2, 'approved');
---------------------------------------------------------
-
-USE [Healthcare_ServiceVer9]
-
-
-select * from WorkSlot
-
-select * from BookingStep
-
-select * from Booking
-
-select * from Customer
-
-select * from MedicalRecord
-
-select * from Service
-
-select * from SubService
-
-select * from Drug
-
-select * from DrugItem
-
-select * from Image
-*/
