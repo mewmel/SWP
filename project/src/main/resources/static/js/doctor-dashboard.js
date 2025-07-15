@@ -295,7 +295,8 @@ window.checkout = async function (bookId, cusId, bookType) {
             const { exists } = await res.json();
             if (!exists) {
                 // Tạo mới medical record
-                await fetch(`/api/medical-records/create/${serId}`, {
+
+                const createRes = await fetch(`/api/medical-records/create/${serId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -303,6 +304,18 @@ window.checkout = async function (bookId, cusId, bookType) {
                         docId,
                         serId,
                         recordStatus:'active',
+                    })
+                });
+                const createData = await createRes.json();
+                const recordId = createData.recordId;
+                
+                // gắn cặp bookId & recordId vào MedicalRecordBooking
+                await fetch(`/api/medical-records-booking/create/${bookId},${recordId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        bookId,
+                        recordId
                     })
                 });
 
