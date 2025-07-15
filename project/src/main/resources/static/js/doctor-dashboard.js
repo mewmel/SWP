@@ -295,7 +295,7 @@ window.checkout = async function (bookId, cusId, bookType) {
             const { exists } = await res.json();
             if (!exists) {
                 // Tạo mới medical record
-                await fetch(`/api/medical-records/create/${serId}`, {
+                const createRes = await fetch(`/api/medical-records/create/${serId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -305,9 +305,21 @@ window.checkout = async function (bookId, cusId, bookType) {
                         recordStatus:'active',
                     })
                 });
+                const createData = await createRes.json();
+                const recordId = createData.recordId;
+                
+                // gắn cặp bookId & recordId vào MedicalRecordBooking
+                await fetch(`/api/medical-records-booking/create/${bookId},${recordId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        bookId,
+                        recordId
+                    })
+                });
 
                 // Tạo mới drug
-                const drugRes = await fetch(`/api/drugs/create/${bookId}`, {
+                await fetch(`/api/drugs/create/${bookId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -315,11 +327,6 @@ window.checkout = async function (bookId, cusId, bookType) {
                         cusId,
                     })
                 });
-
-                const drugId = await drugRes.json();
-                localStorage.setItem('drugId', drugId);
-
-
 
                 await fetch(`/api/booking-steps/set-pending/${bookId}`, {
                     method: 'PUT',

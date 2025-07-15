@@ -1827,6 +1827,16 @@ function showNotification(message, type) {
                 body: JSON.stringify(bookingData)
             });
 
+            // gắn cặp bookId & recordId vào MedicalRecordBooking
+            const medicalRecordResponse = await fetch(`/api/medical-records-booking/create/${bookId},${recordId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    bookId,
+                    recordId
+                })
+            });            
+
             const bookingText = await bookingResponse.text();
             if (!bookingResponse.ok) throw new Error(bookingText || 'Không thể tạo lịch hẹn');
 
