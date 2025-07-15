@@ -7,6 +7,7 @@
     <title>Danh sách bệnh nhân - Hệ thống quản lý</title>
     <link rel="stylesheet" href="css/doctor-common.css">
     <link rel="stylesheet" href="css/bac-si-dashboard.css">
+    <link rel="stylesheet" href="css/booking-loading.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Simple Patient List Styles */
@@ -1959,6 +1960,83 @@
                 <button class="btn-primary" onclick="scheduleNextAppointment()" style="background: #10b981;">
                     <i class="fas fa-calendar-check"></i> Đặt lịch hẹn lại
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Follow-up Booking Loading Overlay -->
+    <div class="booking-loading-overlay" id="followUpLoadingOverlay">
+        <div class="booking-loading-container">
+            <div class="booking-loading-content">
+                <div class="loading-icon">
+                    <div class="loading-spinner"></div>
+                    <i class="fas fa-calendar-plus"></i>
+                </div>
+                <h3 class="loading-title">Đang đặt lịch tái khám</h3>
+                <p class="loading-message">Vui lòng đợi trong giây lát...</p>
+                <div class="loading-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <div class="progress-step active">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Tạo lịch hẹn</span>
+                        </div>
+                        <div class="progress-step">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Tạo bước điều trị</span>
+                        </div>
+                        <div class="progress-step">
+                            <i class="fas fa-envelope"></i>
+                            <span>Gửi thông báo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success State -->
+            <div class="booking-success-content" style="display: none;">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="success-title">Đặt lịch tái khám thành công!</h3>
+                <p class="success-message">
+                    Lịch tái khám đã được tạo và thông báo đã được gửi đến bệnh nhân.<br>
+                    Bệnh nhân sẽ nhận được email xác nhận trong thời gian sớm nhất.
+                </p>
+                <div class="success-actions">
+                    <button class="btn-primary" onclick="closeFollowUpLoadingOverlay()">
+                        <i class="fas fa-check"></i>
+                        Hoàn thành
+                    </button>
+                    <button class="btn-secondary" onclick="openNextAppointmentModal(window.currentNextAppPatient)">
+                        <i class="fas fa-plus"></i>
+                        Hẹn thêm lịch khác
+                    </button>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div class="booking-error-content" style="display: none;">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="error-title">Đặt lịch tái khám thất bại</h3>
+                <p class="error-message" id="errorMessageText">
+                    Có lỗi xảy ra trong quá trình đặt lịch tái khám.<br>
+                    Vui lòng thử lại sau.
+                </p>
+                <div class="error-actions">
+                    <button class="btn-primary" onclick="closeFollowUpLoadingOverlay()">
+                        <i class="fas fa-redo"></i>
+                        Thử lại
+                    </button>
+                    <button class="btn-secondary" onclick="closeFollowUpLoadingOverlay(); closeNextAppointmentModal();">
+                        <i class="fas fa-times"></i>
+                        Đóng
+                    </button>
+                </div>
             </div>
         </div>
     </div>

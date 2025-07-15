@@ -1762,6 +1762,9 @@ function showNotification(message, type) {
             return;
         }
 
+        // Show loading overlay
+        showFollowUpLoadingOverlay();
+
         function toTimeString(str) {
             // Nếu đã có giây thì return luôn
             if (str.match(/^\d{2}:\d{2}:\d{2}$/)) return str;
@@ -1791,7 +1794,7 @@ function showNotification(message, type) {
 
             if (!slotResponse.ok) {
                 // Tùy backend trả về lỗi như thế nào mà bắt
-                showNotification(slotText || 'Không thể tìm khung giờ phù hợp!', 'error');
+                showFollowUpBookingError(slotText || 'Không thể tìm khung giờ phù hợp!<br>Vui lòng chọn thời gian khác hoặc liên hệ hỗ trợ.');
                 return;
             }
 
@@ -1799,7 +1802,7 @@ function showNotification(message, type) {
 
             // Nếu không có slotId, báo lỗi luôn
             if (!slotData.slotId) {
-                showNotification('Không tìm thấy khung giờ phù hợp! Vui lòng chọn lại.', 'error');
+                showFollowUpBookingError('Không tìm thấy khung giờ phù hợp!<br>Vui lòng chọn lại thời gian khác.');
                 return;
             }
 
@@ -1848,16 +1851,20 @@ function showNotification(message, type) {
 
             // 4. Thông báo thành công, reset form
             const serviceNames = selectedServices.map(s => s.subName).join(', ');
-            showNotification(`✅ Đã đặt lịch hẹn lại thành công cho ${selectedServices.length} dịch vụ: ${serviceNames}! Email xác nhận đã được gửi cho bệnh nhân.`, 'success');
-            closeNextAppointmentModal();
-            document.getElementById('nextAppDate').value = '';
-            document.getElementById('nextAppTime').value = '';
-            document.getElementById('nextAppNote').value = '';
-            // if (typeof resetServiceSelection === 'function') resetServiceSelection();
+            showFollowUpBookingSuccess(serviceNames, selectedServices.length);
+            
+            // Reset form after successful booking
+            setTimeout(() => {
+                closeNextAppointmentModal();
+                document.getElementById('nextAppDate').value = '';
+                document.getElementById('nextAppTime').value = '';
+                document.getElementById('nextAppNote').value = '';
+                // if (typeof resetServiceSelection === 'function') resetServiceSelection();
+            }, 100);
 
         } catch (error) {
             console.error('Error creating next appointment:', error);
-            showNotification('❌ Lỗi khi tạo lịch hẹn: ' + error.message, 'error');
+            showFollowUpBookingError('❌ Lỗi khi tạo lịch hẹn: ' + error.message + '<br>Vui lòng kiểm tra lại thông tin và thử lại.');
         }
     };
 
@@ -1918,6 +1925,104 @@ function showNotification(message, type) {
             
             // Update summary
             updateSelectedServicesSummary();
-            
-            showNotification('🗑️ Đã xóa form hẹn khám lại', 'info');
         };
+
+        // ========== Follow-up Booking Loading Functions ===========
+        window.showFollowUpLoadingOverlay = function() {
+            const overlay = document.getElementById('followUpLoadingOverlay');
+            const loadingContent = overlay.querySelector('.booking-loading-content');
+            const successContent = overlay.querySelector('.booking-success-content');
+            const errorContent = overlay.querySelector('.booking-error-content');
+
+            // Reset states
+            loadingContent.style.display = 'block';
+            successContent.style.display = 'none';
+            errorContent.style.display = 'none';
+
+            // Show overlay
+            overlay.classList.add('show');
+
+                         // Simulate progress steps for follow-up booking
+             window.simulateFollowUpProgressSteps();
+                 }
+
+                  window.simulateFollowUpProgressSteps = function() {
+             const steps = document.querySelectorAll('#followUpLoadingOverlay .progress-step');
+             steps.forEach(step => {
+                 step.classList.remove('active', 'completed');
+             });
+
+             // Step 1: Creating booking
+             steps[0].classList.add('active');
+             setTimeout(() => {
+                 steps[0].classList.remove('active');
+                 steps[0].classList.add('completed');
+                 steps[1].classList.add('active');
+             }, 1000);
+
+             // Step 2: Creating booking steps
+             setTimeout(() => {
+                 steps[1].classList.remove('active');
+                 steps[1].classList.add('completed');
+                 steps[2].classList.add('active');
+             }, 2000);
+
+             // Step 3: Sending notification (completed in success/error functions)
+         }
+
+                  window.showFollowUpBookingSuccess = function(serviceNames, serviceCount) {
+             const overlay = document.getElementById('followUpLoadingOverlay');
+             const loadingContent = overlay.querySelector('.booking-loading-content');
+             const successContent = overlay.querySelector('.booking-success-content');
+             const steps = document.querySelectorAll('#followUpLoadingOverlay .progress-step');
+
+             // Complete final step (now step 3)
+             steps[2].classList.remove('active');
+             steps[2].classList.add('completed');
+
+            setTimeout(() => {
+                loadingContent.style.display = 'none';
+                successContent.style.display = 'block';
+                
+                // Update success message with service details
+                const successMessage = successContent.querySelector('.success-message');
+                successMessage.innerHTML = `
+                    Lịch tái khám đã được tạo cho <strong>${serviceCount} dịch vụ: ${serviceNames}</strong>.<br>
+                    Thông báo đã được gửi đến bệnh nhân qua email.
+                `;
+            }, 1000);
+                 }
+
+         window.showFollowUpBookingError = function(errorMessage) {
+            const overlay = document.getElementById('followUpLoadingOverlay');
+            const loadingContent = overlay.querySelector('.booking-loading-content');
+            const errorContent = overlay.querySelector('.booking-error-content');
+            const errorMessageElement = errorContent.querySelector('#errorMessageText');
+
+            loadingContent.style.display = 'none';
+            errorContent.style.display = 'block';
+            
+            // Update error message
+            errorMessageElement.innerHTML = errorMessage || 'Có lỗi xảy ra trong quá trình đặt lịch tái khám.<br>Vui lòng thử lại sau.';
+                 }
+
+         window.closeFollowUpLoadingOverlay = function() {
+            const overlay = document.getElementById('followUpLoadingOverlay');
+            overlay.classList.remove('show');
+            
+            // Reset overlay state for next use
+            setTimeout(() => {
+                const loadingContent = overlay.querySelector('.booking-loading-content');
+                const successContent = overlay.querySelector('.booking-success-content');
+                const errorContent = overlay.querySelector('.booking-error-content');
+                const steps = document.querySelectorAll('#followUpLoadingOverlay .progress-step');
+                
+                loadingContent.style.display = 'block';
+                successContent.style.display = 'none';
+                errorContent.style.display = 'none';
+                
+                steps.forEach(step => {
+                    step.classList.remove('active', 'completed');
+                });
+            }, 300);
+        }
