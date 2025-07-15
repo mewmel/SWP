@@ -1821,13 +1821,39 @@ function showNotification(message, type) {
                 endTime: endTime,
             };
 
-            const bookingResponse = await fetch('/api/booking/create-follow-up-booking', {
+const bookingResponse = await fetch('/api/booking/create-follow-up-booking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bookingData)
             });
 
             const bookingText = await bookingResponse.text();
+            const followBookId = bookingText ? JSON.parse(bookingText).bookId : null;
+
+            const patientObj = allPatients.find(p => p.cusId === currentNextAppPatient.cusId);
+            const recordId = patientObj?.recordId;
+
+            if (!recordId) {
+                showFollowUpBookingError('Không tìm thấy ID hồ sơ bệnh án!<br>Vui lòng thử lại.');
+                return;
+            }
+
+            // gắn cặp bookId & recordId vào MedicalRecordBooking
+            const medicalRecordResponse = await fetch(`/api/medical-records-booking/create/${recordId},${followBookId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    recordId,
+                    recobookId: followBookId
+                })
+            });  
+               
+            if (!medicalRecordResponse.ok) {
+                console.error('Error creating MedicalRecordBooking:', await medicalRecordResponse.text());
+                showFollowUpBookingError('❌ Không thể liên kết lịch hẹn với hồ sơ bệnh án. Vui lòng thử lại sau.');
+            }
+
+            // Nếu không có lỗi, tiếp tục tạo lịch hẹn
             if (!bookingResponse.ok) throw new Error(bookingText || 'Không thể tạo lịch hẹn');
 
             const bookingResult = JSON.parse(bookingText);
