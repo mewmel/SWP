@@ -1,16 +1,19 @@
 package com.example.project.service;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
 
+import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import com.example.project.dto.BookingRequest;
 import com.example.project.entity.Booking;
@@ -136,49 +139,112 @@ public class BookingService {
     }
 
     // Gửi email cho tài khoản mới và xác nhận đặt lịch (có mật khẩu)
+    // Gửi email tài khoản mới và đặt lịch thành công (HTML, đóng khung, trang trí đẹp, có logo dùng CID)
     private void sendNewAccountAndBookingEmail(Customer customer, String password, BookingRequest req,
-            String doctorName, String serviceName) {
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setTo(customer.getCusEmail());
-        msg.setSubject("Tạo tài khoản & Đặt lịch thành công trên FertilityEHR");
+                                               String doctorName, String serviceName) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(customer.getCusEmail());
+            helper.setSubject("Tạo tài khoản & Đặt lịch thành công trên FertilityEHR");
 
-        StringBuilder body = new StringBuilder();
-        body.append("Bạn đã được tạo tài khoản tự động trên hệ thống phòng khám FertilityEHR.\n")
-                .append("Email đăng nhập: ").append(customer.getCusEmail()).append("\n")
-                .append("Mật khẩu: ").append(password).append("\n")
-                .append("Vui lòng đăng nhập và đổi mật khẩu sau khi nhận được email này.\n\n")
-                .append("THÔNG TIN ĐẶT LỊCH KHÁM:\n")
-                .append(formatBookingInfo(req, doctorName, serviceName));
-        msg.setText(body.toString());
-        mailSender.send(msg);
+            String htmlContent = buildStyledEmailContentWithCID(customer, password, req, doctorName, serviceName, true);
+            helper.setText(htmlContent, true); // true để gửi HTML
+
+            // Sử dụng ResourceUtils để lấy file logo trong resources
+            File logoFile = ResourceUtils.getFile("classpath:static/img/logo.png");
+            System.out.println("Logo absolute path: " + logoFile.getAbsolutePath());
+            System.out.println("Logo exists: " + logoFile.exists());
+            if (logoFile.exists()) {
+                helper.addInline("logoImage", logoFile);
+            }
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    // Gửi email xác nhận đặt lịch (không gửi tài khoản/mật khẩu)
+    // Gửi email xác nhận đặt lịch (không gửi tài khoản/mật khẩu, HTML đóng khung, có logo dùng CID)
     private void sendBookingConfirmationEmail(Customer customer, BookingRequest req, String doctorName,
-            String serviceName) {
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setTo(customer.getCusEmail());
-        msg.setSubject("Xác nhận đặt lịch khám trên FertilityEHR");
-        StringBuilder body = new StringBuilder();
-        body.append("Bạn đã đặt lịch khám thành công trên hệ thống phòng khám FertilityEHR.\n\n")
-                .append("THÔNG TIN ĐẶT LỊCH KHÁM:\n")
-                .append(formatBookingInfo(req, doctorName, serviceName));
-        msg.setText(body.toString());
-        mailSender.send(msg);
+                                              String serviceName) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(customer.getCusEmail());
+            helper.setSubject("Xác nhận đặt lịch khám trên FertilityEHR");
+
+            String htmlContent = buildStyledEmailContentWithCID(customer, null, req, doctorName, serviceName, false);
+            helper.setText(htmlContent, true);
+
+            File logoFile = ResourceUtils.getFile("classpath:static/img/logo.png");
+            System.out.println("Logo absolute path: " + logoFile.getAbsolutePath());
+            System.out.println("Logo exists: " + logoFile.exists());
+            if (logoFile.exists()) {
+                helper.addInline("logoImage", logoFile);
+            }
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    // Format thông tin đặt lịch gửi qua email
-    private String formatBookingInfo(BookingRequest req, String doctorName, String serviceName) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Họ tên: ").append(req.getFullName()).append("\n");
-        sb.append("Số điện thoại: ").append(req.getPhone()).append("\n");
-        sb.append("Ngày sinh: ").append(req.getDob()).append("\n");
-        sb.append("Ngày khám: ").append(req.getAppointmentDate()).append("\n");
-        sb.append("Khung giờ: ").append(req.getStartTime()).append(" - ").append(req.getEndTime()).append("\n");
-        sb.append("Bác sĩ: ").append(doctorName).append("\n");
-        sb.append("Dịch vụ: ").append(serviceName).append("\n");
-        sb.append("Ghi chú: ").append(req.getNote() == null ? "" : req.getNote()).append("\n");
-        return sb.toString();
+    // Hàm dựng nội dung HTML đẹp, đóng khung, header nổi bật, có logo bên trái chữ tiêu đề
+    private String buildStyledEmailContentWithCID(Customer customer, String password, BookingRequest req,
+                                                  String doctorName, String serviceName, boolean includeAccount) {
+        // Logo dùng CID
+        String logoCid = "cid:logoImage";
+
+        StringBuilder html = new StringBuilder();
+        html.append("<div style=\"max-width:600px;margin:auto;font-family:Arial,Helvetica,sans-serif;background:#fff;\">")
+                // Header/banner: logo bên trái, chữ bên phải
+                .append("<div style=\"background:#2196f3;color:#fff;padding:0;border-radius:8px 8px 0 0;\">")
+                .append("<div style=\"display:flex;align-items:center;justify-content:flex-start;padding:18px 24px;\">")
+                .append("<img src=\"").append(logoCid).append("\" alt=\"FertilityEHR Logo\" style=\"height:60px;width:auto;display:inline-block;margin-right:16px;\">")
+                .append("<span style=\"font-size:24px;font-weight:bold;letter-spacing:1px;\">FertilityEHR - Đặt lịch & Tài khoản</span>")
+                .append("</div>")
+                .append("</div>")
+                // Main content box
+                .append("<div style=\"border:1.5px solid #ddd;padding:24px;border-radius:0 0 8px 8px;\">")
+                .append("<p>Xin chào <b>").append(req.getFullName()).append("</b>,</p>")
+                .append("<p style=\"margin-top:0;\">");
+
+        if (includeAccount) {
+            html.append("Bạn đã được tạo tài khoản tự động và đặt lịch khám thành công trên hệ thống <b>FertilityEHR</b>.<br>")
+                    .append("Vui lòng đăng nhập & đổi mật khẩu sau khi nhận được email này.");
+        } else {
+            html.append("Bạn đã đặt lịch khám thành công trên hệ thống <b>FertilityEHR</b>.");
+        }
+        html.append("</p>");
+
+        if (includeAccount) {
+            html.append("<div style=\"background:#e3f2fd;padding:12px 16px;border-radius:6px;margin-bottom:14px;\">")
+                    .append("<b>Thông tin đăng nhập:</b><br>")
+                    .append("Email: <b>").append(customer.getCusEmail()).append("</b><br>")
+                    .append("Mật khẩu: <b>").append(password).append("</b>")
+                    .append("</div>");
+        }
+
+        // Thông tin đặt lịch
+        html.append("<div style=\"margin-bottom:10px;\"><b>Thông tin đặt lịch khám:</b></div>")
+                .append("<table style=\"width:100%;border-collapse:collapse;font-size:15px;\">")
+                .append("<tr><td style=\"padding:6px 0;width:140px;color:#2196f3;\">Họ tên</td><td>").append(req.getFullName()).append("</td></tr>")
+                .append("<tr><td style=\"padding:6px 0;color:#2196f3;\">Số điện thoại</td><td>").append(req.getPhone()).append("</td></tr>")
+                .append("<tr><td style=\"padding:6px 0;color:#2196f3;\">Ngày sinh</td><td>").append(req.getDob()).append("</td></tr>")
+                .append("<tr><td style=\"padding:6px 0;color:#2196f3;\">Ngày khám</td><td>").append(req.getAppointmentDate()).append("</td></tr>")
+                .append("<tr><td style=\"padding:6px 0;color:#2196f3;\">Khung giờ</td><td>")
+                .append(req.getStartTime()).append(" - ").append(req.getEndTime()).append("</td></tr>")
+                .append("<tr><td style=\"padding:6px 0;color:#2196f3;\">Bác sĩ</td><td>").append(doctorName).append("</td></tr>")
+                .append("<tr><td style=\"padding:6px 0;color:#2196f3;\">Dịch vụ</td><td>").append(serviceName).append("</td></tr>")
+                .append("<tr><td style=\"padding:6px 0;color:#2196f3;\">Ghi chú</td><td>")
+                .append((req.getNote() == null || req.getNote().trim().isEmpty()) ? "(Không có)" : req.getNote())
+                .append("</td></tr>")
+                .append("</table>")
+                .append("<div style=\"margin-top:18px;color:#888;font-size:13px;\">Nếu có thắc mắc, vui lòng liên hệ phòng khám để được hỗ trợ.</div>")
+                .append("</div>") // end box
+                .append("</div>");
+        return html.toString();
     }
 
     // Cập nhật ghi chú và trạng thái booking
@@ -206,5 +272,4 @@ public class BookingService {
         }
         return false; // Booking không tồn tại
     }
-
 }
