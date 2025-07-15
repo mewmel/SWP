@@ -50,6 +50,16 @@ Optional<WorkSlot> findByDocIdAndWorkDateAndStartTimeAndEndTime(
     @Param("startTime") String startTime,
     @Param("endTime") String endTime
 );
+
+// Lấy danh sách các khung giờ làm việc của bác sĩ trong tuần
+
+@Query("SELECT w FROM WorkSlot w WHERE w.docId = :docId AND w.workDate BETWEEN :from AND :to")
+List<WorkSlot> findAllSlotsByDoctorAndDateRange(
+        @Param("docId") Integer docId,
+        @Param("from") LocalDate from,
+        @Param("to") LocalDate to
+);
+
 }
 
 
