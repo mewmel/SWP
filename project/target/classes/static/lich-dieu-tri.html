@@ -201,27 +201,23 @@
         </div>
 
         <div class="summary-card">
-            <h3><i class="fas fa-syringe"></i> Lịch tiêm thuốc hôm nay</h3>
-            <div class="medication-schedule">
-                <div class="medication-time">
-                    <div class="medication-info">
-                        <div class="medication-icon">💉</div>
-                        <div>
-                            <div class="event-title">Gonal-F 150 IU</div>
-                            <div class="event-time">19:00</div>
-                        </div>
-                    </div>
-                    <button class="done-btn">Đã tiêm</button>
+            <h3><i class="fas fa-calendar-alt"></i> Thông tin lịch điều trị</h3>
+            <div class="treatment-info">
+                <div class="info-item">
+                    <strong>Giai đoạn điều trị:</strong>
+                    <span>Theo dõi và tái khám định kỳ</span>
                 </div>
-                <div class="medication-time">
-                    <div class="medication-info">
-                        <div class="medication-icon">💉</div>
-                        <div>
-                            <div class="event-title">Cetrotide 0.25mg</div>
-                            <div class="event-time">20:00</div>
-                        </div>
-                    </div>
-                    <button class="done-btn">Đã tiêm</button>
+                <div class="info-item">
+                    <strong>Tổng số lịch khám:</strong>
+                    <span id="totalBookingCount">0</span>
+                </div>
+                <div class="info-item">
+                    <strong>Đã hoàn thành:</strong>
+                    <span id="completedBookingCount">0</span>
+                </div>
+                <div class="info-item">
+                    <strong>Sắp tới:</strong>
+                    <span id="upcomingBookingCount">0</span>
                 </div>
             </div>
         </div>

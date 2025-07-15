@@ -53,13 +53,13 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     );
 
     @Query("SELECT b FROM Booking b " +
+          "JOIN WorkSlot w ON b.slotId = w.slotId " +
           "WHERE b.docId = :docId " +
           "AND b.bookStatus IN ('pending', 'confirmed', 'completed') " +
-          "AND b.createdAt BETWEEN :startOfDay AND :endOfDay")
+          "AND w.workDate = :today")
     List<Booking> findBookingsToday(
         @Param("docId") Integer docId,
-        @Param("startOfDay") LocalDateTime startOfDay,
-        @Param("endOfDay") LocalDateTime endOfDay
+        @Param("today") LocalDate today
     );
 
 
@@ -80,6 +80,56 @@ WHERE b.bookId = :bookId
 """)
 BookingPatientService findBookingPatientServiceByBookId(@Param("bookId") Integer bookId);
 
+    // Query lấy tất cả booking của customer với thông tin WorkSlot (cả lần đầu và tái khám)
+    @Query(value = """
+        SELECT 
+            b.bookId,
+            b.bookType,
+            b.bookStatus,
+            b.note,
+            s.serName,
+            d.docFullName,
+            w.workDate,
+            w.startTime,
+            w.endTime,
+            b.createdAt
+        FROM Booking b
+        JOIN WorkSlot w ON b.slotId = w.slotId
+        JOIN Service s ON b.serId = s.serId
+        JOIN Doctor d ON b.docId = d.docId
+        WHERE b.cusId = :cusId 
+        AND b.bookStatus IN ('pending', 'confirmed', 'completed')
+        ORDER BY w.workDate ASC, w.startTime ASC
+        """, nativeQuery = true)
+    List<Object[]> findAllBookingsWithWorkSlot(@Param("cusId") Integer cusId);
+
+    // Query lấy booking history với SubService info
+    @Query(value = """
+        SELECT 
+            b.bookId,
+            b.bookType,
+            b.bookStatus,
+            b.note,
+            s.serName,
+            d.docFullName,
+            w.workDate,
+            w.startTime,
+            w.endTime,
+            b.createdAt,
+            STRING_AGG(sub.subName, ', ') as subServices
+        FROM Booking b
+        JOIN WorkSlot w ON b.slotId = w.slotId
+        JOIN Service s ON b.serId = s.serId
+        JOIN Doctor d ON b.docId = d.docId
+        LEFT JOIN BookingStep bs ON b.bookId = bs.bookId
+        LEFT JOIN SubService sub ON bs.subId = sub.subId
+        WHERE b.cusId = :cusId 
+        AND b.bookStatus IN ('pending', 'confirmed', 'completed')
+        GROUP BY b.bookId, b.bookType, b.bookStatus, b.note, s.serName, 
+                 d.docFullName, w.workDate, w.startTime, w.endTime, b.createdAt
+        ORDER BY w.workDate ASC, w.startTime ASC
+        """, nativeQuery = true)
+    List<Object[]> findAllBookingsWithSubServices(@Param("cusId") Integer cusId);
 
 
 }

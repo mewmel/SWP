@@ -3,9 +3,11 @@ package com.example.project.controller;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -135,14 +137,11 @@ public class BookingController {
     }
 
     // API lấy danh sách booking đã xác nhận trong ngày hôm nay của bác sĩ
-    // GET /api/booking/doctor/{docId}/confirmed-today
+    // GET /api/booking/doctor/{docId}/today
 @GetMapping("/booking/doctor/{docId}/today")
 public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Integer docId) {
     LocalDate today = LocalDate.now();
-    LocalDateTime startOfDay = today.atStartOfDay();         // 00:00:00
-    LocalDateTime endOfDay = today.atTime(LocalTime.MAX);    // 23:59:59.999999999
-
-    List<Booking> bookings = bookingRepository.findBookingsToday(docId, startOfDay, endOfDay);
+    List<Booking> bookings = bookingRepository.findBookingsToday(docId, today);
     return ResponseEntity.ok(bookings);
 }
 
@@ -200,6 +199,34 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
         } catch (Exception e) {
             // Nếu muốn show rõ lỗi backend
             return ResponseEntity.badRequest().body("Không thể tạo lịch tái khám: " + e.getMessage());
+        }
+    }
+
+    // API lấy tất cả booking của customer với thông tin WorkSlot và SubService (cả lần đầu và tái khám)
+    @GetMapping("/booking/history/{cusId}")
+    public ResponseEntity<?> getAllBookings(@PathVariable Integer cusId) {
+        try {
+            List<Object[]> rawResults = bookingRepository.findAllBookingsWithSubServices(cusId);
+            List<Map<String, Object>> allBookings = rawResults.stream().map(row -> {
+                Map<String, Object> booking = new HashMap<>();
+                booking.put("bookId", row[0]);
+                booking.put("bookType", row[1]);
+                booking.put("bookStatus", row[2]);
+                booking.put("note", row[3]);
+                booking.put("serName", row[4]);
+                booking.put("docFullName", row[5]);
+                booking.put("workDate", row[6]);
+                booking.put("startTime", row[7]);
+                booking.put("endTime", row[8]);
+                booking.put("createdAt", row[9]);
+                booking.put("subServices", row[10]); // SubService names joined by comma
+                return booking;
+            }).collect(Collectors.toList());
+            
+            return ResponseEntity.ok(allBookings);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error loading booking history: " + e.getMessage());
         }
     }
 

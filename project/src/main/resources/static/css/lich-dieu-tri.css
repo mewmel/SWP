@@ -231,7 +231,6 @@ nav a.active {
 .event-reminder {
     background: #9b59b6;
 }
-
 .schedule-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -302,6 +301,13 @@ nav a.active {
     font-size: 0.9rem;
 }
 
+.event-note {
+    color: var(--light-text);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-top: var(--spacing-xs);
+}
+
 .medication-schedule {
     display: flex;
     flex-direction: column;
@@ -348,6 +354,34 @@ nav a.active {
 .done-btn:disabled {
     background: #95a5a6;
     cursor: not-allowed;
+}
+
+.treatment-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item strong {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.info-item span {
+    color: var(--light-text);
+    font-weight: 500;
 }
 
 @media (max-width: 768px) {

@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'injection': 'event-injection',
             'test': 'event-test',
             'appointment': 'event-appointment',
-            'reminder': 'event-reminder'
+            'reminder': 'event-reminder',
+            'completed': 'event-completed'
         };
         return eventClasses[eventType] || 'event-item';
     }
@@ -140,10 +141,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function showDayDetails(day, events) {
         const monthName = monthNames[currentMonth];
         if (events.length > 0) {
-            let eventsList = events.map(event => `• ${event.title}`).join('\n');
-            alert(`Ngày ${day} ${monthName} ${currentYear}\n\nSự kiện:\n${eventsList}`);
+            let eventsList = events.map(event => {
+                let details = `• ${event.title}`;
+                if (event.time) details += ` (${event.time})`;
+                if (event.doctor) details += `\n  Bác sĩ: ${event.doctor}`;
+                if (event.subServices && event.subServices.trim()) {
+                    details += `\n  Dịch vụ: ${event.subServices}`;
+                }
+                if (event.note) details += `\n  Ghi chú: ${event.note}`;
+                return details;
+            }).join('\n\n');
+            alert(`Ngày ${day} ${monthName} ${currentYear}\n\nLịch khám:\n\n${eventsList}`);
         } else {
-            alert(`Ngày ${day} ${monthName} ${currentYear}\n\nKhông có sự kiện nào.`);
+            alert(`Ngày ${day} ${monthName} ${currentYear}\n\nKhông có lịch khám nào.`);
         }
     }
 
@@ -266,82 +276,140 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    // ===== LẤY DỮ LIỆU BOOKING STEP TỪ BACKEND VÀ VẼ LỊCH =====
-
-    //Hàm load đồng thời nhiều bookingId và merge vào lịch
-    function loadMultipleBookingSteps(bookingIds, callback) {
-        let fetchDone = 0;
-        bookingIds.forEach(bookId => {
-            fetch(`/api/booking-steps/by-booking/${bookId}`)
-                .then(res => res.json())
-                .then(steps => {
-                    steps.forEach(step => {
-                        let date = new Date(step.performedAt);
-                        let year = date.getFullYear();
-                        let month = date.getMonth() + 1;
-                        let day = date.getDate();
-
-                        let eventsKey = `${year}-${month}`;
-                        if (!eventsData[eventsKey]) eventsData[eventsKey] = {};
-                        if (!eventsData[eventsKey][day]) eventsData[eventsKey][day] = [];
-
-                        let type = 'appointment';
-                        if (step.subName && step.subName.toLowerCase().includes('tiêm')) type = 'injection';
-                        else if (step.subName && step.subName.toLowerCase().includes('xét nghiệm')) type = 'test';
-                        else if (step.subName && step.subName.toLowerCase().includes('siêu âm')) type = 'test';
-
-                        eventsData[eventsKey][day].push({
-                            type: type,
-                            title: step.subName || "Bước điều trị"
-                        });
-                    });
-                    fetchDone++;
-                    if (fetchDone === bookingIds.length) {
-                        if (typeof callback === "function") callback();
-                    }
-                });
-        });
-    }
+    // ===== PHẦN NÀY ĐÃ ĐƯỢC THAY THẾ BẰNG API MỚI =====
+    // Code cũ đã được remove để load booking tái khám trực tiếp từ API
 
 // THÊM HÀM NÀY để load lịch cho đúng khách hàng
     function loadScheduleForCustomer(cusId) {
         // Chỉ xoá sạch eventsData ở đây!
         Object.keys(eventsData).forEach(key => delete eventsData[key]);
-        fetch(`/api/booking/by-customer/${cusId}`)
+        
+        // Load tất cả booking (lần đầu và tái khám) với thông tin WorkSlot
+        fetch(`/api/booking/history/${cusId}`)
             .then(res => res.json())
-            .then(bookings => {
-                const bookingIds = [];
-                bookings.forEach(b => {
-                    if (b.bookStatus === 'pending' || b.bookStatus === 'completed' ) {
-                        // Lấy ngày đăng ký
-                        const date = new Date(b.createdAt);
-                        const year = date.getFullYear();
-                        const month = date.getMonth() + 1;
-                        const day = date.getDate();
-                        const eventsKey = `${year}-${month}`;
-                        if (!eventsData[eventsKey]) eventsData[eventsKey] = {};
-                        if (!eventsData[eventsKey][day]) eventsData[eventsKey][day] = [];
-                        let title = b.bookStatus === 'pending' ? "Đang chờ xác thực" : "Đã đến khám";
-                        let type = b.bookStatus; // "pending" hoặc "completed"
-                        eventsData[eventsKey][day].push({
-                            type: type,
-                            title: title
-                        });
+            .then(allBookings => {
+                allBookings.forEach(booking => {
+                    // Parse workDate from WorkSlot
+                    const workDate = new Date(booking.workDate);
+                    const year = workDate.getFullYear();
+                    const month = workDate.getMonth() + 1; // getMonth() returns 0-11
+                    const day = workDate.getDate();
+                    
+                    const eventsKey = `${year}-${month}`;
+                    if (!eventsData[eventsKey]) eventsData[eventsKey] = {};
+                    if (!eventsData[eventsKey][day]) eventsData[eventsKey][day] = [];
+                    
+                    // Xác định type và title của event dựa trên bookType và bookStatus
+                    let type = 'appointment';
+                    let title = booking.serName;
+                    
+                    if (booking.bookStatus === 'completed') {
+                        type = 'completed';
+                        if (booking.bookType === 'follow-up') {
+                            title = `Đã tái khám: ${booking.serName}`;
+                        } else {
+                            title = `Đã khám: ${booking.serName}`;
+                        }
+                    } else if (booking.bookStatus === 'confirmed' || booking.bookStatus === 'pending') {
+                        type = 'appointment';
+                        if (booking.bookType === 'follow-up') {
+                            title = `Tái khám: ${booking.serName}`;
+                        } else {
+                            title = `Khám: ${booking.serName}`;
+                        }
                     }
-                    if (b.bookStatus === 'confirmed') {
-                        bookingIds.push(b.bookId);
-                    }
-                });
-                if (bookingIds.length > 0) {
-                    // Load step confirmed, rồi render cả lịch khi xong
-                    loadMultipleBookingSteps(bookingIds, function() {
-                        renderCalendar();
+                    
+                    eventsData[eventsKey][day].push({
+                        type: type,
+                        title: title,
+                        time: booking.startTime ? booking.startTime.substring(0, 5) : '',
+                        doctor: booking.docFullName,
+                        note: booking.note,
+                        bookId: booking.bookId,
+                        bookStatus: booking.bookStatus,
+                        bookType: booking.bookType,
+                        subServices: booking.subServices || '' // Thêm SubService info
                     });
-                } else {
-                    // Không có booking confirmed, chỉ render lịch với pending/rejected
-                    renderCalendar();
-                }
+                });
+                
+                // Render calendar sau khi load xong data
+                renderCalendar();
+                updateUpcomingEvents(allBookings);
+                updateTreatmentInfo(allBookings);
+            })
+            .catch(error => {
+                console.error('Error loading booking history:', error);
+                // Fallback: render calendar với data rỗng
+                renderCalendar();
             });
+    }
+
+    // Hàm cập nhật phần "Sự kiện sắp tới" 
+    function updateUpcomingEvents(allBookings) {
+        const upcomingEventsContainer = document.querySelector('.upcoming-events');
+        if (!upcomingEventsContainer) return;
+        
+        // Filter và sort upcoming events (chỉ lấy các booking confirmed/pending từ hôm nay trở đi)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const upcomingBookings = allBookings
+            .filter(booking => {
+                const workDate = new Date(booking.workDate);
+                return workDate >= today && (booking.bookStatus === 'confirmed' || booking.bookStatus === 'pending');
+            })
+            .sort((a, b) => new Date(a.workDate) - new Date(b.workDate))
+            .slice(0, 3); // Chỉ lấy 3 sự kiện gần nhất
+        
+        if (upcomingBookings.length === 0) {
+            upcomingEventsContainer.innerHTML = '<p style="color: #888; text-align: center; padding: 1rem;">Không có lịch khám nào sắp tới.</p>';
+            return;
+        }
+        
+        // Render upcoming events
+        upcomingEventsContainer.innerHTML = upcomingBookings.map(booking => {
+            const workDate = new Date(booking.workDate);
+            const dayOfWeek = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][workDate.getDay()];
+            const day = workDate.getDate();
+            const startTime = booking.startTime ? booking.startTime.substring(0, 5) : '';
+            
+            return `
+                <div class="upcoming-event">
+                    <div class="event-date">
+                        <div class="day">${day}</div>
+                        <div class="month">${dayOfWeek}</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title">${booking.serName}</div>
+                        <div class="event-time">${startTime} - ${booking.docFullName}</div>
+                        ${booking.subServices && booking.subServices.trim() ? 
+                          `<div class="event-note">Dịch vụ phụ: ${booking.subServices}</div>` : ''}
+                        ${booking.note ? `<div class="event-note">${booking.note}</div>` : ''}
+                    </div>
+                </div>
+            `;
+                 }).join('');
+     }
+
+    // Hàm cập nhật thông tin lịch điều trị
+    function updateTreatmentInfo(allBookings) {
+        const totalCount = allBookings.length;
+        const completedCount = allBookings.filter(booking => booking.bookStatus === 'completed').length;
+        const upcomingCount = allBookings.filter(booking => {
+            const workDate = new Date(booking.workDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return workDate >= today && (booking.bookStatus === 'confirmed' || booking.bookStatus === 'pending');
+        }).length;
+
+        // Cập nhật các element  
+        const totalElement = document.getElementById('totalBookingCount');
+        const completedElement = document.getElementById('completedBookingCount');
+        const upcomingElement = document.getElementById('upcomingBookingCount');
+
+        if (totalElement) totalElement.textContent = totalCount;
+        if (completedElement) completedElement.textContent = completedCount;
+        if (upcomingElement) upcomingElement.textContent = upcomingCount;
     }
 
 // GIẢ SỬ bạn đã lấy được cusId (ví dụ lấy từ localStorage hoặc server truyền vào)
@@ -352,10 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Xử lý khi chưa đăng nhập hoặc chưa có cusId
         alert("Bạn cần đăng nhập để xem lịch điều trị!");
     }
-    // KHÔNG gọi renderCalendar() ở cuối file nữa, chỉ gọi sau khi đã load xong dữ liệu từ API
-    //loadBookingStepsFromAPI(3); // Thay 123 bằng bookingId thực tế
-    //loadBookingStepsFromAPI(4);
-    // loadMultipleBookingSteps([3, 4]);
+
     // Hỗ trợ chuyển tháng bằng phím mũi tên
     document.addEventListener('keydown', function(e) {
         if (e.target.tagName.toLowerCase() !== 'input') {
