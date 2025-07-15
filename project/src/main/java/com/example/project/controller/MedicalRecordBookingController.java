@@ -19,14 +19,14 @@ public class MedicalRecordBookingController {
     @Autowired
     private MedicalRecordBookingRepository medicalRecordBookingRepository;
 
-    // POST /api/medical-records-booking/create/{bookId},{recordId}
-    @PostMapping("/create/{bookId},{recordId}")
+    // POST /api/medical-records-booking/create/{recordId},{bookId}
+    @PostMapping("/create/{recordId},{bookId}")
     public ResponseEntity<?> createMedicalRecordBooking(
-            @PathVariable Integer bookId,
-            @PathVariable Integer recordId) {
+            @PathVariable Integer recordId,
+            @PathVariable Integer bookId) {
         try {
             // Tạo ID
-            MedicalRecordBooking.MedicalRecordBookingId id = new MedicalRecordBooking.MedicalRecordBookingId(bookId, recordId);
+            MedicalRecordBooking.MedicalRecordBookingId id = new MedicalRecordBooking.MedicalRecordBookingId(recordId, bookId);
             // Tạo entity
             MedicalRecordBooking entity = new MedicalRecordBooking();
             entity.setId(id);
