@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.DoctorWeekScheduleDTO;
+import com.example.project.dto.WorkSlotBookingDTO;
 import com.example.project.entity.WorkSlot;
 import com.example.project.repository.WorkSlotRepository;
 import com.example.project.service.WorkSlotService;
@@ -105,6 +106,27 @@ public class WorkSlotController {
         } catch (Exception e) {
             response.put("error", "Lỗi hệ thống: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    /**
+     * ✅ API MỚI: Lấy WorkSlot với thông tin booking count cho ngày cụ thể
+     * GET /api/workslots?docId={docId}&date={date}
+     * @param docId ID của bác sĩ
+     * @param date Ngày cần lấy WorkSlot (yyyy-MM-dd)
+     * @return List<WorkSlotBookingDTO> với thông tin startTime, endTime, maxPatient, currentBooking
+     */
+    @GetMapping
+    public ResponseEntity<List<WorkSlotBookingDTO>> getWorkSlotsWithBookingCount(
+            @RequestParam Integer docId,
+            @RequestParam String date) {
+        try {
+            LocalDate workDate = LocalDate.parse(date);
+            List<WorkSlotBookingDTO> result = workSlotService.getWorkSlotsWithBookingCount(docId, workDate);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
         }
     }
 }

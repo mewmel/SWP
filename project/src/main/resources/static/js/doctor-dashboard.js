@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const actions = clone.querySelector('.appointment-actions');
                 if (b.bookStatus === 'confirmed') {
                     actions.innerHTML = `<button class="btn-waiting" onclick="window.markAsExamined('${b.cusId}','${b.serId}','${b.docId}','${b.bookId}')">
-                    <i class="fas fa-check"></i> Xem hồ sơ
+                    <i class="fas fa-check"></i> Đã đến khám
                 </button>
                 <button class="btn-reject" onclick="window.markAsCancelled('${b.cusId}','${b.serId}','${b.docId}','${b.bookId}')">
                     <i class="fas fa-times"></i> Không đến khám
@@ -1183,8 +1183,25 @@ window.checkout = async function (bookId, cusId, bookType) {
 
         stepsList.insertBefore(newStepItem, stepsList.firstChild);
 
+        // ✅ THÊM: Chỉ remove option nếu KHÔNG phải đang edit
+        if (!window.currentEditingStepId) {
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            if (selectedOption) {
+                selectedOption.remove();
+            }
+
+            // ✅ THÊM: Kiểm tra nếu dropdown trống thì hiển thị thông báo
+            if (serviceSelect.options.length <= 1) { // Chỉ còn option default
+                serviceSelect.innerHTML = '<option value="">Tất cả bước đã hoàn thành</option>';
+                serviceSelect.disabled = true;
+            }
+        }
+
         updateEmptyStepsNotice();
         cancelStepForm();
+        
+        // ✅ THÊM: Reset trạng thái editing sau khi save thành công
+        window.currentEditingStepId = null;
 
         alert('Đã lưu bước thực hiện thành công!');
     };
@@ -1202,13 +1219,33 @@ window.checkout = async function (bookId, cusId, bookType) {
         }
     }
 
+    // ✅ THÊM: Hàm helper để refresh dropdown sau khi hoàn thành/hủy bỏ
+    function refreshServiceDropdown() {
+        const serviceSelect = document.getElementById('serviceSelect');
+        
+        // Nếu có option và không disable thì return
+        if (serviceSelect.options.length > 1 && !serviceSelect.disabled) {
+            return;
+        }
+        
+        // Nếu dropdown bị disable hoặc trống, có thể reload lại
+        // Tùy thuộc vào requirement cụ thể
+        console.log('Dropdown may need refresh');
+    }
+
     window.cancelStepForm = function () {
         document.getElementById('stepForm').style.display = 'none';
-        document.getElementById('serviceSelect').value = '';
+        const serviceSelect = document.getElementById('serviceSelect');
+        serviceSelect.value = '';
         document.getElementById('stepResult').value = '';
         document.getElementById('stepNote').value = '';
         document.getElementById('stepStatus').value = 'pending';
         window.currentEditingStepId = null;
+
+        // ✅ THÊM: Đảm bảo dropdown không bị disable khi cancel
+        if (serviceSelect.disabled && serviceSelect.options.length > 1) {
+            serviceSelect.disabled = false;
+        }
 
         updateEmptyStepsNotice();
     };
@@ -1224,6 +1261,26 @@ window.checkout = async function (bookId, cusId, bookType) {
             const stepResult = stepItem.querySelector('.step-result').textContent;
             const stepNote = stepItem.querySelector('.step-note').textContent;
             // Không cần lấy formattedDateTime vì khi edit thường để user nhập lại performedAt
+
+            // ✅ THÊM: Thêm lại option vào dropdown khi edit
+            const existingOption = serviceSelect.querySelector(`option[value="${subId}"]`);
+            if (!existingOption) {
+                // Tạo option mới
+                const newOption = document.createElement('option');
+                newOption.value = subId;
+                newOption.textContent = subName;
+                serviceSelect.appendChild(newOption);
+                
+                // Enable dropdown nếu đang bị disable
+                if (serviceSelect.disabled) {
+                    serviceSelect.disabled = false;
+                    // Cập nhật lại default option
+                    const defaultOption = serviceSelect.querySelector('option[value=""]');
+                    if (defaultOption && defaultOption.textContent === 'Tất cả bước đã hoàn thành') {
+                        defaultOption.textContent = '-- Chọn dịch vụ/bước --';
+                    }
+                }
+            }
 
             // Chọn đúng dịch vụ
             serviceSelect.value = subId;
