@@ -230,5 +230,68 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
         }
     }
 
+    /**
+     * ✅ API MỚI: Xử lý yêu cầu dời lịch từ customer
+     * PUT /api/booking/{bookId}/reschedule
+     * @param bookId ID của booking cần dời lịch
+     * @param rescheduleRequest chứa newSlotId, reason, note
+     * @return Kết quả xử lý yêu cầu dời lịch
+     */
+    @PutMapping("/booking/{bookId}/reschedule")
+    public ResponseEntity<?> rescheduleBooking(
+            @PathVariable Integer bookId,
+            @RequestBody Map<String, Object> rescheduleRequest) {
+        try {
+            // Validate input
+            if (!rescheduleRequest.containsKey("newSlotId")) {
+                return ResponseEntity.badRequest().body("Thiếu thông tin newSlotId");
+            }
+
+            Integer newSlotId = (Integer) rescheduleRequest.get("newSlotId");
+            String reason = (String) rescheduleRequest.getOrDefault("reason", "");
+            
+            // Lý do dời lịch sẽ được lưu trực tiếp vào cột note
+            String finalNote = reason;
+
+            // Tìm booking hiện tại
+            Optional<Booking> bookingOpt = bookingRepository.findById(bookId);
+            if (!bookingOpt.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Booking booking = bookingOpt.get();
+            
+            // Lưu thông tin cũ để log
+            Integer oldSlotId = booking.getSlotId();
+            String oldStatus = booking.getBookStatus();
+
+            // Cập nhật booking với thông tin mới
+            booking.setSlotId(newSlotId);
+            booking.setNote(finalNote);
+            booking.setBookStatus("pending"); // Đợi bác sĩ xác nhận
+            
+            bookingRepository.save(booking);
+
+            // Tạo response
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Yêu cầu dời lịch đã được gửi thành công. Vui lòng đợi bác sĩ xác nhận.");
+            response.put("bookId", bookId);
+            response.put("oldSlotId", oldSlotId);
+            response.put("newSlotId", newSlotId);
+            response.put("oldStatus", oldStatus);
+            response.put("newStatus", "pending");
+            
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Lỗi hệ thống khi xử lý yêu cầu dời lịch: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
 
 }

@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     ` : ''}
                 </div>
-                ${event.bookType === 'follow-up' && (event.bookStatus === 'confirmed' || event.bookStatus === 'pending') ? `
+                ${event.bookType === 'follow-up' && event.bookStatus === 'confirmed' ? `
                     <div class="event-actions">
                         <button class="btn-reschedule" onclick="openRescheduleModal(${event.bookId}, '${event.title}', '${event.doctor}')">
                             <i class="fas fa-calendar-alt"></i>
@@ -643,8 +643,7 @@ document.addEventListener('DOMContentLoaded', function() {
             bookId: currentBookingData.bookId,
             newDate: currentBookingData.selectedDate,
             newTimeSlot: document.getElementById('newTimeSlot').value,
-            reason: document.getElementById('rescheduleReason').value,
-            note: document.getElementById('rescheduleNote').value
+            reason: document.getElementById('rescheduleReason').value
         };
         
         // Validation
@@ -682,22 +681,75 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
         submitBtn.disabled = true;
         
-        // TODO: Call API để dời lịch
-        // Hiện tại dùng simulation
-        setTimeout(() => {
-            // Simulate API success
-            showNotification('Đã gửi yêu cầu dời lịch thành công! Chúng tôi sẽ liên hệ xác nhận trong thời gian sớm nhất.', 'success');
-            
-            // Đóng modal
-            closeRescheduleModal();
-            
-            // Reset button
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            
-            // Reload calendar để cập nhật
-            renderCalendar();
-        }, 2000);
+        // ✅ THAY THẾ: Gọi API thực tế để dời lịch
+        handleRescheduleAPI();
+        
+        async function handleRescheduleAPI() {
+            try {
+                // ✅ BƯỚC 1: Lấy slotId từ ngày giờ được chọn
+                const [startTime, endTime] = formData.newTimeSlot.split('-');
+                
+                const slotResponse = await fetch('/api/workslots/get-slot-id-by-date-time', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        docId: currentBookingData.docId,
+                        workDate: formData.newDate,
+                        startTime: startTime,
+                        endTime: endTime
+                    })
+                });
+                
+                if (!slotResponse.ok) {
+                    const errorText = await slotResponse.text();
+                    throw new Error(`Không thể tìm khung giờ phù hợp: ${errorText}`);
+                }
+                
+                const slotData = await slotResponse.json();
+                
+                if (!slotData.slotId) {
+                    throw new Error('Không tìm thấy khung giờ làm việc phù hợp!');
+                }
+                
+                console.log('📅 Đã lấy slotId:', slotData.slotId, 'cho ngày', formData.newDate, 'khung giờ', formData.newTimeSlot);
+                
+                // ✅ BƯỚC 2: Gửi yêu cầu dời lịch
+                const rescheduleResponse = await fetch(`/api/booking/${formData.bookId}/reschedule`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        newSlotId: slotData.slotId,
+                        reason: formData.reason
+                    })
+                });
+                
+                const rescheduleResult = await rescheduleResponse.json();
+                
+                if (rescheduleResponse.ok && rescheduleResult.success) {
+                    // Thành công
+                    showNotification(rescheduleResult.message, 'success');
+                    
+                    // Đóng modal
+                    closeRescheduleModal();
+                    
+                    // Reload calendar để cập nhật
+                    renderCalendar();
+                    
+                    console.log('✅ Reschedule thành công:', rescheduleResult);
+                } else {
+                    // Lỗi từ API
+                    throw new Error(rescheduleResult.message || 'Không thể dời lịch');
+                }
+                
+            } catch (error) {
+                console.error('❌ Lỗi khi dời lịch:', error);
+                showNotification(`Lỗi: ${error.message}`, 'error');
+            } finally {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
     }
 
     // Hàm cập nhật danh sách sự kiện sắp tới (summary card bên phải)
@@ -863,7 +915,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         } else {
                             title = `Đã khám: ${booking.serName}`;
                         }
-                    } else if (booking.bookStatus === 'confirmed' || booking.bookStatus === 'pending') {
+                    } else if (booking.bookStatus === 'confirmed') {
                         type = 'appointment';
                         if (booking.bookType === 'follow-up') {
                             title = `Tái khám: ${booking.serName}`;
@@ -909,7 +961,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const upcomingBookings = allBookings
             .filter(booking => {
                 const workDate = new Date(booking.workDate);
-                return workDate >= today && (booking.bookStatus === 'confirmed' || booking.bookStatus === 'pending');
+                return workDate >= today && booking.bookStatus === 'confirmed';
             })
             .sort((a, b) => new Date(a.workDate) - new Date(b.workDate))
             .slice(0, 3); // Chỉ lấy 3 sự kiện gần nhất
@@ -952,7 +1004,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const workDate = new Date(booking.workDate);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            return workDate >= today && (booking.bookStatus === 'confirmed' || booking.bookStatus === 'pending');
+            return workDate >= today && booking.bookStatus === 'confirmed';
         }).length;
 
         // Cập nhật các element  
