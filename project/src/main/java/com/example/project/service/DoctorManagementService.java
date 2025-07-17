@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import com.example.project.dto.DocFullProfile;
 import com.example.project.entity.Doctor;
 import com.example.project.entity.DoctorService;
-import com.example.project.repository.DoctorAvatarRepository;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.repository.DoctorServiceRepository;
 import com.example.project.repository.ServiceRepository;
@@ -28,8 +27,7 @@ public class DoctorManagementService {
 
     @Autowired
     private ServiceRepository serviceRepository;
-    @Autowired
-    private DoctorAvatarRepository doctorAvatarRepository;
+
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -79,7 +77,7 @@ public class DoctorManagementService {
      */
  public DocFullProfile getFullProfile(Integer docId) {
     // 1. Lấy Doctor
-    Optional<Doctor> doctorOpt = doctorRepository.findById(docId);
+    Optional<Doctor> doctorOpt = doctorRepository.findByDocId(docId);
     if (!doctorOpt.isPresent()) {
         // Có thể throw NotFoundException ở đây nếu muốn
         return null;
@@ -126,6 +124,7 @@ public class DoctorManagementService {
 
     return dto;
 }
+
 
 
     }

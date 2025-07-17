@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,10 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.DocFullProfile;
 import com.example.project.entity.Doctor;
@@ -23,7 +24,6 @@ import com.example.project.entity.WorkSlot;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.repository.WorkSlotRepository;
 import com.example.project.service.DoctorManagementService;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -64,7 +64,7 @@ public class DoctorController {
      *   - Danh sách dịch vụ (currentServices)
      *   - Ảnh (nếu có)
      */
-    @GetMapping("/doctor/full-profile/{docId}")
+    @GetMapping("/doctors/full-profile/{docId}")
     public ResponseEntity<?> getFullProfile(@PathVariable Integer docId) {
         try {
             DocFullProfile profile = doctorManagementService.getFullProfile(docId);
