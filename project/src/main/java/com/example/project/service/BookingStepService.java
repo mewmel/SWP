@@ -72,14 +72,14 @@ public class BookingStepService {
         LocalDateTime startDate = booking.getCreatedAt();
 
         for (SubService sub : subServices) {
-            // Nếu subService không cùng serId với booking thì dừng luôn
-            if (!sub.getSerId().equals(booking.getSerId())) {
-                break;
+            // Chỉ tạo step khi estimatedDayOffset = 1
+            Integer offset = sub.getEstimatedDayOffset() != null ? sub.getEstimatedDayOffset() : 1;
+            if (!Integer.valueOf(1).equals(offset)) {
+                continue;
             }
 
-            Integer offset = sub.getEstimatedDayOffset() != null ? sub.getEstimatedDayOffset() : 1;
-            // Ngày thực hiện: cộng (offset-1) ngày vào startDate
-            LocalDateTime performedAt = startDate.plusDays(offset - 1);
+            // Ngày thực hiện: cộng (offset-1) ngày vào startDate (ở đây offset luôn là 1 => performedAt = startDate)
+            LocalDateTime performedAt = startDate;
 
             BookingStep step = new BookingStep();
             step.setBookId(bookId);
@@ -91,7 +91,6 @@ public class BookingStepService {
 
             bookingStepRepo.save(step);
         }
-
     }
 
 public VisitSubService getSubServicesForBooking(Integer bookId) {
