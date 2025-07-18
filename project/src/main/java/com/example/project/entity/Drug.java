@@ -21,26 +21,17 @@ public class Drug {
     @Column(name = "drugId")
     private Integer drugId;
 
+    @Column(name = "bookId", nullable = false)
+    private Integer bookId;
+
     @Column(name = "docId", nullable = false)
     private Integer docId;
 
     @Column(name = "cusId", nullable = false)
     private Integer cusId;
 
-    @Column(name = "drugName", length = 100, nullable = false)
-    private String drugName;
-
-    @Column(name = "dosage", length = 50, nullable = false)
-    private String dosage;
-
-    @Column(name = "frequency", length = 50, nullable = false)
-    private String frequency;
-
-    @Column(name = "duration", length = 50, nullable = false)
-    private String duration;
-
-    @Column(name = "note", length = 200)
-    private String note;
+    @Column(name = "drugNote", length = 200)
+    private String drugNote;
 
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
