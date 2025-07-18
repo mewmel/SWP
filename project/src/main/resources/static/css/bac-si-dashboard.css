@@ -817,7 +817,25 @@ body {
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
 }
-
+.btn-reject {
+    background: #f50b0b;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.btn-reject:hover {
+    background: #f50b0b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(245, 11, 11, 0.3);
+}
 .btn-record {
     background: #059669;
     color: white;
