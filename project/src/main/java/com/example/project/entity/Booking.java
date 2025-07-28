@@ -30,9 +30,6 @@ public class Booking {
     @Column(name = "slotId", nullable = false)
     private Integer slotId;
 
-    @Column(name = "serId", nullable = false)
-    private Integer serId;
-
     @Column(nullable = false)
     private String bookType;
 
@@ -44,4 +41,11 @@ public class Booking {
 
     @Column(name = "note", length = 1000)
     private String note;
+
+    @Column(name = "serId", nullable = false)
+    private Integer serId;
+
+    @Column(name = "drugId")
+    private Integer drugId;
+
 }
