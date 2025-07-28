@@ -37,6 +37,14 @@ public class OtpService {
         if (isValid) otpCache.remove(customerId); // clear sau khi dùng
         return isValid;
     }
+
+    /**
+     * Method để lưu OTP cho testing (không gửi email)
+     */
+    public void saveOtpForTesting(Integer customerId, String otp) {
+        OtpData otpData = new OtpData(otp, LocalDateTime.now().plusMinutes(10));
+        otpCache.put(customerId, otpData);
+    }
     private static class OtpData {
         private final String otp;
         private final LocalDateTime expiredAt;
@@ -63,6 +71,13 @@ public void sendOtpEmail(String email, String otp) {
     // Dùng logger thay vì System.err
     Logger logger = LoggerFactory.getLogger(OtpService.class);
     try {
+        // Log OTP để debug
+        logger.info("=== OTP DEBUG ===");
+        logger.info("Email: {}", email);
+        logger.info("OTP: {}", otp);
+        logger.info("=== END OTP DEBUG ===");
+        
+        // Gửi email thật
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(email);
         msg.setSubject("Mã xác thực OTP đổi mật khẩu");
@@ -75,6 +90,8 @@ public void sendOtpEmail(String email, String otp) {
 
         msg.setText(body.toString());
         mailSender.send(msg);
+        
+        logger.info("Email OTP đã được gửi thành công đến: {}", email);
     } catch (Exception e) {
         logger.error("Lỗi gửi email OTP: {}", e.getMessage(), e);
         throw new RuntimeException("Không thể gửi email OTP, vui lòng thử lại sau.");

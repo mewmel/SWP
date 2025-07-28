@@ -1243,11 +1243,31 @@ document.addEventListener('DOMContentLoaded', function () {
     if (forgotPasswordLink && forgotPasswordModal) {
         forgotPasswordLink.addEventListener('click', function (e) {
             e.preventDefault();
-            authModal.classList.remove('active');
-            forgotPasswordModal.style.display = 'block';
-            setTimeout(() => {
-                forgotPasswordModal.classList.add('active');
-            }, 50);
+            console.log('Forgot password link clicked');
+            
+            // Hide auth modal
+            if (authModal) {
+                authModal.classList.remove('active');
+            }
+            
+            // Show forgot password modal
+            if (forgotPasswordModal) {
+                forgotPasswordModal.style.display = 'flex';
+                setTimeout(() => {
+                    forgotPasswordModal.classList.add('active');
+                    
+                    // Add active class to the form
+                    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+                    if (forgotPasswordForm) {
+                        forgotPasswordForm.classList.add('active');
+                        forgotPasswordForm.style.display = 'block'; // Force display
+                        console.log('Forgot password form activated');
+                    }
+                }, 50);
+                console.log('Forgot password modal displayed');
+            } else {
+                console.error('Forgot password modal not found');
+            }
         });
     }
 
@@ -1267,42 +1287,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function closeForgotPasswordModal() {
-        forgotPasswordModal.classList.remove('active');
-        setTimeout(() => {
-            forgotPasswordModal.style.display = 'none';
-            resetForgotPasswordModal();
-        }, 300);
-    }
-
-    function resetForgotPasswordModal() {
-        // Clear form
-        const form = document.getElementById('forgotPasswordForm');
-        if (form) {
-            form.reset();
-        }
-    }
-
-    // Navigation button
-    const backToLogin = document.getElementById('backToLogin');
-
-    if (backToLogin) {
-        backToLogin.addEventListener('click', function () {
-            closeForgotPasswordModal();
-            authModal.classList.add('active');
-        });
-    }
-
-    // Main forgot password form
-    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-    if (forgotPasswordForm) {
-        forgotPasswordForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+    // Setup send OTP button
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    console.log('Send OTP button found:', sendOtpBtn);
+    
+    if (sendOtpBtn) {
+        console.log('Adding click listener to send OTP button');
+        sendOtpBtn.addEventListener('click', async function() {
+            console.log('Send OTP button clicked!');
             const email = document.getElementById('forgotEmail').value.trim();
             const newPassword = document.getElementById('forgotNewPassword').value;
             const confirmPassword = document.getElementById('forgotConfirmPassword').value;
-            const otp = document.getElementById('forgotOtp').value.trim();
-            const submitBtn = this.querySelector('button[type="submit"]');
 
             // Validation
             if (!email) {
@@ -1335,35 +1330,213 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            if (!otp) {
-                showNotification('Vui lòng nhập mã OTP!', 'error');
-                return;
+            sendOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+            sendOtpBtn.disabled = true;
+
+                                    try {
+                            console.log('Making API call to send OTP...');
+                            // Sử dụng API test thay vì API thật
+                            const response = await fetch('/api/forgot-password/test-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        newPassword: newPassword
+                    })
+                });
+                
+                const result = await response.json();
+                
+                                            if (response.ok && result.success) {
+                                console.log('OTP sent successfully:', result);
+                                showNotification(result.message + ' OTP: ' + result.otp, 'success');
+                                document.getElementById('forgotOtp').required = true;
+                                document.getElementById('forgotOtp').focus();
+                                document.querySelector('.otp-note small').textContent = 'Mã OTP đã được tạo: ' + result.otp;
+                                sendOtpBtn.innerHTML = '<i class="fas fa-check"></i> Đã gửi';
+                                sendOtpBtn.style.background = '#28a745';
+                } else {
+                    console.log('OTP send failed:', result);
+                    showNotification(result.message || 'Không thể gửi OTP, vui lòng thử lại!', 'error');
+                    sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi mã OTP';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Lỗi kết nối, vui lòng thử lại!', 'error');
+                sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi mã OTP';
+            } finally {
+                sendOtpBtn.disabled = false;
             }
-
-            if (!/^\d{6}$/.test(otp)) {
-                showNotification('Mã OTP phải là 6 chữ số!', 'error');
-                return;
-            }
-
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
-            submitBtn.disabled = true;
-
-            // Simulate API call
-            setTimeout(() => {
-                // For demo, accept any valid inputs
-                showNotification('Đặt lại mật khẩu thành công! Bạn có thể đăng nhập với mật khẩu mới.', 'success');
-
-                // Close forgot password modal and open login
-                closeForgotPasswordModal();
-                setTimeout(() => {
-                    authModal.classList.add('active');
-                }, 300);
-
-                submitBtn.innerHTML = '<span>Đặt lại mật khẩu</span><i class="fas fa-save"></i>';
-                submitBtn.disabled = false;
-            }, 2000);
         });
     }
+
+    function closeForgotPasswordModal() {
+        console.log('Closing forgot password modal');
+        if (forgotPasswordModal) {
+            forgotPasswordModal.classList.remove('active');
+            
+            // Remove active class from form
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            if (forgotPasswordForm) {
+                forgotPasswordForm.classList.remove('active');
+            }
+            
+            setTimeout(() => {
+                forgotPasswordModal.style.display = 'none';
+                resetForgotPasswordModal();
+            }, 300);
+        }
+    }
+
+    function resetForgotPasswordModal() {
+        // Clear form
+        const form = document.getElementById('forgotPasswordForm');
+        if (form) {
+            form.reset();
+        }
+        
+        // Reset button state
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<span>Gửi mã OTP</span><i class="fas fa-paper-plane"></i>';
+            submitBtn.setAttribute('data-otp-sent', 'false');
+        }
+        
+        // Reset OTP field
+        const otpInput = document.getElementById('forgotOtp');
+        if (otpInput) {
+            otpInput.required = false;
+        }
+        
+        // Reset OTP note
+        const otpNote = document.querySelector('.otp-note small');
+        if (otpNote) {
+            otpNote.textContent = 'Mã OTP sẽ được gửi đến email của bạn';
+        }
+        
+        // Reset send OTP button
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        if (sendOtpBtn) {
+            sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi mã OTP';
+            sendOtpBtn.style.background = '';
+            sendOtpBtn.disabled = false;
+        }
+    }
+
+    // Navigation button
+    const backToLogin = document.getElementById('backToLogin');
+
+    if (backToLogin) {
+        backToLogin.addEventListener('click', function () {
+            console.log('Back to login clicked');
+            closeForgotPasswordModal();
+            if (authModal) {
+                authModal.style.display = 'flex';
+                setTimeout(() => {
+                    authModal.classList.add('active');
+                }, 50);
+            }
+        });
+    }
+
+                    // Main forgot password form
+                const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+                if (forgotPasswordForm) {
+                    forgotPasswordForm.addEventListener('submit', async function (e) {
+                        e.preventDefault();
+                        const email = document.getElementById('forgotEmail').value.trim();
+                        const newPassword = document.getElementById('forgotNewPassword').value;
+                        const confirmPassword = document.getElementById('forgotConfirmPassword').value;
+                        const otp = document.getElementById('forgotOtp').value.trim();
+
+                        // Validation
+                        if (!email) {
+                            showNotification('Vui lòng nhập email!', 'error');
+                            return;
+                        }
+
+                        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                            showNotification('Email không hợp lệ!', 'error');
+                            return;
+                        }
+
+                        if (!newPassword) {
+                            showNotification('Vui lòng nhập mật khẩu mới!', 'error');
+                            return;
+                        }
+
+                        if (newPassword.length < 6) {
+                            showNotification('Mật khẩu phải có ít nhất 6 ký tự!', 'error');
+                            return;
+                        }
+
+                        if (!confirmPassword) {
+                            showNotification('Vui lòng xác nhận mật khẩu mới!', 'error');
+                            return;
+                        }
+
+                        if (newPassword !== confirmPassword) {
+                            showNotification('Mật khẩu xác nhận không khớp!', 'error');
+                            return;
+                        }
+
+                        if (!otp) {
+                            showNotification('Vui lòng nhập mã OTP!', 'error');
+                            return;
+                        }
+
+                        if (!/^\d{6}$/.test(otp)) {
+                            showNotification('Mã OTP phải là 6 chữ số!', 'error');
+                            return;
+                        }
+
+                        const submitBtn = document.getElementById('submitBtn');
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+                        submitBtn.disabled = true;
+
+                        try {
+                            // Đặt lại mật khẩu với OTP
+                            const response = await fetch('/api/forgot-password/reset-password', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    email: email,
+                                    newPassword: newPassword,
+                                    otp: otp
+                                })
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (response.ok && result.success) {
+                                showNotification(result.message, 'success');
+                                
+                                // Close forgot password modal and open login
+                                closeForgotPasswordModal();
+                                setTimeout(() => {
+                                    authModal.classList.add('active');
+                                }, 300);
+                                
+                                // Reset form
+                                forgotPasswordForm.reset();
+                                resetForgotPasswordModal();
+                            } else {
+                                showNotification(result.message || 'Đặt lại mật khẩu thất bại!', 'error');
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            showNotification('Lỗi kết nối, vui lòng thử lại!', 'error');
+                        } finally {
+                            submitBtn.disabled = false;
+                        }
+                    });
+                }
+
+
 
     // Auto-format OTP input
     const otpInput = document.getElementById('forgotOtp');
@@ -1389,6 +1562,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+
 
     // ============= Xem chi tiết bác sĩ =============
     (function() {

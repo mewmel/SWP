@@ -204,7 +204,6 @@
         <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
     </aside>
 
-    <!-- Modal trong phần Đăng nhập và Đăng ký -->
     <div class="auth-modal" id="authModal">
         <div class="auth-modal-content">
             <div class="auth-modal-left">
@@ -386,6 +385,8 @@
                         </div>
                     </div>
                     
+
+                    
                     <div class="form-group">
                         <label for="forgotNewPassword">Mật khẩu mới</label>
                         <div class="input-group">
@@ -404,20 +405,26 @@
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group" id="otpFieldGroup">
                         <label for="forgotOtp">Mã xác nhận (OTP)</label>
-                        <div class="input-group">
-                            <i class="fas fa-key"></i>
-                            <input type="text" id="forgotOtp" required placeholder="Nhập mã OTP 6 số" maxlength="6" pattern="[0-9]{6}">
+                        <div class="otp-input-group">
+                            <div class="input-group">
+                                <i class="fas fa-key"></i>
+                                <input type="text" id="forgotOtp" placeholder="Nhập mã OTP 6 số" maxlength="6" pattern="[0-9]{6}">
+                            </div>
+                            <button type="button" id="sendOtpBtn" class="btn-send-otp">
+                                <i class="fas fa-paper-plane"></i>
+                                Gửi mã OTP
+                            </button>
                         </div>
                         <div class="otp-note">
-                            <small>Mã OTP sẽ được gửi đến email của bạn sau khi bấm "Đặt lại mật khẩu"</small>
+                            <small>Mã OTP sẽ được gửi đến email của bạn</small>
                         </div>
                     </div>
                     
-                    <button type="submit" class="btn-primary">
+                    <button type="submit" class="btn-primary" id="submitBtn">
                         <span>Đặt lại mật khẩu</span>
-                        <i class="fas fa-save"></i>
+                        <i class="fas fa-paper-plane"></i>
                     </button>
                 </form>
             </div>
@@ -797,6 +804,62 @@
             color: #ddd;
             margin-bottom: 20px;
         }
+        
+        /* Force display for forgot password form */
+        #forgotPasswordModal .auth-form.active {
+            display: block !important;
+        }
+        
+        #forgotPasswordModal #forgotPasswordForm {
+            display: block !important;
+        }
+        
+        /* OTP input group styling */
+        .otp-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        
+        .otp-input-group .input-group {
+            flex: 1;
+        }
+        
+        .btn-send-otp {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-send-otp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-send-otp:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-send-otp i {
+            font-size: 12px;
+        }
+        
+
+        
+
     </style>
     
     <script>
