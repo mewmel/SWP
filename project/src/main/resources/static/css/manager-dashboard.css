@@ -897,25 +897,25 @@
         margin: 10px;
         border-radius: 16px;
     }
-    
+
     .degree-content-wrapper {
         grid-template-columns: 1fr;
     }
-    
+
     .degree-section {
         border-right: none;
         border-bottom: 1px solid #e2e8f0;
     }
-    
+
     .degree-modal-header {
         padding: 20px;
     }
-    
+
     .degree-section,
     .specialty-section {
         padding: 20px;
     }
-    
+
     .header-text h3 {
         font-size: 20px;
     }

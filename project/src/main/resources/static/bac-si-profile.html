@@ -32,8 +32,8 @@
 
             <div class="doctor-profile-info">
                 <div class="doctor-info">
-                    <div class="doctor-name">BS. Nguyễn Ngọc Khánh Linh</div>
-                    <div class="doctor-role">Quản trị viên</div>
+                    <div class="doctor-name" id="doctorName"></div>
+                    <div class="doctor-role" id="doctorRole">Bác sĩ</div>
                 </div>
                 <div class="doctor-avatar">
                     <i class="fas fa-user"></i>
@@ -72,10 +72,9 @@
                     </div>
                 </div>
                 <div class="profile-header-info">
-                    <h1>BS. Nguyễn Ngọc Khánh Linh</h1>
+                    <h1 id="profileDoctorName"></h1>
                     <div class="profile-badges">
-                        <span class="badge primary">Bác sĩ Chuyên khoa</span>
-                        <span class="badge success">Đã xác thực</span>
+                        <span class="badge success">Đang hoạt động</span>
                     </div>
                 </div>  
             </div>
@@ -109,31 +108,19 @@
                                 <div class="form-grid">
                                     <div class="form-group">
                                         <label><i class="fas fa-user"></i> Họ và tên</label>
-                                        <input type="text" id="fullName" value="BS. Nguyễn Ngọc Khánh Linh" readonly class="form-input">
+                                        <input type="text" id="fullName"  readonly class="form-input">
                                     </div>
                                     <div class="form-group">
                                         <label><i class="fas fa-id-card"></i> Mã bác sĩ</label>
-                                        <input type="text" id="doctorId" value="BS001" readonly class="form-input">
+                                        <input type="text" id="doctorId" readonly class="form-input">
                                     </div>
                                     <div class="form-group">
                                         <label><i class="fas fa-envelope"></i> Email</label>
-                                        <input type="email" id="email" value="doc1@gmail.com" readonly class="form-input">
+                                        <input type="email" id="email" readonly class="form-input">
                                     </div>
                                     <div class="form-group">
                                         <label><i class="fas fa-phone"></i> Số điện thoại</label>
-                                        <input type="tel" id="phone" value="+84 123 456 789" readonly class="form-input">
-                                    </div>
-                                    <div class="form-group">
-                                        <label><i class="fas fa-birthday-cake"></i> Ngày sinh</label>
-                                        <input type="date" id="birthDate" value="1990-01-15" readonly class="form-input">
-                                    </div>
-                                    <div class="form-group">
-                                        <label><i class="fas fa-venus-mars"></i> Giới tính</label>
-                                        <select id="gender" disabled class="form-input">
-                                            <option value="female" selected>Nữ</option>
-                                            <option value="male">Nam</option>
-                                            <option value="other">Khác</option>
-                                        </select>
+                                        <input type="tel" id="phone" readonly class="form-input">
                                     </div>
                                 </div>
                             </form>
@@ -152,18 +139,14 @@
                                         <label><i class="fas fa-certificate"></i> Bằng cấp</label>
                                         <input type="text" id="degree" value="Tiến sĩ Sản Phụ khoa" readonly class="form-input">
                                     </div>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label><i class="fas fa-university"></i> Trường tốt nghiệp</label>
                                         <input type="text" id="university" value="Đại học Y Dược TP.HCM" readonly class="form-input">
-                                    </div>
-                                    <div class="form-group">
-                                        <label><i class="fas fa-calendar-alt"></i> Năm tốt nghiệp</label>
-                                        <input type="number" id="graduationYear" value="2012" readonly class="form-input">
-                                    </div>
-                                    <div class="form-group">
+                                    </div> -->
+                                    <!-- <div class="form-group">
                                         <label><i class="fas fa-clock"></i> Kinh nghiệm</label>
                                         <input type="text" id="experience" value="12 năm" readonly class="form-input">
-                                    </div>
+                                    </div> -->
                                     <div class="form-group full-width">
                                         <label><i class="fas fa-stethoscope"></i> Chuyên môn</label>
                                         <textarea id="specialization" readonly class="form-input" rows="3">Khám, tư vấn và thực hiện các kỹ thuật điều trị vô sinh – hiếm muộn, hỗ trợ sinh sản.</textarea>
@@ -177,10 +160,7 @@
                                 <div class="expertise-section">
                                     <label><i class="fas fa-tags"></i> Lĩnh vực chuyên môn</label>
                                     <div class="expertise-tags" id="expertiseTags">
-                                        <span class="expertise-tag">IVF</span>
-                                        <span class="expertise-tag">IUI</span>
-                                        <span class="expertise-tag">Sinh học phôi</span>
-                                        <span class="expertise-tag">Nội tiết sinh sản</span>
+                                        <span class="expertise-tag"></span>
                                     </div>
                                 </div>
                             </form>
@@ -284,7 +264,8 @@
     </div>
 </div>
 
+<script src="js/script.js"></script>
 <script src="js/doctor-common.js"></script>
-<script src="js/bac-si-profile.js"></script>
+<script src="js/doctor-profile.js"></script>
 </body>
 </html>

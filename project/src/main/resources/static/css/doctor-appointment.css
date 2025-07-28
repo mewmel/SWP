@@ -1313,3 +1313,12 @@ body {
         opacity: 0;
     }
 }
+
+
+.shift-button.selected {
+    background-color: #43e97b; /* Màu nổi bật, có thể đổi */
+    color: white;
+    border: 2px solid #28a745;
+    box-shadow: 0 0 10px #43e97b99;
+    font-weight: bold;
+}

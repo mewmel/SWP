@@ -8,294 +8,294 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.html#doctor">Đội ngũ bác sĩ</a></li>
-                    <li class="dropdown">
-                        <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="kham-hiem-muon.html">Khám hiếm muộn/ tiền hôn nhân</a></li>
-                            <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#blog" class="active">Blog</a></li>
-                    <li><a href="bang-gia.html">Bảng giá</a></li>
-                    <li><a href="#footer">Liên hệ</a></li>
-                    <li><a href="dat-lich.html">Đặt lịch</a></li>
-                </ul>
-            </nav>
-            <!--hiển thị nút Đăng nhập và đăng kí-->
-            <div class="auth-buttons">
-                <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
-                <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
-            </div>
-            <div class="user-menu" style="display:none;">
-                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-                <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            <button class="mobile-menu-btn">
+<header>
+    <div class="container">
+        <div class="logo">
+            <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#doctor">Đội ngũ bác sĩ</a></li>
+                <li class="dropdown">
+                    <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="kham-hiem-muon.html">Khám hiếm muộn/ tiền hôn nhân</a></li>
+                        <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
+                    </ul>
+                </li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="bang-gia.html">Bảng giá</a></li>
+                <li><a href="#footer">Liên hệ</a></li>
+                <li><a href="dat-lich.html">Đặt lịch</a></li>
+            </ul>
+        </nav>
+        <!--hiển thị nút Đăng nhập và đăng kí-->
+        <div class="auth-buttons">
+            <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
+            <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
+        </div>
+        <div class="user-menu" style="display:none;">
+            <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+            <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
-    </header>
-    <!-- Modal trong phần Đăng nhập và Đăng ký -->
-    <div class="auth-modal" id="authModal">
-        <div class="auth-modal-content">
-            <div class="auth-modal-left">
-                <div class="auth-modal-overlay">
-                    <h2>Chào mừng bạn đến với FertilityEHR</h2>
-                    <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
-                </div>
-            </div>
-            <div class="auth-modal-right">
-                <span class="close-modal">&times;</span>
-
-                <!-- Bước chọn role -->
-                <div class="role-selection" id="roleSelection">
-                    <h2>Chọn vai trò của bạn</h2>
-                    <p>Vui lòng chọn loại tài khoản để tiếp tục</p>
-                    <div class="role-options">
-                        <div class="role-option" data-role="customer">
-                            <div class="role-icon">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <h3>Khách hàng</h3>
-                            <p>Bệnh nhân đăng ký điều trị hiếm muộn</p>
-                            <ul>
-                                <li>Đặt lịch khám</li>
-                                <li>Theo dõi lịch điều trị</li>
-                                <li>Xem kết quả xét nghiệm</li>
-                                <li>Quản lý hồ sơ cá nhân</li>
-                            </ul>
-                        </div>
-                        <div class="role-option" data-role="doctor">
-                            <div class="role-icon">
-                                <i class="fas fa-user-md"></i>
-                            </div>
-                            <h3>Nhân viên</h3>
-                            <p>Đội ngũ y tế chuyên khoa</p>
-                            <ul>
-                                <li>Quản lý bệnh nhân</li>
-                                <li>Ghi nhận kết quả khám</li>
-                                <li>Lập lịch điều trị</li>
-                                <li>Báo cáo và thống kê</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Auth Forms (hidden initially) -->
-                <div class="auth-section" id="authSection" style="display: none;">
-                    <div class="auth-header">
-                        <button class="back-to-role" id="backToRole">
-                            <i class="fas fa-arrow-left"></i> Quay lại
-                        </button>
-                        <div class="selected-role-info">
-                            <span class="role-badge"></span>
-                        </div>
-                    </div>
-                    <div class="auth-tabs">
-                        <button class="auth-tab active" data-tab="login">Đăng nhập</button>
-                        <button class="auth-tab" data-tab="register">Đăng ký</button>
-                    </div>
-                    <form id="loginForm" class="auth-form active">
-                        <div class="form-group">
-                            <label for="loginEmail">Email</label>
-                            <div class="input-group">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="loginPassword">Mật khẩu</label>
-                            <div class="input-group">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu">
-                                <i class="fas fa-eye toggle-password"></i>
-                            </div>
-                        </div>
-                        <div class="form-group remember-forgot">
-                            <label class="checkbox-container">
-                                <input type="checkbox" id="rememberMe">
-                                <span class="checkmark"></span>
-                                Ghi nhớ đăng nhập
-                            </label>
-                            <a href="#" class="forgot-password">Quên mật khẩu?</a>
-                        </div>
-                        <button type="submit" class="btn-primary">
-                            <span>Đăng nhập</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </form>
-                    <form id="registerForm" class="auth-form">
-                        <div class="form-group">
-                            <label for="registerName">Họ và tên</label>
-                            <div class="input-group">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="registerName" required placeholder="Nhập họ tên của bạn">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="registerEmail">Email</label>
-                            <div class="input-group">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="registerEmail">Số điện thoại</label>
-                            <div class="input-group">
-                                <i class="fas fa-phone"></i>
-                                <input type="tel" id="registerPhone" required placeholder="Nhập số điện thoại của bạn">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="registerEmail">Ngày sinh</label>
-                            <div class="input-group">
-                                <i class="fas fa-calendar-alt"></i>
-                                <input type="date" id="registerDob" required placeholder="Chọn ngày sinh">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="registerPassword">Mật khẩu</label>
-                            <div class="input-group">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="registerPassword" required placeholder="Tạo mật khẩu">
-                                <i class="fas fa-eye toggle-password"></i>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword">Xác nhận mật khẩu</label>
-                            <div class="input-group">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="confirmPassword" required placeholder="Xác nhận mật khẩu">
-                                <i class="fas fa-eye toggle-password"></i>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="checkbox-container">
-                                <input type="checkbox" id="agreeTerms">
-                                <span class="checkmark"></span>
-                                Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
-                            </label>
-                        </div>
-                        <button type="submit" class="btn-primary">
-                            <span>Đăng ký</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </form>
-                </div> <!-- End auth-section -->
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</header>
+<!-- Modal trong phần Đăng nhập và Đăng ký -->
+<div class="auth-modal" id="authModal">
+    <div class="auth-modal-content">
+        <div class="auth-modal-left">
+            <div class="auth-modal-overlay">
+                <h2>Chào mừng bạn đến với FertilityEHR</h2>
+                <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
             </div>
         </div>
-    </div>
-    
+        <div class="auth-modal-right">
+            <span class="close-modal">&times;</span>
 
-    <!-- Forgot Password Modal -->
-    <div class="auth-modal" id="forgotPasswordModal" style="display: none;">
-        <div class="auth-modal-content">
-            <div class="auth-modal-left">
-                <div class="auth-modal-overlay">
-                    <h2>Khôi phục mật khẩu</h2>
-                    <p>Nhập thông tin để đặt lại mật khẩu của bạn</p>
+            <!-- Bước chọn role -->
+            <div class="role-selection" id="roleSelection">
+                <h2>Chọn vai trò của bạn</h2>
+                <p>Vui lòng chọn loại tài khoản để tiếp tục</p>
+                <div class="role-options">
+                    <div class="role-option" data-role="customer">
+                        <div class="role-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>Khách hàng</h3>
+                        <p>Bệnh nhân đăng ký điều trị hiếm muộn</p>
+                        <ul>
+                            <li>Đặt lịch khám</li>
+                            <li>Theo dõi lịch điều trị</li>
+                            <li>Xem kết quả xét nghiệm</li>
+                            <li>Quản lý hồ sơ cá nhân</li>
+                        </ul>
+                    </div>
+                    <div class="role-option" data-role="doctor">
+                        <div class="role-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h3>Nhân viên</h3>
+                        <p>Đội ngũ y tế chuyên khoa</p>
+                        <ul>
+                            <li>Quản lý bệnh nhân</li>
+                            <li>Ghi nhận kết quả khám</li>
+                            <li>Lập lịch điều trị</li>
+                            <li>Báo cáo và thống kê</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="auth-modal-right">
-                <span class="close-modal" id="closeForgotModal">&times;</span>
-                
+
+            <!-- Auth Forms (hidden initially) -->
+            <div class="auth-section" id="authSection" style="display: none;">
                 <div class="auth-header">
-                    <button class="back-to-login" id="backToLogin">
-                        <i class="fas fa-arrow-left"></i> Quay lại đăng nhập
+                    <button class="back-to-role" id="backToRole">
+                        <i class="fas fa-arrow-left"></i> Quay lại
                     </button>
+                    <div class="selected-role-info">
+                        <span class="role-badge"></span>
+                    </div>
                 </div>
-                
-                <h2>Đặt lại mật khẩu</h2>
-                
-                <form id="forgotPasswordForm" class="auth-form active">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                    <button class="auth-tab" data-tab="register">Đăng ký</button>
+                </div>
+                <form id="loginForm" class="auth-form active">
                     <div class="form-group">
-                        <label for="forgotEmail">Email</label>
+                        <label for="loginEmail">Email</label>
                         <div class="input-group">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" id="forgotEmail" required placeholder="Nhập email của bạn">
+                            <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="forgotNewPassword">Mật khẩu mới</label>
+                        <label for="loginPassword">Mật khẩu</label>
                         <div class="input-group">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="forgotNewPassword" required placeholder="Nhập mật khẩu mới">
+                            <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu">
                             <i class="fas fa-eye toggle-password"></i>
                         </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="forgotConfirmPassword">Xác nhận mật khẩu mới</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="forgotConfirmPassword" required placeholder="Nhập lại mật khẩu mới">
-                            <i class="fas fa-eye toggle-password"></i>
-                        </div>
+                    <div class="form-group remember-forgot">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="checkmark"></span>
+                            Ghi nhớ đăng nhập
+                        </label>
+                        <a href="#" class="forgot-password">Quên mật khẩu?</a>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="forgotOtp">Mã xác nhận (OTP)</label>
-                        <div class="input-group">
-                            <i class="fas fa-key"></i>
-                            <input type="text" id="forgotOtp" required placeholder="Nhập mã OTP 6 số" maxlength="6" pattern="[0-9]{6}">
-                        </div>
-                        <div class="otp-note">
-                            <small>Mã OTP sẽ được gửi đến email của bạn sau khi bấm "Đặt lại mật khẩu"</small>
-                        </div>
-                    </div>
-                    
                     <button type="submit" class="btn-primary">
-                        <span>Đặt lại mật khẩu</span>
-                        <i class="fas fa-save"></i>
+                        <span>Đăng nhập</span>
+                        <i class="fas fa-arrow-right"></i>
                     </button>
                 </form>
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="registerName">Họ và tên</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="registerName" required placeholder="Nhập họ tên của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Số điện thoại</label>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="registerPhone" required placeholder="Nhập số điện thoại của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Ngày sinh</label>
+                        <div class="input-group">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="date" id="registerDob" required placeholder="Chọn ngày sinh">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Mật khẩu</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="registerPassword" required placeholder="Tạo mật khẩu">
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Xác nhận mật khẩu</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirmPassword" required placeholder="Xác nhận mật khẩu">
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="agreeTerms">
+                            <span class="checkmark"></span>
+                            Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <span>Đăng ký</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div> <!-- End auth-section -->
+        </div>
+    </div>
+</div>
+
+
+<!-- Forgot Password Modal -->
+<div class="auth-modal" id="forgotPasswordModal" style="display: none;">
+    <div class="auth-modal-content">
+        <div class="auth-modal-left">
+            <div class="auth-modal-overlay">
+                <h2>Khôi phục mật khẩu</h2>
+                <p>Nhập thông tin để đặt lại mật khẩu của bạn</p>
+            </div>
+        </div>
+        <div class="auth-modal-right">
+            <span class="close-modal" id="closeForgotModal">&times;</span>
+
+            <div class="auth-header">
+                <button class="back-to-login" id="backToLogin">
+                    <i class="fas fa-arrow-left"></i> Quay lại đăng nhập
+                </button>
+            </div>
+
+            <h2>Đặt lại mật khẩu</h2>
+
+            <form id="forgotPasswordForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="forgotEmail">Email</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="forgotEmail" required placeholder="Nhập email của bạn">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="forgotNewPassword">Mật khẩu mới</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="forgotNewPassword" required placeholder="Nhập mật khẩu mới">
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="forgotConfirmPassword">Xác nhận mật khẩu mới</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="forgotConfirmPassword" required placeholder="Nhập lại mật khẩu mới">
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="forgotOtp">Mã xác nhận (OTP)</label>
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input type="text" id="forgotOtp" required placeholder="Nhập mã OTP 6 số" maxlength="6" pattern="[0-9]{6}">
+                    </div>
+                    <div class="otp-note">
+                        <small>Mã OTP sẽ được gửi đến email của bạn sau khi bấm "Đặt lại mật khẩu"</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <span>Đặt lại mật khẩu</span>
+                    <i class="fas fa-save"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<main style="margin-top:120px; min-height:60vh;">
+    <div class="container">
+        <div id="blogDetail" class="blog-detail-content">
+            <!-- Nội dung bài blog sẽ được render ở đây -->
+        </div>
+        <div style="margin-top:32px; margin-bottom: 30px;">
+            <a href="#" class="btn-secondary" id="backToBlog"><i class="fas fa-arrow-left"></i> Quay lại Blog</a>
+        </div>
+    </div>
+</main>
+<footer id="footer">
+    <div class="container">
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h3>Sản phẩm</h3>
+                <ul>
+                    <li><a href="#">FertilityEHR</a></li>
+                    <li><a href="#">IMS</a></li>
+                    <li><a href="#">Cổng thông tin bệnh nhân</a></li>
+                    <li><a href="#">Khám từ xa</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Liên hệ</h3>
+                <p>123 Đường Lê Văn Việt<br>Tầng 5<br>Hồ Chí Minh, Việt Nam</p>
+                <p>Điện thoại: (028) 5555-1234</p>
+                <p>Email: info@meditab.com</p>
             </div>
         </div>
     </div>
-    <main style="margin-top:120px; min-height:60vh;">
-        <div class="container">
-            <div id="blogDetail" class="blog-detail-content">
-                <!-- Nội dung bài blog sẽ được render ở đây -->
-            </div>
-            <div style="margin-top:32px; margin-bottom: 30px;">
-                <a href="#" class="btn-secondary" id="backToBlog"><i class="fas fa-arrow-left"></i> Quay lại Blog</a>
-            </div>
-        </div>
-    </main>
-    <footer id="footer">
-        <div class="container">
-            <div class="footer-columns">
-                <div class="footer-column">
-                    <h3>Sản phẩm</h3>
-                    <ul>
-                        <li><a href="#">FertilityEHR</a></li>
-                        <li><a href="#">IMS</a></li>
-                        <li><a href="#">Cổng thông tin bệnh nhân</a></li>
-                        <li><a href="#">Khám từ xa</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Liên hệ</h3>
-                    <p>123 Đường Lê Văn Việt<br>Tầng 5<br>Hồ Chí Minh, Việt Nam</p>
-                    <p>Điện thoại: (028) 5555-1234</p>
-                    <p>Email: info@meditab.com</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <script>
+</footer>
+<script>
     // Demo dữ liệu blog, thực tế có thể lấy từ API hoặc localStorage
     const blogData = [
         {
@@ -386,7 +386,7 @@
             });
         }
     });
-    </script>
-    <script src="js/script.js"></script>
+</script>
+<script src="js/script.js"></script>
 </body>
 </html>

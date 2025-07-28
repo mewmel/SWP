@@ -47,24 +47,10 @@
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
-.nav-btn-schedule {
-      background: #2563eb;
-      color: #fff;
-      border: none;
-    }
-    .nav-btn-schedule:hover {
-      background: #1d4ed8;
-    }
-    .nav-btn-leave {
-      background: #f59e42;
-      color: #fff;
-      border: none;
-    }
-    .nav-btn-leave:hover {
-      background: #ea580c;
-    }
 
 .nav-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

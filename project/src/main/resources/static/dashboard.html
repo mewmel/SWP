@@ -12,110 +12,57 @@
 </head>
 
 <body>
-    <!-- Dashboard Header -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="dashboard.html" class="active">Bệnh án</a></li>
-                    <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
-                    <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
-                    <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
-                        <div class="notification-wrapper" style="position: relative;">
-                            <button class="notification-icon" id="notificationBtn">
-                                <i class="fas fa-bell"></i>
-                                <span class="notification-badge">9</span>
-                            </button>
-
-                            <!-- Dropdown Notification -->
-                            <div class="notification-dropdown" id="notificationDropdown">
-                                <div class="notification-dropdown-header">
-                                    <h3>Thông báo</h3>
-                                    <button class="notification-settings-btn">
-                                        <i class="fas fa-cog"></i>
-                                    </button>
-                                </div>
-
-                                <div class="notification-dropdown-body">
-                                    <div class="notification-dropdown-item unread">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-syringe"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Nhắc nhở tiêm thuốc</div>
-                                            <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
-                                            </div>
-                                            <div class="notification-time">5 phút trước</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="notification-dropdown-item unread">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-flask"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Lịch xét nghiệm</div>
-                                            <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc
-                                                8:00</div>
-                                            <div class="notification-time">2 giờ trước</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="notification-dropdown-item">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-calendar-check"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Lịch hẹn khám</div>
-                                            <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
-                                                14:00</div>
-                                            <div class="notification-time">1 ngày trước</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="notification-dropdown-item">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-chart-line"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Kết quả xét nghiệm</div>
-                                            <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
-                                            <div class="notification-time">2 ngày trước</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="notification-dropdown-item">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-user-md"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Tin nhắn từ bác sĩ</div>
-                                            <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
-                                                cho bạn</div>
-                                            <div class="notification-time">3 ngày trước</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="notification-dropdown-footer">
-                                    <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-            <div class="user-menu" style="display:none;">
-                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
-                <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
-                    <i class="fas fa-bars"></i>
-                </button>
+<!-- Dashboard Header -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
         </div>
-    </header>
-   <!-- Sidebar-->
+        <nav>
+            <ul>
+                <li><a href="dashboard.html" class="active">Bệnh án</a></li>
+                <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
+                <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
+                <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
+                <div class="notification-wrapper" style="position: relative;">
+                    <button class="notification-icon" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+
+                    <!-- Dropdown Notification -->
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-dropdown-header">
+                            <h3>Thông báo</h3>
+                            <button class="notification-settings-btn">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+
+                        <div class="notification-dropdown-body" id="notificationDropdownBody">
+                            <!-- JS sẽ render động -->
+                        </div>
+                    </div>
+                </div>
+                </li>
+            </ul>
+        </nav>
+        <div class="user-menu" style="display:none;">
+            <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+            <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
+                <i class="fas fa-bars"></i>
+            </button>
+            <button class="logout-btn"
+                    style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </button>
+        </div>
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</header>
+<!-- Sidebar giống trang index -->
 <aside class="sidebar" id="sidebar" style="display:none;">
     <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
     <div class="sidebar-user">
@@ -130,224 +77,213 @@
     <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
     <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
 </aside>
-    
-
-    <!-- Dashboard Main Content -->
-    <main class="dashboard-main">
-        <!-- Main Content Area -->
-        <div class="dashboard-content">
-            <!-- Overview Cards -->
-            <section class="overview-cards">
-                <div class="overview-card">
-                    <h3>Chu kỳ hiện tại</h3>
-                    <div class="value">IVF</div>
-                    <div class="subtitle">Giai đoạn 2</div>
-                </div>
-                <div class="overview-card">
-                    <h3>Ngày tiếp theo</h3>
-                    <div class="value">25/06</div>
-                    <div class="subtitle">Xét nghiệm</div>
-                </div>
-                
-            </section>
-
-            <!-- Timeline Section -->
-            <section class="timeline-section">
-                <div class="timeline-header">
-                    <h2>Timeline điều trị</h2>
-                    <span style="color: var(--light-text);">Tuần 3 - Tháng 6/2024</span>
-                </div>
-                
-
-                <!-- Progress Bar -->
-                <div class="progress-bar">
-                    <div class="progress-fill">
-                        <span class="progress-text">Giai đoạn 2/5 - Kích thích buồng trứng</span>
-                    </div>
-                </div>
-
-                <!-- Week Timeline -->
-                <div class="timeline-week">
-                    <div class="timeline-day">
-                        <div class="day-number">22</div>
-                        <div class="day-events">
-                            <div class="event-dot event-injection"></div>
-                        </div>
-                        <small>T2</small>
-                    </div>
-                    <div class="timeline-day">
-                        <div class="day-number">23</div>
-                        <div class="day-events">
-                            <div class="event-dot event-injection"></div>
-                        </div>
-                        <small>T3</small>
-                    </div>
-                    <div class="timeline-day today">
-                        <div class="day-number">24</div>
-                        <div class="day-events">
-                            <div class="event-dot event-injection"></div>
-                            <div class="event-dot event-test"></div>
-                        </div>
-                        <small>T4</small>
-                    </div>
-                    <div class="timeline-day has-event">
-                        <div class="day-number">25</div>
-                        <div class="day-events">
-                            <div class="event-dot event-test"></div>
-                        </div>
-                        <small>T5</small>
-                    </div>
-                    <div class="timeline-day">
-                        <div class="day-number">26</div>
-                        <div class="day-events">
-                            <div class="event-dot event-injection"></div>
-                        </div>
-                        <small>T6</small>
-                    </div>
-                    <div class="timeline-day has-event">
-                        <div class="day-number">27</div>
-                        <div class="day-events">
-                            <div class="event-dot event-appointment"></div>
-                        </div>
-                        <small>T7</small>
-                    </div>
-                    <div class="timeline-day">
-                        <div class="day-number">28</div>
-                        <div class="day-events">
-                            <div class="event-dot event-appointment"></div>
-                        </div>
-                        <small>CN</small>
-                    </div>
-                </div>
-
-                <!-- Legend -->
-                <div style="display: flex; gap: var(--spacing-lg); font-size: 0.85rem; color: var(--light-text);">
-                    <span><span class="event-dot event-injection"
-                            style="display: inline-block; margin-right: 5px;"></span>Tiêm thuốc</span>
-                    <span><span class="event-dot event-test"
-                            style="display: inline-block; margin-right: 5px;"></span>Xét nghiệm</span>
-                    <span><span class="event-dot event-appointment"
-                            style="display: inline-block; margin-right: 5px;"></span>Khám bác sĩ</span>
-                </div>
-            </section>
-
-            <!-- Quick Actions -->
-            <section class="quick-actions">
-                <h3>Hành động nhanh</h3>
-                <ul class="action-list">
-                    <li class="action-item">
-                        <div class="action-icon">🔔</div>
-                        <span>Đặt nhắc nhở tiêm thuốc</span>
-                    </li>
-                    
-                    <li class="action-item">
-                        <div class="action-icon">📊</div>
-                        <span>Xem kết quả xét nghiệm</span>
-                    </li>
-                </ul>
-            </section>
-
-            <!-- Chart Section -->
-            <section class="chart-container">
-                
-            </section>
+<!-- Auth Modal -->
+<div id="authModal" class="auth-modal">
+    <div class="auth-modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+            <button class="auth-tab" data-tab="register">Đăng ký</button>
         </div>
 
-        <!-- Sidebar Dashboard -->
-        <aside class="dashboard-sidebar">
-            <!-- Treatment Info -->
-            <div class="sidebar-card">
-                <h3><i class="fas fa-heart"></i> Thông tin bệnh nhân</h3>
-                <div class="treatment-info">
-                    <div class="info-row">
-                        <span class="info-label">Mã bệnh nhân</span>
-                        <span class="info-value">BN-2024-001</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Ngày đăng ký</span>
-                        <span class="info-value">15/03/2024</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Bác sĩ phụ trách</span>
-                        <span class="info-value">BS. Nguyễn Thị Hương</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Chu kỳ điều trị</span>
-                        <span class="info-value">Chu kỳ 1 - IVF</span>
-                    </div>
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active">
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Mật khẩu</label>
+                <div class="password-input">
+                    <input type="password" id="loginPassword" name="password" required>
+                    <i class="fas fa-eye toggle-password"></i>
                 </div>
+            </div>
+            <button type="submit" class="auth-submit-btn">
+                <span>Đăng nhập</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <div class="social-login">
+                <button type="button" class="social-btn google">
+                    <i class="fab fa-google"></i> Đăng nhập với Google
+                </button>
+                <button type="button" class="social-btn facebook">
+                    <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
+                </button>
+            </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="auth-form">
+            <div class="form-group">
+                <label for="registerName">Họ và tên</label>
+                <input type="text" id="registerName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="registerPassword">Mật khẩu</label>
+                <div class="password-input">
+                    <input type="password" id="registerPassword" name="password" required>
+                    <i class="fas fa-eye toggle-password"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Xác nhận mật khẩu</label>
+                <div class="password-input">
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    <i class="fas fa-eye toggle-password"></i>
+                </div>
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="agreeTerms" required>
+                <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
+            </div>
+            <button type="submit" class="auth-submit-btn">
+                <span>Đăng ký</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+
+<!-- Dashboard Main Content -->
+<main class="dashboard-main">
+    <!-- Main Content Area -->
+    <div class="dashboard-content">
+        <!-- Overview Cards -->
+        <section class="overview-cards">
+            <div class="overview-card">
+                <h3>Chu kỳ hiện tại</h3>
+                <div class="value dashboard-treatment-name">IVF</div>
+            </div>
+            <div class="overview-card">
+                <h3>Ngày tiếp theo</h3>
+                <div class="value dashboard-next-event-date">25/06</div>
+                <div class="subtitle dashboard-next-event-type">Xét nghiệm</div>
+            </div>
+        </section>
+        <!-- Timeline Section -->
+        <section class="timeline-section">
+            <div class="timeline-header">
+                <h2>Timeline điều trị</h2>
+                <span style="color: var(--light-text);" id="timeline-week-label"></span>
             </div>
 
 
-            <div class="sidebar-card">
-                <h3><i class="fas fa-heart"></i> Thông tin điều trị</h3>
-                <div class="treatment-info">
-                    <div class="info-row">
-                        <span class="info-label">Mã bệnh nhân:</span>
-                        <span class="info-value">BN-2024-001</span>
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-fill">
+                    <span class="progress-text" id="progress-text"></span>
+                </div>
+            </div>
+            <!-- TimeLine week -->
+            <div class="timeline-week" id="timeline-week"></div>
+
+            <!-- Legend -->
+            <div id="timeline-legend" style="display: flex; gap: var(--spacing-lg); font-size: 0.85rem; color: var(--light-text);"></div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <h3>Hành động nhanh</h3>
+            <ul class="action-list">
+                <li class="action-item">
+                    <div class="action-icon">🔔</div>
+                    <span>Đặt nhắc nhở tiêm thuốc</span>
+                </li>
+
+                <li class="action-item">
+                    <div class="action-icon">📊</div>
+                    <span>Xem kết quả xét nghiệm</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Chart Section -->
+        <section class="chart-container">
+
+        </section>
+    </div>
+
+    <!-- Sidebar Dashboard -->
+    <aside class="dashboard-sidebar">
+        <!-- Treatment Info -->
+        <div class="sidebar-card">
+            <h3><i class="fas fa-heart"></i> Thông tin bệnh nhân</h3>
+            <div class="treatment-info">
+                <div class="info-row">
+                    <span class="info-label">Mã bệnh nhân</span>
+                    <span class="info-value profile-patient-code"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Ngày đăng ký</span>
+                    <span class="info-value profile-registration-date"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Bác sĩ phụ trách</span>
+                    <span class="info-value profile-doctor"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-card">
+            <h3><i class="fas fa-heart"></i> Thông tin điều trị</h3>
+            <div class="treatment-info">
+                <div class="info-row">
+                    <span class="info-label">Mã bệnh nhân:</span>
+                    <span class="info-value profile-patient-code"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Ngày đăng ký:</span>
+                    <span class="info-value profile-registration-date"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medication Info -->
+        <div class="sidebar-card">
+            <h3><i class="fas fa-pills"></i> Thuốc đang sử dụng</h3>
+            <div class="medication-info">
+                <div class="medication-item">
+                    <div class="medication-name">Gonal-F</div>
+                    <div class="medication-details">
+                        <span>150 IU</span>
+                        <span>19:00</span>
+                        <span>Còn 5 liều</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">Ngày đăng ký:</span>
-                        <span class="info-value">15/06/2024</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Chu kỳ thứ:</span>
-                        <span class="info-value">2</span>
+                </div>
+                <div class="medication-item">
+                    <div class="medication-name">Cetrotide</div>
+                    <div class="medication-details">
+                        <span>0.25mg</span>
+                        <span>20:00</span>
+                        <span>Còn 3 liều</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Medication Info -->
-            <div class="sidebar-card">
-                <h3><i class="fas fa-pills"></i> Thuốc đang sử dụng</h3>
-                <div class="medication-info">
-                    <div class="medication-item">
-                        <div class="medication-name">Gonal-F</div>
-                        <div class="medication-details">
-                            <span>150 IU</span>
-                            <span>19:00</span>
-                            <span>Còn 5 liều</span>
-                        </div>
-                    </div>
-                    <div class="medication-item">
-                        <div class="medication-name">Cetrotide</div>
-                        <div class="medication-details">
-                            <span>0.25mg</span>
-                            <span>20:00</span>
-                            <span>Còn 3 liều</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Social sidebar fixed bên phải -->
+        <div class="social-sidebar">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+        </div>
 
-            <!-- Social sidebar fixed bên phải -->
-            <div class="social-sidebar">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fas fa-envelope"></i></a>
-            </div>
-
-            <!-- Notifications -->
-            <div class="sidebar-card notifications-card">
-                <h3><i class="fas fa-bell"></i> Thông báo hôm nay</h3>
-                <div class="notification-item">
-                    <div class="notification-time">19:00</div>
-                    <span>Tiêm thuốc Gonal-F</span>
-                </div>
-                <div class="notification-item">
-                    <div class="notification-time">Ngày mai</div>
-                    <span>Xét nghiệm máu E2</span>
-                </div>
-                <div class="notification-item">
-                    <div class="notification-time">28/06</div>
-                    <span>Khám siêu âm kiểm tra</span>
-                </div>
-            </div>
-
-           
-        </aside>
-    </main>
-    <script src="js/script.js"></script>
+        <!-- Notifications -->
+        <div class="sidebar-card notifications-card">
+            <h3><i class="fas fa-bell"></i> Thông báo hôm nay</h3>
+            <div class="notifications-list"></div>
+        </div>
+    </aside>
+</main>
+<script src="js/profile-summary.js"></script>
+<script src="js/notification-dropdown.js"></script>
+<script src="js/script.js"></script>
 </body>
 
-</html> 
+</html>
