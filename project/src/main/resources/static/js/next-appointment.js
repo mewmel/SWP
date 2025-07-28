@@ -162,10 +162,10 @@ function showNotification(message, type) {
                     <td>
                         <div class="action-buttons">
                             ${patient.recordStatus === 'closed' 
-                                ? `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId})">
+                                ? `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId}, ${patient.recordId})">
                                     <i class="fas fa-eye"></i> Xem hồ sơ
                                    </button>`
-                                : `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId})">
+                                : `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId}, ${patient.recordId})">
                                     <i class="fas fa-edit"></i> Sửa hồ sơ
                                    </button>`
                             }
@@ -293,7 +293,7 @@ function showNotification(message, type) {
                         loadAndRenderTestResults(currentPatientData.bookId);
                         break;
                     case 'history':
-                        loadMedicalHistory(currentPatientData);
+                        loadMedicalHistory(currentPatientData.recordId);
                         break;
                     case 'treatment':
                         loadTreatmentPlan(currentPatientData);
@@ -310,7 +310,8 @@ function showNotification(message, type) {
         }
 
         // Enhanced patient record viewing - ✅ FIXED: Sử dụng dữ liệu đã load  
-        async function viewPatientRecord(cusId, bookId) {
+        async function viewPatientRecord(cusId, bookId, recordId) {
+            if(recordId) {
             try {
                 showLoading();
                 
@@ -349,7 +350,20 @@ function showNotification(message, type) {
                 // Load medical record data
                 if (bookId) {
                     console.log('Loading medical record data for bookId:', bookId);
-                    
+
+            const res = await fetch(`/api/medical-records/${recordId}`);
+            if (!res.ok) throw new Error('Không tìm thấy hồ sơ bệnh án');
+            const record = await res.json();
+            console.log('🎯 DEBUG: Loaded medical record:', record);
+
+            // Gán vào UI tab "Hồ sơ bệnh án"
+            document.getElementById('recordStatus').value = record.recordStatus || '';
+            document.getElementById('recordCreatedDate').value = formatDateTimeForInput(record.createdAt);
+            document.getElementById('diagnosis').value = record.diagnosis || '';
+            document.getElementById('treatmentPlan').value = record.treatmentPlan || '';
+            document.getElementById('dischargeDate').value = formatDateTimeForInput(record.dischargeDate);
+            document.getElementById('medicalNote').value = record.note || '';
+                        
                     // Load test results and prescription data
                     loadAndRenderTestResults(bookId);
                     await loadExistingPrescriptionData(bookId);
@@ -362,7 +376,7 @@ function showNotification(message, type) {
                 hideLoading();
                 showErrorMessage('Không thể tải hồ sơ bệnh nhân. Vui lòng thử lại sau.');
             }
-        }
+        }}
 
         function populatePatientInfo(patientData) {
             // Basic patient information - using correct field names
@@ -428,73 +442,45 @@ function showNotification(message, type) {
             document.getElementById('serviceName').textContent = patientData.serviceName || 'Chưa xác định';
         }
 
-        async function loadMedicalHistory(patientData) {
-            const historyContent = document.getElementById('historyContent');
-            
+        async function loadMedicalHistory(recordId) {
             try {
-                // Show loading
-                historyContent.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Đang tải lịch sử khám...</div>';
-                
-                // Fetch medical history
-                const response = await fetch(`/api/customer/${patientData.cusId}/medical-history`);
-                
-                if (response.ok) {
-                    const historyData = await response.json();
-                    renderMedicalHistory(historyData);
-                } else {
-                    // Use sample data if API not available
-                    renderSampleHistory();
-                }
-            } catch (error) {
-                console.error('Error loading medical history:', error);
-                renderSampleHistory();
+                const res = await fetch(`/api/medical-records/customer/${recordId}/medical-history`);
+                if (!res.ok) throw new Error("Lỗi server");
+                const history = await res.json();
+                console.log('✅ Lấy lịch sử khám thành công:', history); // <== log này
+                renderMedicalHistory(history); // ✅ dùng hàm đúng
+            } catch (err) {
+                console.error("Error loading medical history:", err);
+                showNotification("Không thể tải lịch sử khám", "error");
             }
         }
 
-        function renderMedicalHistory(historyData) {
-            const historyContent = document.getElementById('historyContent');
-            
-            if (historyData && historyData.length > 0) {
-                let historyHtml = '';
-                historyData.forEach(record => {
-                    historyHtml += `
-                        <div class="history-item">
-                            <div class="history-header">
-                                <div class="history-date">${formatDate(record.createdAt)}</div>
-                                <div class="history-status ${record.recordStatus}">${record.recordStatus === 'active' ? 'Đang điều trị' : 'Đã kết thúc'}</div>
-                            </div>
-                            <div class="history-content">
-                                <div class="history-info">
-                                    <p><strong>Mã hồ sơ:</strong> MR${String(record.recordId).padStart(3, '0')}</p>
-                                    <p><strong>Dịch vụ:</strong> ${record.serviceName || 'N/A'}</p>
-                                    <p><strong>Bác sĩ điều trị:</strong> ${record.doctorName || 'N/A'}</p>
-                                </div>
-                                <div class="history-details">
-                                    <p><strong>Chẩn đoán:</strong> ${record.diagnosis || 'N/A'}</p>
-                                    <p><strong>Kế hoạch điều trị:</strong> ${record.treatmentPlan || 'N/A'}</p>
-                                    <p><strong>Ngày dự kiến kết thúc:</strong> ${formatDate(record.dischargeDate) || 'N/A'}</p>
-                                </div>
-                                <div class="history-notes">
-                                    <p><strong>Ghi chú:</strong> ${record.medicalNotes || 'Không có ghi chú'}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                historyContent.innerHTML = historyHtml;
-            } else {
-                renderSampleHistory();
-            }
-        }
 
-        function renderSampleHistory() {
-            document.getElementById('historyContent').innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: #64748b;">
-                    <i class="fas fa-history" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                    <p>Chưa có lịch sử bệnh án</p>
-                </div>
-            `;
-        }
+function renderMedicalHistory(historyData) {
+    const historyContainer = document.getElementById('medical-history-content');
+    if (!historyContainer) {
+        console.warn('Không tìm thấy #medical-history-content trong DOM');
+        return;
+    }
+
+    if (!historyData || historyData.length === 0) {
+        historyContainer.innerHTML = '<p class="text-muted">Không có lịch sử khám.</p>';
+        return;
+    }
+
+    historyContainer.innerHTML = historyData.map(item => `
+        <div class="history-item">
+            <p><strong>Mã đặt:</strong> ${item.bookId}</p>
+            <p><strong>Loại:</strong> ${item.bookType}</p>
+            <p><strong>Trạng thái:</strong> ${item.bookStatus}</p>
+            <p><strong>Thời gian:</strong> ${item.date} | ${item.time}</p>
+            <p><strong>Dịch vụ con:</strong> ${(item.subNames || []).join(', ')}</p>
+            <hr>
+        </div>
+    `).join('');
+}
+
+
 
         async function loadTreatmentPlan(patientData) {
             const treatmentContent = document.getElementById('treatmentContent');
