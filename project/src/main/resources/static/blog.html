@@ -236,25 +236,45 @@ Mẹo: Sử dụng các tiêu đề để tổ chức nội dung, thêm hình �
                                         </div>
                                     </div>
 
-                                    <!-- Status Bar -->
-                                    <div class="status-bar">
-                                        <div class="status-left">
-                                            <div class="status-indicator">
-                                                <div class="status-dot" id="statusDot"></div>
-                                                <span class="status-text" id="statusText">Bản nháp</span>
-                                            </div>
-                                            <div class="auto-save" id="autoSave">
-                                                <i class="fas fa-check-circle"></i>
-                                                <span>Đã lưu tự động</span>
-                                            </div>
-                                        </div>
-                                        <div class="status-right">
-                                            <div class="reading-time" id="readingTime">
-                                                <i class="fas fa-clock"></i>
-                                                <span>~2 phút đọc</span>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Draft Posts Section (Collapsible) -->
+                        <div class="draft-posts-section" id="draftPostsSection">
+                            <div class="section-header" id="draftHeader">
+                                <div class="header-left">
+                                    <h2><i class="fas fa-save"></i> Bài viết đã lưu nháp</h2>
+                                    <span class="draft-count" id="draftCount">(0)</span>
+                                </div>
+                                <div class="header-right">
+                                    <button class="btn btn-outline btn-sm" id="refreshDraftsBtn">
+                                        <i class="fas fa-sync-alt"></i> Làm mới
+                                    </button>
+                                    <button class="btn btn-outline btn-sm" id="toggleDraftsBtn">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="draft-posts-container" id="draftPostsContainer" style="display: none;">
+                                <!-- Loading state -->
+                                <div class="draft-loading" id="draftLoading">
+                                    <div class="loading-content">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <p>Đang tải bài viết nháp...</p>
                                     </div>
+                                </div>
+
+                                <!-- Draft posts will be loaded here -->
+                            </div>
+
+                            <!-- No drafts message -->
+                            <div class="no-drafts" id="noDrafts" style="display: none;">
+                                <div class="no-drafts-content">
+                                    <i class="fas fa-file-alt"></i>
+                                    <h3>Chưa có bài viết nháp nào</h3>
+                                    <p>Bắt đầu viết bài viết mới để tạo bản nháp đầu tiên</p>
                                 </div>
                             </div>
                         </div>

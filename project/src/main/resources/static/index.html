@@ -603,86 +603,18 @@
         <div class="container">
             <h2 class="section-title">Blog & Tin tức</h2>
             <div class="blog-grid" id="blogGrid">
-                <div class="blog-card">
-                    <div class="blog-image">
-                        <img src="img/blog1.jpg" alt="IVF Blog">
-                        <div class="blog-category">IVF</div>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-date">12 Tháng 6, 2024</div>
-                        <h3>Những điều cần biết về quá trình thụ tinh trong ống nghiệm</h3>
-                        <p>Tìm hiểu chi tiết về các bước trong quy trình IVF và cách chuẩn bị tốt nhất cho hành trình
-                            của bạn.</p>
-                        <a href="blog-detail.html?id=1" class="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
+                <!-- Loading state -->
+                <div class="blog-loading" id="blogLoading">
+                    <div class="loading-content">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
+                        <p style="color: #666;">Đang tải bài viết...</p>
                     </div>
                 </div>
-
-                <div class="blog-card">
-                    <div class="blog-image">
-                        <img src="img/blog2.jpg" alt="Nutrition Blog">
-                        <div class="blog-category">Dinh dưỡng</div>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-date">10 Tháng 6, 2024</div>
-                        <h3>Chế độ dinh dưỡng tối ưu cho phụ nữ đang điều trị hiếm muộn</h3>
-                        <p>Khám phá những thực phẩm và chế độ ăn giúp tăng cường khả năng thụ thai tự nhiên.</p>
-                        <a href="blog-detail.html?id=2" class="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="blog-card">
-                    <div class="blog-image">
-                        <img src="img/blog3.jpg" alt="Mental Health Blog">
-                        <div class="blog-category">Tâm lý</div>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-date">8 Tháng 6, 2024</div>
-                        <h3>Cách đối phó với áp lực tâm lý trong quá trình điều trị hiếm muộn</h3>
-                        <p>Những lời khuyên và phương pháp giúp cân bằng tinh thần trong hành trình làm cha mẹ.</p>
-                        <a href="blog-detail.html?id=3" class="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <!-- Ẩn các bài viết blog chỉ hiện khi bấm "Xem tất cả bài viết" -->
-                <div class="blog-card hidden">
-                    <div class="blog-image">
-                        <img src="img/blog4.jpg" alt="Lifestyle Blog">
-                        <div class="blog-category">Lifestyle</div>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-date">7 Tháng 6, 2024</div>
-                        <h3>Lối sống lành mạnh cho cặp đôi đang điều trị hiếm muộn</h3>
-                        <p>Những thói quen và hoạt động giúp tăng cường sức khỏe sinh sản.</p>
-                        <a href="blog-detail.html?id=4" class="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-                <div class="blog-card hidden">
-                    <div class="blog-image">
-                        <img src="img/blog5.jpg" alt="Treatment Blog">
-                        <div class="blog-category">Điều trị</div>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-date">5 Tháng 6, 2024</div>
-                        <h3>Những tiến bộ mới trong điều trị vô sinh hiếm muộn</h3>
-                        <p>Cập nhật về các phương pháp điều trị hiện đại và hiệu quả.</p>
-                        <a href="blog-detail.html?id=5" class="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-                <div class="blog-card hidden">
-                    <div class="blog-image">
-                        <img src="img/blog6.jpg" alt="Support Blog">
-                        <div class="blog-category">Hỗ trợ</div>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-date">3 Tháng 6, 2024</div>
-                        <h3>Các nhóm hỗ trợ tinh thần cho cặp đôi hiếm muộn</h3>
-                        <p>Tìm hiểu về cộng đồng và nguồn hỗ trợ tinh thần trong hành trình điều trị.</p>
-                        <a href="blog-detail.html?id=6" class="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
+                
+                <!-- Blog posts will be loaded here from API -->
             </div>
             <div class="blog-view-all">
-                <a href="#" class="btn-secondary" id="viewAllBlogs">Xem tất cả bài viết</a>
+                <a href="#" class="btn-secondary" id="viewAllBlogs" style="display: none;">Xem tất cả bài viết</a>
             </div>
         </div>
     </section>
@@ -855,6 +787,38 @@
         
         .btn-send-otp i {
             font-size: 12px;
+        }
+        
+        /* Blog loading and error states */
+        .blog-loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .blog-loading .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .blog-error {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .blog-error .error-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .blog-error i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 20px;
         }
         
 

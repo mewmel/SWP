@@ -20,8 +20,8 @@ public class SecurityConfig {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-        mailSender.setUsername("FertilityEHR@gmail.com");
-        mailSender.setPassword("YOUR_NEW_APP_PASSWORD_HERE");
+        mailSender.setUsername("laptruong2984@gmail.com");
+        mailSender.setPassword("hwnmnkyekqmvufao");
         
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

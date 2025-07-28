@@ -1335,8 +1335,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                                     try {
                             console.log('Making API call to send OTP...');
-                            // Sử dụng API test thay vì API thật
-                            const response = await fetch('/api/forgot-password/test-otp', {
+                            const response = await fetch('/api/forgot-password/send-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1351,10 +1350,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                                             if (response.ok && result.success) {
                                 console.log('OTP sent successfully:', result);
-                                showNotification(result.message + ' OTP: ' + result.otp, 'success');
+                                showNotification(result.message, 'success');
                                 document.getElementById('forgotOtp').required = true;
                                 document.getElementById('forgotOtp').focus();
-                                document.querySelector('.otp-note small').textContent = 'Mã OTP đã được tạo: ' + result.otp;
+                                document.querySelector('.otp-note small').textContent = 'Mã OTP đã được gửi đến email của bạn';
                                 sendOtpBtn.innerHTML = '<i class="fas fa-check"></i> Đã gửi';
                                 sendOtpBtn.style.background = '#28a745';
                 } else {

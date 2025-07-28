@@ -296,88 +296,86 @@
     </div>
 </footer>
 <script>
-    // Demo dữ liệu blog, thực tế có thể lấy từ API hoặc localStorage
-    const blogData = [
-        {
-            id: 1,
-            title: 'Những điều cần biết về quá trình thụ tinh trong ống nghiệm',
-            date: '12 Tháng 6, 2024',
-            category: 'IVF',
-            image: 'img/blog1.jpg',
-            content: `<p>Thụ tinh trong ống nghiệm (IVF) là một trong những phương pháp hỗ trợ sinh sản hiện đại nhất hiện nay. Quy trình IVF gồm nhiều bước: kích thích buồng trứng, chọc hút trứng, thụ tinh trong phòng thí nghiệm, nuôi cấy phôi và chuyển phôi vào tử cung. Để chuẩn bị tốt nhất, các cặp đôi nên kiểm tra sức khỏe tổng quát, tuân thủ hướng dẫn của bác sĩ và giữ tinh thần lạc quan.</p>
-            <ul>
-                <li>Chuẩn bị tâm lý và sức khỏe trước khi bắt đầu IVF</li>
-                <li>Tuân thủ phác đồ điều trị của bác sĩ</li>
-                <li>Chế độ dinh dưỡng hợp lý, tránh stress</li>
-            </ul>
-            <p>IVF mang lại hy vọng cho nhiều cặp vợ chồng hiếm muộn trên toàn thế giới.</p>`
-        },
-        {
-            id: 2,
-            title: 'Chế độ dinh dưỡng tối ưu cho phụ nữ đang điều trị hiếm muộn',
-            date: '10 Tháng 6, 2024',
-            category: 'Dinh dưỡng',
-            image: 'img/blog2.jpg',
-            content: `<p>Dinh dưỡng đóng vai trò quan trọng trong quá trình điều trị hiếm muộn. Phụ nữ nên bổ sung các thực phẩm giàu axit folic, sắt, kẽm, vitamin D và omega-3. Hạn chế đồ ngọt, thức ăn nhanh, rượu bia và caffeine. Ngoài ra, duy trì cân nặng hợp lý và tập luyện thể thao nhẹ nhàng cũng giúp tăng khả năng thụ thai.</p>`
-        },
-        {
-            id: 3,
-            title: 'Cách đối phó với áp lực tâm lý trong quá trình điều trị hiếm muộn',
-            date: '8 Tháng 6, 2024',
-            category: 'Tâm lý',
-            image: 'img/blog3.jpg',
-            content: `<p>Áp lực tâm lý là điều không tránh khỏi khi điều trị hiếm muộn. Hãy chia sẻ cảm xúc với người thân, tham gia các nhóm hỗ trợ, tập yoga hoặc thiền để giảm stress. Đừng ngần ngại tìm đến chuyên gia tâm lý khi cần thiết.</p>`
-        },
-        {
-            id: 4,
-            title: 'Lối sống lành mạnh cho cặp đôi đang điều trị hiếm muộn',
-            date: '7 Tháng 6, 2024',
-            category: 'Lifestyle',
-            image: 'img/blog4.jpg',
-            content: `<p>Một lối sống lành mạnh giúp tăng khả năng thụ thai tự nhiên và hỗ trợ hiệu quả điều trị hiếm muộn. Hãy duy trì chế độ ăn cân bằng, tập thể dục đều đặn, ngủ đủ giấc và tránh xa các chất kích thích như rượu, thuốc lá.</p>`
-        },
-        {
-            id: 5,
-            title: 'Những tiến bộ mới trong điều trị vô sinh hiếm muộn',
-            date: '5 Tháng 6, 2024',
-            category: 'Điều trị',
-            image: 'img/blog5.jpg',
-            content: `<p>Các phương pháp điều trị vô sinh ngày càng hiện đại như IVF, IUI, tiêm hormone, nuôi cấy phôi dài ngày... giúp tăng tỷ lệ thành công cho các cặp vợ chồng hiếm muộn. Công nghệ mới như xét nghiệm di truyền tiền làm tổ (PGT) cũng mang lại nhiều hy vọng.</p>`
-        },
-        {
-            id: 6,
-            title: 'Các nhóm hỗ trợ tinh thần cho cặp đôi hiếm muộn',
-            date: '3 Tháng 6, 2024',
-            category: 'Hỗ trợ',
-            image: 'img/blog6.jpg',
-            content: `<p>Tham gia các nhóm hỗ trợ tinh thần giúp các cặp đôi hiếm muộn chia sẻ kinh nghiệm, động viên nhau vượt qua khó khăn. Đây là nguồn động lực lớn trong hành trình điều trị.</p>`
+    // Load blog detail from API
+    async function loadBlogDetail() {
+        const blogId = getQueryParam('id');
+        const blogDetail = document.getElementById('blogDetail');
+        
+        if (!blogId) {
+            blogDetail.innerHTML = '<p style="color:red;">Không tìm thấy ID bài viết.</p>';
+            return;
         }
-    ];
+        
+        try {
+            console.log('Loading blog detail for ID:', blogId);
+            const response = await fetch(`/api/posts/${blogId}`);
+            
+            if (response.ok) {
+                const blog = await response.json();
+                console.log('Blog detail loaded:', blog);
+                console.log('Has image:', blog.hasImage);
+                console.log('Post ID:', blog.postId);
+                
+                // Get blog image if exists
+                let imageHtml = '';
+                if (blog.hasImage) {
+                    imageHtml = `<img src="/api/posts/${blog.postId}/image" alt="${blog.title}" style="max-width:100%;border-radius:16px;box-shadow:0 4px 16px rgba(74,144,226,0.08);margin-bottom:24px;" onerror="this.style.display='none';">`;
+                }
+                
+                // Format date
+                const date = new Date(blog.createdAt).toLocaleDateString('vi-VN', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                
+                // Get category from title (you can modify this logic)
+                const category = getCategoryFromTitle(blog.title);
+                
+                blogDetail.innerHTML = `
+                    <div class="blog-detail-header">
+                        <div style="margin-bottom:18px;">
+                            <span class="blog-category" style="background:#4A90E2;color:#fff;padding:4px 12px;border-radius:8px;font-size:1rem;">${category}</span>
+                            <span style="color:#888;margin-left:16px;font-size:0.98rem;"><i class="fas fa-calendar-alt"></i> ${date}</span>
+                        </div>
+                        <h1 style="font-size:2.2rem;margin-bottom:18px;">${blog.title}</h1>
+                        ${imageHtml}
+                    </div>
+                    <div class="blog-detail-body" style="font-size:1.15rem;line-height:1.7;">${blog.content}</div>
+                `;
+            } else {
+                console.error('Failed to load blog detail:', response.status);
+                blogDetail.innerHTML = '<p style="color:red;">Không thể tải bài viết từ server.</p>';
+            }
+        } catch (error) {
+            console.error('Error loading blog detail:', error);
+            blogDetail.innerHTML = '<p style="color:red;">Lỗi kết nối khi tải bài viết.</p>';
+        }
+    }
+    
+    // Helper function to get category from title
+    function getCategoryFromTitle(title) {
+        const lowerTitle = title.toLowerCase();
+        if (lowerTitle.includes('ivf') || lowerTitle.includes('thụ tinh')) return 'IVF';
+        if (lowerTitle.includes('dinh dưỡng') || lowerTitle.includes('ăn uống')) return 'Dinh dưỡng';
+        if (lowerTitle.includes('tâm lý') || lowerTitle.includes('stress')) return 'Tâm lý';
+        if (lowerTitle.includes('lối sống') || lowerTitle.includes('thể dục')) return 'Lifestyle';
+        if (lowerTitle.includes('điều trị') || lowerTitle.includes('phương pháp')) return 'Điều trị';
+        if (lowerTitle.includes('hỗ trợ') || lowerTitle.includes('nhóm')) return 'Hỗ trợ';
+        return 'Blog';
+    }
+    
     // Lấy id từ query string
     function getQueryParam(name) {
         const url = new URL(window.location.href);
         return url.searchParams.get(name);
     }
-    const blogId = parseInt(getQueryParam('id'), 10);
-    const blog = blogData.find(b => b.id === blogId);
-    const blogDetail = document.getElementById('blogDetail');
-    if (blog && blogDetail) {
-        blogDetail.innerHTML = `
-            <div class="blog-detail-header">
-                <div style="margin-bottom:18px;">
-                    <span class="blog-category" style="background:#4A90E2;color:#fff;padding:4px 12px;border-radius:8px;font-size:1rem;">${blog.category}</span>
-                    <span style="color:#888;margin-left:16px;font-size:0.98rem;"><i class="fas fa-calendar-alt"></i> ${blog.date}</span>
-                </div>
-                <h1 style="font-size:2.2rem;margin-bottom:18px;">${blog.title}</h1>
-                <img src="${blog.image}" alt="${blog.title}" style="max-width:100%;border-radius:16px;box-shadow:0 4px 16px rgba(74,144,226,0.08);margin-bottom:24px;">
-            </div>
-            <div class="blog-detail-body" style="font-size:1.15rem;line-height:1.7;">${blog.content}</div>
-        `;
-    } else if (blogDetail) {
-        blogDetail.innerHTML = '<p style="color:red;">Không tìm thấy bài viết.</p>';
-    }
-    // Xử lý nút quay lại blog không tải lại trang
+    
+    // Load blog detail when page loads
     document.addEventListener('DOMContentLoaded', function() {
+        loadBlogDetail();
+        
+        // Xử lý nút quay lại blog không tải lại trang
         var backBtn = document.getElementById('backToBlog');
         if (backBtn) {
             backBtn.addEventListener('click', function(e) {
