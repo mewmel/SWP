@@ -684,80 +684,16 @@
     <section class="testimonials">
         <div class="container">
             <h2 class="section-title">Khách hàng nói gì về chúng tôi</h2>
-            <div class="testimonial-slider">
-                <div class="testimonial">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"FertilityEHR đã hoàn toàn thay đổi quy trình làm việc của phòng khám
-                        chúng tôi. Các tính năng chuyên biệt cho y học sinh sản đã cải thiện đáng kể hiệu quả của chúng
-                        tôi."</p>
-                    <div class="testimonial-author">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Bác sĩ Nguyễn Thị Hương">
-                        <div class="author-info">
-                            <h4>Bác sĩ Nguyễn Thị Hương</h4>
-                            <p>Trung tâm Hỗ trợ Sinh sản Hà Nội</p>
-                        </div>
+            <div class="testimonial-slider" id="testimonialSlider">
+                <!-- Loading state -->
+                <div class="testimonial-loading" id="testimonialLoading">
+                    <div class="loading-content">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
+                        <p style="color: #666;">Đang tải đánh giá từ khách hàng...</p>
                     </div>
                 </div>
-                <div class="testimonial">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"Hệ thống theo dõi bệnh nhân rất chuyên nghiệp. Chúng tôi có thể dễ dàng
-                        truy cập thông tin và theo dõi tiến trình điều trị của từng bệnh nhân."</p>
-                    <div class="testimonial-author">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Bác sĩ Trần Văn Minh">
-                        <div class="author-info">
-                            <h4>Bác sĩ Trần Văn Minh</h4>
-                            <p>Phòng khám IVF Sài Gòn</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                    <p class="testimonial-text">"Tích hợp phòng xét nghiệm giúp chúng tôi tiết kiệm thời gian và giảm
-                        thiểu sai sót. Quy trình làm việc trở nên hiệu quả hơn nhiều."</p>
-                    <div class="testimonial-author">
-                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Bác sĩ Lê Thị Hà">
-                        <div class="author-info">
-                            <h4>Bác sĩ Lê Thị Hà</h4>
-                            <p>Bệnh viện Phụ sản Trung ương</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"Cổng thông tin bệnh nhân rất tiện lợi. Bệnh nhân có thể dễ dàng truy
-                        cập thông tin và liên lạc với chúng tôi mọi lúc."</p>
-                    <div class="testimonial-author">
-                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Bác sĩ Phạm Văn An">
-                        <div class="author-info">
-                            <h4>Bác sĩ Phạm Văn An</h4>
-                            <p>Phòng khám Nam khoa Hà Nội</p>
-                        </div>
-                    </div>
-                </div>
+                
+                <!-- Testimonials will be loaded here from API -->
             </div>
         </div>
     </section>
@@ -815,5 +751,204 @@
     </footer>
     <script src="js/script.js"></script>
     <script src="js/blogViewAll.js"></script>
+    
+    <style>
+        .testimonial-loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .testimonial {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .testimonial:nth-child(1) { animation-delay: 0.1s; }
+        .testimonial:nth-child(2) { animation-delay: 0.2s; }
+        .testimonial:nth-child(3) { animation-delay: 0.3s; }
+        .testimonial:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .testimonial-error {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .testimonial-error i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+    </style>
+    
+    <script>
+        // Load testimonials when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTestimonials();
+        });
+
+        async function loadTestimonials() {
+            const testimonialSlider = document.getElementById('testimonialSlider');
+            const loadingElement = document.getElementById('testimonialLoading');
+            
+            try {
+                console.log('Loading testimonials from API...');
+                
+                // First, test if we can reach the API
+                const testResponse = await fetch('/api/feedback/test');
+                if (testResponse.ok) {
+                    const testData = await testResponse.json();
+                    console.log('Test API response:', testData);
+                }
+                
+                // Try the main testimonials API first
+                let response = await fetch('/api/feedback/testimonials');
+                console.log('Main testimonials API response status:', response.status);
+                
+                let testimonials = [];
+                
+                if (response.ok) {
+                    testimonials = await response.json();
+                    console.log('Main testimonials loaded:', testimonials);
+                } else {
+                    console.log('Main API failed, trying simple API...');
+                    
+                    // Fallback to simple API
+                    response = await fetch('/api/feedback/testimonials-simple');
+                    console.log('Simple testimonials API response status:', response.status);
+                    
+                    if (response.ok) {
+                        testimonials = await response.json();
+                        console.log('Simple testimonials loaded:', testimonials);
+                    } else {
+                        throw new Error(`Both APIs failed. Last error: HTTP ${response.status}: ${response.statusText}`);
+                    }
+                }
+                
+                // Hide loading
+                if (loadingElement) {
+                    loadingElement.style.display = 'none';
+                }
+                
+                if (!testimonials || testimonials.length === 0) {
+                    console.log('No testimonials found, showing empty state');
+                    showNoTestimonials();
+                    return;
+                }
+                
+                renderTestimonials(testimonials);
+                
+            } catch (error) {
+                console.error('Error loading testimonials:', error);
+                showTestimonialError(error.message);
+            }
+        }
+
+        function renderTestimonials(testimonials) {
+            const testimonialSlider = document.getElementById('testimonialSlider');
+            let html = '';
+            
+            testimonials.forEach((testimonial, index) => {
+                const stars = generateStarsForTestimonial(testimonial.rating);
+                const customerInitials = getInitials(testimonial.customerName);
+                const avatarUrl = generateAvatarUrl(customerInitials);
+                
+                html += `
+                    <div class="testimonial">
+                        <div class="testimonial-rating">
+                            ${stars}
+                        </div>
+                        <p class="testimonial-text">"${testimonial.comment}"</p>
+                        <div class="testimonial-author">
+                            <img src="${avatarUrl}" alt="${testimonial.customerName}" 
+                                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(customerInitials)}&background=667eea&color=fff&size=64'">
+                            <div class="author-info">
+                                <h4>${testimonial.customerName}</h4>
+                                <p>Khách hàng của ${testimonial.doctorName} - ${testimonial.serviceName}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            testimonialSlider.innerHTML = html;
+        }
+
+        function generateStarsForTestimonial(rating) {
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHTML += '<i class="fas fa-star"></i>';
+                } else if (i - 0.5 <= rating) {
+                    starsHTML += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    starsHTML += '<i class="far fa-star"></i>';
+                }
+            }
+            return starsHTML;
+        }
+
+        function getInitials(fullName) {
+            if (!fullName) return 'UN';
+            const names = fullName.split(' ');
+            if (names.length === 1) return names[0].charAt(0).toUpperCase();
+            return names[0].charAt(0).toUpperCase() + names[names.length - 1].charAt(0).toUpperCase();
+        }
+
+        function generateAvatarUrl(initials) {
+            // Sử dụng service tạo avatar từ initials
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=667eea&color=fff&size=64&rounded=true`;
+        }
+
+        function showNoTestimonials() {
+            const testimonialSlider = document.getElementById('testimonialSlider');
+            testimonialSlider.innerHTML = `
+                <div class="testimonial-error">
+                    <i class="fas fa-comments"></i>
+                    <h3>Chưa có đánh giá nào</h3>
+                    <p>Chúng tôi đang chờ những đánh giá đầu tiên từ khách hàng.</p>
+                </div>
+            `;
+        }
+
+        function showTestimonialError(errorMessage = '') {
+            const testimonialSlider = document.getElementById('testimonialSlider');
+            const loadingElement = document.getElementById('testimonialLoading');
+            
+            if (loadingElement) {
+                loadingElement.style.display = 'none';
+            }
+            
+            testimonialSlider.innerHTML = `
+                <div class="testimonial-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Không thể tải đánh giá</h3>
+                    <p>Có lỗi xảy ra khi tải đánh giá từ khách hàng. Vui lòng thử lại sau.</p>
+                    ${errorMessage ? `<p style="color: #ff6b6b; font-size: 0.9em; margin-top: 10px;">Chi tiết lỗi: ${errorMessage}</p>` : ''}
+                    <button onclick="loadTestimonials()" style="margin-top: 15px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        Thử lại
+                    </button>
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
