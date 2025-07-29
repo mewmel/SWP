@@ -23,6 +23,7 @@
                         <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
                     </ul>
                 </li>
+                </li>
                 <li><a href="index.html#blog">Blog</a></li>
                 <li><a href="bang-gia.html">Bảng giá</a></li>
                 <li><a href="#footer">Liên hệ</a></li>
@@ -301,73 +302,73 @@
 </div>
 
 
-    <!-- Forgot Password Modal -->
-    <div class="auth-modal" id="forgotPasswordModal" style="display: none;">
-        <div class="auth-modal-content">
-            <div class="auth-modal-left">
-                <div class="auth-modal-overlay">
-                    <h2>Khôi phục mật khẩu</h2>
-                    <p>Nhập thông tin để đặt lại mật khẩu của bạn</p>
-                </div>
-            </div>
-            <div class="auth-modal-right">
-                <span class="close-modal" id="closeForgotModal">&times;</span>
-                
-                <div class="auth-header">
-                    <button class="back-to-login" id="backToLogin">
-                        <i class="fas fa-arrow-left"></i> Quay lại đăng nhập
-                    </button>
-                </div>
-                
-                <h2>Đặt lại mật khẩu</h2>
-                
-                <form id="forgotPasswordForm" class="auth-form active">
-                    <div class="form-group">
-                        <label for="forgotEmail">Email</label>
-                        <div class="input-group">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" id="forgotEmail" required placeholder="Nhập email của bạn">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="forgotNewPassword">Mật khẩu mới</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="forgotNewPassword" required placeholder="Nhập mật khẩu mới">
-                            <i class="fas fa-eye toggle-password"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="forgotConfirmPassword">Xác nhận mật khẩu mới</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="forgotConfirmPassword" required placeholder="Nhập lại mật khẩu mới">
-                            <i class="fas fa-eye toggle-password"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="forgotOtp">Mã xác nhận (OTP)</label>
-                        <div class="input-group">
-                            <i class="fas fa-key"></i>
-                            <input type="text" id="forgotOtp" required placeholder="Nhập mã OTP 6 số" maxlength="6" pattern="[0-9]{6}">
-                        </div>
-                        <div class="otp-note">
-                            <small>Mã OTP sẽ được gửi đến email của bạn sau khi bấm "Đặt lại mật khẩu"</small>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary">
-                        <span>Đặt lại mật khẩu</span>
-                        <i class="fas fa-save"></i>
-                    </button>
-                </form>
+<!-- Forgot Password Modal -->
+<div class="auth-modal" id="forgotPasswordModal" style="display: none;">
+    <div class="auth-modal-content">
+        <div class="auth-modal-left">
+            <div class="auth-modal-overlay">
+                <h2>Khôi phục mật khẩu</h2>
+                <p>Nhập thông tin để đặt lại mật khẩu của bạn</p>
             </div>
         </div>
+        <div class="auth-modal-right">
+            <span class="close-modal" id="closeForgotModal">&times;</span>
+
+            <div class="auth-header">
+                <button class="back-to-login" id="backToLogin">
+                    <i class="fas fa-arrow-left"></i> Quay lại đăng nhập
+                </button>
+            </div>
+
+            <h2>Đặt lại mật khẩu</h2>
+
+            <form id="forgotPasswordForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="forgotEmail">Email</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="forgotEmail" required placeholder="Nhập email của bạn">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="forgotNewPassword">Mật khẩu mới</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="forgotNewPassword" required placeholder="Nhập mật khẩu mới">
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="forgotConfirmPassword">Xác nhận mật khẩu mới</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="forgotConfirmPassword" required placeholder="Nhập lại mật khẩu mới">
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="forgotOtp">Mã xác nhận (OTP)</label>
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input type="text" id="forgotOtp" required placeholder="Nhập mã OTP 6 số" maxlength="6" pattern="[0-9]{6}">
+                    </div>
+                    <div class="otp-note">
+                        <small>Mã OTP sẽ được gửi đến email của bạn sau khi bấm "Đặt lại mật khẩu"</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <span>Đặt lại mật khẩu</span>
+                    <i class="fas fa-save"></i>
+                </button>
+            </form>
+        </div>
     </div>
-    
+</div>
+
 
 <section class="hero">
     <div class="container">
@@ -401,6 +402,10 @@
                             <li>Chi phí hợp lý</li>
                             <li>Tỷ lệ thành công: 15-20% mỗi chu kỳ</li>
                         </ul>
+                        <a href="dat-lich.html?service=iui" class="btn-primary" style="margin-top: 20px; display: inline-block;">
+                            <span>Đặt lịch ngay</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -415,6 +420,10 @@
                             <li>Có thể kết hợp với các kỹ thuật hỗ trợ khác</li>
                             <li>Tỷ lệ thành công: 40-50% mỗi chu kỳ</li>
                         </ul>
+                        <a href="dat-lich.html?service=ivf" class="btn-primary" style="margin-top: 20px; display: inline-block;">
+                            <span>Đặt lịch ngay</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -437,20 +446,8 @@
 <div class="social-sidebar">
     <a href="#"><i class="fab fa-facebook-f"></i></a>
     <a href="#"><i class="fab fa-instagram"></i></a>
-    <a href="#" id="gmail-link"><i class="fas fa-envelope"></i></a>
+    <a href="#"><i class="fas fa-envelope"></i></a>
 </div>
-
-<!-- CTA Section -->
-<section class="cta">
-    <div class="container">
-        <h2>Sẵn sàng hành trình làm cha mẹ cùng chúng tôi chứ ?</h2>
-        <p>Tham gia cùng hàng trăm phòng khám hiếm muộn đang tin tưởng FertilityEHR</p>
-        <div class="cta-buttons">
-            <a href="dat-lich.html" class="btn-secondary">Đặt lịch khám ngay</a>
-        </div>
-    </div>
-</section>
-
 <footer id="footer">
     <div class="container">
         <div class="footer-columns">

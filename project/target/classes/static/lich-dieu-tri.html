@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="css/lich-dieu-tri.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
     <header>
         <div class="container">
             <div class="logo">
@@ -20,11 +19,10 @@
                    <li><a href="lich-dieu-tri.html" class="active">Lịch điều trị</a></li>
                     <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
                     <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
-                    <li>
                         <div class="notification-wrapper" style="position: relative;">
                             <button class="notification-icon" id="notificationBtn">
                                 <i class="fas fa-bell"></i>
-                                <span class="notification-badge">9</span>
+                                <span class="notification-badge"></span>
                             </button>
 
                             <!-- Dropdown Notification -->
@@ -36,69 +34,8 @@
                                     </button>
                                 </div>
 
-                                <div class="notification-dropdown-body">
-                                    <div class="notification-dropdown-item unread">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-syringe"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Nhắc nhở tiêm thuốc</div>
-                                            <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
-                                            </div>
-                                            <div class="notification-time">5 phút trước</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="notification-dropdown-item unread">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-flask"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Lịch xét nghiệm</div>
-                                            <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc
-                                                8:00</div>
-                                            <div class="notification-time">2 giờ trước</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="notification-dropdown-item">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-calendar-check"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Lịch hẹn khám</div>
-                                            <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
-                                                14:00</div>
-                                            <div class="notification-time">1 ngày trước</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="notification-dropdown-item">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-chart-line"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Kết quả xét nghiệm</div>
-                                            <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
-                                            <div class="notification-time">2 ngày trước</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="notification-dropdown-item">
-                                        <div class="notification-avatar">
-                                            <i class="fas fa-user-md"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Tin nhắn từ bác sĩ</div>
-                                            <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
-                                                cho bạn</div>
-                                            <div class="notification-time">3 ngày trước</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="notification-dropdown-footer">
-                                    <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
+                                <div class="notification-dropdown-body" id="notificationDropdownBody">
+                                    <!-- JS sẽ render động -->
                                 </div>
                             </div>
                         </div>
@@ -110,29 +47,115 @@
                 <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
                     <i class="fas fa-bars"></i>
                 </button>
+                <button class="logout-btn"
+                    style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
             </div>
+
+            <div class="auth-buttons" style="display:flex;">
+                <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
+                <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </header>
 
 
-       <!-- Sidebar-->
-<aside class="sidebar" id="sidebar" style="display:none;">
-    <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
-    <div class="sidebar-user">
-        <i class="fas fa-user-circle"></i>
-        <span class="sidebar-username"></span>
+        <!-- Sidebar giống trang index -->
+    <aside class="sidebar" id="sidebar" style="display:none;">
+        <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+        <div class="sidebar-user">
+            <i class="fas fa-user-circle"></i>
+            <span class="sidebar-username"></span>
+        </div>
+        <a href="dashboard.html"><i class="fas fa-user"></i> Bệnh án</a>
+        <a href="lich-dieu-tri.html"><i class="fas fa-calendar-check"></i> Lịch điều trị</a>
+        <a href="index.html#blog"><i class="fas fa-book-open"></i> Blog</a>
+        <a href="dat-lich.html"><i class="fas fa-calendar-alt"></i> Đặt lịch</a>
+        <a href="ho-so-ca-nhan.html"><i class="fas fa-cog"></i> Cài đặt</a>
+        <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
+        <a href="bac-si-dashboard.html">Bác sĩ dashboard</a>
+        <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+    </aside>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                <button class="auth-tab" data-tab="register">Đăng ký</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="loginPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng nhập</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div class="social-login">
+                    <button type="button" class="social-btn google">
+                        <i class="fab fa-google"></i> Đăng nhập với Google
+                    </button>
+                    <button type="button" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
+                    </button>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">Họ và tên</label>
+                    <input type="text" id="registerName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="registerPassword" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <div class="password-input">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <label for="agreeTerms">Tôi đồng ý với <a href="#">điều khoản sử dụng</a></label>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Đăng ký</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
     </div>
-    <a href="dashboard.html"><i class="fas fa-user"></i> Bệnh án</a>
-    <a href="lich-dieu-tri.html"><i class="fas fa-calendar-check"></i> Lịch điều trị</a>
-    <a href="index.html#blog"><i class="fas fa-book-open"></i> Blog</a>
-    <a href="dat-lich.html"><i class="fas fa-calendar-alt"></i> Đặt lịch</a>
-    <a href="ho-so-ca-nhan.html"><i class="fas fa-cog"></i> Cài đặt</a>
-    <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
-    <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-</aside>
+
 
     <main class="page-main">
-        <div class="page-header ">
+        <div class="page-header">
             <h1>Lịch điều trị</h1>
             <p>Theo dõi lịch trình điều trị IVF của bạn</p>
         </div>
@@ -227,7 +250,117 @@
             </div>
         </div>
     </main>
+
+    <!-- ✅ THÊM: Modal hiển thị chi tiết ngày -->
+    <div class="day-detail-modal" id="dayDetailModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Chi tiết ngày</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Nội dung sẽ được render bằng JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ THÊM: Modal dời lịch tái khám -->
+    <div class="reschedule-modal" id="rescheduleModal">
+        <div class="modal-overlay" id="rescheduleOverlay"></div>
+        <div class="modal-content reschedule-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-alt"></i> Dời lịch tái khám</h3>
+                <button class="modal-close" id="rescheduleModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="rescheduleForm" class="reschedule-form">
+                    <div class="current-appointment-info">
+                        <h4><i class="fas fa-info-circle"></i> Thông tin lịch hẹn hiện tại</h4>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Dịch vụ:</label>
+                                <span id="currentService">Tái khám IVF</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Bác sĩ:</label>
+                                <span id="currentDoctor">Dr. Nguyễn Văn A</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Ngày hiện tại:</label>
+                                <span id="currentDate">15/12/2024</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Giờ hiện tại:</label>
+                                <span id="currentTime">08:00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="new-appointment-form">
+                        <h4><i class="fas fa-calendar-plus"></i> Lịch hẹn mới</h4>
+                        
+                        <div class="form-group">
+                            <label for="newDate">
+                                <i class="fas fa-calendar"></i>
+                                Ngày mới <span class="required">*</span>
+                            </label>
+                            <div class="date-picker-buttons" id="datePicker">
+                                <!-- JavaScript sẽ tự động tạo 5 button ở đây -->
+                            </div>
+                            <input type="hidden" id="newDate" name="newDate" required>
+                            <small class="help-text">Chọn một trong 5 ngày tiếp theo (tối đa 5 ngày kể từ ngày hẹn hiện tại)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newTimeSlot">
+                                <i class="fas fa-clock"></i>
+                                Khung giờ mới <span class="required">*</span>
+                            </label>
+                            <select id="newTimeSlot" class="form-control" required>
+                                <option value="">-- Chọn khung giờ --</option>
+                                <option value="08:00-09:00">08:00 - 09:00</option>
+                                <option value="09:00-10:00">09:00 - 10:00</option>
+                                <option value="10:00-11:00">10:00 - 11:00</option>
+                                <option value="11:00-12:00">11:00 - 12:00</option>
+                                <option value="14:00-15:00">14:00 - 15:00</option>
+                                <option value="15:00-16:00">15:00 - 16:00</option>
+                                <option value="16:00-17:00">16:00 - 17:00</option>
+                            </select>
+                            <small class="help-text">Khung giờ khả dụng sẽ được cập nhật theo ngày được chọn</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rescheduleReason">
+                                <i class="fas fa-comment"></i>
+                                Lý do dời lịch
+                            </label>
+                            <textarea id="rescheduleReason" class="form-control" rows="3" 
+                                placeholder="Vui lòng cho biết lý do dời lịch (không bắt buộc)"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeRescheduleModal()">
+                            <i class="fas fa-times"></i>
+                            Hủy bỏ
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i>
+                            Xác nhận dời lịch
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="js/schedule.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/notification-dropdown.js"></script>
 </body>
-</html>
+</html> 
