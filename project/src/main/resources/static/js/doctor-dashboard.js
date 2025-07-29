@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Set data
                 clone.dataset.patient = b.cusId || '';
                 clone.dataset.status = b.bookStatus || '';
+                clone.dataset.bookid = b.bookId || '';
 
                 // Time
                 clone.querySelector('.time').textContent = info.startTime ? info.startTime.slice(0, 5) : '--:--';
@@ -275,7 +276,7 @@ window.checkout = async function (bookId, cusId, bookType) {
 
     // Mark patient as examined
     window.markAsExamined = async function (cusId, serId, docId, bookId) {
-        const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
+        const appointmentItem = document.querySelector(`[data-bookid="${bookId}"]`);
         if (!appointmentItem) return;
 
         // 2. Đổi nút/action
