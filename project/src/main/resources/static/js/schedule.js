@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'injection': 'event-injection',
             'test': 'event-test',
             'appointment': 'event-appointment',
-            'reminder': 'event-reminder'
+            'reminder': 'event-reminder',
+            'completed': 'event-completed'
         };
         return eventClasses[eventType] || 'event-item';
     }
@@ -136,14 +137,618 @@ document.addEventListener('DOMContentLoaded', function() {
         return dayElement;
     }
 
-    // Hàm hiển thị popup chi tiết sự kiện trong ngày
+    // ✅ THAY THẾ: Hàm hiển thị modal chi tiết sự kiện trong ngày
     function showDayDetails(day, events) {
         const monthName = monthNames[currentMonth];
+        const dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+        const selectedDate = new Date(currentYear, currentMonth, day);
+        const dayOfWeek = dayNames[selectedDate.getDay()];
+        
+        // Lấy các element modal
+        const modal = document.getElementById('dayDetailModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        
+        // Set title
+        modalTitle.innerHTML = `<i class="fas fa-calendar-day"></i> ${dayOfWeek}, ${day} ${monthName} ${currentYear}`;
+        
+        // Tạo nội dung modal
+        let modalContent = `
+            <div class="day-info">
+                <div class="date-display">${day}</div>
+                <div class="day-type">${dayOfWeek}, ${monthName} ${currentYear}</div>
+            </div>
+        `;
+        
         if (events.length > 0) {
-            let eventsList = events.map(event => `• ${event.title}`).join('\n');
-            alert(`Ngày ${day} ${monthName} ${currentYear}\n\nSự kiện:\n${eventsList}`);
+            modalContent += `
+                <div class="events-list">
+                    ${events.map(event => createEventCard(event)).join('')}
+                </div>
+            `;
         } else {
-            alert(`Ngày ${day} ${monthName} ${currentYear}\n\nKhông có sự kiện nào.`);
+            modalContent += `
+                <div class="empty-day">
+                    <i class="fas fa-calendar-times"></i>
+                    <h4>Không có lịch khám</h4>
+                    <p>Bạn không có lịch hẹn nào trong ngày này.</p>
+                </div>
+            `;
+        }
+        
+        modalBody.innerHTML = modalContent;
+        
+        // Hiển thị modal
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+    }
+    
+    // ✅ THÊM: Hàm tạo event card cho modal
+    function createEventCard(event) {
+        const eventType = event.type || 'appointment';
+        const statusIcon = {
+            'completed': 'fas fa-check-circle',
+            'appointment': 'fas fa-calendar-check',
+            'test': 'fas fa-flask',
+            'injection': 'fas fa-syringe',
+            'reminder': 'fas fa-bell'
+        };
+        
+        return `
+            <div class="event-card ${eventType}">
+                <div class="event-header">
+                    <div class="event-title">
+                        <i class="${statusIcon[eventType] || statusIcon.appointment}"></i>
+                        ${event.title}
+                    </div>
+                    ${event.time ? `<div class="event-time">${event.time}</div>` : ''}
+                </div>
+                <div class="event-details">
+                    ${event.doctor ? `
+                        <div class="event-detail-item">
+                            <i class="fas fa-user-md"></i>
+                            <span>Bác sĩ: ${event.doctor}</span>
+                        </div>
+                    ` : ''}
+                    ${event.subServices && event.subServices.trim() ? `
+                        <div class="event-detail-item">
+                            <i class="fas fa-medical-bag"></i>
+                            <span>Dịch vụ: ${event.subServices}</span>
+                        </div>
+                    ` : ''}
+                    ${event.note ? `
+                        <div class="event-detail-item">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>Ghi chú: ${event.note}</span>
+                        </div>
+                    ` : ''}
+                    ${event.bookStatus ? `
+                        <div class="event-detail-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Trạng thái: ${getStatusText(event.bookStatus)}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                ${event.bookType === 'follow-up' && event.bookStatus === 'confirmed' ? `
+                    <div class="event-actions">
+                        <button class="btn-reschedule" onclick="openRescheduleModal(${event.bookId}, '${event.title}', '${event.doctor}')">
+                            <i class="fas fa-calendar-alt"></i>
+                            Dời lịch tái khám
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+    
+    // ✅ THÊM: Hàm lấy text trạng thái
+    function getStatusText(status) {
+        const statusMap = {
+            'pending': 'Chờ xác nhận',
+            'confirmed': 'Đã xác nhận',
+            'completed': 'Đã hoàn thành',
+            'cancelled': 'Đã hủy'
+        };
+        return statusMap[status] || status;
+    }
+    
+    // ✅ THÊM: Xử lý đóng modal
+    function closeModal() {
+        const modal = document.getElementById('dayDetailModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restore background scroll
+    }
+    
+    // ✅ THÊM: Event listeners cho modal
+    function initModalEventListeners() {
+        const modal = document.getElementById('dayDetailModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalOverlay = document.getElementById('modalOverlay');
+        
+        // Đóng modal khi click X
+        modalClose.addEventListener('click', closeModal);
+        
+        // Đóng modal khi click overlay
+        modalOverlay.addEventListener('click', closeModal);
+        
+        // Đóng modal khi nhấn Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // ✅ THÊM: Event listeners cho modal dời lịch
+        initRescheduleModalListeners();
+    }
+    
+    // ✅ THÊM: Khởi tạo event listeners cho modal dời lịch
+    function initRescheduleModalListeners() {
+        const rescheduleModal = document.getElementById('rescheduleModal');
+        const rescheduleModalClose = document.getElementById('rescheduleModalClose');
+        const rescheduleOverlay = document.getElementById('rescheduleOverlay');
+        const rescheduleForm = document.getElementById('rescheduleForm');
+        const newDateInput = document.getElementById('newDate');
+        
+        // Đóng modal khi click X
+        rescheduleModalClose.addEventListener('click', closeRescheduleModal);
+        
+        // Đóng modal khi click overlay
+        rescheduleOverlay.addEventListener('click', closeRescheduleModal);
+        
+        // Đóng modal khi nhấn Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && rescheduleModal.style.display === 'block') {
+                closeRescheduleModal();
+            }
+        });
+        
+        // Set ngày tối thiểu là ngày mai
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        newDateInput.min = tomorrow.toISOString().split('T')[0];
+        
+        // Load khung giờ khi thay đổi ngày
+        newDateInput.addEventListener('change', loadAvailableTimeSlots);
+        
+        // Xử lý submit form
+        rescheduleForm.addEventListener('submit', handleRescheduleSubmit);
+    }
+    
+    // ✅ THÊM: Biến lưu thông tin booking hiện tại
+    let currentBookingData = {};
+    
+    // ✅ THÊM: Mở modal dời lịch
+    window.openRescheduleModal = async function(bookId, title, doctor) {
+        // Lưu thông tin booking hiện tại
+        currentBookingData = { bookId, title, doctor };
+        
+        // Tìm thông tin chi tiết từ eventsData
+        const bookingDetails = findBookingDetails(bookId);
+        
+        // Cập nhật thông tin lịch hẹn hiện tại
+        document.getElementById('currentService').textContent = title;
+        document.getElementById('currentDoctor').textContent = doctor;
+        
+        if (bookingDetails) {
+            document.getElementById('currentDate').textContent = formatDateVietnamese(bookingDetails.date);
+            document.getElementById('currentTime').textContent = bookingDetails.time || '';
+        }
+        
+        // 🔄 MỚI: Lấy docId từ API booking detail
+        try {
+            const response = await fetch(`/api/booking/${bookId}`);
+            if (response.ok) {
+                const bookingInfo = await response.json();
+                currentBookingData.docId = bookingInfo.docId;
+                
+                // Tạo date picker với 5 ngày tiếp theo kiểm tra WorkSlot thực tế
+                if (bookingDetails) {
+                    await generateDatePickerButtons(bookingDetails.date);
+                }
+            } else {
+                console.error('Không thể lấy thông tin booking:', response.status);
+                showNotification('Không thể lấy thông tin lịch hẹn!', 'error');
+                return;
+            }
+        } catch (error) {
+            console.error('Lỗi khi gọi API booking:', error);
+            showNotification('Lỗi kết nối! Vui lòng thử lại.', 'error');
+            return;
+        }
+        
+        // Reset form
+        document.getElementById('rescheduleForm').reset();
+        
+        // Hiển thị modal
+        const modal = document.getElementById('rescheduleModal');
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // ✅ THÊM: Đóng modal dời lịch
+    window.closeRescheduleModal = function() {
+        const modal = document.getElementById('rescheduleModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        currentBookingData = {};
+    }
+    
+    // ✅ THÊM: Tìm thông tin chi tiết booking
+    function findBookingDetails(bookId) {
+        for (const monthKey in eventsData) {
+            for (const day in eventsData[monthKey]) {
+                const events = eventsData[monthKey][day];
+                for (const event of events) {
+                    if (event.bookId === bookId) {
+                        const [year, month] = monthKey.split('-');
+                        return {
+                            date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)),
+                            time: event.time,
+                            event: event
+                        };
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    // ✅ THÊM: Format ngày theo kiểu Việt Nam
+    function formatDateVietnamese(date) {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+    
+    // ✅ THÊM: Tạo 5 button chọn ngày (async để gọi API WorkSlot)
+    async function generateDatePickerButtons(currentDate) {
+        const datePicker = document.getElementById('datePicker');
+        if (!datePicker) return;
+        
+        // Hiển thị loading
+        datePicker.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;"><i class="fas fa-spinner fa-spin"></i> Đang tải lịch làm việc...</div>';
+        
+        if (!currentBookingData.docId) {
+            datePicker.innerHTML = '<div style="text-align: center; padding: 20px; color: #e74c3c;">Không thể lấy thông tin bác sĩ!</div>';
+            return;
+        }
+        
+        // Tính khoảng ngày: từ ngày mai đến 5 ngày sau ngày hẹn hiện tại
+        const tomorrow = new Date(currentDate);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        const endDate = new Date(currentDate);
+        endDate.setDate(endDate.getDate() + 5);
+        
+        // ✅ FIX: Tránh vấn đề timezone
+        const fromDate = `${tomorrow.getFullYear()}-${(tomorrow.getMonth() + 1).toString().padStart(2, '0')}-${tomorrow.getDate().toString().padStart(2, '0')}`;
+        const toDate = `${endDate.getFullYear()}-${(endDate.getMonth() + 1).toString().padStart(2, '0')}-${endDate.getDate().toString().padStart(2, '0')}`;
+        
+        try {
+            // Gọi API lấy WorkSlot của bác sĩ trong 5 ngày tiếp theo
+            const response = await fetch(`/api/workslots/${currentBookingData.docId}/slots?from=${fromDate}&to=${toDate}`);
+            
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+            
+            const workSlots = await response.json();
+            console.log('📅 WorkSlots từ API:', workSlots);
+            
+            // Tạo Set các ngày có WorkSlot approved
+            const availableDates = new Set();
+            workSlots.forEach(slot => {
+                if (slot.slotStatus === 'approved') {
+                    // ✅ FIX: Tránh vấn đề timezone - dùng workDate string trực tiếp
+                    const workDate = slot.workDate; // workDate từ API đã là string "yyyy-MM-dd"
+                    availableDates.add(workDate);
+                }
+            });
+            
+            console.log('📅 Ngày có lịch làm việc:', Array.from(availableDates));
+            
+            // Clear loading và tạo buttons
+            datePicker.innerHTML = '';
+            
+            // Tạo 5 ngày tiếp theo
+            for (let i = 1; i <= 5; i++) {
+                const date = new Date(currentDate);
+                date.setDate(date.getDate() + i);
+                
+                // ✅ FIX: Tránh vấn đề timezone bằng cách format thủ công
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                const dateStr = `${year}-${month}-${day}`;
+                
+                // Debug: Log thông tin ngày được tạo
+                console.log(`📅 DEBUG: Tạo button ${i} - Ngày: ${dateStr}, Thứ: ${date.getDay()}, Display: ${date.getDate()}`);
+                
+                // Kiểm tra ngày này có trong WorkSlot approved không
+                const isAvailable = availableDates.has(dateStr);
+                
+                const dateBtn = createDateButton(date, i, isAvailable);
+                datePicker.appendChild(dateBtn);
+            }
+            
+        } catch (error) {
+            console.error('❌ Lỗi khi lấy WorkSlot:', error);
+            datePicker.innerHTML = '<div style="text-align: center; padding: 20px; color: #e74c3c;">Không thể tải lịch làm việc! Vui lòng thử lại.</div>';
+        }
+    }
+    
+    // ✅ THÊM: Tạo button cho mỗi ngày với trạng thái available  
+    function createDateButton(date, dayOffset, isAvailable) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        
+        // ✅ FIX: Tránh vấn đề timezone bằng cách format thủ công
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+        
+        button.dataset.date = dateStr;
+        button.dataset.dayOffset = dayOffset;
+        
+        // Debug: Log thông tin button được tạo
+        console.log(`🔧 DEBUG: Create button - Date object: ${date}, DateStr: ${dateStr}, Display day: ${date.getDate()}, DayOffset: ${dayOffset}`);
+        
+        // Tên thứ trong tuần
+        const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+        const dayName = dayNames[date.getDay()];
+        
+        // Tên tháng
+        const monthNames = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+        const monthName = monthNames[date.getMonth()];
+        
+        // Set className và thuộc tính dựa trên availability
+        if (isAvailable) {
+            button.className = 'date-btn available';
+            button.disabled = false;
+            button.title = 'Bác sĩ có lịch làm việc trong ngày này';
+            
+            // Thêm event listener chỉ cho ngày available
+            button.addEventListener('click', function() {
+                selectDate(this);
+            });
+        } else {
+            button.className = 'date-btn unavailable';
+            button.disabled = true;
+            button.title = 'Bác sĩ không có lịch làm việc trong ngày này';
+        }
+        
+        // Nội dung HTML với status indicator
+        button.innerHTML = `
+            <div class="day-name">${dayName}</div>
+            <div class="date-number">${date.getDate()}</div>
+            <div class="month-name">${monthName}</div>
+            <div class="status-indicator">
+                ${isAvailable ? 
+                    '<i class="fas fa-check-circle" style="color: #27ae60; font-size: 0.8rem;"></i>' : 
+                    '<i class="fas fa-times-circle" style="color: #e74c3c; font-size: 0.8rem;"></i>'
+                }
+            </div>
+        `;
+        
+        return button;
+    }
+    
+    // ✅ THÊM: Xử lý chọn ngày 
+    async function selectDate(selectedButton) {
+        // Kiểm tra xem button này có available không
+        if (selectedButton.disabled || selectedButton.classList.contains('unavailable')) {
+            showNotification('Bác sĩ không có lịch làm việc trong ngày này!', 'warning');
+            return;
+        }
+        
+        // Remove selected class từ tất cả buttons
+        document.querySelectorAll('.date-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        
+        // Add selected class cho button được chọn
+        selectedButton.classList.add('selected');
+        
+        // Lưu ngày đã chọn
+        const selectedDate = selectedButton.dataset.date;
+        const displayDay = selectedButton.querySelector('.date-number').textContent;
+        const displayDayName = selectedButton.querySelector('.day-name').textContent;
+        
+        console.log(`🎯 DEBUG: User click button ${displayDayName} ${displayDay}, dataset.date = ${selectedDate}`);
+        
+        currentBookingData.selectedDate = selectedDate;
+        
+        // Cập nhật hidden input cho form validation
+        const hiddenInput = document.getElementById('newDate');
+        if (hiddenInput) {
+            hiddenInput.value = selectedDate;
+        }
+        
+        // Load khung giờ khả dụng cho ngày đã chọn
+        await loadAvailableTimeSlots(selectedDate);
+        
+        console.log('✅ Đã chọn ngày:', selectedDate);
+    }
+
+    
+    // ✅ THÊM: Load khung giờ khả dụng cho ngày đã chọn từ API WorkSlot
+    async function loadAvailableTimeSlots(selectedDate) {
+        const timeSlotSelect = document.getElementById('newTimeSlot');
+        
+        if (!selectedDate || !currentBookingData.docId) {
+            timeSlotSelect.innerHTML = '<option value="">-- Chọn khung giờ --</option>';
+            return;
+        }
+        
+        // Hiển thị loading
+        timeSlotSelect.innerHTML = '<option value="">Đang tải khung giờ...</option>';
+        
+        try {
+            // Gọi API lấy WorkSlot với booking count cho ngày cụ thể
+            const response = await fetch(`/api/workslots?docId=${currentBookingData.docId}&date=${selectedDate}`);
+            
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+            
+            const workSlots = await response.json();
+            console.log('⏰ WorkSlots cho ngày', selectedDate, ':', workSlots);
+            
+            // Reset dropdown
+            timeSlotSelect.innerHTML = '<option value="">-- Chọn khung giờ --</option>';
+            
+            if (!workSlots || workSlots.length === 0) {
+                timeSlotSelect.innerHTML = '<option value="">Bác sĩ không có lịch làm việc trong ngày này</option>';
+                return;
+            }
+            
+            // Tạo options từ WorkSlot thực tế
+            workSlots.forEach(slot => {
+                const option = document.createElement('option');
+                const timeRange = `${slot.startTime}-${slot.endTime}`;
+                option.value = timeRange;
+                
+                // Kiểm tra slot có còn chỗ không (để disable nếu đầy)
+                const remainingSlots = slot.maxPatient - slot.currentBooking;
+                const isFull = remainingSlots <= 0;
+                
+                // ✅ Chỉ hiển thị khung giờ, tạm ẩn thông tin số chỗ
+                option.textContent = timeRange;
+                
+                if (isFull) {
+                    option.disabled = true;
+                    option.style.color = '#999';
+                    option.style.fontStyle = 'italic';
+                }
+                
+                timeSlotSelect.appendChild(option);
+            });
+            
+            console.log('✅ Đã load', workSlots.length, 'khung giờ cho ngày', selectedDate);
+            
+        } catch (error) {
+            console.error('❌ Lỗi khi lấy khung giờ:', error);
+            timeSlotSelect.innerHTML = '<option value="">Không thể tải khung giờ! Vui lòng thử lại.</option>';
+        }
+    }
+    
+    // ✅ THÊM: Xử lý submit form dời lịch
+    function handleRescheduleSubmit(e) {
+        e.preventDefault();
+        
+        const formData = {
+            bookId: currentBookingData.bookId,
+            newDate: currentBookingData.selectedDate,
+            newTimeSlot: document.getElementById('newTimeSlot').value,
+            reason: document.getElementById('rescheduleReason').value
+        };
+        
+        // Validation
+        if (!formData.newDate) {
+            showNotification('Vui lòng chọn ngày mới!', 'error');
+            return;
+        }
+        
+        if (!formData.newTimeSlot) {
+            showNotification('Vui lòng chọn khung giờ!', 'error');
+            return;
+        }
+        
+        // Kiểm tra ngày không được là quá khứ (này đã được đảm bảo bởi logic 5 ngày tiếp theo)
+        const selectedDate = new Date(formData.newDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (selectedDate <= today) {
+            showNotification('Ngày mới phải là ngày trong tương lai!', 'error');
+            return;
+        }
+        
+        // Kiểm tra slot không được là disabled
+        const timeSlotSelect = document.getElementById('newTimeSlot');
+        const selectedOption = timeSlotSelect.options[timeSlotSelect.selectedIndex];
+        if (selectedOption && selectedOption.disabled) {
+            showNotification('Khung giờ này đã đầy, vui lòng chọn khung giờ khác!', 'error');
+            return;
+        }
+        
+        // Hiển thị loading
+        const submitBtn = document.querySelector('#rescheduleForm .btn-primary');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+        submitBtn.disabled = true;
+        
+        // ✅ THAY THẾ: Gọi API thực tế để dời lịch
+        handleRescheduleAPI();
+        
+        async function handleRescheduleAPI() {
+            try {
+                // ✅ BƯỚC 1: Lấy slotId từ ngày giờ được chọn
+                const [startTime, endTime] = formData.newTimeSlot.split('-');
+                
+                const slotResponse = await fetch('/api/workslots/get-slot-id-by-date-time', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        docId: currentBookingData.docId,
+                        workDate: formData.newDate,
+                        startTime: startTime,
+                        endTime: endTime
+                    })
+                });
+                
+                if (!slotResponse.ok) {
+                    const errorText = await slotResponse.text();
+                    throw new Error(`Không thể tìm khung giờ phù hợp: ${errorText}`);
+                }
+                
+                const slotData = await slotResponse.json();
+                
+                if (!slotData.slotId) {
+                    throw new Error('Không tìm thấy khung giờ làm việc phù hợp!');
+                }
+                
+                console.log('📅 Đã lấy slotId:', slotData.slotId, 'cho ngày', formData.newDate, 'khung giờ', formData.newTimeSlot);
+                
+                // ✅ BƯỚC 2: Gửi yêu cầu dời lịch
+                const rescheduleResponse = await fetch(`/api/booking/${formData.bookId}/reschedule`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        newSlotId: slotData.slotId,
+                        reason: formData.reason
+                    })
+                });
+                
+                const rescheduleResult = await rescheduleResponse.json();
+                
+                if (rescheduleResponse.ok && rescheduleResult.success) {
+                    // Thành công
+                    showNotification(rescheduleResult.message, 'success');
+                    
+                    // Đóng modal
+                    closeRescheduleModal();
+                    
+                    // Reload calendar để cập nhật
+                    renderCalendar();
+                    
+                    console.log('✅ Reschedule thành công:', rescheduleResult);
+                } else {
+                    // Lỗi từ API
+                    throw new Error(rescheduleResult.message || 'Không thể dời lịch');
+                }
+                
+            } catch (error) {
+                console.error('❌ Lỗi khi dời lịch:', error);
+                showNotification(`Lỗi: ${error.message}`, 'error');
+            } finally {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
         }
     }
 
@@ -239,117 +844,177 @@ document.addEventListener('DOMContentLoaded', function() {
     // Hàm hiển thị thông báo nổi (toast)
     function showNotification(message, type = 'success') {
         const notification = document.createElement('div');
+        const bgColor = type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#f39c12';
+        const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ⓘ';
+        
         notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
             padding: 15px 25px;
-            background: ${type === 'success' ? '#27ae60' : '#e74c3c'};
+            background: ${bgColor};
             color: white;
             border-radius: 8px;
             font-weight: 500;
-            z-index: 1000;
+            z-index: 1003;
             transform: translateX(100%);
             transition: transform 0.3s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 400px;
+            word-wrap: break-word;
         `;
-        notification.textContent = message;
+        notification.innerHTML = `<span style="margin-right: 8px;">${icon}</span>${message}`;
         document.body.appendChild(notification);
+        
         setTimeout(() => {
             notification.style.transform = 'translateX(0)';
         }, 10);
+        
+        const duration = type === 'error' ? 5000 : 3000; // Error hiển thị lâu hơn
         setTimeout(() => {
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => {
+                if (notification.parentNode) {
                 document.body.removeChild(notification);
+                }
             }, 300);
-        }, 3000);
+        }, duration);
     }
 
-    // ===== LẤY DỮ LIỆU BOOKING STEP TỪ BACKEND VÀ VẼ LỊCH =====
-    function loadBookingStepsFromAPI(bookingId) {
-        // Gọi API lấy danh sách bước điều trị từ backend
-        fetch(`/api/booking-steps/by-booking/${bookingId}`)
-            .then(res => res.json())
-            .then(steps => {
-                // Xóa sạch eventsData trước khi nạp mới
-                Object.keys(eventsData).forEach(key => delete eventsData[key]);
-                // Duyệt từng bước, mapping vào eventsData theo đúng tháng/ngày
-                steps.forEach(step => {
-                    let date = new Date(step.performedAt);
-                    let year = date.getFullYear();
-                    let month = date.getMonth() + 1; // JS: 0-11, eventsData: 1-12
-                    let day = date.getDate();
+    // ===== PHẦN NÀY ĐÃ ĐƯỢC THAY THẾ BẰNG API MỚI =====
+    // Code cũ đã được remove để load booking tái khám trực tiếp từ API
 
-                    let eventsKey = `${year}-${month}`;
+// THÊM HÀM NÀY để load lịch cho đúng khách hàng
+    function loadScheduleForCustomer(cusId) {
+        // Chỉ xoá sạch eventsData ở đây!
+        Object.keys(eventsData).forEach(key => delete eventsData[key]);
+        
+        // Load tất cả booking (lần đầu và tái khám) với thông tin WorkSlot
+        fetch(`/api/booking/history/${cusId}`)
+            .then(res => res.json())
+            .then(allBookings => {
+                allBookings.forEach(booking => {
+                    // Parse workDate from WorkSlot
+                    const workDate = new Date(booking.workDate);
+                    const year = workDate.getFullYear();
+                    const month = workDate.getMonth() + 1; // getMonth() returns 0-11
+                    const day = workDate.getDate();
+                    
+                    const eventsKey = `${year}-${month}`;
                     if (!eventsData[eventsKey]) eventsData[eventsKey] = {};
                     if (!eventsData[eventsKey][day]) eventsData[eventsKey][day] = [];
-
-                    // Phân loại sự kiện dựa theo tên subService (đơn giản hóa)
+                    
+                    // Xác định type và title của event dựa trên bookType và bookStatus
                     let type = 'appointment';
-                    if (step.subName && step.subName.toLowerCase().includes('tiêm')) type = 'injection';
-                    else if (step.subName && step.subName.toLowerCase().includes('xét nghiệm')) type = 'test';
-                    else if (step.subName && step.subName.toLowerCase().includes('siêu âm')) type = 'test';
-
+                    let title = booking.serName;
+                    
+                    if (booking.bookStatus === 'completed') {
+                        type = 'completed';
+                        if (booking.bookType === 'follow-up') {
+                            title = `Đã tái khám: ${booking.serName}`;
+                        } else {
+                            title = `Đã khám: ${booking.serName}`;
+                        }
+                    } else if (booking.bookStatus === 'confirmed') {
+                        type = 'appointment';
+                        if (booking.bookType === 'follow-up') {
+                            title = `Tái khám: ${booking.serName}`;
+                        } else {
+                            title = `Khám: ${booking.serName}`;
+                        }
+                    }
+                    
                     eventsData[eventsKey][day].push({
                         type: type,
-                        title: step.subName || "Bước điều trị"
+                        title: title,
+                        time: booking.startTime ? booking.startTime.substring(0, 5) : '',
+                        doctor: booking.docFullName,
+                        note: booking.note,
+                        bookId: booking.bookId,
+                        bookStatus: booking.bookStatus,
+                        bookType: booking.bookType,
+                        subServices: booking.subServices || '' // Thêm SubService info
                     });
                 });
-                // Sau khi nạp xong thì vẽ lại lịch
+                
+                // Render calendar sau khi load xong data
+                renderCalendar();
+                updateUpcomingEvents(allBookings);
+                updateTreatmentInfo(allBookings);
+            })
+            .catch(error => {
+                console.error('Error loading booking history:', error);
+                // Fallback: render calendar với data rỗng
                 renderCalendar();
             });
     }
-    //Hàm load đồng thời nhiều bookingId và merge vào lịch
-    function loadMultipleBookingSteps(bookingIds) {
-        // Đầu tiên xóa sạch eventsData
-        Object.keys(eventsData).forEach(key => delete eventsData[key]);
-        let fetchDone = 0;
-        bookingIds.forEach(bookingId => {
-            fetch(`/api/booking-steps/by-booking/${bookingId}`)
-                .then(res => res.json())
-                .then(steps => {
-                    steps.forEach(step => {
-                        let date = new Date(step.performedAt);
-                        let year = date.getFullYear();
-                        let month = date.getMonth() + 1;
-                        let day = date.getDate();
 
-                        let eventsKey = `${year}-${month}`;
-                        if (!eventsData[eventsKey]) eventsData[eventsKey] = {};
-                        if (!eventsData[eventsKey][day]) eventsData[eventsKey][day] = [];
+    // Hàm cập nhật phần "Sự kiện sắp tới" 
+    function updateUpcomingEvents(allBookings) {
+        const upcomingEventsContainer = document.querySelector('.upcoming-events');
+        if (!upcomingEventsContainer) return;
+        
+        // Filter và sort upcoming events (chỉ lấy các booking confirmed/pending từ hôm nay trở đi)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const upcomingBookings = allBookings
+            .filter(booking => {
+                const workDate = new Date(booking.workDate);
+                return workDate >= today && booking.bookStatus === 'confirmed';
+            })
+            .sort((a, b) => new Date(a.workDate) - new Date(b.workDate))
+            .slice(0, 3); // Chỉ lấy 3 sự kiện gần nhất
+        
+        if (upcomingBookings.length === 0) {
+            upcomingEventsContainer.innerHTML = '<p style="color: #888; text-align: center; padding: 1rem;">Không có lịch khám nào sắp tới.</p>';
+            return;
+        }
+        
+        // Render upcoming events
+        upcomingEventsContainer.innerHTML = upcomingBookings.map(booking => {
+            const workDate = new Date(booking.workDate);
+            const dayOfWeek = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][workDate.getDay()];
+            const day = workDate.getDate();
+            const startTime = booking.startTime ? booking.startTime.substring(0, 5) : '';
+            
+            return `
+                <div class="upcoming-event">
+                    <div class="event-date">
+                        <div class="day">${day}</div>
+                        <div class="month">${dayOfWeek}</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title">${booking.serName}</div>
+                        <div class="event-time">${startTime} - ${booking.docFullName}</div>
+                        ${booking.subServices && booking.subServices.trim() ? 
+                          `<div class="event-note">Dịch vụ phụ: ${booking.subServices}</div>` : ''}
+                        ${booking.note ? `<div class="event-note">${booking.note}</div>` : ''}
+                    </div>
+                </div>
+            `;
+                 }).join('');
+     }
 
-                        let type = 'appointment';
-                        if (step.subName && step.subName.toLowerCase().includes('tiêm')) type = 'injection';
-                        else if (step.subName && step.subName.toLowerCase().includes('xét nghiệm')) type = 'test';
-                        else if (step.subName && step.subName.toLowerCase().includes('siêu âm')) type = 'test';
+    // Hàm cập nhật thông tin lịch điều trị
+    function updateTreatmentInfo(allBookings) {
+        const totalCount = allBookings.length;
+        const completedCount = allBookings.filter(booking => booking.bookStatus === 'completed').length;
+        const upcomingCount = allBookings.filter(booking => {
+            const workDate = new Date(booking.workDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return workDate >= today && booking.bookStatus === 'confirmed';
+        }).length;
 
-                        eventsData[eventsKey][day].push({
-                            type: type,
-                            title: step.subName || "Bước điều trị"
-                        });
-                    });
-                    fetchDone++;
-                    // Khi đã load xong tất cả booking thì render calendar
-                    if (fetchDone === bookingIds.length) {
-                        renderCalendar();
-                    }
-                });
-        });
-    }
-    // THÊM HÀM NÀY để load lịch cho đúng khách hàng
-    function loadScheduleForCustomer(cusId) {
-        fetch(`/api/booking/by-customer/${cusId}`)
-            .then(res => res.json())
-            .then(bookings => {
-                const bookingIds = bookings.map(b => b.bookId);
-                if (bookingIds.length === 0) {
-                    // Không có booking, chỉ render lịch trống
-                    renderCalendar();
-                    return;
-                }
-                loadMultipleBookingSteps(bookingIds);
-            });
+        // Cập nhật các element  
+        const totalElement = document.getElementById('totalBookingCount');
+        const completedElement = document.getElementById('completedBookingCount');
+        const upcomingElement = document.getElementById('upcomingBookingCount');
+
+        if (totalElement) totalElement.textContent = totalCount;
+        if (completedElement) completedElement.textContent = completedCount;
+        if (upcomingElement) upcomingElement.textContent = upcomingCount;
     }
 
 // GIẢ SỬ bạn đã lấy được cusId (ví dụ lấy từ localStorage hoặc server truyền vào)
@@ -360,10 +1025,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Xử lý khi chưa đăng nhập hoặc chưa có cusId
         alert("Bạn cần đăng nhập để xem lịch điều trị!");
     }
-    // KHÔNG gọi renderCalendar() ở cuối file nữa, chỉ gọi sau khi đã load xong dữ liệu từ API
-    //loadBookingStepsFromAPI(3); // Thay 123 bằng bookingId thực tế
-    //loadBookingStepsFromAPI(4);
-    // loadMultipleBookingSteps([3, 4]);
+
+    // ✅ THÊM: Khởi tạo modal event listeners
+    initModalEventListeners();
+
     // Hỗ trợ chuyển tháng bằng phím mũi tên
     document.addEventListener('keydown', function(e) {
         if (e.target.tagName.toLowerCase() !== 'input') {
@@ -374,4 +1039,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
 });

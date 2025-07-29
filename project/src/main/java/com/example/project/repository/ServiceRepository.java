@@ -1,6 +1,11 @@
 package com.example.project.repository;
 
-import com.example.project.entity.Service;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ServiceRepository extends JpaRepository<Service, Integer> {}
+import com.example.project.entity.Service;
+
+public interface ServiceRepository extends JpaRepository<Service, Integer> {
+    Optional<Service> findBySerId(Integer serId);
+}

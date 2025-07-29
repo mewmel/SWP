@@ -292,7 +292,7 @@
             margin-bottom: 24px;
             display: flex;
             gap: 20px;
-            align-items: center;
+            align-items: end;
             flex-wrap: wrap;
         }
 
@@ -330,11 +330,13 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            align-self: flex-end;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
 
         .btn-refresh:hover {
             background: #2563eb;
+            transform: translateY(-1px);
         }
 
         .appointments-header {
@@ -561,6 +563,7 @@
             .filter-section {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 16px;
             }
 
             .modal-content {
@@ -609,8 +612,8 @@
 
             <div class="doctor-profile-info">
                 <div class="doctor-info">
-                    <div class="doctor-name">BS. Nguyễn Ngọc Khánh Linh</div>
-                    <div class="doctor-role">Quản trị viên</div>
+                    <div class="doctor-name" id="doctorName"></div>
+                    <div class="doctor-role">Bác sĩ</div>
                 </div>
                 <div class="doctor-avatar">
                     <i class="fas fa-user"></i>
@@ -666,7 +669,7 @@
                     <div class="appointment-card template" id="bookingTemplate" style="display: none;">
                         <div class="appointment-header">
                             <div class="patient-info">
-                                <h3 class="patient-name" id="patientName">Booking #</h3>
+                                <h3 class="patient-name" id="patientName">Tên bệnh nhân</h3>
                                 <div class="booking-type-badge" id="bookingTypeBadge">
                                     <i class="fas fa-user-plus"></i>
                                     <span id="bookingType">Khám lần đầu</span>
@@ -695,30 +698,12 @@
                                 </div>
                                 <div class="detail-item">
                                     <span class="detail-label">
-                                        <i class="fas fa-phone"></i> Số điện thoại
-                                    </span>
-                                    <span class="detail-value" id="customerPhone">N/A</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">
                                         <i class="fas fa-info-circle"></i> Trạng thái
                                     </span>
                                     <span class="detail-value">
                                         <span class="status-badge" id="statusBadge">--</span>
                                     </span>
                                 </div>
-
-                            </div>
-                        </div>
-
-                        <div class="follow-up-info" id="followUpInfo" style="display: none;">
-                            <div class="follow-up-badge">
-                                <i class="fas fa-redo-alt"></i>
-                                <span>Tái khám bước điều trị: <strong id="followUpService">Tên bước điều trị</strong></span>
-                            </div>
-                            <div class="previous-visit">
-                                <i class="fas fa-history"></i>
-                                <span>Lần khám trước: <span id="previousVisit">--/--/----</span></span>
                             </div>
                         </div>
 
@@ -736,9 +721,6 @@
                             </button>
                             <button class="btn-small btn-confirm" id="btnConfirm" style="display: none;">
                                 <i class="fas fa-check"></i> Xác nhận
-                            </button>
-                            <button class="btn-small btn-reject" id="btnReject" style="display: none;">
-                                <i class="fas fa-times"></i> Từ chối
                             </button>
                         </div>
                     </div>
@@ -784,10 +766,6 @@
                             <label>Email:</label>
                             <span id="detailPatientEmail"></span>
                         </div>
-                        <div class="info-item">
-                            <label>Tuổi:</label>
-                            <span id="detailPatientAge"></span>
-                        </div>
                     </div>
                 </div>
 
@@ -795,17 +773,15 @@
                     <h4><i class="fas fa-calendar"></i> Thông tin lịch hẹn</h4>
                     <div class="info-grid">
                         <div class="info-item">
-                            <label>Ngày hẹn:</label>
-                            <span id="detailAppointmentDate"></span>
-                        </div>
-                        <div class="info-item">
-                            <label>Giờ hẹn:</label>
-                            <span id="detailAppointmentTime"></span>
-                        </div>
-                        <div class="info-item">
                             <label>Dịch vụ:</label>
                             <span id="detailService"></span>
                         </div>
+<div class="follow-up-badge">
+    <label>Bước điều trị:</label>
+  
+        <strong id="followUpService"><br>Tên bước điều trị</strong></label>
+</div>
+
                         <div class="info-item">
                             <label>Trạng thái:</label>
                             <span id="detailStatus" class="status-badge"></span>
@@ -819,19 +795,11 @@
                         Không có ghi chú
                     </div>
                 </div>
-
-                <!-- <div class="doctor-note-section">
-                    <h4><i class="fas fa-user-md"></i> Ghi chú của bác sĩ</h4>
-                    <textarea id="doctorNote" placeholder="Nhập ghi chú của bác sĩ..." rows="3"></textarea>
-                </div> -->
             </div>
         </div>
         <div class="modal-footer">
             <button class="btn-secondary" onclick="closeDetailModal()">Đóng</button>
             <div class="action-buttons" id="appointmentActions">
-                <button class="btn-danger" onclick="rejectBooking()">
-                    <i class="fas fa-times"></i> Từ chối
-                </button>
                 <button class="btn-success" onclick="confirmBooking()">
                     <i class="fas fa-check"></i> Xác nhận
                 </button>
@@ -843,289 +811,5 @@
 <script src="js/script.js"></script>
 <script src="js/doctor-common.js"></script>
 <script src="js/doctor-appointment-management.js"></script>
-
-<script>
-// Demo function để hiển thị thông tin mẫu
-function createSampleAppointment(isFollowUp = false) {
-    const template = document.getElementById('bookingTemplate');
-    const appointmentCard = template.cloneNode(true);
-    appointmentCard.id = 'appointment-' + Date.now();
-    appointmentCard.style.display = 'block';
-    appointmentCard.classList.remove('template');
-
-    // Thông tin cơ bản
-    appointmentCard.querySelector('#patientName').textContent = isFollowUp ? 'Nguyễn Thị Mai (BN #12345)' : 'Trần Văn An (BN #12346)';
-    appointmentCard.querySelector('#appointmentTime').textContent = isFollowUp ? '24/06/2024 14:00' : '25/06/2024 09:00';
-    
-    // Booking type
-    const bookingTypeBadge = appointmentCard.querySelector('#bookingTypeBadge');
-    const bookingType = appointmentCard.querySelector('#bookingType');
-    
-    if (isFollowUp) {
-        bookingTypeBadge.classList.add('follow-up');
-        bookingType.innerHTML = '<i class="fas fa-redo-alt"></i> Tái khám';
-    } else {
-        bookingTypeBadge.classList.add('initial');
-        bookingType.innerHTML = '<i class="fas fa-user-plus"></i> Khám lần đầu';
-    }
-
-    // Service info
-    if (isFollowUp) {
-        appointmentCard.querySelector('#serviceName').textContent = 'Liệu trình điều trị IVF';
-    } else {
-        appointmentCard.querySelector('#serviceName').textContent = 'Khám tiền đăng ký điều trị (IVF/IUI)';
-    }
-
-    // Detail info
-    appointmentCard.querySelector('#customerId').textContent = isFollowUp ? 'BN #12345' : 'BN #12346';
-    appointmentCard.querySelector('#customerPhone').textContent = isFollowUp ? '0352020737' : '0987654321';
-    
-    // Status
-    const statusBadge = appointmentCard.querySelector('#statusBadge');
-    statusBadge.textContent = 'Chờ xác nhận';
-    statusBadge.classList.add('pending');
-
-    // Follow-up info (chỉ hiển thị cho tái khám)
-    const followUpInfo = appointmentCard.querySelector('#followUpInfo');
-    if (isFollowUp) {
-        followUpInfo.style.display = 'block';
-        appointmentCard.querySelector('#followUpService').textContent = 'Siêu âm noãn (theo dõi nang noãn phát triển)';
-        appointmentCard.querySelector('#previousVisit').textContent = '20/06/2024';
-    }
-
-    // Note
-    const appointmentNote = appointmentCard.querySelector('#appointmentNote');
-    if (isFollowUp) {
-        appointmentNote.style.display = 'block';
-        appointmentCard.querySelector('#noteText').textContent = 'Xin hẹn lại để kiểm tra kết quả xét nghiệm hormone và tiến độ điều trị IVF.';
-    } else {
-        appointmentNote.style.display = 'block';
-        appointmentCard.querySelector('#noteText').textContent = 'Muốn được tư vấn về phương pháp điều trị hiếm muộn phù hợp.';
-    }
-
-    // Show confirm/reject buttons for pending appointments
-    appointmentCard.querySelector('#btnConfirm').style.display = 'inline-flex';
-    appointmentCard.querySelector('#btnReject').style.display = 'inline-flex';
-
-    return appointmentCard;
-}
-
-// Demo function để tạo appointment với subService cụ thể
-function createSubServiceAppointment(subServiceName, subServiceDescription, patientName, time, isFollowUp = true) {
-    const template = document.getElementById('bookingTemplate');
-    const appointmentCard = template.cloneNode(true);
-    appointmentCard.id = 'appointment-' + Date.now() + Math.random();
-    appointmentCard.style.display = 'block';
-    appointmentCard.classList.remove('template');
-
-    // Thông tin cơ bản
-    appointmentCard.querySelector('#patientName').textContent = patientName;
-    appointmentCard.querySelector('#appointmentTime').textContent = time;
-    
-    // Booking type
-    const bookingTypeBadge = appointmentCard.querySelector('#bookingTypeBadge');
-    const bookingType = appointmentCard.querySelector('#bookingType');
-    
-    if (isFollowUp) {
-        bookingTypeBadge.classList.add('follow-up');
-        bookingType.innerHTML = '<i class="fas fa-redo-alt"></i> Tái khám';
-    } else {
-        bookingTypeBadge.classList.add('initial');
-        bookingType.innerHTML = '<i class="fas fa-user-plus"></i> Khám lần đầu';
-    }
-
-    // Service info (hiển thị service chính)
-    if (isFollowUp) {
-        appointmentCard.querySelector('#serviceName').textContent = 'Liệu trình điều trị IVF';
-    } else {
-        appointmentCard.querySelector('#serviceName').textContent = 'Khám tiền đăng ký điều trị (IVF/IUI)';
-    }
-
-    // Detail info
-    const phoneNumbers = ['0352020737', '0987654321', '0912345678', '0933444555'];
-    const customerIds = ['BN #12345', 'BN #12346', 'BN #12347', 'BN #12348'];
-    const randomIndex = Math.floor(Math.random() * phoneNumbers.length);
-    
-    appointmentCard.querySelector('#customerId').textContent = customerIds[randomIndex];
-    appointmentCard.querySelector('#customerPhone').textContent = phoneNumbers[randomIndex];
-    
-    // Status
-    const statusBadge = appointmentCard.querySelector('#statusBadge');
-    statusBadge.textContent = 'Chờ xác nhận';
-    statusBadge.classList.add('pending');
-
-    // Follow-up info với subService cụ thể
-    const followUpInfo = appointmentCard.querySelector('#followUpInfo');
-    if (isFollowUp) {
-        followUpInfo.style.display = 'block';
-        appointmentCard.querySelector('#followUpService').textContent = subServiceName + ' (' + subServiceDescription + ')';
-        appointmentCard.querySelector('#previousVisit').textContent = '20/06/2024';
-    }
-
-    // Note
-    const appointmentNote = appointmentCard.querySelector('#appointmentNote');
-    appointmentNote.style.display = 'block';
-    if (isFollowUp) {
-        appointmentCard.querySelector('#noteText').textContent = `Xin hẹn lại để thực hiện bước: ${subServiceName}. ${subServiceDescription}`;
-    } else {
-        appointmentCard.querySelector('#noteText').textContent = 'Muốn được tư vấn về phương pháp điều trị hiếm muộn phù hợp.';
-    }
-
-    // Show confirm/reject buttons for pending appointments
-    appointmentCard.querySelector('#btnConfirm').style.display = 'inline-flex';
-    appointmentCard.querySelector('#btnReject').style.display = 'inline-flex';
-
-    return appointmentCard;
-}
-
-// Demo function để load appointments mẫu với ví dụ tái khám
-function loadSampleAppointments() {
-    const appointmentsList = document.getElementById('appointmentsList');
-    
-    // Clear existing appointments (except template)
-    const existingAppointments = appointmentsList.querySelectorAll('.appointment-card:not(.template)');
-    existingAppointments.forEach(card => card.remove());
-
-    // Tạo 1 ví dụ tái khám với subService từ database
-    const followUpAppointment = createSubServiceAppointment(
-        'Siêu âm noãn', 
-        'Theo dõi nang noãn phát triển', 
-        'Nguyễn Thị Mai (BN #12345)', 
-        '24/06/2024 14:00', 
-        true
-    );
-    appointmentsList.appendChild(followUpAppointment);
-
-    // Thêm 1 appointment khám lần đầu
-    const initialAppointment = createSampleAppointment(false);
-    appointmentsList.appendChild(initialAppointment);
-
-    // Update pending count
-    document.getElementById('pendingCount').textContent = '2';
-}
-
-// Load sample data when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    loadSampleAppointments();
-});
-
-// Override existing loadBookings function with demo
-function loadBookings() {
-    loadSampleAppointments();
-}
-
-// Demo filter function
-function filterBookings() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const dateFilter = document.getElementById('dateFilter').value;
-    
-    const appointments = document.querySelectorAll('.appointment-card:not(.template)');
-    let visibleCount = 0;
-    
-    appointments.forEach(appointment => {
-        let shouldShow = true;
-        
-        if (statusFilter !== 'all') {
-            const statusBadge = appointment.querySelector('.status-badge');
-            const appointmentStatus = statusBadge.textContent.toLowerCase().includes('chờ') ? 'pending' : 
-                                     statusBadge.textContent.toLowerCase().includes('xác nhận') ? 'confirmed' : 'rejected';
-            
-            if (appointmentStatus !== statusFilter) {
-                shouldShow = false;
-            }
-        }
-        
-        if (dateFilter) {
-            const appointmentTime = appointment.querySelector('#appointmentTime').textContent;
-            const appointmentDate = appointmentTime.split(' ')[0];
-            const filterDate = new Date(dateFilter).toLocaleDateString('vi-VN');
-            
-            if (appointmentDate !== filterDate) {
-                shouldShow = false;
-            }
-        }
-        
-        appointment.style.display = shouldShow ? 'block' : 'none';
-        if (shouldShow) visibleCount++;
-    });
-    
-    document.getElementById('pendingCount').textContent = visibleCount;
-}
-
-// Enhance modal functionality
-function openDetailModal(appointmentData) {
-    const modal = document.getElementById('appointmentDetailModal');
-    
-    // Populate modal with data
-    if (appointmentData) {
-        document.getElementById('detailPatientName').textContent = appointmentData.patientName || 'N/A';
-        document.getElementById('detailPatientPhone').textContent = appointmentData.phone || 'N/A';
-        document.getElementById('detailPatientEmail').textContent = appointmentData.email || 'N/A';
-        document.getElementById('detailPatientAge').textContent = appointmentData.age || 'N/A';
-        document.getElementById('detailAppointmentDate').textContent = appointmentData.date || 'N/A';
-        document.getElementById('detailAppointmentTime').textContent = appointmentData.time || 'N/A';
-        document.getElementById('detailService').textContent = appointmentData.service || 'N/A';
-        document.getElementById('detailNote').textContent = appointmentData.note || 'Không có ghi chú';
-        
-        const statusBadge = document.getElementById('detailStatus');
-        statusBadge.textContent = appointmentData.status || 'N/A';
-        statusBadge.className = 'status-badge ' + (appointmentData.status === 'Chờ xác nhận' ? 'pending' : 'confirmed');
-    }
-    
-    // Show modal with animation
-    modal.style.display = 'flex';
-    setTimeout(() => {
-        modal.classList.add('show');
-    }, 10);
-}
-
-function closeDetailModal() {
-    const modal = document.getElementById('appointmentDetailModal');
-    modal.classList.remove('show');
-    
-    // Hide modal after animation completes
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
-}
-
-// Add click event to view buttons
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('btn-view') || e.target.parentElement.classList.contains('btn-view')) {
-        const appointmentCard = e.target.closest('.appointment-card');
-        const appointmentData = {
-            patientName: appointmentCard.querySelector('#patientName').textContent,
-            phone: appointmentCard.querySelector('#customerPhone').textContent,
-            email: 'patient@example.com',
-            age: '29 tuổi',
-            date: appointmentCard.querySelector('#appointmentTime').textContent.split(' ')[0],
-            time: appointmentCard.querySelector('#appointmentTime').textContent.split(' ')[1],
-            service: appointmentCard.querySelector('#serviceName').textContent,
-            status: appointmentCard.querySelector('#statusBadge').textContent,
-            note: appointmentCard.querySelector('#noteText') ? appointmentCard.querySelector('#noteText').textContent : 'Không có ghi chú'
-        };
-        
-        openDetailModal(appointmentData);
-    }
-});
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('appointmentDetailModal');
-    if (event.target === modal) {
-        closeDetailModal();
-    }
-}
-
-// Close modal with Escape key
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        const modal = document.getElementById('appointmentDetailModal');
-        if (modal.classList.contains('show')) {
-            closeDetailModal();
-        }
-    }
-});
-</script>
 </body>
 </html>

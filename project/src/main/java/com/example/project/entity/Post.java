@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,13 +29,6 @@ public class Post {
 
     @Column(name = "content", columnDefinition = "NVARCHAR(MAX)", nullable = false)
     private String content;
-
-    @Lob
-    @Column(name = "thumbnail")
-    private byte[] thumbnail;
-
-    @Column(name = "thumbnailMimeType", length = 50)
-    private String thumbnailMimeType;
 
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;

@@ -260,6 +260,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            // Hàm kiểm tra tuổi
+            function calculateAge(dobStr) {
+                if (!dobStr) return 0;
+                const dob = new Date(dobStr);
+                const today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                const m = today.getMonth() - dob.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+
             // Validate fields
             let errorMsg = '';
             let errorField = null;
@@ -280,6 +293,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorField = document.getElementById('registerPhone');
             } else if (!cusDob) {
                 errorMsg = "Vui lòng chọn ngày sinh.";
+                errorField = document.getElementById('registerDob');
+            } else if (calculateAge(cusDob) < 18) {
+                errorMsg = "Bạn phải đủ 18 tuổi trở lên để đăng ký tài khoản!";
                 errorField = document.getElementById('registerDob');
             } else if (!cusPassword) {
                 errorMsg = "Vui lòng nhập mật khẩu.";
