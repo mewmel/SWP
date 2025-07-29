@@ -18,9 +18,6 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Autowired
-    private OtpService otpService;
-
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Optional<Customer> login(LoginRequest request) {
@@ -96,7 +93,6 @@ public class CustomerService {
     return customerRepository.save(customer);
 }
 
-
     // Hàm verify mật khẩu hiện tại theo ID
     public boolean verifyCurrentPassword(Integer cusId, String currentPassword) {
         Optional<Customer> customerOpt = customerRepository.findById(cusId);
@@ -108,38 +104,18 @@ public class CustomerService {
         return passwordEncoder.matches(currentPassword, customer.getCusPassword());
     }
 
-
-public boolean verifyOtp(String cusEmail, String otp) {
-    // 1. Tìm customerId từ email
-    Optional<Customer> customerOpt = customerRepository.findByCusEmail(cusEmail);
-    if (!customerOpt.isPresent()) {
-        return false; // Không tìm thấy khách hàng
-    }
-    Integer customerId = customerOpt.get().getCusId();
-    // 2. Gọi sang OtpService để xác thực OTP
-    return otpService.verifyOtp(customerId, otp);
-}
-    
-
-    // Hàm đổi mật khẩu theo email
-    public String changeCusPassword(String cusEmail, String currentPassword, String newPassword, String otp) {
-        Optional<Customer> customerOpt = customerRepository.findByCusEmail(cusEmail);
+    // Hàm đổi mật khẩu theo ID
+    public String changeCusPassword(Integer cusId, String currentPassword, String newPassword) {
+        Optional<Customer> customerOpt = customerRepository.findById(cusId);
         if (!customerOpt.isPresent()) {
             return "Không tìm thấy khách hàng!";
         }
         
         Customer customer = customerOpt.get();
-        Integer cusId = customer.getCusId();
-
-        // 3. Nếu chưa có otp → gửi và trả về OTP_SENT
-        if (otp == null || otp.isBlank()) {
-            otpService.sendOtp(cusId, cusEmail);;
-            return "OTP_SENT";
-        }
-
-        // 4. Nếu có otp → verify qua otpService
-        if (!otpService.verifyOtp(cusId, otp)) {
-            return "OTP không hợp lệ hoặc đã hết hạn!";
+        
+        // Kiểm tra mật khẩu hiện tại
+        if (!passwordEncoder.matches(currentPassword, customer.getCusPassword())) {
+            return "Mật khẩu hiện tại không đúng!";
         }
         
         // Kiểm tra mật khẩu mới có đủ mạnh không (tùy chọn)
