@@ -62,8 +62,3 @@ List<WorkSlot> findAllSlotsByDoctorAndDateRange(
 );
 
 }
-
-
-
-
-

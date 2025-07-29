@@ -52,6 +52,9 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     // Đếm số booking theo trạng thái
     long countByDocIdAndBookStatus(Integer docId, String bookStatus);
 
+    // Thêm method để lấy booking theo customer và status
+    List<Booking> findByCusIdAndBookStatusOrderByCreatedAtDesc(Integer cusId, String bookStatus);
+
     List<Booking> findByCusIdOrderByBookIdAsc(Integer cusId);
 
     int countBySlotIdAndBookStatusIn(Integer slotId, List<String> status);

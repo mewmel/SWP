@@ -28,7 +28,7 @@ import com.example.project.repository.ImageRepository;
 @RequestMapping("/api/avatar")
 public class ImageController {
 
-     @Autowired
+    @Autowired
     private DoctorRepository doctorRepository;
 
     @Autowired
@@ -54,7 +54,7 @@ public class ImageController {
             // Kiểm tra doctor tồn tại
             Optional<Doctor> doctorOpt = doctorRepository.findById(docId);
             if (doctorOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+                return ResponseEntity.notFound().build();
             }
 
             // Lưu ảnh vào Image

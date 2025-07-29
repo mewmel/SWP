@@ -26,4 +26,3 @@ public class BookingWithSlotAndCus {
     private LocalTime endTime;
 
 }
-

@@ -11,4 +11,3 @@ public class StaffLoginRequest {
     private String role;
 
 }
-

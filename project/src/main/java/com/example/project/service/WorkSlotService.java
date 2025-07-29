@@ -126,6 +126,7 @@ public class WorkSlotService {
         }
         return result;
     }
+
     public List<WorkSlot> getPendingSlots() {
         return workSlotRepository.findBySlotStatus("pending");
     }

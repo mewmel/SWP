@@ -17,16 +17,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.stereotype.Service;
 
+import com.example.project.dto.BookingWithStepsAndDrug;
+import com.example.project.dto.BookingWithStepsAndDrug.DrugItemDTO;
 import com.example.project.dto.TestResult;
 import com.example.project.dto.VisitSubService;
 import com.example.project.entity.Booking;
 import com.example.project.entity.BookingStep;
+import com.example.project.entity.Drug;
+import com.example.project.entity.DrugItem;
 import com.example.project.entity.SubService;
 import com.example.project.repository.BookingRepository;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.example.project.repository.DrugRepository;
+import com.example.project.repository.DrugItemRepository;
+import com.example.project.repository.MedicalRecordBookingRepository;
+import com.example.project.entity.MedicalRecordBooking;
 
 import java.util.ArrayList;
 
@@ -39,6 +47,14 @@ public class BookingStepService {
     private SubServiceRepository subServiceRepo;
     @Autowired
     private BookingStepRepository bookingStepRepo;
+
+    @Autowired
+    private DrugRepository drugRepo;
+    @Autowired
+    private DrugItemRepository drugItemRepo;
+
+    @Autowired
+    private MedicalRecordBookingRepository medicalRecordBookingRepo;
 
     /**
      * Tạo BookingStep cho tất cả các SubService liên quan khi booking đã confirmed
@@ -145,9 +161,9 @@ public VisitSubService getSubServicesForBooking(Integer bookId) {
         return true;
     }
 
-public List<TestResult> getTestResultsForBooking(Integer bookId) {
+    public List<TestResult> getTestResultsForBooking(Integer bookId) {
         Booking booking = bookingRepo.findById(bookId)
-            .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID = " + bookId));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID = " + bookId));
         Integer serId = booking.getSerId();
 
         // Lấy tất cả subService thuộc service này, tên chứa "Xét nghiệm"
@@ -195,11 +211,11 @@ public List<TestResult> getTestResultsForBooking(Integer bookId) {
     @Transactional
     public void saveTestResults(List<TestResult> testResults) throws Exception {
         for (TestResult dto : testResults) {
-        // Chỉ lưu nếu status là pending hoặc completed
-        if (!"pending".equalsIgnoreCase(dto.getStepStatus())
-            && !"completed".equalsIgnoreCase(dto.getStepStatus())) {
-            continue; // Bỏ qua
-        }
+            // Chỉ lưu nếu status là pending hoặc completed
+            if (!"pending".equalsIgnoreCase(dto.getStepStatus())
+                    && !"completed".equalsIgnoreCase(dto.getStepStatus())) {
+                continue; // Bỏ qua
+            }
 
 
             BookingStep step = null;
@@ -244,17 +260,60 @@ public List<TestResult> getTestResultsForBooking(Integer bookId) {
         if (reqBody.containsKey("performedAt")) {
             String performedAtStr = (String) reqBody.get("performedAt");
             if (performedAtStr != null && !performedAtStr.isBlank()) {
-                        try {
-            // Xử lý cả dạng có "Z" hoặc không có
-            step.setPerformedAt(java.time.OffsetDateTime.parse(performedAtStr).toLocalDateTime());
-        } catch (Exception e) {
-            // Nếu vẫn fail (do định dạng khác), thử loại bỏ "Z" ở cuối và parse lại
-            step.setPerformedAt(java.time.LocalDateTime.parse(performedAtStr.replace("Z", "")));
-        }
+                try {
+                    // Xử lý cả dạng có "Z" hoặc không có
+                    step.setPerformedAt(java.time.OffsetDateTime.parse(performedAtStr).toLocalDateTime());
+                } catch (Exception e) {
+                    // Nếu vẫn fail (do định dạng khác), thử loại bỏ "Z" ở cuối và parse lại
+                    step.setPerformedAt(java.time.LocalDateTime.parse(performedAtStr.replace("Z", "")));
+                }
             }
         }
 
         bookingStepRepo.save(step);
         return true;
+    }
+
+    public List<BookingWithStepsAndDrug> getBookingsWithStepsAndDrugByRecordId(Integer recordId) {
+        List<Integer> bookIds = medicalRecordBookingRepo.findByIdRecordId(recordId)
+                .stream().map(link -> link.getId().getBookId()).toList();
+
+        List<BookingWithStepsAndDrug> result = new ArrayList<>();
+        for (Integer bookId : bookIds) {
+            // Lấy các step
+            List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
+            List<BookingWithStepsAndDrug.BookingStepDTO> stepDTOs = steps.stream().map(step -> {
+                String subName = subServiceRepo.findById(step.getSubId())
+                        .map(sub -> sub.getSubName()).orElse("Không rõ");
+                String performedAt = step.getPerformedAt() != null ? step.getPerformedAt().toString() : null;
+                return new BookingWithStepsAndDrug.BookingStepDTO(
+                        subName,
+                        performedAt,
+                        step.getResult(),
+                        step.getNote(),
+                        step.getStepStatus()
+                );
+            }).toList();
+
+            // Lấy drugId & danh sách drugItem (nếu có)
+            Drug drug = drugRepo.findByBookId(bookId).orElse(null); // Phải có findByBookId trong DrugRepository
+            Integer drugId = drug != null ? drug.getDrugId() : null;
+            List<DrugItemDTO> drugItemDTOs = new ArrayList<>();
+            if (drugId != null) {
+                List<DrugItem> drugItems = drugItemRepo.findByDrugId(drugId);
+                drugItemDTOs = drugItems.stream().map(item ->
+                        new DrugItemDTO(
+                                item.getDrugItemId(),
+                                item.getDrugName(),
+                                item.getDosage(),
+                                item.getFrequency(),
+                                item.getDuration(),
+                                item.getDrugItemNote()
+                        )
+                ).toList();
+            }
+            result.add(new BookingWithStepsAndDrug(bookId, stepDTOs, drugId, drugItemDTOs));
+        }
+        return result;
     }
 }

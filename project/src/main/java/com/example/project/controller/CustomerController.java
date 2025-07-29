@@ -73,7 +73,6 @@ public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @Reques
     customer.setCusOccupation(updatedData.getCusOccupation());
     customer.setEmergencyContact(updatedData.getEmergencyContact());
 
-
     Customer saved = customerRepository.save(customer);
     return ResponseEntity.ok(saved);
 }
