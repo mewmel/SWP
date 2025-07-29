@@ -185,12 +185,82 @@ function loadDoctors() {
         });
 }
 
-// ========== Submit form đặt lịch ===========
+// ========== Submit form đặt lịch & kiểm tra tất cả field ===========
 function setupBookingFormSubmission() {
     document.getElementById('bookingForm').addEventListener('submit', function (e) {
         e.preventDefault();
-        if (!document.getElementById('selectedTime').value) {
-            alert('Vui lòng chọn khung giờ khám!');
+
+        // Lấy tất cả field
+        const fullName = document.getElementById('fullName');
+        const phone = document.getElementById('phone');
+        const email = document.getElementById('email');
+        const dob = document.getElementById('dob');
+        const doctor = document.getElementById('doctor');
+        const appointmentDate = document.getElementById('appointmentDate');
+        const service = document.getElementById('service');
+        const selectedTime = document.getElementById('selectedTime');
+        const symptoms = document.getElementById('symptoms');
+
+        // Xóa trạng thái lỗi cũ
+        this.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+
+        // Validate từng trường giống như đăng ký
+        let errorMsg = '';
+        let errorField = null;
+
+        if (!fullName.value.trim()) {
+            errorMsg = "Vui lòng nhập họ tên.";
+            errorField = fullName;
+        } else if (!email.value.trim()) {
+            errorMsg = "Vui lòng nhập email.";
+            errorField = email;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+            errorMsg = "Email không hợp lệ.";
+            errorField = email;
+        } else if (!phone.value.trim()) {
+            errorMsg = "Vui lòng nhập số điện thoại.";
+            errorField = phone;
+        } else if (!/^(0|\+84)\d{9,10}$/.test(phone.value.trim())) {
+            errorMsg = "Số điện thoại không hợp lệ.";
+            errorField = phone;
+        } else if (!dob.value) {
+            errorMsg = "Vui lòng chọn ngày sinh.";
+            errorField = dob;
+        } else if (calculateAgeBooking(dob.value) < 18) {
+            errorMsg = "Bạn phải đủ 18 tuổi trở lên để đặt lịch!";
+            errorField = dob;
+        } else if (!doctor.value) {
+            errorMsg = "Vui lòng chọn bác sĩ.";
+            errorField = doctor;
+        } else if (!appointmentDate.value) {
+            errorMsg = "Vui lòng chọn ngày khám.";
+            errorField = appointmentDate;
+        } else if (!service.value) {
+            errorMsg = "Vui lòng chọn dịch vụ.";
+            errorField = service;
+        } else if (!selectedTime.value) {
+            errorMsg = "Vui lòng chọn khung giờ khám!";
+            errorField = selectedTime;
+        }
+
+        if (errorMsg) {
+            // In ra tất cả field đang có
+            console.log({
+                fullName: fullName.value,
+                phone: phone.value,
+                email: email.value,
+                dob: dob.value,
+                doctor: doctor.value,
+                appointmentDate: appointmentDate.value,
+                service: service.value,
+                selectedTime: selectedTime.value,
+                symptoms: symptoms.value
+            });
+            alert(errorMsg);
+            if (errorField) {
+                errorField.classList.add('error');
+                errorField.focus();
+            }
             return;
         }
 
@@ -198,24 +268,27 @@ function setupBookingFormSubmission() {
         showBookingLoadingOverlay();
 
         // Lấy và tách thời gian, loại bỏ giây và khoảng trắng nếu có
-        const timeRange = document.getElementById('selectedTime').value.trim();
+        const timeRange = selectedTime.value.trim();
         let [startTime, endTime] = timeRange.split('-').map(t => t.trim());
         if (startTime.length === 8) startTime = startTime.slice(0,5);
         if (endTime.length === 8) endTime = endTime.slice(0,5);
 
         const data = {
-            fullName: document.getElementById('fullName').value,
-            phone: document.getElementById('phone').value,
-            email: document.getElementById('email').value,
-            dob: document.getElementById('dob').value,
-            docId: parseInt(document.getElementById('doctor').value),
-            appointmentDate: document.getElementById('appointmentDate').value,
-            serId: parseInt(document.getElementById('service').value),
+            fullName: fullName.value,
+            phone: phone.value,
+            email: email.value,
+            dob: dob.value,
+            docId: parseInt(doctor.value),
+            appointmentDate: appointmentDate.value,
+            serId: parseInt(service.value),
             startTime: startTime,
             endTime: endTime,
-            note: document.getElementById('symptoms').value,
+            note: symptoms.value,
             bookType: 'initial'
         };
+
+        // In ra tất cả data gửi lên backend
+        console.log(data);
 
         fetch('/api/booking', {
             method: 'POST',
@@ -234,6 +307,19 @@ function setupBookingFormSubmission() {
                 showBookingError('Có lỗi xảy ra khi gửi dữ liệu!');
             });
     });
+}
+
+// Hàm kiểm tra tuổi đặt lịch
+function calculateAgeBooking(dobStr) {
+    if (!dobStr) return 0;
+    const dob = new Date(dobStr);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+    }
+    return age;
 }
 
 // ========== Mobile menu toggle ===========
