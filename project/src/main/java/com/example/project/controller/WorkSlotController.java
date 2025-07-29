@@ -129,4 +129,22 @@ public class WorkSlotController {
             return ResponseEntity.status(500).build();
         }
     }
+
+    /**
+     * ✅ API MỚI: Lấy tất cả WorkSlot cho tất cả bác sĩ trong một ngày
+     * GET /api/workslots/all?date={date}
+     * @param date Ngày cần lấy WorkSlot (yyyy-MM-dd)
+     * @return List<WorkSlot> với thông tin đầy đủ
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<WorkSlot>> getAllWorkSlotsByDate(@RequestParam String date) {
+        try {
+            LocalDate workDate = LocalDate.parse(date);
+            List<WorkSlot> workSlots = workSlotRepository.findByWorkDate(workDate);
+            return ResponseEntity.ok(workSlots);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 }

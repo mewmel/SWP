@@ -53,48 +53,7 @@
             Thêm bác sĩ mới
         </button>
     </div>
-    <div class="stats-overview">
-        <div class="stat-card">
-            <div class="stat-content">
-                <div class="stat-label">Tổng số bác sĩ</div>
-                <div class="stat-value" id="totalDoctors">0</div>
-                <div class="stat-subtext">Đang hoạt động</div>
-            </div>
-            <div class="stat-icon blue">
-                <i class="fas fa-user-md"></i>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-content">
-                <div class="stat-label">Bác sĩ online</div>
-                <div class="stat-value" id="doctorsOnline">0</div>
-                <div class="stat-subtext">Đang làm việc</div>
-            </div>
-            <div class="stat-icon green">
-                <i class="fas fa-circle"></i>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-content">
-                <div class="stat-label">Lịch hẹn hôm nay</div>
-                <div class="stat-value" id="todayAppointments">0</div>
-                <div class="stat-subtext">Đã được đặt</div>
-            </div>
-            <div class="stat-icon orange">
-                <i class="fas fa-calendar-check"></i>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-content">
-                <div class="stat-label">Doanh thu tháng</div>
-                <div class="stat-value" id="monthlyRevenue">0</div>
-                <div class="stat-subtext">VND</div>
-            </div>
-            <div class="stat-icon purple">
-                <i class="fas fa-chart-line"></i>
-            </div>
-        </div>
-    </div>
+
     <div class="doctors-section">
         <div class="section-header">
             <h2 class="section-title">
@@ -456,10 +415,12 @@
     async function fetchWorkslotsToday() {
         const todayStr = new Date().toISOString().slice(0, 10);
         try {
-            const res = await fetch(`/api/workslots?date=${todayStr}`);
+            // Lấy tất cả workslots cho tất cả bác sĩ trong ngày hôm nay
+            const res = await fetch(`/api/workslots/all?date=${todayStr}`);
             if (!res.ok) throw new Error('Lỗi lấy workslot');
             workslotsToday = await res.json();
         } catch (e) {
+            console.log('Không thể lấy workslots:', e);
             workslotsToday = [];
         }
     }
@@ -467,11 +428,11 @@
     // Hàm lấy booking step performedAt hôm nay
     async function fetchBookingStepsToday() {
         try {
-            // Lưu ý: Đường dẫn phải đúng với backend đang cấu hình!
-            const res = await fetch(`/api/booking-steps/booking-steps/today-performed-at`);
+            const res = await fetch(`/api/booking-steps/today-performed-at`);
             if (!res.ok) throw new Error('Lỗi lấy booking step');
             bookingStepsToday = await res.json();
         } catch (e) {
+            console.log('Không thể lấy booking steps:', e);
             bookingStepsToday = [];
         }
     }
@@ -556,23 +517,33 @@
                 });
             });
 
-            document.getElementById('totalDoctors').textContent = doctors.length;
+            // Cập nhật thống kê (nếu các element còn tồn tại)
+            const totalDoctorsElement = document.getElementById('totalDoctors');
+            if (totalDoctorsElement) {
+                totalDoctorsElement.textContent = doctors.length;
+            }
+            
             const activeDoctorIds = new Set(
                 workslotsToday
                     .filter(ws => ws.slotStatus === 'approved')
                     .map(ws => ws.docId)
             );
-            document.getElementById('doctorsOnline').textContent = activeDoctorIds.size;
-            document.getElementById('todayAppointments').textContent = bookingStepsToday.length;
-            document.getElementById('monthlyRevenue').textContent = '125M';
-
-            // In performedAt list ra UI (nếu có div bookingStepList)
-            const bookingStepListDiv = document.getElementById('bookingStepList');
-            if (bookingStepListDiv) {
-                bookingStepListDiv.innerHTML = "<b>Danh sách performedAt hôm nay:</b>" +
-                    (bookingStepsToday.length === 0 ? " Không có lịch hẹn nào." :
-                        "<ul>" + bookingStepsToday.map(item => `<li>${item}</li>`).join('') + "</ul>");
+            
+            const doctorsOnlineElement = document.getElementById('doctorsOnline');
+            if (doctorsOnlineElement) {
+                doctorsOnlineElement.textContent = activeDoctorIds.size;
             }
+            
+            const todayAppointmentsElement = document.getElementById('todayAppointments');
+            if (todayAppointmentsElement) {
+                todayAppointmentsElement.textContent = bookingStepsToday.length;
+            }
+            
+            const monthlyRevenueElement = document.getElementById('monthlyRevenue');
+            if (monthlyRevenueElement) {
+                monthlyRevenueElement.textContent = '125M';
+            }
+
             // In ra console cho dev kiểm tra
             console.log('Danh sách performedAt hôm nay:', bookingStepsToday);
 
