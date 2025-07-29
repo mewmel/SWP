@@ -146,7 +146,15 @@ public ResponseEntity<CusCurrentBooking> getFullRecord(@PathVariable Integer cus
     if (booking.getSerId() != null) {
         service = serviceRepository.findById(booking.getSerId()).orElse(null);
     }
-    bookingDTO.setSerName(service != null ? service.getSerName() : null);
+
+    // lấy drugId từ booking nếu có
+    if (booking.getDrugId() != null) {  
+        dto.setDrugId(booking.getDrugId());
+    } else {
+        dto.setDrugId(null); // hoặc để null nếu không có
+    }
+        // Gán tên dịch vụ vào DTO
+        bookingDTO.setSerName(service != null ? service.getSerName() : null);
         dto.setCurrentBooking(bookingDTO);
     }
 
@@ -158,7 +166,6 @@ public ResponseEntity<CusCurrentBooking> getFullRecord(@PathVariable Integer cus
       log.error("Lỗi khi lấy full-record cho cusId={}", cusId, ex);
       return ResponseEntity.status(500).build();
     }
-
 }
 
 @PutMapping("/update-full-record/{cusId}")

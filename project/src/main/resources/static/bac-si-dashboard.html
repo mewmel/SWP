@@ -305,6 +305,50 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Test Result Form (Hidden by default) -->
+                                <div class="test-result-form" id="testResultForm" style="display: none;">
+                                <div class="form-header">
+                                    <h6 id="selectedTestServiceTitle">
+                                        <i class="fas fa-vial"></i> Nhập kết quả xét nghiệm
+                                    </h6>
+                                    <span class="form-badge">Xét nghiệm</span>
+                                </div>
+                                <div class="test-form-content">
+                                    <div class="record-section" style="display: flex; gap: 1rem; align-items: center;">                                     
+                                        <label for="testStatus" style="margin-bottom:0;">Trạng thái:</label>
+                                        <select id="testStatus" class="form-control" style="width: 150px;">
+                                            <option value="pending">Đang chờ</option>
+                                            <option value="completed">Hoàn thành</option>
+                                            <option value="cancelled">Đã huỷ</option>
+                                        </select>
+                                    </div>
+                                    <div class="record-section">
+                                        <label>Ngày thực hiện:</label>
+                                        <input type="datetime-local" id="testPerformedAt" class="form-control">
+                                    </div>
+                                    <div class="record-section">
+                                        <label>Kết quả các chỉ số:</label>
+                                        <div id="testResultGrid"></div>
+                                        <button type="button" class="btn-add-test-index" onclick="window.addTestResultRow()">
+                                            <i class="fas fa-plus"></i> Thêm chỉ số
+                                        </button>
+                                    </div>
+                                    <div class="record-section">
+                                        <label>Ghi chú:</label>
+                                        <textarea id="testNote" rows="2" class="form-control"></textarea>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn-save-step" onclick="window.saveTestResultStep()">
+                                            <i class="fas fa-save"></i> Lưu kết quả xét nghiệm
+                                        </button>
+                                        <button type="button" class="btn-cancel-step" onclick="window.cancelTestResultForm()">
+                                            <i class="fas fa-times"></i> Hủy
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                               
                                 <!-- Completed Steps List -->
                                 <div class="completed-steps">
                                     <h6><i class="fas fa-check-circle"></i> Các bước đã thực hiện</h6>

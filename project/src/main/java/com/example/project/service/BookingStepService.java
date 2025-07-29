@@ -226,6 +226,7 @@ public List<TestResult> getTestResultsForBooking(Integer bookId) {
                 // Chưa có, tạo mới
                 step = new BookingStep();
                 step.setSubId(dto.getSubId());
+                step.setBookId(dto.getBookingId());
                 // Phải biết bookingId, nếu không gửi lên thì cần truyền từ FE
                 step.setBookingStepId(dto.getBookingStepId());
             }

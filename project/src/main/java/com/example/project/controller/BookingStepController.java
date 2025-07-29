@@ -274,6 +274,19 @@ public ResponseEntity<List<Map<String, Object>>> getFollowUpSubservices(@PathVar
         }
     }
     
+@GetMapping("/find-id/{bookingId}/{subId}")
+public ResponseEntity<?> getBookingStepId(
+    @PathVariable Integer bookingId,
+    @PathVariable Integer subId
+) {
+    BookingStep step = bookingStepRepo.findByBookIdAndSubId(bookingId, subId)
+        .orElse(null);
+    if (step != null) {
+        return ResponseEntity.ok(Collections.singletonMap("bookingStepId", step.getBookingStepId()));
+    } else {
+        return ResponseEntity.ok(Collections.singletonMap("bookingStepId", null));
+    }
+}
 
 
 }

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TestResult {
     private Integer bookingStepId;
+    private Integer bookingId; 
     private Integer subId;
     private String subName;
     private LocalDateTime performedAt;
