@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.project.dto.CusCurrentBooking;
 import com.example.project.entity.Booking;
 import com.example.project.entity.Customer;
-import com.example.project.entity.Drug;
 import com.example.project.entity.MedicalRecord;
 import com.example.project.entity.Service;
 import com.example.project.repository.BookingRepository;
@@ -78,7 +77,7 @@ public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @Reques
     return ResponseEntity.ok(saved);
 }
 
-    @GetMapping("/full-record/{cusId}, {bookId}")
+    @GetMapping("/full-record/{cusId},{bookId}")
 public ResponseEntity<CusCurrentBooking> getFullRecord(@PathVariable Integer cusId, @PathVariable Integer bookId) {
     try {
     // 1. Tìm customer
@@ -147,13 +146,7 @@ public ResponseEntity<CusCurrentBooking> getFullRecord(@PathVariable Integer cus
         dto.setCurrentBooking(bookingDTO);
     }
 
-    // lấy drugId
-    Drug drug = drugRepository.findByBookId(booking.getBookId()).orElse(null);
-    if (drug != null) {
-        dto.setDrugId(drug.getDrugId());
-    } else {
-        dto.setDrugId(null);
-    }
+
 
     return ResponseEntity.ok(dto);
 

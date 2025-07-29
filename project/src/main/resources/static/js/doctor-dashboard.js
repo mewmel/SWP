@@ -146,8 +146,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.editPatientFromList = function (patientId, bookId) {
         window.closePatientListModal();
-        window.viewPatientRecord(patientId, bookId);
+        window.viewPatientRecord(patientId, bookId, docId);
     };
+
 
     window.searchPatients = function () {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -282,7 +283,7 @@ window.checkout = async function (bookId, cusId, bookType) {
         // 2. Đổi nút/action
         const actionDiv = appointmentItem.querySelector('.appointment-actions');
         actionDiv.innerHTML = `
-            <button class="btn-record" onclick="window.viewPatientRecord('${cusId}', '${bookId}')">
+            <button class="btn-record" onclick="window.viewPatientRecord('${cusId}', '${bookId}', '${docId}')">
                 <i class="fas fa-file-medical"></i> Xem hồ sơ
             </button>
         `;
@@ -319,19 +320,6 @@ window.checkout = async function (bookId, cusId, bookType) {
                         bookId
                     })
                 });
-
-                // Tạo mới drug
-                const drugRes = await fetch(`/api/drugs/create/${bookId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        docId,
-                        cusId,
-                    })
-                });
-
-                const drugId = await drugRes.json();
-                localStorage.setItem('drugId', drugId);
 
 
 
@@ -449,7 +437,7 @@ window.checkout = async function (bookId, cusId, bookType) {
 
 
     // Update viewPatientRecord function to work with new database-matching structure
-    window.viewPatientRecord = async function (cusId, bookId) {
+    window.viewPatientRecord = async function (cusId, bookId, docId) {
         try {
             // 1. Gọi API
             const res = await fetch(`/api/customer/full-record/${cusId}, ${bookId}`);
@@ -470,7 +458,20 @@ window.checkout = async function (bookId, cusId, bookType) {
             document.getElementById('emergencyContact').textContent = patientData.emergencyContact || 'Không rõ';
             document.getElementById('patientStatus').textContent = (patientData.cusStatus === 'active'
                 ? 'Hoạt động' : 'Không hoạt động');
-            document.getElementById('prescriptionNumber').textContent = patientData.drugId || 'Không rõ';
+
+
+                                            // Tạo mới drug
+                const drugRes = await fetch(`/api/drugs/create/${bookId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        docId,
+                        cusId,
+                    })
+                });
+                const drugId = await drugRes.json();
+
+            document.getElementById('prescriptionNumber').value = drugId || 'Không rõ';
 
             // 3. Booking hiện tại
             if (patientData.currentBooking) {
@@ -648,6 +649,7 @@ window.checkout = async function (bookId, cusId, bookType) {
             }
 
             // (4) Gọi API insert Drug cho từng thuốc
+
 
 
             alert('Đã lưu hồ sơ bệnh án thành công!');
@@ -1428,7 +1430,6 @@ window.checkout = async function (bookId, cusId, bookType) {
         });
 
 
-        document.querySelector('#prescriptionNumber').value = localStorage.getItem('drugId') || '';
         // Final prescription data
         return {
             prescriptionNumber: document.getElementById('prescriptionNumber')?.value || '',
@@ -1444,13 +1445,13 @@ window.checkout = async function (bookId, cusId, bookType) {
     window.savePrescription = async function () {
         const data = collectPrescriptionData();
 
-        const drugId = localStorage.getItem('drugId') || '';
-
+        
         if (!data.prescriptionNumber) {
             showNotification('❌ Không tìm thấy prescriptionNumber. Vui lòng kiểm tra lại.', 'error');
             return;
         }
 
+        const drugId = data.prescriptionNumber;
         try {
             // 1. Cập nhật bảng Drug
             const updateDrugRes = await fetch(`/api/drugs/update/${drugId}`, {
@@ -1459,7 +1460,7 @@ window.checkout = async function (bookId, cusId, bookType) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    createdAt: data.prescriptionDate || new Date().toISOString(),
+                    createdAt: data.prescriptionDate || new Date().toISOString().replace('Z','').split('.')[0],
                     note: data.diagnosis || ''
                 })
             });
@@ -1509,9 +1510,9 @@ window.checkout = async function (bookId, cusId, bookType) {
                 <ul style="margin-left: 20px;">
                     ${prescriptionData.drugs.map((drug, index) => `
                         <li style="margin-bottom: 10px;">
-                            <strong>${drug.name} ${drug.dosage}</strong><br>
+                            <strong>${drug.drugName} ${drug.dosage}</strong><br>
                             ${drug.frequency}, ${drug.duration}<br>
-                            <em>${drug.instructions}</em>
+                            <em>${drug.drugItemNote}</em>
                         </li>
                     `).join('')}
                 </ul>
