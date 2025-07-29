@@ -396,7 +396,7 @@ async function loadPatients() {
             filteredCustomers = [...allCustomers];
             renderPatientsTable(filteredCustomers);
             updatePatientsSummary(filteredCustomers);
-            initPatientFilters();
+    initPatientFilters();
         } else {
             console.error('Failed to load patients:', response.status);
             showToast('Không thể tải danh sách bệnh nhân', 'error');
@@ -616,7 +616,7 @@ async function loadDoctors() {
             filteredDoctors = [...allDoctors];
             renderDoctorsTable(filteredDoctors);
             updateDoctorsSummary(filteredDoctors);
-            initDoctorFilters();
+    initDoctorFilters();
         } else {
             console.error('Failed to load doctors:', response.status);
             showToast('Không thể tải danh sách bác sĩ', 'error');
@@ -808,7 +808,7 @@ async function loadManagers() {
             filteredManagers = [...allManagers];
             renderManagersTable(filteredManagers);
             updateManagersSummary(filteredManagers);
-            initManagerFilters();
+    initManagerFilters();
         } else {
             console.error('Failed to load managers:', response.status);
             showToast('Không thể tải danh sách quản lý', 'error');
@@ -1062,9 +1062,9 @@ function renderServicesHierarchy(servicesData) {
                         </div>
                         <div class="sub-service-actions" style="display: flex; gap: 8px;">
                             <button class="action-btn edit" onclick="editSubService('${subService.subId}', '${subService.subName}', ${subService.subPrice})" title="Chỉnh sửa" style="background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </div>
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
                     </div>
                 `).join('')}
             </div>

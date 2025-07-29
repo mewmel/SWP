@@ -1074,15 +1074,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-    }
-
-    // Interactive action items
-    document.querySelectorAll('.action-item').forEach(item => {
-        item.addEventListener('click', function () {
-            const action = this.textContent.trim();
-            showNotification(`Chức năng "${action}" sẽ được phát triển trong phiên bản tiếp theo!`, 'info');
-        });
-    });
+    }   
 
     // Progress bar animation
     const progressFill = document.querySelector('.progress-fill');

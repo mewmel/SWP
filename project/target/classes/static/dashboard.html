@@ -9,6 +9,345 @@
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.flex {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            max-height: calc(80vh - 140px);
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        /* Medication Styles */
+        .medication-prescription {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .prescription-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .prescription-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prescription-date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .prescription-content {
+            padding: 1.5rem;
+        }
+
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .medication-table th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .medication-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .medication-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .medication-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .medication-dosage {
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .medication-frequency {
+            color: #7c3aed;
+            font-weight: 500;
+        }
+
+        .medication-duration {
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        .medication-notes {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .prescription-notes {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #0369a1;
+        }
+
+        .prescription-notes strong {
+            color: #1e40af;
+        }
+
+        .no-medications {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: #64748b;
+        }
+
+        .no-medications i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+            color: #94a3b8;
+        }
+
+        .no-medications h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-medications p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        /* Action Item Hover Effect */
+        .action-item {
+            transition: all 0.3s ease;
+        }
+
+        .action-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Sidebar Medication Styles */
+        .medication-info .medication-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .medication-info .medication-item:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+        }
+
+        .medication-info .medication-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .medication-info .medication-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .medication-info .medication-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .medication-info .medication-details span {
+            font-size: 0.85rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .medication-info .medication-details .dosage {
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .medication-info .medication-details .frequency {
+            color: #7c3aed;
+            font-weight: 500;
+        }
+
+        .medication-info .medication-details .duration {
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        .medication-info .no-medications {
+            text-align: center;
+            padding: 1.5rem;
+            color: #64748b;
+        }
+
+        .medication-info .no-medications i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.3;
+        }
+
+        .medication-info .no-medications p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 2.5% auto;
+            }
+            
+            .modal-header {
+                padding: 1rem;
+            }
+            
+            .modal-body {
+                padding: 1rem;
+            }
+            
+            .prescription-header {
+                padding: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .medication-table {
+                font-size: 0.85rem;
+            }
+            
+            .medication-table th,
+            .medication-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -150,6 +489,28 @@
     </div>
 </div>
 
+<!-- Prescribed Medications Modal -->
+<div id="medicationsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-pills"></i> Thuốc đã kê</h3>
+            <span class="close" onclick="closeMedicationsModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div id="medicationsContent">
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-spinner fa-spin"></i> Đang tải thông tin thuốc...
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeMedicationsModal()">
+                <i class="fas fa-times"></i> Đóng
+            </button>
+        </div>
+    </div>
+</div>
+
 
 <!-- Dashboard Main Content -->
 <main class="dashboard-main">
@@ -193,14 +554,9 @@
         <section class="quick-actions">
             <h3>Hành động nhanh</h3>
             <ul class="action-list">
-                <li class="action-item">
-                    <div class="action-icon">🔔</div>
-                    <span>Đặt nhắc nhở tiêm thuốc</span>
-                </li>
-
-                <li class="action-item">
-                    <div class="action-icon">📊</div>
-                    <span>Xem kết quả xét nghiệm</span>
+                <li class="action-item" onclick="viewPrescribedMedications(event)" style="cursor: pointer;">
+                    <div class="action-icon">💊</div>
+                    <span>Xem thuốc</span>
                 </li>
 
                 <li class="action-item" onclick="window.location.href='feedback-customer.html'">
@@ -262,22 +618,9 @@
         <!-- Medication Info -->
         <div class="sidebar-card">
             <h3><i class="fas fa-pills"></i> Thuốc đang sử dụng</h3>
-            <div class="medication-info">
-                <div class="medication-item">
-                    <div class="medication-name">Gonal-F</div>
-                    <div class="medication-details">
-                        <span>150 IU</span>
-                        <span>19:00</span>
-                        <span>Còn 5 liều</span>
-                    </div>
-                </div>
-                <div class="medication-item">
-                    <div class="medication-name">Cetrotide</div>
-                    <div class="medication-details">
-                        <span>0.25mg</span>
-                        <span>20:00</span>
-                        <span>Còn 3 liều</span>
-                    </div>
+            <div class="medication-info" id="currentMedications">
+                <div style="text-align: center; padding: 1rem; color: #64748b;">
+                    <i class="fas fa-spinner fa-spin"></i> Đang tải...
                 </div>
             </div>
         </div>
@@ -299,6 +642,340 @@
 <script src="js/profile-summary.js"></script>
 <script src="js/notification-dropdown.js"></script>
 <script src="js/script.js"></script>
+<script>
+    // Function to view prescribed medications
+    async function viewPrescribedMedications(event) {
+        // Prevent any default behavior and stop propagation
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        const modal = document.getElementById('medicationsModal');
+        const content = document.getElementById('medicationsContent');
+        
+        // Show modal
+        modal.style.display = 'flex';
+        
+        // Get customer ID from localStorage
+        const customerId = localStorage.getItem('cusId') || sessionStorage.getItem('cusId');
+        
+        if (!customerId) {
+            content.innerHTML = `
+                <div class="no-medications">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Vui lòng đăng nhập</h3>
+                    <p>Bạn cần đăng nhập để xem thông tin thuốc đã kê.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        try {
+            // Show loading
+            content.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-spinner fa-spin"></i> Đang tải thông tin thuốc...
+                </div>
+            `;
+            
+            // Fetch all bookings for this customer
+            const bookingsResponse = await fetch(`/api/booking/by-customer/${customerId}`);
+            if (!bookingsResponse.ok) {
+                throw new Error('Không thể tải danh sách lịch hẹn');
+            }
+            
+            const bookings = await bookingsResponse.json();
+            
+            if (!bookings || bookings.length === 0) {
+                content.innerHTML = `
+                    <div class="no-medications">
+                        <i class="fas fa-pills"></i>
+                        <h3>Chưa có thuốc nào</h3>
+                        <p>Bạn chưa có lịch hẹn nào hoặc chưa có thuốc được kê.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Fetch medications for each booking
+            let allMedications = [];
+            
+            for (const booking of bookings) {
+                if (booking.bookId) {
+                    try {
+                        const medResponse = await fetch(`/api/drugs/by-booking/${booking.bookId}`);
+                        if (medResponse.ok) {
+                            const medications = await medResponse.json();
+                            if (medications && medications.length > 0) {
+                                allMedications.push({
+                                    booking: booking,
+                                    medications: medications
+                                });
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching medications for booking ${booking.bookId}:`, error);
+                    }
+                }
+            }
+            
+            if (allMedications.length === 0) {
+                content.innerHTML = `
+                    <div class="no-medications">
+                        <i class="fas fa-pills"></i>
+                        <h3>Chưa có thuốc nào</h3>
+                        <p>Bác sĩ chưa kê thuốc nào cho bạn.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Render medications
+            renderMedications(allMedications);
+            
+        } catch (error) {
+            console.error('Error loading medications:', error);
+            content.innerHTML = `
+                <div class="no-medications">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Lỗi tải dữ liệu</h3>
+                    <p>Có lỗi xảy ra khi tải thông tin thuốc. Vui lòng thử lại sau.</p>
+                </div>
+            `;
+        }
+    }
+    
+    // Function to render medications
+    function renderMedications(medicationsData) {
+        const content = document.getElementById('medicationsContent');
+        
+        let html = '';
+        
+        medicationsData.forEach((data, index) => {
+            const booking = data.booking;
+            const medications = data.medications;
+            
+            medications.forEach(medication => {
+                const prescriptionDate = medication.createdAt ? 
+                    new Date(medication.createdAt).toLocaleDateString('vi-VN') : 'Không xác định';
+                
+                html += `
+                    <div class="medication-prescription">
+                        <div class="prescription-header">
+                            <h4><i class="fas fa-prescription-bottle-medical"></i> Đơn thuốc #${medication.drugId}</h4>
+                            <div class="prescription-date">Ngày kê: ${prescriptionDate}</div>
+                        </div>
+                        <div class="prescription-content">
+                            <table class="medication-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tên thuốc</th>
+                                        <th>Liều dùng</th>
+                                        <th>Tần suất</th>
+                                        <th>Thời gian</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                if (medication.drugItems && medication.drugItems.length > 0) {
+                    medication.drugItems.forEach((item, itemIndex) => {
+                        html += `
+                            <tr>
+                                <td>${itemIndex + 1}</td>
+                                <td class="medication-name">${item.drugName || '-'}</td>
+                                <td class="medication-dosage">${item.dosage || '-'}</td>
+                                <td class="medication-frequency">${item.frequency || '-'}</td>
+                                <td class="medication-duration">${item.duration || '-'}</td>
+                                <td class="medication-notes">${item.drugItemNote || ''}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html += `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #64748b; padding: 2rem;">
+                                Không có thuốc nào trong đơn này
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                html += `
+                                </tbody>
+                            </table>
+                            ${medication.drugNote ? `
+                                <div class="prescription-notes">
+                                    <strong>Lời dặn của bác sĩ:</strong> ${medication.drugNote}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        });
+        
+        content.innerHTML = html;
+    }
+    
+    // Function to close medications modal
+    function closeMedicationsModal() {
+        const modal = document.getElementById('medicationsModal');
+        modal.style.display = 'none';
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('medicationsModal');
+        if (event.target === modal) {
+            closeMedicationsModal();
+        }
+    }
+
+    // Function to load current medications for sidebar
+    async function loadCurrentMedications() {
+        const container = document.getElementById('currentMedications');
+        
+        // Get customer ID from localStorage
+        const customerId = localStorage.getItem('cusId') || sessionStorage.getItem('cusId');
+        
+        if (!customerId) {
+            container.innerHTML = `
+                <div class="no-medications">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Vui lòng đăng nhập</p>
+                </div>
+            `;
+            return;
+        }
+        
+        try {
+            // Fetch all bookings for this customer
+            const bookingsResponse = await fetch(`/api/booking/by-customer/${customerId}`);
+            if (!bookingsResponse.ok) {
+                throw new Error('Không thể tải danh sách lịch hẹn');
+            }
+            
+            const bookings = await bookingsResponse.json();
+            
+            if (!bookings || bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="no-medications">
+                        <i class="fas fa-pills"></i>
+                        <p>Chưa có thuốc nào</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Get the most recent booking with medications
+            let latestMedications = [];
+            
+            for (const booking of bookings) {
+                if (booking.bookId) {
+                    try {
+                        const medResponse = await fetch(`/api/drugs/by-booking/${booking.bookId}`);
+                        if (medResponse.ok) {
+                            const medications = await medResponse.json();
+                            if (medications && medications.length > 0) {
+                                // Get the most recent medication
+                                const latestMed = medications[0];
+                                if (latestMed.drugItems && latestMed.drugItems.length > 0) {
+                                    latestMedications = latestMed.drugItems;
+                                    break; // Use the first booking with medications
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching medications for booking ${booking.bookId}:`, error);
+                    }
+                }
+            }
+            
+            if (latestMedications.length === 0) {
+                container.innerHTML = `
+                    <div class="no-medications">
+                        <i class="fas fa-pills"></i>
+                        <p>Chưa có thuốc nào</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Render medications (show max 3 medications)
+            const medicationsToShow = latestMedications.slice(0, 3);
+            let html = '';
+            
+            medicationsToShow.forEach((medication, index) => {
+                html += `
+                    <div class="medication-item">
+                        <div class="medication-name">${medication.drugName || 'Thuốc không tên'}</div>
+                        <div class="medication-details">
+                            <span class="dosage">
+                                <i class="fas fa-weight"></i>
+                                ${medication.dosage || 'Không xác định'}
+                            </span>
+                            <span class="frequency">
+                                <i class="fas fa-clock"></i>
+                                ${medication.frequency || 'Không xác định'}
+                            </span>
+                            <span class="duration">
+                                <i class="fas fa-calendar-days"></i>
+                                ${medication.duration || 'Không xác định'}
+                            </span>
+                            ${medication.drugItemNote ? `
+                                <span style="color: #6b7280; font-style: italic;">
+                                    <i class="fas fa-sticky-note"></i>
+                                    ${medication.drugItemNote}
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Add "View more" link if there are more medications
+            if (latestMedications.length > 3) {
+                html += `
+                    <div style="text-align: center; margin-top: 0.5rem;">
+                        <button onclick="viewPrescribedMedications()" style="
+                            background: none;
+                            border: none;
+                            color: #3b82f6;
+                            font-size: 0.85rem;
+                            cursor: pointer;
+                            text-decoration: underline;
+                        ">
+                            Xem thêm ${latestMedications.length - 3} thuốc khác
+                        </button>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+            
+        } catch (error) {
+            console.error('Error loading current medications:', error);
+            container.innerHTML = `
+                <div class="no-medications">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Lỗi tải dữ liệu</p>
+                </div>
+            `;
+        }
+    }
+
+    // Load current medications when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait a bit for other scripts to load
+        setTimeout(() => {
+            loadCurrentMedications();
+        }, 1000);
+    });
+</script>
 </body>
 
 </html>

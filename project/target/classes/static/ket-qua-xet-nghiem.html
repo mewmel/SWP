@@ -203,8 +203,8 @@
             <div class="tab-content">
                 <!-- Tab 1: Kết quả xét nghiệm -->
                 <div id="test-results" class="tab-pane active">
-                    <div class="results-list">
-                        <div class="results-header">
+            <div class="results-list">
+                <div class="results-header">
                             <h3><i class="fas fa-vial"></i> Kết quả xét nghiệm</h3>
                         </div>
                         
@@ -221,31 +221,31 @@
                             <!-- Test results will be populated by JavaScript -->
                         </div>
                     </div>
-                </div>
+                            </div>
 
                 <!-- Tab 2: Kết quả bước điều trị -->
                 <div id="treatment-results" class="tab-pane">
                     <div class="results-list">
                         <div class="results-header">
                             <h3><i class="fas fa-stethoscope"></i> Kết quả bước điều trị</h3>
-                        </div>
-                        
+                    </div>
+
                         <!-- Loading và Error states -->
                         <div id="treatment-results-loading" class="loading-message">
                             <i class="fas fa-spinner fa-spin"></i> Đang tải kết quả điều trị...
                         </div>
                         <div id="treatment-results-error" class="error-message" style="display: none;">
                             <i class="fas fa-exclamation-triangle"></i> Không thể tải kết quả điều trị
-                        </div>
-                        
+                    </div>
+
                         <!-- Dynamic treatment results will be loaded here -->
                         <div id="treatment-results-container" class="booking-steps-results" style="display: none;">
                             <!-- Treatment results will be populated by JavaScript -->
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                            </div>
+                        </div>
+                    </div>
     </div>
 </main>
 <script src="js/auth-access.js"></script>
@@ -296,7 +296,7 @@ function formatIndexResultJSON(jsonString) {
             const resultHTML = data.map(item => {
                 const statusClass = getStatusClass(item.status);
                 return `
-                    <div class="result-item">
+                                <div class="result-item">
                         <span class="result-label">${item.indexName}:</span>
                         <span class="result-number">${item.value}</span>
                         <span class="result-unit">${item.unit}</span>
@@ -310,12 +310,12 @@ function formatIndexResultJSON(jsonString) {
             // Single test result
             const statusClass = getStatusClass(data.status);
             return `
-                <div class="result-item">
+                                <div class="result-item">
                     <span class="result-label">${data.indexName}:</span>
                     <span class="result-number">${data.value}</span>
                     <span class="result-unit">${data.unit}</span>
                     <span class="result-status ${statusClass}">(${data.status})</span>
-                </div>
+                                </div>
             `;
         }
     } catch (error) {
@@ -438,7 +438,7 @@ async function loadTestResults() {
                     <button onclick="openAuthModal('login')" class="btn-login" style="margin-top: 16px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
                         <i class="fas fa-sign-in-alt"></i> Đăng nhập
                     </button>
-                </div>
+                                </div>
             `;
             return;
         }
@@ -480,7 +480,7 @@ function renderTestResults(results) {
             <div class="no-results">
                 <i class="fas fa-info-circle"></i>
                 <p>Chưa có kết quả xét nghiệm nào</p>
-            </div>
+                                </div>
         `;
         return;
     }
@@ -501,22 +501,22 @@ function renderTestResults(results) {
         }
         
         return `
-            <div class="step-result-item">
-                <div class="step-result-header">
-                    <div class="step-info">
+                    <div class="step-result-item">
+                        <div class="step-result-header">
+                            <div class="step-info">
                         <h4>${result.subName}</h4>
                         <div class="test-date">${performedDate} - ${performedTime}</div>
                     </div>
                     <div class="test-status ${statusClass}">${statusText}</div>
-                </div>
-                <div class="step-result-content">
-                    <div class="result-value">
-                        <strong>Kết quả:</strong>
+                        </div>
+                        <div class="step-result-content">
+                            <div class="result-value">
+                                <strong>Kết quả:</strong>
                         ${formatTestResult(result.result)}
-                    </div>
+                            </div>
                     ${result.note ? `
-                        <div class="result-note">
-                            <strong>Ghi chú:</strong>
+                            <div class="result-note">
+                                <strong>Ghi chú:</strong>
                             <span>${result.note}</span>
                         </div>
                     ` : ''}
