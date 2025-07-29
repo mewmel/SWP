@@ -1,13 +1,13 @@
 package com.example.project.controller;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +32,19 @@ public class WorkSlotController {
     public ResponseEntity<?> saveDoctorWeekSchedules(@RequestBody List<DoctorWeekScheduleDTO> dtos) {
         workSlotService.saveDoctorWeekSchedules(dtos);
         return ResponseEntity.ok("Saved all schedules for all doctors in week!");
+    }
+
+    @GetMapping(value = "", params = {"date"})
+    public List<WorkSlot> getWorkSlotsByDate(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return workSlotService.getSlotsByDate(date);
+    }
+
+    @GetMapping("/by-doctor")
+    public List<WorkSlotBookingDTO> getSlots(
+            @RequestParam Integer docId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return workSlotService.getWorkSlotsWithBookingCount(docId, date);
     }
 
     /**

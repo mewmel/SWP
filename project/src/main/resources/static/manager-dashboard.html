@@ -468,7 +468,7 @@
     async function fetchBookingStepsToday() {
         try {
             // Lưu ý: Đường dẫn phải đúng với backend đang cấu hình!
-            const res = await fetch(`/api/booking-steps/booking-steps/today-performed-at`);
+            const res = await fetch(`/api/booking-steps/today-performed-at`);
             if (!res.ok) throw new Error('Lỗi lấy booking step');
             bookingStepsToday = await res.json();
         } catch (e) {
