@@ -1,3 +1,11 @@
+// Global variables for real data
+let allCustomers = [];
+let filteredCustomers = [];
+let allDoctors = [];
+let filteredDoctors = [];
+let allManagers = [];
+let filteredManagers = [];
+
 // Real Data from Database
 const mockPatients = [
     {
@@ -189,11 +197,12 @@ let doctors = JSON.parse(localStorage.getItem('doctors')) || mockDoctors;
 let managers = JSON.parse(localStorage.getItem('managers')) || mockManagers;
 let services = JSON.parse(localStorage.getItem('services')) || mockServices;
 let currentEditingService = null;
+// Global variables for editing
 let currentEditingDoctor = null;
 let currentEditingManager = null;
 let filteredPatients = [...patients];
-let filteredDoctors = [...doctors];
-let filteredManagers = [...managers];
+
+
 let filteredServices = [...services];
 
 // Utility Functions
@@ -327,78 +336,115 @@ function loadTabContent(tabId) {
 
 // Dashboard Functions
 function loadDashboard() {
-    loadSchedule();
+    // Load all stats from database
+    loadOverviewStats();
 }
 
-function loadSchedule() {
-    const scheduleList = document.getElementById('scheduleList');
-    if (!scheduleList) return;
-    
-    scheduleList.innerHTML = mockAppointments.map(appointment => `
-        <div class="schedule-item ${appointment.status}">
-            <div class="schedule-info">
-                <div class="schedule-time">${appointment.time}</div>
-                <div class="schedule-details">
-                    <h4>BN: ${appointment.patientName}</h4>
-                    <p>${appointment.serviceName}</p>
-                </div>
-            </div>
-            <div class="schedule-status ${appointment.status}">
-                ${appointment.status === 'completed' ? 'Hoàn thành' :
-                  appointment.status === 'cancelled' ? 'Đã hủy' : 'Đã lên lịch'}
-            </div>
-        </div>
-    `).join('');
+
+
+async function loadOverviewStats() {
+    try {
+        const response = await fetch('/api/stats/overview');
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Update total patients count
+            const totalPatientsElement = document.getElementById('totalPatientsCount');
+            if (totalPatientsElement) {
+                totalPatientsElement.textContent = data.totalCustomers || 0;
+            }
+            
+            // Update available services count
+            const availableServicesElement = document.getElementById('availableServicesCount');
+            if (availableServicesElement) {
+                availableServicesElement.textContent = data.availableServices || 0;
+            }
+            
+            // Update total staff count
+            const totalStaffElement = document.getElementById('totalStaffCount');
+            if (totalStaffElement) {
+                totalStaffElement.textContent = data.totalStaff || 0;
+            }
+            
+        } else {
+            console.error('Failed to load overview stats:', response.status);
+            showErrorOnElements(['totalPatientsCount', 'availableServicesCount', 'totalStaffCount']);
+        }
+    } catch (error) {
+        console.error('Error loading overview stats:', error);
+        showErrorOnElements(['totalPatientsCount', 'availableServicesCount', 'totalStaffCount']);
+    }
 }
+
+function showErrorOnElements(elementIds) {
+    elementIds.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = 'Error';
+        }
+    });
+}
+
+
 
 // Patient Functions
-function loadPatients() {
-    renderPatientsTable();
-    updatePatientsSummary();
-    initPatientFilters();
+async function loadPatients() {
+    try {
+        const response = await fetch('/api/customer/all');
+        if (response.ok) {
+            allCustomers = await response.json();
+            filteredCustomers = [...allCustomers];
+            renderPatientsTable(filteredCustomers);
+            updatePatientsSummary(filteredCustomers);
+            initPatientFilters();
+        } else {
+            console.error('Failed to load patients:', response.status);
+            showToast('Không thể tải danh sách bệnh nhân', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading patients:', error);
+        showToast('Lỗi kết nối khi tải danh sách bệnh nhân', 'error');
+    }
 }
 
-function renderPatientsTable() {
+function renderPatientsTable(customers = []) {
     const tbody = document.getElementById('patientsTableBody');
     if (!tbody) return;
     
-    tbody.innerHTML = filteredPatients.map(patient => `
+    tbody.innerHTML = customers.map(customer => `
         <tr>
             <td>
                 <div class="patient-info">
-                    <div class="patient-avatar">
-                        ${patient.name.charAt(0).toUpperCase()}
-                    </div>
                     <div class="patient-details">
-                        <h4>${patient.name}</h4>
-                        <p>ID: ${patient.id}</p>
+                        <h4>${customer.cusFullName || 'Chưa có tên'}</h4>
+                        <p>ID: ${customer.cusId}</p>
                     </div>
                 </div>
             </td>
             <td>
                 <div class="contact-info">
-                    <p>${patient.email}</p>
-                    <p>${patient.phone}</p>
+                    <p>${customer.cusEmail || 'Chưa có email'}</p>
+                    <p>${customer.cusPhone || 'Chưa có SĐT'}</p>
                 </div>
             </td>
             <td>
-                <span class="status-badge ${patient.hasService ? 'with-service' : 'without-service'}">
-                    ${patient.hasService ? 'Có dịch vụ' : 'Chưa có dịch vụ'}
+                <span class="status-badge ${customer.hasBookings ? 'with-service' : 'without-service'}">
+                    ${customer.hasBookings ? 'Đã đặt lịch' : 'Chưa đặt lịch'}
                 </span>
             </td>
             <td>
                 <div>
-                    ${formatDate(patient.registeredDate)}
-                    ${patient.lastVisit ? `<div style="font-size: 12px; color: #64748b; margin-top: 2px;">Khám cuối: ${formatDate(patient.lastVisit)}</div>` : ''}
+                    ${customer.cusDate ? formatDate(customer.cusDate) : 'Chưa có ngày sinh'}
+                    ${customer.lastBookingDate ? `<div style="font-size: 12px; color: #64748b; margin-top: 2px;">Khám cuối: ${formatDate(customer.lastBookingDate)}</div>` : ''}
                 </div>
             </td>
             
             <td>
                 <div class="action-buttons">
-                    <button class="action-btn view" onclick="viewPatient('${patient.id}')" title="Xem chi tiết">
+                    <button class="action-btn view" onclick="viewPatient('${customer.cusId}')" title="Xem chi tiết">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="action-btn delete" onclick="deletePatient('${patient.id}')" title="Xóa">
+                    <button class="action-btn delete" onclick="deletePatient('${customer.cusId}')" title="Xóa">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -407,23 +453,19 @@ function renderPatientsTable() {
     `).join('');
 }
 
-function updatePatientsSummary() {
-    document.getElementById('totalPatientsCount').textContent = filteredPatients.length;
-    document.getElementById('withServiceCount').textContent = filteredPatients.filter(p => p.hasService).length;
-    document.getElementById('withoutServiceCount').textContent = filteredPatients.filter(p => !p.hasService).length;
-    document.getElementById('activeCount').textContent = filteredPatients.filter(p => p.status === 'active').length;
+function updatePatientsSummary(customers = []) {
+    document.getElementById('customerTableTotalCount').textContent = customers.length;
+    document.getElementById('customerWithServiceCount').textContent = customers.filter(c => c.hasBookings).length;
+    document.getElementById('customerWithoutServiceCount').textContent = customers.filter(c => !c.hasBookings).length;
+    document.getElementById('customerActiveCount').textContent = customers.length;
 }
 
 function initPatientFilters() {
     const searchInput = document.getElementById('patientSearch');
-    const statusFilter = document.getElementById('statusFilter');
     const serviceFilter = document.getElementById('serviceFilter');
     
     if (searchInput) {
         searchInput.addEventListener('input', filterPatients);
-    }
-    if (statusFilter) {
-        statusFilter.addEventListener('change', filterPatients);
     }
     if (serviceFilter) {
         serviceFilter.addEventListener('change', filterPatients);
@@ -432,29 +474,27 @@ function initPatientFilters() {
 
 function filterPatients() {
     const searchTerm = document.getElementById('patientSearch')?.value.toLowerCase() || '';
-    const statusFilter = document.getElementById('statusFilter')?.value || 'all';
     const serviceFilter = document.getElementById('serviceFilter')?.value || 'all';
     
-    filteredPatients = patients.filter(patient => {
-        const matchesSearch = patient.name.toLowerCase().includes(searchTerm) ||
-                             patient.email.toLowerCase().includes(searchTerm);
-        const matchesStatus = statusFilter === 'all' || patient.status === statusFilter;
+    filteredCustomers = allCustomers.filter(customer => {
+        const matchesSearch = (customer.cusFullName && customer.cusFullName.toLowerCase().includes(searchTerm)) ||
+                             (customer.cusEmail && customer.cusEmail.toLowerCase().includes(searchTerm));
         const matchesService = serviceFilter === 'all' ||
-                              (serviceFilter === 'withService' && patient.hasService) ||
-                              (serviceFilter === 'withoutService' && !patient.hasService);
+                              (serviceFilter === 'withService' && customer.hasBookings) ||
+                              (serviceFilter === 'withoutService' && !customer.hasBookings);
         
-        return matchesSearch && matchesStatus && matchesService;
+        return matchesSearch && matchesService;
     });
     
-    renderPatientsTable();
-    updatePatientsSummary();
+    renderPatientsTable(filteredCustomers);
+    updatePatientsSummary(filteredCustomers);
 }
 
 
 
 function viewPatient(patientId) {
-    const patient = patients.find(p => p.id === patientId);
-    if (!patient) return;
+    const customer = allCustomers.find(c => c.cusId == patientId);
+    if (!customer) return;
     
     const modal = document.getElementById('patientDetailModal');
     const content = document.getElementById('patientDetailContent');
@@ -463,40 +503,60 @@ function viewPatient(patientId) {
         <div class="patient-detail-grid">
             <div class="detail-item">
                 <div class="detail-label">Họ và tên</div>
-                <div class="detail-value">${patient.name}</div>
+                <div class="detail-value">${customer.cusFullName || 'Chưa có tên'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Email</div>
-                <div class="detail-value">${patient.email}</div>
+                <div class="detail-value">${customer.cusEmail || 'Chưa có email'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Số điện thoại</div>
-                <div class="detail-value">${patient.phone}</div>
+                <div class="detail-value">${customer.cusPhone || 'Chưa có SĐT'}</div>
             </div>
             <div class="detail-item">
-                <div class="detail-label">Ngày đăng ký</div>
-                <div class="detail-value">${formatDate(patient.registeredDate)}</div>
+                <div class="detail-label">Ngày sinh</div>
+                <div class="detail-value">${customer.cusDate ? formatDate(customer.cusDate) : 'Chưa có ngày sinh'}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Giới tính</div>
+                <div class="detail-value">${customer.cusGender === 'M' ? 'Nam' : customer.cusGender === 'F' ? 'Nữ' : 'Chưa có'}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Địa chỉ</div>
+                <div class="detail-value">${customer.cusAddress || 'Chưa có địa chỉ'}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Nghề nghiệp</div>
+                <div class="detail-value">${customer.cusOccupation || 'Chưa có'}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Liên hệ khẩn cấp</div>
+                <div class="detail-value">${customer.emergencyContact || 'Chưa có'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Trạng thái dịch vụ</div>
                 <div class="detail-value">
-                    <span class="status-badge ${patient.hasService ? 'with-service' : 'without-service'}">
-                        ${patient.hasService ? 'Có dịch vụ' : 'Chưa có dịch vụ'}
+                    <span class="status-badge ${customer.hasBookings ? 'with-service' : 'without-service'}">
+                        ${customer.hasBookings ? 'Có dịch vụ' : 'Chưa có dịch vụ'}
                     </span>
                 </div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Trạng thái hoạt động</div>
                 <div class="detail-value">
-                    <span class="status-badge ${patient.status}">
-                        ${patient.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+                    <span class="status-badge ${customer.cusStatus === 'active' || !customer.cusStatus ? 'active' : 'inactive'}">
+                        ${customer.cusStatus === 'active' || !customer.cusStatus ? 'Hoạt động' : 'Không hoạt động'}
                     </span>
                 </div>
             </div>
-            ${patient.lastVisit ? `
+            <div class="detail-item">
+                <div class="detail-label">Tổng số lần đặt lịch</div>
+                <div class="detail-value">${customer.totalBookings || 0}</div>
+            </div>
+            ${customer.lastBookingDate ? `
                 <div class="detail-item">
                     <div class="detail-label">Lần khám cuối</div>
-                    <div class="detail-value">${formatDate(patient.lastVisit)}</div>
+                    <div class="detail-value">${formatDate(customer.lastBookingDate)} (${customer.lastBookingStatus})</div>
                 </div>
             ` : ''}
         </div>
@@ -510,67 +570,100 @@ function closePatientDetailModal() {
     modal.classList.remove('show');
 }
 
-function deletePatient(patientId) {
-    if (confirm('Bạn có chắc chắn muốn xóa bệnh nhân này?')) {
-        patients = patients.filter(p => p.id !== patientId);
-        saveToLocalStorage();
-        filterPatients();
-        showToast('Đã xóa bệnh nhân thành công');
+async function deletePatient(patientId) {
+    const customer = allCustomers.find(c => c.cusId == patientId);
+    
+    if (!customer) {
+        showToast('Không tìm thấy bệnh nhân', 'error');
+        return;
+    }
+    
+    if (confirm(`Bạn có chắc chắn muốn xóa bệnh nhân "${customer.cusFullName}"? Bệnh nhân sẽ bị chuyển sang trạng thái inactive.`)) {
+        try {
+            const response = await fetch(`/api/customer/${patientId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: 'inactive'
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                showToast('Đã xóa bệnh nhân thành công', 'success');
+                
+                // Reload danh sách bệnh nhân để cập nhật dữ liệu
+                await loadPatients();
+            } else {
+                const error = await response.json();
+                showToast(error.error || 'Lỗi khi xóa bệnh nhân', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting patient:', error);
+            showToast('Lỗi kết nối khi xóa bệnh nhân', 'error');
+        }
     }
 }
 
 // Doctor Functions
-function loadDoctors() {
-    renderDoctorsTable();
-    updateDoctorsSummary();
-    initDoctorFilters();
+async function loadDoctors() {
+    try {
+        const response = await fetch('/api/doctors/all');
+        if (response.ok) {
+            allDoctors = await response.json();
+            filteredDoctors = [...allDoctors];
+            renderDoctorsTable(filteredDoctors);
+            updateDoctorsSummary(filteredDoctors);
+            initDoctorFilters();
+        } else {
+            console.error('Failed to load doctors:', response.status);
+            showToast('Không thể tải danh sách bác sĩ', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading doctors:', error);
+        showToast('Lỗi kết nối khi tải danh sách bác sĩ', 'error');
+    }
 }
 
-function renderDoctorsTable() {
+function renderDoctorsTable(doctors = []) {
     const tbody = document.getElementById('doctorsTableBody');
     if (!tbody) return;
     
-    tbody.innerHTML = filteredDoctors.map(doctor => `
+    tbody.innerHTML = doctors.map(doctor => `
         <tr>
             <td>
-                <div class="patient-info">
-                    <div class="patient-avatar">
-                        ${doctor.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div class="patient-details">
-                        <h4>${doctor.name}</h4>
-                        <p>ID: ${doctor.id}</p>
+                <div class="doctor-info">
+                    <div class="doctor-details">
+                        <h4>${doctor.docFullName || 'Chưa có tên'}</h4>
+                        <p>ID: ${doctor.docId}</p>
                     </div>
                 </div>
             </td>
             <td>
                 <div class="contact-info">
-                    <p>${doctor.email}</p>
-                    <p>${doctor.phone}</p>
+                    <p>${doctor.docEmail || 'Chưa có email'}</p>
+                    <p>${doctor.docPhone || 'Chưa có SĐT'}</p>
                 </div>
             </td>
             <td>
-                <div>
-                    <strong>${doctor.degree}</strong>
-                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${doctor.expertise}</div>
-                </div>
-            </td>
-            <td>
-                <span class="status-badge ${doctor.status}">
-                    ${doctor.status === 'active' ? 'Hoạt động' : 'Tạm khóa'}
+                <span class="status-badge category">
+                    ${doctor.expertise || 'Chưa có chuyên khoa'}
                 </span>
             </td>
-            <td>${formatDate(doctor.createdDate)}</td>
+            <td>
+                <span class="status-badge ${doctor.isActive ? 'active' : 'inactive'}">
+                    ${doctor.isActive ? 'Hoạt động' : 'Tạm khóa'}
+                </span>
+            </td>
             <td>
                 <div class="action-buttons">
-                    <button class="action-btn view" onclick="viewDoctor('${doctor.id}')" title="Xem chi tiết">
+                    <button class="action-btn view" onclick="viewDoctor('${doctor.docId}')" title="Xem chi tiết">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="action-btn edit" onclick="editDoctor('${doctor.id}')" title="Chỉnh sửa">
+                    <button class="action-btn edit" onclick="editDoctor('${doctor.docId}')" title="Chỉnh sửa">
                         <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteDoctor('${doctor.id}')" title="Xóa">
-                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </td>
@@ -578,19 +671,13 @@ function renderDoctorsTable() {
     `).join('');
 }
 
-function updateDoctorsSummary() {
-    document.getElementById('totalDoctorsCount').textContent = filteredDoctors.length;
-    document.getElementById('activeDoctorsCount').textContent = filteredDoctors.filter(d => d.status === 'active').length;
-    document.getElementById('inactiveDoctorsCount').textContent = filteredDoctors.filter(d => d.status === 'inactive').length;
+function updateDoctorsSummary(doctors = []) {
+    document.getElementById('totalDoctorsCount').textContent = doctors.length;
+    document.getElementById('activeDoctorsCount').textContent = doctors.filter(d => d.isActive).length;
+    document.getElementById('inactiveDoctorsCount').textContent = doctors.filter(d => !d.isActive).length;
     
-    // Calculate new doctors this month
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
-    const newDoctorsThisMonth = filteredDoctors.filter(d => {
-        const createdDate = new Date(d.createdDate);
-        return createdDate.getMonth() === currentMonth && createdDate.getFullYear() === currentYear;
-    }).length;
-    document.getElementById('newDoctorsCount').textContent = newDoctorsThisMonth;
+    // Tính số bác sĩ mới trong tháng (tạm thời set 0 vì chưa có ngày tạo)
+    document.getElementById('newDoctorsCount').textContent = 0;
 }
 
 function initDoctorFilters() {
@@ -609,21 +696,23 @@ function filterDoctors() {
     const searchTerm = document.getElementById('doctorSearch')?.value.toLowerCase() || '';
     const statusFilter = document.getElementById('doctorStatusFilter')?.value || 'all';
     
-    filteredDoctors = doctors.filter(doctor => {
-        const matchesSearch = doctor.name.toLowerCase().includes(searchTerm) ||
-                             doctor.email.toLowerCase().includes(searchTerm) ||
-                             doctor.expertise.toLowerCase().includes(searchTerm);
-        const matchesStatus = statusFilter === 'all' || doctor.status === statusFilter;
+    filteredDoctors = allDoctors.filter(doctor => {
+        const matchesSearch = (doctor.docFullName && doctor.docFullName.toLowerCase().includes(searchTerm)) ||
+                             (doctor.docEmail && doctor.docEmail.toLowerCase().includes(searchTerm)) ||
+                             (doctor.expertise && doctor.expertise.toLowerCase().includes(searchTerm));
+        const matchesStatus = statusFilter === 'all' || 
+                             (statusFilter === 'active' && doctor.isActive) ||
+                             (statusFilter === 'inactive' && !doctor.isActive);
         
         return matchesSearch && matchesStatus;
     });
     
-    renderDoctorsTable();
-    updateDoctorsSummary();
+    renderDoctorsTable(filteredDoctors);
+    updateDoctorsSummary(filteredDoctors);
 }
 
 function viewDoctor(doctorId) {
-    const doctor = doctors.find(d => d.id === doctorId);
+    const doctor = allDoctors.find(d => d.docId == doctorId);
     if (!doctor) return;
     
     const modal = document.getElementById('patientDetailModal');
@@ -636,35 +725,35 @@ function viewDoctor(doctorId) {
         <div class="patient-detail-grid">
             <div class="detail-item">
                 <div class="detail-label">Họ và tên</div>
-                <div class="detail-value">${doctor.name}</div>
+                <div class="detail-value">${doctor.docFullName || 'Chưa có tên'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Email</div>
-                <div class="detail-value">${doctor.email}</div>
+                <div class="detail-value">${doctor.docEmail || 'Chưa có email'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Số điện thoại</div>
-                <div class="detail-value">${doctor.phone}</div>
+                <div class="detail-value">${doctor.docPhone || 'Chưa có SĐT'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Bằng cấp</div>
-                <div class="detail-value">${doctor.degree}</div>
+                <div class="detail-value">${doctor.degree || 'Chưa có bằng cấp'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Chuyên môn</div>
-                <div class="detail-value">${doctor.expertise}</div>
+                <div class="detail-value">${doctor.expertise || 'Chưa có chuyên môn'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Trạng thái</div>
                 <div class="detail-value">
-                    <span class="status-badge ${doctor.status}">
-                        ${doctor.status === 'active' ? 'Hoạt động' : 'Tạm khóa'}
+                    <span class="status-badge ${doctor.isActive ? 'active' : 'inactive'}">
+                        ${doctor.isActive ? 'Hoạt động' : 'Tạm khóa'}
                     </span>
                 </div>
             </div>
             <div class="detail-item" style="grid-column: 1 / -1;">
                 <div class="detail-label">Mô tả</div>
-                <div class="detail-value">${doctor.description}</div>
+                <div class="detail-value">${doctor.profileDescription || 'Chưa có mô tả'}</div>
             </div>
         </div>
     `;
@@ -673,83 +762,105 @@ function viewDoctor(doctorId) {
 }
 
 function editDoctor(doctorId) {
-    // Implementation for editing doctor
-    showToast('Chức năng chỉnh sửa bác sĩ đang được phát triển', 'info');
+    const doctor = allDoctors.find(d => d.docId == doctorId);
+    if (!doctor) {
+        showToast('Không tìm thấy bác sĩ', 'error');
+        return;
+    }
+    
+    currentEditingDoctor = doctor;
+    
+    const modal = document.getElementById('doctorModal');
+    const title = document.getElementById('doctorModalTitle');
+    const submitBtn = document.getElementById('doctorSubmitBtn');
+    
+    // Set title và button text cho chỉnh sửa
+    title.textContent = 'Chỉnh sửa thông tin bác sĩ';
+    submitBtn.textContent = 'Cập nhật';
+    
+    // Fill form với dữ liệu hiện tại
+    document.getElementById('doctorName').value = doctor.docFullName || '';
+    document.getElementById('doctorEmail').value = doctor.docEmail || '';
+    document.getElementById('doctorPhone').value = doctor.docPhone || '';
+    document.getElementById('doctorSpecialty').value = doctor.expertise || '';
+    document.getElementById('doctorDescription').value = doctor.profileDescription || '';
+    document.getElementById('doctorPassword').value = ''; // Không hiển thị mật khẩu cũ
+    
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    setTimeout(() => modal.classList.add('show'), 10);
 }
 
 function deleteDoctor(doctorId) {
     if (confirm('Bạn có chắc chắn muốn xóa bác sĩ này?')) {
-        doctors = doctors.filter(d => d.id !== doctorId);
-        saveToLocalStorage();
-        filterDoctors();
-        showToast('Đã xóa bác sĩ thành công');
+        // TODO: Implement API call to delete doctor
+        showToast('Chức năng xóa bác sĩ sẽ được cập nhật sau', 'warning');
     }
 }
 
 // Manager Functions
-function loadManagers() {
-    renderManagersTable();
-    updateManagersSummary();
-    initManagerFilters();
+async function loadManagers() {
+    try {
+        const response = await fetch('/api/manager/all');
+        if (response.ok) {
+            allManagers = await response.json();
+            filteredManagers = [...allManagers];
+            renderManagersTable(filteredManagers);
+            updateManagersSummary(filteredManagers);
+            initManagerFilters();
+        } else {
+            console.error('Failed to load managers:', response.status);
+            showToast('Không thể tải danh sách quản lý', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading managers:', error);
+        showToast('Lỗi kết nối khi tải danh sách quản lý', 'error');
+    }
 }
 
-function renderManagersTable() {
+function renderManagersTable(managers = []) {
     const tbody = document.getElementById('managersTableBody');
     if (!tbody) return;
     
-    tbody.innerHTML = filteredManagers.map(manager => `
+    tbody.innerHTML = managers.map(manager => `
         <tr>
             <td>
-                <div class="patient-info">
-                    <div class="patient-avatar">
-                        ${manager.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div class="patient-details">
-                        <h4>${manager.name}</h4>
-                        <p>ID: ${manager.id}</p>
+                <div class="manager-info">
+                    <div class="manager-details">
+                        <h4>${manager.maFullName || 'Chưa có tên'}</h4>
+                        <p>ID: ${manager.maId}</p>
                     </div>
                 </div>
             </td>
             <td>
                 <div class="contact-info">
-                    <p>${manager.email}</p>
-                    <p>${manager.phone}</p>
+                    <p>${manager.maEmail || 'Chưa có email'}</p>
+                    <p>${manager.maPhone || 'Chưa có SĐT'}</p>
                 </div>
             </td>
             <td>
                 <span class="status-badge category">
-                    ${manager.role === 'admin' ? 'Quản trị viên' : 
-                      manager.role === 'manager' ? 'Quản lý' : 'Giám sát'}
+                    ${manager.roles === 'admin' ? 'Quản trị viên' : 'Quản lý'}
                 </span>
             </td>
             <td>
                 <div style="font-size: 12px;">
-                    ${manager.permissions.map(perm => {
-                        const permLabels = {
-                            'user_management': 'Quản lý người dùng',
-                            'service_management': 'Quản lý dịch vụ',
-                            'report_access': 'Xem báo cáo',
-                            'system_config': 'Cấu hình hệ thống'
-                        };
-                        return permLabels[perm] || perm;
-                    }).join('<br>')}
+                    ${manager.position || 'Chưa có chức vụ'}
                 </div>
             </td>
             <td>
-                <span class="status-badge ${manager.status}">
-                    ${manager.status === 'active' ? 'Hoạt động' : 'Tạm khóa'}
+                <span class="status-badge ${manager.isActive ? 'active' : 'inactive'}">
+                    ${manager.isActive ? 'Hoạt động' : 'Tạm khóa'}
                 </span>
             </td>
             <td>
                 <div class="action-buttons">
-                    <button class="action-btn view" onclick="viewManager('${manager.id}')" title="Xem chi tiết">
+                    <button class="action-btn view" onclick="viewManager('${manager.maId}')" title="Xem chi tiết">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="action-btn edit" onclick="editManager('${manager.id}')" title="Chỉnh sửa">
+                    <button class="action-btn edit" onclick="editManager('${manager.maId}')" title="Chỉnh sửa">
                         <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteManager('${manager.id}')" title="Xóa">
-                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </td>
@@ -757,11 +868,11 @@ function renderManagersTable() {
     `).join('');
 }
 
-function updateManagersSummary() {
-    document.getElementById('totalManagersCount').textContent = filteredManagers.length;
-    document.getElementById('adminCount').textContent = filteredManagers.filter(m => m.role === 'admin').length;
-    document.getElementById('managerCount').textContent = filteredManagers.filter(m => m.role === 'manager').length;
-    document.getElementById('supervisorCount').textContent = filteredManagers.filter(m => m.role === 'supervisor').length;
+function updateManagersSummary(managers = []) {
+    document.getElementById('totalManagersCount').textContent = managers.length;
+    document.getElementById('adminCount').textContent = managers.filter(m => m.roles === 'admin').length;
+    document.getElementById('managerCount').textContent = managers.filter(m => m.roles === 'manager').length;
+    document.getElementById('supervisorCount').textContent = 0; // Không còn supervisor
 }
 
 function initManagerFilters() {
@@ -780,20 +891,20 @@ function filterManagers() {
     const searchTerm = document.getElementById('managerSearch')?.value.toLowerCase() || '';
     const roleFilter = document.getElementById('managerRoleFilter')?.value || 'all';
     
-    filteredManagers = managers.filter(manager => {
-        const matchesSearch = manager.name.toLowerCase().includes(searchTerm) ||
-                             manager.email.toLowerCase().includes(searchTerm);
-        const matchesRole = roleFilter === 'all' || manager.role === roleFilter;
+    filteredManagers = allManagers.filter(manager => {
+        const matchesSearch = (manager.maFullName && manager.maFullName.toLowerCase().includes(searchTerm)) ||
+                             (manager.maEmail && manager.maEmail.toLowerCase().includes(searchTerm));
+        const matchesRole = roleFilter === 'all' || manager.roles === roleFilter;
         
         return matchesSearch && matchesRole;
     });
     
-    renderManagersTable();
-    updateManagersSummary();
+    renderManagersTable(filteredManagers);
+    updateManagersSummary(filteredManagers);
 }
 
 function viewManager(managerId) {
-    const manager = managers.find(m => m.id === managerId);
+    const manager = allManagers.find(m => m.maId == managerId);
     if (!manager) return;
     
     const modal = document.getElementById('patientDetailModal');
@@ -806,49 +917,35 @@ function viewManager(managerId) {
         <div class="patient-detail-grid">
             <div class="detail-item">
                 <div class="detail-label">Họ và tên</div>
-                <div class="detail-value">${manager.name}</div>
+                <div class="detail-value">${manager.maFullName || 'Chưa có tên'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Email</div>
-                <div class="detail-value">${manager.email}</div>
+                <div class="detail-value">${manager.maEmail || 'Chưa có email'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Số điện thoại</div>
-                <div class="detail-value">${manager.phone}</div>
+                <div class="detail-value">${manager.maPhone || 'Chưa có SĐT'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Chức vụ</div>
-                <div class="detail-value">${manager.position}</div>
+                <div class="detail-value">${manager.position || 'Chưa có chức vụ'}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Vai trò</div>
                 <div class="detail-value">
                     <span class="status-badge category">
-                        ${manager.role === 'admin' ? 'Quản trị viên' : 
-                          manager.role === 'manager' ? 'Quản lý' : 'Giám sát'}
+                        ${manager.roles === 'admin' ? 'Quản trị viên' : 
+                          manager.roles === 'manager' ? 'Quản lý' : 'Giám sát'}
                     </span>
                 </div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">Trạng thái</div>
                 <div class="detail-value">
-                    <span class="status-badge ${manager.status}">
-                        ${manager.status === 'active' ? 'Hoạt động' : 'Tạm khóa'}
+                    <span class="status-badge ${manager.isActive ? 'active' : 'inactive'}">
+                        ${manager.isActive ? 'Hoạt động' : 'Tạm khóa'}
                     </span>
-                </div>
-            </div>
-            <div class="detail-item" style="grid-column: 1 / -1;">
-                <div class="detail-label">Quyền hạn</div>
-                <div class="detail-value">
-                    ${manager.permissions.map(perm => {
-                        const permLabels = {
-                            'user_management': 'Quản lý người dùng',
-                            'service_management': 'Quản lý dịch vụ',
-                            'report_access': 'Xem báo cáo',
-                            'system_config': 'Cấu hình hệ thống'
-                        };
-                        return `<span class="status-badge category" style="margin-right: 5px; margin-bottom: 5px;">${permLabels[perm] || perm}</span>`;
-                    }).join('')}
                 </div>
             </div>
         </div>
@@ -858,16 +955,39 @@ function viewManager(managerId) {
 }
 
 function editManager(managerId) {
-    // Implementation for editing manager
-    showToast('Chức năng chỉnh sửa quản lý đang được phát triển', 'info');
+    const manager = allManagers.find(m => m.maId == managerId);
+    if (!manager) {
+        showToast('Không tìm thấy quản lý', 'error');
+        return;
+    }
+    
+    currentEditingManager = manager;
+    
+    const modal = document.getElementById('managerModal');
+    const title = document.getElementById('managerModalTitle');
+    const submitBtn = document.getElementById('managerSubmitBtn');
+    
+    // Set title và button text cho chỉnh sửa
+    title.textContent = 'Chỉnh sửa thông tin quản lý';
+    submitBtn.textContent = 'Cập nhật';
+    
+    // Fill form với dữ liệu hiện tại
+    document.getElementById('managerName').value = manager.maFullName || '';
+    document.getElementById('managerEmail').value = manager.maEmail || '';
+    document.getElementById('managerPhone').value = manager.maPhone || '';
+    document.getElementById('managerRole').value = manager.roles || 'manager';
+    document.getElementById('managerPassword').value = ''; // Không hiển thị mật khẩu cũ
+    
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    setTimeout(() => modal.classList.add('show'), 10);
 }
 
 function deleteManager(managerId) {
     if (confirm('Bạn có chắc chắn muốn xóa quản lý này?')) {
-        managers = managers.filter(m => m.id !== managerId);
-        saveToLocalStorage();
-        filterManagers();
-        showToast('Đã xóa quản lý thành công');
+        // TODO: Implement API call to delete manager
+        showToast('Chức năng xóa quản lý sẽ được cập nhật sau', 'warning');
     }
 }
 
@@ -1376,6 +1496,170 @@ function initForms() {
     }
 }
 
+// Doctor Form Handler
+function initDoctorForm() {
+    const doctorForm = document.getElementById('doctorForm');
+    if (doctorForm) {
+        doctorForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                docFullName: document.getElementById('doctorName').value.trim(),
+                docEmail: document.getElementById('doctorEmail').value.trim(),
+                docPhone: document.getElementById('doctorPhone').value.trim(),
+                expertise: document.getElementById('doctorSpecialty').value.trim(),
+                degree: document.getElementById('doctorDescription').value.trim(),
+                profileDescription: document.getElementById('doctorDescription').value.trim(),
+                docPassword: document.getElementById('doctorPassword').value.trim()
+            };
+            
+            // Validate required fields
+            if (!formData.docFullName) {
+                showToast('Họ và tên bác sĩ không được để trống', 'error');
+                return;
+            }
+            
+            if (!formData.docEmail) {
+                showToast('Email không được để trống', 'error');
+                return;
+            }
+            
+            if (!formData.docPhone) {
+                showToast('Số điện thoại không được để trống', 'error');
+                return;
+            }
+            
+            try {
+                let response;
+                let successMessage;
+                
+                if (currentEditingDoctor) {
+                    // Update existing doctor
+                    response = await fetch(`/api/doctors/update/${currentEditingDoctor.docId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    successMessage = 'Cập nhật bác sĩ thành công!';
+                } else {
+                    // Create new doctor
+                    response = await fetch('/api/doctors', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    successMessage = 'Thêm bác sĩ thành công!';
+                }
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showToast(successMessage, 'success');
+                    
+                    // Close modal
+                    closeDoctorModal();
+                    
+                    // Reload danh sách bác sĩ
+                    await loadDoctors();
+                } else {
+                    const error = await response.json();
+                    showToast(error.error || 'Lỗi khi xử lý bác sĩ', 'error');
+                }
+            } catch (error) {
+                console.error('Error processing doctor:', error);
+                showToast('Lỗi kết nối khi xử lý bác sĩ', 'error');
+            }
+        });
+    }
+}
+
+// Manager Form Handler
+function initManagerForm() {
+    const managerForm = document.getElementById('managerForm');
+    if (managerForm) {
+        managerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                maFullName: document.getElementById('managerName').value.trim(),
+                maEmail: document.getElementById('managerEmail').value.trim(),
+                maPhone: document.getElementById('managerPhone').value.trim(),
+                position: document.getElementById('managerRole').value.trim(),
+                roles: document.getElementById('managerRole').value.trim(),
+                maPassword: document.getElementById('managerPassword').value.trim()
+            };
+            
+            // Validate required fields
+            if (!formData.maFullName) {
+                showToast('Họ và tên quản lý không được để trống', 'error');
+                return;
+            }
+            
+            if (!formData.maEmail) {
+                showToast('Email không được để trống', 'error');
+                return;
+            }
+            
+            if (!formData.maPhone) {
+                showToast('Số điện thoại không được để trống', 'error');
+                return;
+            }
+            
+            if (!formData.maPassword) {
+                showToast('Mật khẩu không được để trống', 'error');
+                return;
+            }
+            
+            try {
+                let response;
+                let successMessage;
+                
+                if (currentEditingManager) {
+                    // Update existing manager
+                    response = await fetch(`/api/manager/${currentEditingManager.maId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    successMessage = 'Cập nhật quản lý thành công!';
+                } else {
+                    // Create new manager
+                    response = await fetch('/api/manager', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    successMessage = 'Thêm quản lý thành công!';
+                }
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showToast(successMessage, 'success');
+                    
+                    // Close modal
+                    closeManagerModal();
+                    
+                    // Reload danh sách quản lý
+                    await loadManagers();
+                } else {
+                    const error = await response.json();
+                    showToast(error.error || 'Lỗi khi xử lý quản lý', 'error');
+                }
+            } catch (error) {
+                console.error('Error processing manager:', error);
+                showToast('Lỗi kết nối khi xử lý quản lý', 'error');
+            }
+        });
+    }
+}
+
 // Sidebar Toggle
 function initSidebar() {
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -1416,6 +1700,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initForms();
     initSidebar();
     initModals();
+    initDoctorForm();
+    initManagerForm();
     
     // Load initial data
     saveToLocalStorage();
@@ -1425,6 +1711,11 @@ document.addEventListener('DOMContentLoaded', () => {
 window.viewPatient = viewPatient;
 window.deletePatient = deletePatient;
 window.closePatientDetailModal = closePatientDetailModal;
+
+window.editDoctor = editDoctor;
+window.viewDoctor = viewDoctor;
+window.editManager = editManager;
+window.viewManager = viewManager;
 
 window.openServiceModal = openServiceModal;
 window.closeServiceModal = closeServiceModal;
