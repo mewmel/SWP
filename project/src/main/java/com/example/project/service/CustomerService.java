@@ -96,7 +96,6 @@ public class CustomerService {
     return customerRepository.save(customer);
 }
 
-
     // Hàm verify mật khẩu hiện tại theo ID
     public boolean verifyCurrentPassword(Integer cusId, String currentPassword) {
         Optional<Customer> customerOpt = customerRepository.findById(cusId);
@@ -108,7 +107,6 @@ public class CustomerService {
         return passwordEncoder.matches(currentPassword, customer.getCusPassword());
     }
 
-
 public boolean verifyOtp(String cusEmail, String otp) {
     // 1. Tìm customerId từ email
     Optional<Customer> customerOpt = customerRepository.findByCusEmail(cusEmail);
@@ -119,9 +117,8 @@ public boolean verifyOtp(String cusEmail, String otp) {
     // 2. Gọi sang OtpService để xác thực OTP
     return otpService.verifyOtp(customerId, otp);
 }
-    
 
-    // Hàm đổi mật khẩu theo email
+// Hàm đổi mật khẩu theo email
     public String changeCusPassword(String cusEmail, String currentPassword, String newPassword, String otp) {
         Optional<Customer> customerOpt = customerRepository.findByCusEmail(cusEmail);
         if (!customerOpt.isPresent()) {
@@ -133,7 +130,7 @@ public boolean verifyOtp(String cusEmail, String otp) {
 
         // 3. Nếu chưa có otp → gửi và trả về OTP_SENT
         if (otp == null || otp.isBlank()) {
-            otpService.sendOtp(cusId, cusEmail);;
+            otpService.sendOtp(cusId, cusEmail);
             return "OTP_SENT";
         }
 
@@ -152,7 +149,6 @@ public boolean verifyOtp(String cusEmail, String otp) {
         customerRepository.save(customer);
         return "success";
     }
-
 
     private boolean isValidEmail(String email) {
         return Pattern.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", email);

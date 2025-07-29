@@ -94,43 +94,43 @@ public class BookingStepService {
 
     }
 
-public VisitSubService getSubServicesForBooking(Integer bookId) {
-    // 1. Lấy booking để biết customer
-    Booking booking = bookingRepo.findById(bookId)
-            .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID = " + bookId));
+    public VisitSubService getSubServicesForBooking(Integer bookId) {
+        // 1. Lấy booking để biết customer
+        Booking booking = bookingRepo.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID = " + bookId));
 
-    // 2. Tính "lần khám thứ mấy" dựa trên thứ tự bookId tăng dần
-    List<Booking> customerBookings = bookingRepo.findByCusIdOrderByBookIdAsc(booking.getCusId());
-    int visitNumber = IntStream.range(0, customerBookings.size())
-            .filter(i -> customerBookings.get(i).getBookId().equals(bookId))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Không tìm thấy booking trong danh sách của customer")) + 1;
+        // 2. Tính "lần khám thứ mấy" dựa trên thứ tự bookId tăng dần
+        List<Booking> customerBookings = bookingRepo.findByCusIdOrderByBookIdAsc(booking.getCusId());
+        int visitNumber = IntStream.range(0, customerBookings.size())
+                .filter(i -> customerBookings.get(i).getBookId().equals(bookId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking trong danh sách của customer")) + 1;
 
-    // 3. Lấy danh sách BookingStep (KHÔNG join)
-    List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
+        // 3. Lấy danh sách BookingStep (KHÔNG join)
+        List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
 
-    // 4. Lấy tất cả subId
-    List<Integer> subIds = steps.stream().map(BookingStep::getSubId).collect(Collectors.toList());
+        // 4. Lấy tất cả subId
+        List<Integer> subIds = steps.stream().map(BookingStep::getSubId).collect(Collectors.toList());
 
-    // 5. Lấy tất cả SubService theo subIds (1 lần query)
-    List<SubService> subServices = subServiceRepo.findAllById(subIds);
+        // 5. Lấy tất cả SubService theo subIds (1 lần query)
+        List<SubService> subServices = subServiceRepo.findAllById(subIds);
 
-    // 6. Map subId -> SubService
-    Map<Integer, SubService> subServiceMap = subServices.stream()
-            .collect(Collectors.toMap(SubService::getSubId, ss -> ss));
+        // 6. Map subId -> SubService
+        Map<Integer, SubService> subServiceMap = subServices.stream()
+                .collect(Collectors.toMap(SubService::getSubId, ss -> ss));
 
-    // 7. Group lại theo estimatedDayOffset
-    Map<Integer, List<SubService>> subServicesGrouped = steps.stream()
-            .map(step -> subServiceMap.get(step.getSubId()))
-            .filter(java.util.Objects::nonNull)
-            .collect(Collectors.groupingBy(
-                    SubService::getEstimatedDayOffset,
-                    TreeMap::new,
+        // 7. Group lại theo estimatedDayOffset
+        Map<Integer, List<SubService>> subServicesGrouped = steps.stream()
+                .map(step -> subServiceMap.get(step.getSubId()))
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.groupingBy(
+                        SubService::getEstimatedDayOffset,
+                        TreeMap::new,
                     Collectors.toList()
             ));
 
-    return new VisitSubService(bookId, visitNumber, subServicesGrouped);
-}
+        return new VisitSubService(bookId, visitNumber, subServicesGrouped);
+    }
 
     public boolean updateBookingStepWithBooking(Integer bookId, Integer subId, BookingStep req) {
         Optional<BookingStep> existingStep = bookingStepRepo.findByBookIdAndSubId(bookId, subId);
@@ -145,9 +145,9 @@ public VisitSubService getSubServicesForBooking(Integer bookId) {
         return true;
     }
 
-public List<TestResult> getTestResultsForBooking(Integer bookId) {
+    public List<TestResult> getTestResultsForBooking(Integer bookId) {
         Booking booking = bookingRepo.findById(bookId)
-            .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID = " + bookId));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID = " + bookId));
         Integer serId = booking.getSerId();
 
         // Lấy tất cả subService thuộc service này, tên chứa "Xét nghiệm"
@@ -195,11 +195,11 @@ public List<TestResult> getTestResultsForBooking(Integer bookId) {
     @Transactional
     public void saveTestResults(List<TestResult> testResults) throws Exception {
         for (TestResult dto : testResults) {
-        // Chỉ lưu nếu status là pending hoặc completed
+            // Chỉ lưu nếu status là pending hoặc completed
         if (!"pending".equalsIgnoreCase(dto.getStepStatus())
             && !"completed".equalsIgnoreCase(dto.getStepStatus())) {
-            continue; // Bỏ qua
-        }
+                continue; // Bỏ qua
+            }
 
 
             BookingStep step = null;
@@ -244,13 +244,13 @@ public List<TestResult> getTestResultsForBooking(Integer bookId) {
         if (reqBody.containsKey("performedAt")) {
             String performedAtStr = (String) reqBody.get("performedAt");
             if (performedAtStr != null && !performedAtStr.isBlank()) {
-                        try {
-            // Xử lý cả dạng có "Z" hoặc không có
-            step.setPerformedAt(java.time.OffsetDateTime.parse(performedAtStr).toLocalDateTime());
-        } catch (Exception e) {
-            // Nếu vẫn fail (do định dạng khác), thử loại bỏ "Z" ở cuối và parse lại
-            step.setPerformedAt(java.time.LocalDateTime.parse(performedAtStr.replace("Z", "")));
-        }
+                try {
+                    // Xử lý cả dạng có "Z" hoặc không có
+                    step.setPerformedAt(java.time.OffsetDateTime.parse(performedAtStr).toLocalDateTime());
+                } catch (Exception e) {
+                    // Nếu vẫn fail (do định dạng khác), thử loại bỏ "Z" ở cuối và parse lại
+                    step.setPerformedAt(java.time.LocalDateTime.parse(performedAtStr.replace("Z", "")));
+                }
             }
         }
 
