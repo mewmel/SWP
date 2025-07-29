@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FertilityEHR bởi Meditab</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .doctors-slider-container {
+            margin: 50px 0;
+            position: relative;
+        }
+
+        .doctors-slider-wrapper {
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .doctors-grid {
+            display: flex;
+            transition: transform 0.5s ease;
+            gap: 30px;
+        }
+
+        .doctor-card {
+            flex: 0 0 calc((100% - 60px) / 3);
+            min-width: calc((100% - 60px) / 3);
+        }
+
+        .doctors-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .nav-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 20px;
+        }
+
+        .nav-button:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #ccc;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="logo">
+            <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#doctor">Đội ngũ bác sĩ</a></li>
+                <li class="dropdown">
+                    <a href="#">Chuyên khoa <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="kham-hiem-muon.html">Khám hiếm muộn/ tiền hôn nhân</a></li>
+                        <li><a href="phuong-phap-sinh-san.html">Các phương pháp hỗ trợ sinh sản</a></li>
+                    </ul>
+                </li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="bang-gia.html">Bảng giá</a></li>
+                <li><a href="#footer">Liên hệ</a></li>
+                <li><a href="dat-lich.html">Đặt lịch</a></li>
+
+                <li>
+                    <div class="notification-wrapper" style="position: relative; display: none">
+                        <button class="notification-icon" id="notificationBtn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">9</span>
+                        </button>
+
+                        <!-- Hiển thị dropdown thông báo -->
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-dropdown-header">
+                                <h3>Thông báo</h3>
+                                <button class="notification-settings-btn">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+
+                            <div class="notification-dropdown-body">
+                                <div class="notification-dropdown-item unread">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-syringe"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Nhắc nhở tiêm thuốc</div>
+                                        <div class="notification-description">Đã đến giờ tiêm thuốc Gonal-F 150 IU
+                                        </div>
+                                        <div class="notification-time">5 phút trước</div>
+                                    </div>
+                                </div>
+
+                                <div class="notification-dropdown-item unread">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-flask"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Lịch xét nghiệm</div>
+                                        <div class="notification-description">Xét nghiệm máu E2 vào ngày mai lúc
+                                            8:00</div>
+                                        <div class="notification-time">2 giờ trước</div>
+                                    </div>
+                                </div>
+
+                                <div class="notification-dropdown-item">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Lịch hẹn khám</div>
+                                        <div class="notification-description">Khám siêu âm kiểm tra vào 28/06 lúc
+                                            14:00</div>
+                                        <div class="notification-time">1 ngày trước</div>
+                                    </div>
+                                </div>
+
+                                <div class="notification-dropdown-item">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Kết quả xét nghiệm</div>
+                                        <div class="notification-description">Kết quả xét nghiệm hormone đã có</div>
+                                        <div class="notification-time">2 ngày trước</div>
+                                    </div>
+                                </div>
+
+                                <div class="notification-dropdown-item">
+                                    <div class="notification-avatar">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Tin nhắn từ bác sĩ</div>
+                                        <div class="notification-description">BS. Nguyễn Thị Hương đã gửi tin nhắn
+                                            cho bạn</div>
+                                        <div class="notification-time">3 ngày trước</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="notification-dropdown-footer">
+                                <a href="#" class="view-all-notifications">Xem tất cả thông báo</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <!--hiển thị nút Đăng nhập và đăng kí-->
+        <div class="auth-buttons">
+            <button class="btn-login" onclick="openAuthModal('login')">Đăng nhập</button>
+            <button class="btn-register" onclick="openAuthModal('register')">Đăng ký</button>
+        </div>
+        <div class="user-menu" style="display:none;">
+            <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+            <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</header>
+
+<!-- Sidebar-->
+<aside class="sidebar" id="sidebar" style="display:none;">
+    <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+    <div class="sidebar-user">
+        <i class="fas fa-user-circle"></i>
+        <span class="sidebar-username"></span>
+    </div>
+    <a href="dashboard.html"><i class="fas fa-user"></i> Bệnh án</a>
+    <a href="lich-dieu-tri.html"><i class="fas fa-calendar-check"></i> Lịch điều trị</a>
+    <a href="index.html#blog"><i class="fas fa-book-open"></i> Blog</a>
+    <a href="dat-lich.html"><i class="fas fa-calendar-alt"></i> Đặt lịch</a>
+    <a href="ho-so-ca-nhan.html"><i class="fas fa-cog"></i> Cài đặt</a>
+    <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
+    <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+</aside>
+
+<div class="auth-modal" id="authModal">
+    <div class="auth-modal-content">
+        <div class="auth-modal-left">
+            <div class="auth-modal-overlay">
+                <h2>Chào mừng bạn đến với FertilityEHR</h2>
+                <p>Hệ thống hỗ trợ theo dõi cho phòng khám hiếm muộn</p>
+            </div>
+        </div>
+        <div class="auth-modal-right">
+            <span class="close-modal">&times;</span>
+
+            <!-- Bước chọn role -->
+            <div class="role-selection" id="roleSelection">
+                <h2>Chọn vai trò của bạn</h2>
+                <p>Vui lòng chọn loại tài khoản để tiếp tục</p>
+                <div class="role-options">
+                    <div class="role-option" data-role="customer">
+                        <div class="role-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>Khách hàng</h3>
+                        <p>Bệnh nhân đăng ký điều trị hiếm muộn</p>
+                        <ul>
+                            <li>Đặt lịch khám</li>
+                            <li>Theo dõi lịch điều trị</li>
+                            <li>Xem kết quả xét nghiệm</li>
+                            <li>Quản lý hồ sơ cá nhân</li>
+                        </ul>
+                    </div>
+                    <div class="role-option" data-role="doctor">
+                        <div class="role-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h3>Nhân viên</h3>
+                        <p>Đội ngũ y tế chuyên khoa</p>
+                        <ul>
+                            <li>Quản lý bệnh nhân</li>
+                            <li>Ghi nhận kết quả khám</li>
+                            <li>Lập lịch điều trị</li>
+                            <li>Báo cáo và thống kê</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auth Forms (hidden initially) -->
+            <div class="auth-section" id="authSection" style="display: none;">
+                <div class="auth-header">
+                    <button class="back-to-role" id="backToRole">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </button>
+                    <div class="selected-role-info">
+                        <span class="role-badge"></span>
+                    </div>
+                </div>
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Đăng nhập</button>
+                    <button class="auth-tab" data-tab="register">Đăng ký</button>
+                </div>
+                <form id="loginForm" class="auth-form active">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" required placeholder="Nhập email của bạn">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Mật khẩu</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu">
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group remember-forgot">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="checkmark"></span>
+                            Ghi nhớ đăng nhập
+                        </label>
+                        <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <span>Đăng nhập</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="registerName">Họ và tên</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="registerName" required placeholder="Nhập họ tên của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="registerEmail" required placeholder="Nhập email của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Số điện thoại</label>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="registerPhone" required placeholder="Nhập số điện thoại của bạn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Ngày sinh</label>
+                        <div class="input-group">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="date" id="registerDob" required placeholder="Chọn ngày sinh">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Mật khẩu</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="registerPassword" required placeholder="Tạo mật khẩu">
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Xác nhận mật khẩu</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirmPassword" required placeholder="Xác nhận mật khẩu">
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="agreeTerms">
+                            <span class="checkmark"></span>
+                            Tôi đồng ý với <a href="#">điều khoản sử dụng</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <span>Đăng ký</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div> <!-- End auth-section -->
+        </div>
+    </div>
+</div>
+
+
+<!-- Forgot Password Modal -->
+<div class="auth-modal" id="forgotPasswordModal" style="display: none;">
+    <div class="auth-modal-content">
+        <div class="auth-modal-left">
+            <div class="auth-modal-overlay">
+                <h2>Khôi phục mật khẩu</h2>
+                <p>Nhập thông tin để đặt lại mật khẩu của bạn</p>
+            </div>
+        </div>
+        <div class="auth-modal-right">
+            <span class="close-modal" id="closeForgotModal">&times;</span>
+
+            <div class="auth-header">
+                <button class="back-to-login" id="backToLogin">
+                    <i class="fas fa-arrow-left"></i> Quay lại đăng nhập
+                </button>
+            </div>
+
+            <h2>Đặt lại mật khẩu</h2>
+
+            <form id="forgotPasswordForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="forgotEmail">Email</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="forgotEmail" required placeholder="Nhập email của bạn">
+                    </div>
+                </div>
+
+
+
+                <div class="form-group">
+                    <label for="forgotNewPassword">Mật khẩu mới</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="forgotNewPassword" required placeholder="Nhập mật khẩu mới">
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="forgotConfirmPassword">Xác nhận mật khẩu mới</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="forgotConfirmPassword" required placeholder="Nhập lại mật khẩu mới">
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
+                </div>
+
+                <div class="form-group" id="otpFieldGroup">
+                    <label for="forgotOtp">Mã xác nhận (OTP)</label>
+                    <div class="otp-input-group">
+                        <div class="input-group">
+                            <i class="fas fa-key"></i>
+                            <input type="text" id="forgotOtp" placeholder="Nhập mã OTP 6 số" maxlength="6" pattern="[0-9]{6}">
+                        </div>
+                        <button type="button" id="sendOtpBtn" class="btn-send-otp">
+                            <i class="fas fa-paper-plane"></i>
+                            Gửi mã OTP
+                        </button>
+                    </div>
+                    <div class="otp-note">
+                        <small>Mã OTP sẽ được gửi đến email của bạn</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <span>Đặt lại mật khẩu</span>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>FertilityEHR</h1>
+        <h2>Hệ thống Quản lý và Theo dõi Điều trị Hiếm muộn</h2>
+        <p>Đồng hành cùng hành trình sinh con với nền tảng quản lý hiện đại, kết nối liền mạch giữa bệnh nhân, bác sĩ và quy trình điều trị hiếm muộn.</p>
+    </div>
+</section>
+
+<section id="about-fertilitycare" class="about-fertilitycare-section py-5">
+    <div class="container">
+        <div class="about-fertilitycare-header">
+            <h2>Về Chúng Tôi</h2>
+            <p>Chúng tôi cam kết giúp các cặp đôi đạt được ước mơ làm cha mẹ thông qua các phương pháp điều trị hiếm
+                muộn sáng tạo và chăm sóc cá nhân hóa.</p>
+        </div>
+        <div class="about-fertilitycare-flex">
+            <div class="about-fertilitycare-left">
+                <h3 class="mb-3">Sứ Mệnh Của Chúng Tôi</h3>
+                <p class="mb-4">Chúng tôi cam kết cung cấp các phương pháp điều trị hiếm muộn hàng đầu với tỷ lệ
+                    thành công cao nhất. Đội ngũ đa ngành của chúng tôi kết hợp công nghệ tiên tiến với sự chăm sóc
+                    tận tâm để hỗ trợ bạn trong từng bước của hành trình điều trị hiếm muộn.</p>
+                <div class="row text-center"
+                     style="display: flex; justify-content: space-between; align-items: center; margin: 0; margin-top: 50px;">
+                    <div class="col-4">
+                        <div class="display-5 fw-bold" style="color:#ff6b6b;">85%</div>
+                        <div class="small text-muted">Success Rate</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="display-5 fw-bold" style="color:#5a5fd4;">10+</div>
+                        <div class="small text-muted">Years Experience</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="display-5 fw-bold" style="color:#ff6b6b;">2000+</div>
+                        <div class="small text-muted">Happy Families</div>
+                    </div>
+                </div>
+            </div>
+            <div class="about-fertilitycare-right">
+                <img src="https://public.youware.com/users-website-assets/prod/c71d610f-2797-4c93-9f2d-a12dad829c52/gf060087cbc49c99a99f61205896862318bdd8cdb39b20af181a9426a4b7e735fbd6f75a800e5ae8302548f4d13ffe78e347b38fe5ad550122fc8a8475435401e_1280.jpg"
+                     alt="FertilityCare Illustration" class="img-fluid rounded-4 shadow"
+                     style="max-height:350px;object-fit:cover;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Tính năng chính</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <i class="fas fa-user-md"></i>
+                <h3>Quản lý bệnh nhân</h3>
+                <p>Theo dõi và quản lý toàn diện bệnh nhân đặc biệt cho phòng khám hiếm muộn.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>Theo dõi chu kỳ</h3>
+                <p>Giám sát chu kỳ nâng cao với phân tích và báo cáo chi tiết.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-flask"></i>
+                <h3>Tích hợp phòng xét nghiệm</h3>
+                <p>Tích hợp liền mạch với hệ thống phòng xét nghiệm để quy trình làm việc hiệu quả.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Phân tích điều trị</h3>
+                <p>Thống kê thời gian thực và theo dõi tỷ lệ thành công cho tất cả các phương pháp điều trị.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-mobile-alt"></i>
+                <h3>Cổng thông tin bệnh nhân</h3>
+                <p>Cổng thông tin truy cập hồ sơ và liên lạc bảo mật dành cho bệnh nhân.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <h3>Tích hợp thanh toán</h3>
+                <p>Hệ thống thanh toán hợp lý với xác minh bảo hiểm.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Doctors Slider Section -->
+<section class="doctors-slider-container" id="doctor">
+    <div class="container">
+        <h2 class="section-title">Đội ngũ bác sĩ chuyên khoa</h2>
+        <div class="doctors-slider-wrapper">
+            <div class="doctors-grid">
+                <div class="doctor-card">
+                    <div class="doctor-image">
+                        <img src="img/doctor1.png" alt="Bác sĩ Trương Quốc Lập">
+                    </div>
+                    <div class="doctor-info">
+                        <h3>Bác sĩ Trương Quốc Lập</h3>
+                        <p class="doctor-title">Trưởng khoa Sản phụ khoa</p>
+                        <p class="doctor-specialty">Chuyên gia về khoa sản và bệnh hiếm muộn</p>
+                        <a href="#" class="doctor-profile">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <div class="doctor-image">
+                        <img src="img/doctor2.png" alt="Bác sĩ Nguyễn Ngọc Khánh Linh">
+                    </div>
+                    <div class="doctor-info">
+                        <h3>Bác sĩ Nguyễn N. Kh. Linh</h3>
+                        <p class="doctor-title">Trưởng khoa phòng IVF</p>
+                        <p class="doctor-specialty">Chuyên gia hỗ trợ điều trị và tư vấn IVF</p>
+                        <a href="#" class="doctor-profile">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <div class="doctor-image">
+                        <img src="img/doctor3.png" alt="Bác sĩ Tất Vĩnh Hùng">
+                    </div>
+                    <div class="doctor-info">
+                        <h3>Bác sĩ Tất Vĩnh Hùng</h3>
+                        <p class="doctor-title">Trưởng khoa phòng IUI</p>
+                        <p class="doctor-specialty">Chuyên gia hỗ trợ điều trị và tư vấn IUI</p>
+                        <a href="#" class="doctor-profile">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <div class="doctor-image">
+                        <img src="img/doctor2.png" alt="Bác sĩ Phạm Thị Hồng Anh">
+                    </div>
+                    <div class="doctor-info">
+                        <h3>Bác sĩ Phạm Thị Hồng Anh</h3>
+                        <p class="doctor-title">Bác sĩ chuyên khoa Nội tiết</p>
+                        <p class="doctor-specialty">Chuyên gia về nội tiết và sinh sản</p>
+                        <a href="#" class="doctor-profile">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <div class="doctor-image">
+                        <img src="img/doctor1.png" alt="Bác sĩ Lê Minh Đức">
+                    </div>
+                    <div class="doctor-info">
+                        <h3>Bác sĩ Lê Minh Đức</h3>
+                        <p class="doctor-title">Bác sĩ chuyên khoa Nam học</p>
+                        <p class="doctor-specialty">Chuyên gia về nam khoa và vô sinh nam</p>
+                        <a href="#" class="doctor-profile">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <div class="doctor-image">
+                        <img src="img/doctor2.png" alt="Bác sĩ Trần Thị Tú">
+                    </div>
+                    <div class="doctor-info">
+                        <h3>Bác sĩ Trần Thị Tú</h3>
+                        <p class="doctor-title">Bác sĩ chuyên khoa Phôi học</p>
+                        <p class="doctor-specialty">Chuyên gia về phôi học và nuôi cấy phôi</p>
+                        <a href="#" class="doctor-profile">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="doctors-navigation">
+            <button class="nav-button prev-btn"><i class="fas fa-chevron-left"></i></button>
+            <button class="nav-button next-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+</section>
+
+<!--Blog section-->
+<section class="blog-section" id="blog">
+    <div class="container">
+        <h2 class="section-title">Blog & Tin tức</h2>
+        <div class="blog-grid" id="blogGrid">
+            <!-- Loading state -->
+            <div class="blog-loading" id="blogLoading">
+                <div class="loading-content">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
+                    <p style="color: #666;">Đang tải bài viết...</p>
+                </div>
+            </div>
+
+            <!-- Blog posts will be loaded here from API -->
+        </div>
+        <div class="blog-view-all">
+            <a href="#" class="btn-secondary" id="viewAllBlogs" style="display: none;">Xem tất cả bài viết</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section - Phản hồi từ khách hàng-->
+<section class="testimonials">
+    <div class="container">
+        <h2 class="section-title">Khách hàng nói gì về chúng tôi</h2>
+        <div class="testimonial-slider" id="testimonialSlider">
+            <!-- Loading state -->
+            <div class="testimonial-loading" id="testimonialLoading">
+                <div class="loading-content">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
+                    <p style="color: #666;">Đang tải đánh giá từ khách hàng...</p>
+                </div>
+            </div>
+
+            <!-- Testimonials will be loaded here from API -->
+        </div>
+    </div>
+</section>
+
+<!--Form Đặt lịch khám-->
+<section class="cta" id="cta">
+    <div class="container">
+        <h2>Sẵn sàng hành trình làm cha mẹ cùng chúng tôi chứ?</h2>
+        <p>Tham gia cùng hàng trăm phòng khám hiếm muộn đang tin tưởng FertilityEHR</p>
+        <div class="cta-buttons">
+            <a href="dat-lich.html" class="btn-secondary">Đặt lịch khám ngay</a>
+        </div>
+    </div>
+</section>
+
+<div class="social-sidebar">
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" id="instagram-link"><i class="fab fa-instagram"></i></a>
+    <a href="#" id="gmail-link"><i class="fas fa-envelope"></i></a>
+</div>
+<!--Footer-->
+<footer id="footer">
+    <div class="container">
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h3>Sản phẩm</h3>
+                <ul>
+                    <li><a href="#">FertilityEHR</a></li>
+                    <li><a href="#">Cổng thông tin bệnh nhân</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Chuyên khoa</h3>
+                <ul>
+                    <li><a href="kham-hiem-muon.html">Hiếm muộn/Tiền hôn nhân</a></li>
+                    <li><a href="phuong-phap-sinh-san.html">Phương pháp IVF</a></li>
+                    <li><a href="phuong-phap-sinh-san.html">Phương pháp IUI</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Tài nguyên</h3>
+                <ul>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Hỗ trợ</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Liên hệ</h3>
+                <p>123 Đường Lê Văn Việt<br>Tầng 5<br>Hồ Chí Minh, Việt Nam</p>
+                <p>Điện thoại: (028) 5555-1234</p>
+                <p>Email: info@meditab.com</p>
+            </div>
+        </div>
+    </div>
+</footer>
+<script src="js/script.js"></script>
+<script src="js/blogViewAll.js"></script>
+
+<style>
+    .testimonial-loading {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .loading-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .testimonial {
+        opacity: 0;
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .testimonial:nth-child(1) { animation-delay: 0.1s; }
+    .testimonial:nth-child(2) { animation-delay: 0.2s; }
+    .testimonial:nth-child(3) { animation-delay: 0.3s; }
+    .testimonial:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .testimonial-error {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+
+    .testimonial-error i {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+
+    /* Force display for forgot password form */
+    #forgotPasswordModal .auth-form.active {
+        display: block !important;
+    }
+
+    #forgotPasswordModal #forgotPasswordForm {
+        display: block !important;
+    }
+
+    /* OTP input group styling */
+    .otp-input-group {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+    }
+
+    .otp-input-group .input-group {
+        flex: 1;
+    }
+
+    .btn-send-otp {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-send-otp:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-send-otp:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .btn-send-otp i {
+        font-size: 12px;
+    }
+
+    /* Blog loading and error states */
+    .blog-loading {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .blog-loading .loading-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .blog-error {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+
+    .blog-error .error-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .blog-error i {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+
+
+
+
+</style>
+
+<script>
+    // Load testimonials when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        loadTestimonials();
+    });
+
+    async function loadTestimonials() {
+        const testimonialSlider = document.getElementById('testimonialSlider');
+        const loadingElement = document.getElementById('testimonialLoading');
+
+        try {
+            console.log('Loading testimonials from API...');
+
+            // First, test if we can reach the API
+            const testResponse = await fetch('/api/feedback/test');
+            if (testResponse.ok) {
+                const testData = await testResponse.json();
+                console.log('Test API response:', testData);
+            }
+
+            // Try the main testimonials API first
+            let response = await fetch('/api/feedback/testimonials');
+            console.log('Main testimonials API response status:', response.status);
+
+            let testimonials = [];
+
+            if (response.ok) {
+                testimonials = await response.json();
+                console.log('Main testimonials loaded:', testimonials);
+            } else {
+                console.log('Main API failed, trying simple API...');
+
+                // Fallback to simple API
+                response = await fetch('/api/feedback/testimonials-simple');
+                console.log('Simple testimonials API response status:', response.status);
+
+                if (response.ok) {
+                    testimonials = await response.json();
+                    console.log('Simple testimonials loaded:', testimonials);
+                } else {
+                    throw new Error(`Both APIs failed. Last error: HTTP ${response.status}: ${response.statusText}`);
+                }
+            }
+
+            // Hide loading
+            if (loadingElement) {
+                loadingElement.style.display = 'none';
+            }
+
+            if (!testimonials || testimonials.length === 0) {
+                console.log('No testimonials found, showing empty state');
+                showNoTestimonials();
+                return;
+            }
+
+            renderTestimonials(testimonials);
+
+        } catch (error) {
+            console.error('Error loading testimonials:', error);
+            showTestimonialError(error.message);
+        }
+    }
+
+    function renderTestimonials(testimonials) {
+        const testimonialSlider = document.getElementById('testimonialSlider');
+        let html = '';
+
+        testimonials.forEach((testimonial, index) => {
+            const stars = generateStarsForTestimonial(testimonial.rating);
+            const customerInitials = getInitials(testimonial.customerName);
+            const avatarUrl = generateAvatarUrl(customerInitials);
+
+            html += `
+                    <div class="testimonial">
+                        <div class="testimonial-rating">
+                            ${stars}
+                        </div>
+                        <p class="testimonial-text">"${testimonial.comment}"</p>
+                        <div class="testimonial-author">
+                            <img src="${avatarUrl}" alt="${testimonial.customerName}"
+                                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(customerInitials)}&background=667eea&color=fff&size=64'">
+                            <div class="author-info">
+                                <h4>${testimonial.customerName}</h4>
+                                <p>Khách hàng của ${testimonial.doctorName} - ${testimonial.serviceName}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        });
+
+        testimonialSlider.innerHTML = html;
+    }
+
+    function generateStarsForTestimonial(rating) {
+        let starsHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                starsHTML += '<i class="fas fa-star"></i>';
+            } else if (i - 0.5 <= rating) {
+                starsHTML += '<i class="fas fa-star-half-alt"></i>';
+            } else {
+                starsHTML += '<i class="far fa-star"></i>';
+            }
+        }
+        return starsHTML;
+    }
+
+    function getInitials(fullName) {
+        if (!fullName) return 'UN';
+        const names = fullName.split(' ');
+        if (names.length === 1) return names[0].charAt(0).toUpperCase();
+        return names[0].charAt(0).toUpperCase() + names[names.length - 1].charAt(0).toUpperCase();
+    }
+
+    function generateAvatarUrl(initials) {
+        // Sử dụng service tạo avatar từ initials
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=667eea&color=fff&size=64&rounded=true`;
+    }
+
+    function showNoTestimonials() {
+        const testimonialSlider = document.getElementById('testimonialSlider');
+        testimonialSlider.innerHTML = `
+                <div class="testimonial-error">
+                    <i class="fas fa-comments"></i>
+                    <h3>Chưa có đánh giá nào</h3>
+                    <p>Chúng tôi đang chờ những đánh giá đầu tiên từ khách hàng.</p>
+                </div>
+            `;
+    }
+
+    function showTestimonialError(errorMessage = '') {
+        const testimonialSlider = document.getElementById('testimonialSlider');
+        const loadingElement = document.getElementById('testimonialLoading');
+
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+
+        testimonialSlider.innerHTML = `
+                <div class="testimonial-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Không thể tải đánh giá</h3>
+                    <p>Có lỗi xảy ra khi tải đánh giá từ khách hàng. Vui lòng thử lại sau.</p>
+                    ${errorMessage ? `<p style="color: #ff6b6b; font-size: 0.9em; margin-top: 10px;">Chi tiết lỗi: ${errorMessage}</p>` : ''}
+                    <button onclick="loadTestimonials()" style="margin-top: 15px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        Thử lại
+                    </button>
+                </div>
+            `;
+    }
+</script>
+</body>
+</html>

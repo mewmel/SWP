@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý bác sĩ - Dashboard</title>
+    <link rel="stylesheet" href="css/doctor-common.css">
+    <link rel="stylesheet" href="css/manager-common.css">
+    <link rel="stylesheet" href="css/manager-dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="manager-dashboard">
+<header class="doctor-header">
+    <div class="doctor-header-container">
+        <nav class="doctor-nav">
+            <a href="#" class="nav-link active">
+                <i class="fas fa-users-cog"></i>
+                Quản lý bác sĩ
+            </a>
+            <a href="sap-xep-lich-bac-si.html" class="nav-link">
+                <i class="fas fa-calendar-plus"></i>
+                Sắp xếp lịch làm
+            </a>
+            <a href="thong-ke-manager.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                Thống kê
+            </a>
+        </nav>
+        <div class="doctor-header-right">
+            <div class="doctor-user-info">
+                <div class="doctor-user-details">
+                    <span class="doctor-welcome-text">Chào mừng</span>
+                    <span class="doctor-user-name">Quản lý</span>
+                </div>
+                <div class="doctor-user-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+            </div>
+            <button class="doctor-logout-btn" title="Đăng xuất">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </div>
+</header>
+<div class="manager-container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <i class="fas fa-users-cog"></i>
+            Quản lý bác sĩ
+        </h1>
+        <button class="add-doctor-btn" id="addDoctorBtn">
+            <i class="fas fa-plus"></i>
+            Thêm bác sĩ mới
+        </button>
+    </div>
+    <div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Tổng số bác sĩ</div>
+                <div class="stat-value" id="totalDoctors">0</div>
+                <div class="stat-subtext">Đang hoạt động</div>
+            </div>
+            <div class="stat-icon blue">
+                <i class="fas fa-user-md"></i>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Bác sĩ online</div>
+                <div class="stat-value" id="doctorsOnline">0</div>
+                <div class="stat-subtext">Đang làm việc</div>
+            </div>
+            <div class="stat-icon green">
+                <i class="fas fa-circle"></i>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Lịch hẹn hôm nay</div>
+                <div class="stat-value" id="todayAppointments">0</div>
+                <div class="stat-subtext">Đã được đặt</div>
+            </div>
+            <div class="stat-icon orange">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Doanh thu tháng</div>
+                <div class="stat-value" id="monthlyRevenue">0</div>
+                <div class="stat-subtext">VND</div>
+            </div>
+            <div class="stat-icon purple">
+                <i class="fas fa-chart-line"></i>
+            </div>
+        </div>
+    </div>
+    <div class="doctors-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i>
+                Danh sách bác sĩ
+            </h2>
+        </div>
+        <div class="doctors-table-container">
+            <table class="doctors-table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Ảnh</th>
+                    <th>Họ tên</th>
+                    <th>Mã bác sĩ</th>
+                    <th>Khoa</th>
+                    <th>Chuyên môn</th>
+                    <th>Đánh giá</th>
+                    <th>Trạng thái</th>
+                    <th>Liên hệ</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Render từ JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Bác sĩ -->
+<div id="addEditDoctorModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="addEditDoctorTitle">
+                <i class="fas fa-user-md"></i>
+                Thêm bác sĩ mới
+            </h3>
+            <button class="close" id="closeAddEditDoctorModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addEditDoctorForm">
+                <div>
+                    <label for="doctorFullName">Họ tên*</label>
+                    <input type="text" id="doctorFullName" required>
+                </div>
+                <div>
+                    <label for="doctorDept">Khoa*</label>
+                    <input type="text" id="doctorDept" required>
+                </div>
+                <div>
+                    <label for="doctorSpecialty">Chuyên môn*</label>
+                    <input type="text" id="doctorSpecialty" required>
+                </div>
+                <div>
+                    <label for="doctorPhone">Số điện thoại*</label>
+                    <input type="text" id="doctorPhone" required>
+                </div>
+                <div>
+                    <label for="doctorEmail">Email*</label>
+                    <input type="email" id="doctorEmail" required>
+                </div>
+                <div>
+                    <label for="doctorDegree">Bằng cấp</label>
+                    <input type="text" id="doctorDegree">
+                </div>
+                <div>
+                    <label for="doctorPassword">Mật khẩu*</label>
+                    <input type="password" id="doctorPassword" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelAddEditDoctorBtn">Hủy</button>
+            <button class="btn btn-primary" id="saveAddEditDoctorBtn">Lưu</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xem bằng cấp chuyên môn -->
+<div id="degreeModal" class="modal">
+    <div class="modal-content degree-modal-content">
+        <div class="modal-header degree-modal-header">
+            <div class="header-icon">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="header-text">
+                <h3>Bằng cấp & Chuyên môn</h3>
+                <span class="doctor-name-subtitle" id="degreeDoctorName"></span>
+            </div>
+            <button class="close modern-close" id="closeDegreeModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body degree-modal-body">
+            <div class="degree-content-wrapper">
+                <div class="degree-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h4>Bằng cấp</h4>
+                    </div>
+                    <div class="degree-list" id="degreeList"></div>
+                </div>
+                <div class="specialty-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <h4>Chuyên môn</h4>
+                    </div>
+                    <div class="specialty-list" id="specialtyList"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer degree-modal-footer">
+            <button class="btn btn-primary modern-btn" id="closeDegreeBtn">
+                <i class="fas fa-check"></i>
+                Đóng
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xem chi tiết bác sĩ -->
+<div id="doctorDetailModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h3>
+                <i class="fas fa-user-md"></i>
+                Thông tin chi tiết bác sĩ <span id="detailDoctorName"></span>
+            </h3>
+            <button class="close" id="closeDoctorDetailModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="doctor-detail-tabs">
+                <button class="tab-btn active" data-tab="info">Thông tin cơ bản</button>
+                <button class="tab-btn" data-tab="performance">Hiệu suất</button>
+                <button class="tab-btn" data-tab="schedule">Lịch làm việc</button>
+                <button class="tab-btn" data-tab="reviews">Đánh giá</button>
+            </div>
+            <div id="infoTab" class="tab-content active">
+                <div class="doctor-info-grid">
+                    <div class="info-card">
+                        <div class="info-header">
+                            <i class="fas fa-id-card"></i>
+                            Thông tin cá nhân
+                        </div>
+                        <div class="info-content">
+                            <div class="info-row">
+                                <span class="label">Mã bác sĩ:</span>
+                                <span class="value" id="detailDoctorId"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Khoa:</span>
+                                <span class="value" id="detailDoctorDept"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Kinh nghiệm:</span>
+                                <span class="value" id="detailDoctorExp"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Ngày vào làm:</span>
+                                <span class="value" id="detailDoctorJoinDate"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-header">
+                            <i class="fas fa-chart-line"></i>
+                            Thống kê
+                        </div>
+                        <div class="info-content">
+                            <div class="stat-item">
+                                <span class="stat-number" id="totalPatients">0</span>
+                                <span class="stat-label">Bệnh nhân điều trị</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="successRate">0%</span>
+                                <span class="stat-label">Tỷ lệ thành công</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="avgRating">0.0</span>
+                                <span class="stat-label">Đánh giá trung bình</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="performanceTab" class="tab-content">
+                <div class="performance-metrics">
+                    <div class="metric-card">
+                        <h4>Tháng này</h4>
+                        <div class="metric-value">28</div>
+                        <div class="metric-label">Lịch hẹn</div>
+                        <div class="metric-trend positive">+12%</div>
+                    </div>
+                    <div class="metric-card">
+                        <h4>Doanh thu</h4>
+                        <div class="metric-value">15.2M</div>
+                        <div class="metric-label">VND</div>
+                        <div class="metric-trend positive">+8%</div>
+                    </div>
+                    <div class="metric-card">
+                        <h4>Tỷ lệ hoàn thành</h4>
+                        <div class="metric-value">94%</div>
+                        <div class="metric-label">Lịch hẹn</div>
+                        <div class="metric-trend positive">+3%</div>
+                    </div>
+                </div>
+                <div class="recent-activities">
+                    <h4>Hoạt động gần đây</h4>
+                    <div class="activity-list" id="doctorActivities"></div>
+                </div>
+            </div>
+            <div id="scheduleTab" class="tab-content">
+                <div class="schedule-overview">
+                    <h4>Lịch làm việc tuần này</h4>
+                    <div class="weekly-schedule" id="doctorWeeklySchedule"></div>
+                </div>
+            </div>
+            <div id="reviewsTab" class="tab-content">
+                <div class="reviews-summary">
+                    <div class="rating-overview">
+                        <div class="overall-rating">
+                            <span class="rating-number" id="overallRating">4.8</span>
+                            <div class="rating-stars-large">
+                                <span id="ratingStarsDisplay">⭐⭐⭐⭐⭐</span>
+                            </div>
+                            <span class="total-reviews" id="totalReviews">128 đánh giá</span>
+                        </div>
+                        <div class="rating-breakdown">
+                            <div class="rating-bar">
+                                <span>5⭐</span>
+                                <div class="bar"><div class="fill" style="width: 70%"></div></div>
+                                <span>70%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>4⭐</span>
+                                <div class="bar"><div class="fill" style="width: 20%"></div></div>
+                                <span>20%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>3⭐</span>
+                                <div class="bar"><div class="fill" style="width: 7%"></div></div>
+                                <span>7%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>2⭐</span>
+                                <div class="bar"><div class="fill" style="width: 2%"></div></div>
+                                <span>2%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>1⭐</span>
+                                <div class="bar"><div class="fill" style="width: 1%"></div></div>
+                                <span>1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="recent-reviews" id="recentReviews"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="closeDoctorDetailBtn">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal đánh giá bác sĩ -->
+<div id="rateDoctorModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>
+                <i class="fas fa-star"></i>
+                Đánh giá bác sĩ <span id="rateDoctorName"></span>
+            </h3>
+            <button class="close" id="closeRateDoctorModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="rateDoctorForm">
+                <div class="rating-section">
+                    <label>Chọn mức đánh giá:</label>
+                    <div class="interactive-rating">
+                        <span class="rating-star" data-rating="1">☆</span>
+                        <span class="rating-star" data-rating="2">☆</span>
+                        <span class="rating-star" data-rating="3">☆</span>
+                        <span class="rating-star" data-rating="4">☆</span>
+                        <span class="rating-star" data-rating="5">☆</span>
+                    </div>
+                    <input type="hidden" id="selectedRating" value="0">
+                    <div class="rating-text" id="ratingText">Chưa chọn đánh giá</div>
+                </div>
+                <div class="criteria-section">
+                    <label>Đánh giá chi tiết:</label>
+                    <div class="criteria-item">
+                        <span>Chuyên môn:</span>
+                        <div class="criteria-rating">
+                            <span class="criteria-star" data-criteria="expertise" data-rating="1">☆</span>
+                            <span class="criteria-star" data-criteria="expertise" data-rating="2">☆</span>
+                            <span class="criteria-star" data-criteria="expertise" data-rating="3">☆</span>
+                            <span class="criteria-star" data-criteria="expertise" data-rating="4">☆</span>
+                            <span class="criteria-star" data-criteria="expertise" data-rating="5">☆</span>
+                        </div>
+                    </div>
+                    <div class="criteria-item">
+                        <span>Thái độ:</span>
+                        <div class="criteria-rating">
+                            <span class="criteria-star" data-criteria="attitude" data-rating="1">☆</span>
+                            <span class="criteria-star" data-criteria="attitude" data-rating="2">☆</span>
+                            <span class="criteria-star" data-criteria="attitude" data-rating="3">☆</span>
+                            <span class="criteria-star" data-criteria="attitude" data-rating="4">☆</span>
+                            <span class="criteria-star" data-criteria="attitude" data-rating="5">☆</span>
+                        </div>
+                    </div>
+                    <div class="criteria-item">
+                        <span>Hiệu quả điều trị:</span>
+                        <div class="criteria-rating">
+                            <span class="criteria-star" data-criteria="effectiveness" data-rating="1">☆</span>
+                            <span class="criteria-star" data-criteria="effectiveness" data-rating="2">☆</span>
+                            <span class="criteria-star" data-criteria="effectiveness" data-rating="3">☆</span>
+                            <span class="criteria-star" data-criteria="effectiveness" data-rating="4">☆</span>
+                            <span class="criteria-star" data-criteria="effectiveness" data-rating="5">☆</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-section">
+                    <label for="ratingComment">Nhận xét (tùy chọn):</label>
+                    <textarea id="ratingComment" rows="4" placeholder="Chia sẻ trải nghiệm của bạn về bác sĩ..."></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelRatingBtn">Hủy</button>
+            <button class="btn btn-primary" id="submitRatingBtn" disabled>Gửi đánh giá</button>
+        </div>
+    </div>
+</div>
+<!-- ... (phần HTML trên giữ nguyên) ... -->
+<script>
+    // ====== DEMO DATA: Có thể thay bằng API backend ======
+    const doctorDegrees = {
+        'BS001': { name: 'BS. Nguyễn Văn A', degrees: [ { title: 'Bác sĩ Đa khoa', details: 'ĐH Y Hà Nội (2012)' } ], specialties: [ { title: 'Sản phụ khoa', details: '8 năm kinh nghiệm' } ] },
+        'BS002': { name: 'BS. Trần Thị B', degrees: [ { title: 'Bác sĩ Nội tiết', details: 'ĐH Y Dược TP.HCM (2013)' } ], specialties: [ { title: 'Nội tiết', details: '6 năm' } ] },
+        'BS003': { name: 'BS. Lê Văn C', degrees: [ { title: 'Bác sĩ Nhi', details: 'ĐH Y Hà Nội (2014)' } ], specialties: [ { title: 'Nhi', details: '7 năm' } ] },
+        'BS004': { name: 'BS. Phạm Thị D', degrees: [ { title: 'Bác sĩ Tim mạch', details: 'ĐH Y Dược TP.HCM (2015)' } ], specialties: [ { title: 'Tim mạch', details: '6 năm' } ] },
+        'BS005': { name: 'BS. Hoàng Văn E', degrees: [ { title: 'Bác sĩ Ngoại khoa', details: 'ĐH Y Hà Nội (2016)' } ], specialties: [ { title: 'Ngoại khoa', details: '5 năm' } ] },
+        'BS006': { name: 'BS. Đặng Thị F', degrees: [ { title: 'Bác sĩ Da liễu', details: 'ĐH Y Dược TP.HCM (2017)' } ], specialties: [ { title: 'Da liễu', details: '4 năm' } ] },
+    };
+    // ====== END DEMO DATA ======
+
+    let doctors = [];
+    let workslotsToday = [];
+    let bookingStepsToday = [];
+
+    // Hàm lấy workslot hôm nay
+    async function fetchWorkslotsToday() {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        try {
+            const res = await fetch(`/api/workslots?date=${todayStr}`);
+            if (!res.ok) throw new Error('Lỗi lấy workslot');
+            workslotsToday = await res.json();
+        } catch (e) {
+            workslotsToday = [];
+        }
+    }
+
+    // Hàm lấy booking step performedAt hôm nay
+    async function fetchBookingStepsToday() {
+        try {
+            // Lưu ý: Đường dẫn phải đúng với backend đang cấu hình!
+            const res = await fetch(`/api/booking-steps/today-performed-at`);
+            if (!res.ok) throw new Error('Lỗi lấy booking step');
+            bookingStepsToday = await res.json();
+        } catch (e) {
+            bookingStepsToday = [];
+        }
+    }
+
+    async function fetchAndRenderDoctors() {
+        const tableBody = document.querySelector('.doctors-table tbody');
+        await fetchWorkslotsToday();
+        await fetchBookingStepsToday();
+
+        try {
+            const res = await fetch('/api/doctors');
+            if (!res.ok) throw new Error('Lỗi server');
+            doctors = await res.json();
+            tableBody.innerHTML = '';
+            doctors.forEach((doctor, idx) => {
+                const doctorCode = 'BS' + String(doctor.docId).padStart(3, '0');
+                const wsToday = workslotsToday.filter(ws => ws.docId === doctor.docId);
+
+                let statusText = 'Nghỉ';
+                let statusClass = 'status-offline';
+                if (wsToday.length > 0) {
+                    if (wsToday.some(ws => ws.slotStatus === 'approved')) {
+                        statusText = 'Đang hoạt động';
+                        statusClass = 'status-active';
+                    } else {
+                        statusText = wsToday[0].slotStatus;
+                        statusClass = 'status-other';
+                    }
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>
+                <img src="img/doctor${(idx % 3) + 1}.png" alt="${doctor.docFullName || ''}" class="doctor-avatar">
+            </td>
+            <td class="doctor-name">${doctor.docFullName || ''}</td>
+            <td><span class="doctor-id">${doctorCode}</span></td>
+            <td>${doctor.expertise || ''}</td>
+            <td>${doctor.degree || ''}</td>
+            <td>
+                <div class="rating-container">
+                    <div class="rating-stars"><span class="stars">⭐⭐⭐⭐⭐</span>
+                    <span class="rating-value">5.0</span></div>
+                    <div class="rating-count">0 đánh giá</div>
+                </div>
+            </td>
+            <td>
+                <span class="status-badge ${statusClass}">${statusText}</span>
+            </td>
+            <td class="contact-info">
+                <div class="contact-phone">${doctor.docPhone || ''}</div>
+                <div class="contact-email">${doctor.docEmail || ''}</div>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn view" onclick="showDoctorDetail('${doctorCode}')" title="Xem chi tiết">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn rate" onclick="showRatingModal('${doctorCode}')" title="Đánh giá">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="action-btn view view-degree-btn" data-doctor="${doctorCode}" title="Bằng cấp">
+                        <i class="fas fa-user-graduate"></i>
+                    </button>
+                    <button class="action-btn edit" onclick="openAddEditDoctorModal('${doctorCode}')" title="Sửa">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" onclick="deleteDoctor('${doctorCode}')" title="Xóa">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+                tableBody.appendChild(tr);
+            });
+
+            document.querySelectorAll('.view-degree-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const doctorId = this.getAttribute('data-doctor');
+                    openDegreeModal(doctorId);
+                });
+            });
+
+            document.getElementById('totalDoctors').textContent = doctors.length;
+            const activeDoctorIds = new Set(
+                workslotsToday
+                    .filter(ws => ws.slotStatus === 'approved')
+                    .map(ws => ws.docId)
+            );
+            document.getElementById('doctorsOnline').textContent = activeDoctorIds.size;
+            document.getElementById('todayAppointments').textContent = bookingStepsToday.length;
+            document.getElementById('monthlyRevenue').textContent = '125M';
+
+            // In performedAt list ra UI (nếu có div bookingStepList)
+            const bookingStepListDiv = document.getElementById('bookingStepList');
+            if (bookingStepListDiv) {
+                bookingStepListDiv.innerHTML = "<b>Danh sách performedAt hôm nay:</b>" +
+                    (bookingStepsToday.length === 0 ? " Không có lịch hẹn nào." :
+                        "<ul>" + bookingStepsToday.map(item => `<li>${item}</li>`).join('') + "</ul>");
+            }
+            // In ra console cho dev kiểm tra
+            console.log('Danh sách performedAt hôm nay:', bookingStepsToday);
+
+        } catch (e) {
+            tableBody.innerHTML = `<tr><td colspan="10" style="color:red;">${e.message}</td></tr>`;
+        }
+    }
+
+    function openDegreeModal(doctorId) {
+        const data = doctorDegrees[doctorId];
+        if (!data) {
+            alert('Không tìm thấy thông tin bác sĩ!');
+            return;
+        }
+        document.getElementById('degreeDoctorName').textContent = data.name;
+        document.getElementById('degreeList').innerHTML = data.degrees.map(degree => `
+        <div class="degree-item">
+            <div class="degree-title">${degree.title}</div>
+            <div class="degree-details">${degree.details}</div>
+        </div>
+    `).join('');
+        document.getElementById('specialtyList').innerHTML = data.specialties.map(specialty => `
+        <div class="specialty-item">
+            <div class="specialty-title">${specialty.title}</div>
+            <div class="specialty-details">${specialty.details}</div>
+        </div>
+    `).join('');
+        document.getElementById('degreeModal').style.display = 'flex';
+    }
+    function closeDegreeModal() {
+        document.getElementById('degreeModal').style.display = 'none';
+    }
+
+    function showDoctorDetail(doctorId) {
+        document.getElementById('detailDoctorName').textContent = doctorDegrees[doctorId]?.name || '';
+        document.getElementById('detailDoctorId').textContent = doctorId;
+        document.getElementById('detailDoctorDept').textContent = doctorDegrees[doctorId]?.specialties?.[0]?.title || '';
+        document.getElementById('detailDoctorExp').textContent = doctorDegrees[doctorId]?.specialties?.[0]?.details || '';
+        document.getElementById('detailDoctorJoinDate').textContent = '15/01/2020';
+        document.getElementById('totalPatients').textContent = '1250';
+        document.getElementById('successRate').textContent = '95%';
+        document.getElementById('avgRating').textContent = '4.8';
+        document.getElementById('doctorActivities').innerHTML = `
+        <div class="activity-item">
+            <div class="activity-time">09:00</div>
+            <div class="activity-content">
+                <div class="activity-action">Khám bệnh</div>
+                <div class="activity-patient">Nguyễn Thị A</div>
+            </div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-time">10:30</div>
+            <div class="activity-content">
+                <div class="activity-action">Tư vấn điều trị</div>
+                <div class="activity-patient">Trần Văn B</div>
+            </div>
+        </div>
+    `;
+        document.getElementById('doctorWeeklySchedule').innerHTML = `
+        <div class="schedule-grid">
+            <div class="day-column"><div class="day-header">T2</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
+            <div class="day-column"><div class="day-header">T3</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
+            <div class="day-column"><div class="day-header">T4</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
+            <div class="day-column"><div class="day-header">T5</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
+            <div class="day-column"><div class="day-header">T6</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
+            <div class="day-column"><div class="day-header">T7</div><div class="time-slot">08:00-12:00</div><div class="time-slot off">Nghỉ</div></div>
+            <div class="day-column"><div class="day-header">CN</div><div class="time-slot off">Nghỉ</div><div class="time-slot off">Nghỉ</div></div>
+        </div>
+    `;
+        document.getElementById('recentReviews').innerHTML = `
+        <div class="review-item">
+            <div class="review-header">
+                <div class="reviewer-name">Nguyễn Thị A</div>
+                <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                <div class="review-date">2 ngày trước</div>
+            </div>
+            <div class="review-content">Bác sĩ rất chuyên nghiệp và tận tâm. Kết quả điều trị rất tốt.</div>
+        </div>
+        <div class="review-item">
+            <div class="review-header">
+                <div class="reviewer-name">Trần Văn B</div>
+                <div class="review-rating">⭐⭐⭐⭐☆</div>
+                <div class="review-date">1 tuần trước</div>
+            </div>
+            <div class="review-content">Thời gian chờ hơi lâu nhưng bác sĩ khám rất kỹ.</div>
+        </div>
+    `;
+        document.getElementById('doctorDetailModal').style.display = 'flex';
+    }
+
+    function showRatingModal(doctorId) {
+        document.getElementById('rateDoctorName').textContent = doctorDegrees[doctorId]?.name || doctorId;
+        document.querySelectorAll('.rating-star').forEach(star => {
+            star.textContent = '☆';
+            star.classList.remove('selected');
+        });
+        document.querySelectorAll('.criteria-star').forEach(star => {
+            star.textContent = '☆';
+            star.classList.remove('selected');
+        });
+        document.getElementById('ratingText').textContent = 'Chưa chọn đánh giá';
+        document.getElementById('ratingComment').value = '';
+        document.getElementById('submitRatingBtn').disabled = true;
+        document.getElementById('rateDoctorModal').style.display = 'flex';
+    }
+
+    function openAddEditDoctorModal(doctorCode) {
+        const form = document.getElementById('addEditDoctorForm');
+        if (doctorCode) {
+            const doctor = doctors.find(doc => 'BS' + String(doc.docId).padStart(3, '0') === doctorCode);
+            if (doctor) {
+                document.getElementById('addEditDoctorTitle').innerHTML = '<i class="fas fa-edit"></i> Sửa bác sĩ';
+                form.setAttribute('data-doctor-id', doctorCode);
+                document.getElementById('doctorFullName').value = doctor.docFullName || '';
+                document.getElementById('doctorDept').value = doctor.expertise || '';
+                document.getElementById('doctorSpecialty').value = doctor.profileDescription || '';
+                document.getElementById('doctorPhone').value = doctor.docPhone || '';
+                document.getElementById('doctorEmail').value = doctor.docEmail || '';
+                document.getElementById('doctorDegree').value = doctor.degree || '';
+                document.getElementById('doctorPassword').value = '';
+                document.getElementById('doctorPassword').removeAttribute('required');
+            }
+        } else {
+            document.getElementById('addEditDoctorTitle').innerHTML = '<i class="fas fa-user-md"></i> Thêm bác sĩ mới';
+            form.removeAttribute('data-doctor-id');
+            form.reset();
+            document.getElementById('doctorPassword').setAttribute('required', 'required');
+        }
+        document.getElementById('addEditDoctorModal').style.display = 'flex';
+    }
+    function closeAddEditDoctorModal() {
+        document.getElementById('addEditDoctorModal').style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('saveAddEditDoctorBtn').addEventListener('click', async function() {
+            const form = document.getElementById('addEditDoctorForm');
+            if (!form.reportValidity()) return;
+
+            const doctorId = form.getAttribute('data-doctor-id');
+            const isEdit = !!doctorId;
+
+            const data = {
+                docFullName: document.getElementById('doctorFullName').value,
+                expertise: document.getElementById('doctorDept').value,
+                profileDescription: document.getElementById('doctorSpecialty').value,
+                docPhone: document.getElementById('doctorPhone').value,
+                docEmail: document.getElementById('doctorEmail').value,
+                degree: document.getElementById('doctorDegree').value,
+                docPassword: document.getElementById('doctorPassword').value
+            };
+
+            let url = '/api/doctors';
+            let method = 'POST';
+            if (isEdit) {
+                const idNum = doctorId.replace(/^BS/, '').replace(/^0+/, '');
+                url += `/${idNum}`;
+                method = 'PUT';
+            }
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (!res.ok) throw new Error('Có lỗi xảy ra khi lưu!');
+                closeAddEditDoctorModal();
+                fetchAndRenderDoctors();
+                alert(isEdit ? 'Sửa thành công!' : 'Thêm thành công!');
+            } catch (e) {
+                alert(e.message);
+            }
+        });
+
+        fetchAndRenderDoctors();
+
+        const logoutBtn = document.querySelector('.doctor-logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                localStorage.clear();
+                window.location.href = '/index.html';
+            });
+        }
+        document.getElementById('closeDegreeModal').addEventListener('click', closeDegreeModal);
+        document.getElementById('closeDegreeBtn').addEventListener('click', closeDegreeModal);
+        document.getElementById('closeDoctorDetailModal').addEventListener('click', function(){ closeModal('doctorDetailModal') });
+        document.getElementById('closeDoctorDetailBtn').addEventListener('click', function(){ closeModal('doctorDetailModal') });
+        document.getElementById('closeRateDoctorModal').addEventListener('click', function(){ closeModal('rateDoctorModal') });
+        document.getElementById('cancelRatingBtn').addEventListener('click', function(){ closeModal('rateDoctorModal') });
+
+        document.getElementById('addDoctorBtn').addEventListener('click', function(){ openAddEditDoctorModal(); });
+        document.getElementById('closeAddEditDoctorModal').addEventListener('click', closeAddEditDoctorModal);
+        document.getElementById('cancelAddEditDoctorBtn').addEventListener('click', closeAddEditDoctorModal);
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab + 'Tab').classList.add('active');
+            });
+        });
+
+        let selectedRating = 0;
+        document.querySelectorAll('.rating-star').forEach((star, idx) => {
+            star.addEventListener('click', function() {
+                selectedRating = idx + 1;
+                document.querySelectorAll('.rating-star').forEach((s, i) => {
+                    s.textContent = i < selectedRating ? '⭐' : '☆';
+                    if (i < selectedRating) s.classList.add('selected'); else s.classList.remove('selected');
+                });
+                document.getElementById('ratingText').textContent = ['','Rất tệ','Tệ','Bình thường','Tốt','Rất tốt'][selectedRating];
+                document.getElementById('submitRatingBtn').disabled = selectedRating === 0;
+            });
+        });
+        let criteriaRatings = { expertise: 0, attitude: 0, effectiveness: 0 };
+        document.querySelectorAll('.criteria-star').forEach(star => {
+            star.addEventListener('click', function() {
+                const criteria = this.dataset.criteria;
+                const rating = parseInt(this.dataset.rating);
+                criteriaRatings[criteria] = rating;
+                document.querySelectorAll(`[data-criteria="${criteria}"]`).forEach((s, i) => {
+                    s.textContent = i < rating ? '⭐' : '☆';
+                    if (i < rating) s.classList.add('selected'); else s.classList.remove('selected');
+                });
+            });
+        });
+        document.getElementById('submitRatingBtn').addEventListener('click', function() {
+            alert('Đánh giá đã được gửi thành công!');
+            closeModal('rateDoctorModal');
+        });
+    });
+
+    function deleteDoctor(doctorId) {
+        if (confirm('Bạn có chắc chắn muốn xóa bác sĩ này?')) {
+            alert('Đã xóa bác sĩ: ' + doctorId + ' (demo)');
+            fetchAndRenderDoctors();
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if(modal) modal.style.display = 'none';
+    }
+</script>
+<script src="js/manager-dashboard.js"></script>
+</body>
+</html>

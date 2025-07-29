@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sắp xếp lịch làm việc bác sĩ</title>
+  <link rel="stylesheet" href="css/doctor-common.css">
+  <link rel="stylesheet" href="css/manager-common.css">
+  <link rel="stylesheet" href="css/sap-xep-lich-bac-si.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="manager-dashboard">
+<header class="doctor-header">
+  <div class="doctor-header-container">
+    <nav class="doctor-nav">
+      <a href="manager-dashboard.html" class="nav-link">
+        <i class="fas fa-users-cog"></i>
+        Quản lý bác sĩ
+      </a>
+      <a href="sap-xep-lich-bac-si.html" class="nav-link active">
+        <i class="fas fa-calendar-plus"></i>
+        Sắp xếp lịch làm
+      </a>
+      <a href="thong-ke-manager.html" class="nav-link">
+        <i class="fas fa-chart-bar"></i>
+        Thống kê
+      </a>
+    </nav>
+    <div class="doctor-header-right">
+      <div class="doctor-user-info">
+        <div class="doctor-user-details">
+          <span class="doctor-welcome-text">Chào mừng</span>
+          <span class="doctor-user-name">Quản lý</span>
+        </div>
+        <div class="doctor-user-avatar">
+          <i class="fas fa-user-tie"></i>
+        </div>
+      </div>
+      <button class="doctor-logout-btn" title="Đăng xuất">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="schedule-container">
+  <!-- Page Header -->
+  <div class="schedule-header">
+    <div class="header-content">
+      <h1 class="schedule-title">
+        <i class="fas fa-calendar-plus"></i>
+        Sắp xếp lịch làm việc cho bác sĩ
+      </h1>
+      <div class="header-navigation">
+        <button class="nav-btn" onclick="scrollToSection('schedule-section')" title="Đi đến phần lịch làm việc">
+          <i class="fas fa-calendar-week"></i>
+          <span>Lịch làm việc trong tuần</span>
+        </button>
+        <button class="nav-btn" onclick="scrollToSection('leave-section')" title="Đi đến phần quản lý nghỉ phép">
+          <i class="fas fa-calendar-times"></i>
+          <span>Quản lý nghỉ phép bác sĩ</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Summary -->
+  <div class="stats-summary">
+    <div class="summary-card blue">
+      <div class="summary-value" id="totalDoctors">6</div>
+      <div class="summary-label">Tổng số bác sĩ</div>
+    </div>
+    <div class="summary-card green">
+      <div class="summary-value" id="workingDoctors">4</div>
+      <div class="summary-label">Bác sĩ làm việc</div>
+    </div>
+    <div class="summary-card orange">
+      <div class="summary-value" id="totalShifts">42</div>
+      <div class="summary-label">Tổng ca làm việc</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-value" id="coverageRate">85%</div>
+      <div class="summary-label">Tỷ lệ phủ sóng</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="schedule-controls">
+    <div class="week-selector">
+      <button class="week-nav-btn" id="prevWeek" title="Tuần trước">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span class="current-week" id="currentWeekDisplay">Tuần 1 - 7 Tháng 1, 2025</span>
+      <button class="week-nav-btn" id="nextWeek" title="Tuần sau">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="btn btn-outline" id="selectAllBtn">
+        <i class="fas fa-check-double"></i>
+        Chọn tất cả
+      </button>
+      <button class="btn btn-outline" id="clearAllBtn">
+        <i class="fas fa-times"></i>
+        Bỏ chọn tất cả
+      </button>
+    </div>
+  </div>
+
+  <!-- Modern Schedule Cards -->
+  <div id="schedule-section" class="schedule-cards-section">
+    <div class="section-header">
+      <i class="fas fa-calendar-week"></i>
+      <h3>Lịch làm việc trong tuần</h3>
+    </div>
+    <div class="doctors-grid" id="doctorsGrid">
+      <!-- Doctor cards will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Save Section -->
+  <div class="save-section">
+    <button class="reset-btn" id="resetScheduleBtn">
+      <i class="fas fa-undo"></i>
+      Đặt lại
+    </button>
+    <button class="save-btn" id="saveAllScheduleBtn">
+      <i class="fas fa-save"></i>
+      Lưu lịch làm việc
+    </button>
+  </div>
+
+  <!-- Leave Management Section -->
+  <div id="leave-section" class="leave-management-section">
+    <div class="section-header">
+      <div class="header-left">
+        <i class="fas fa-calendar-times"></i>
+        <h3>Quản lý nghỉ phép bác sĩ</h3>
+        <p>Xem và duyệt các đơn xin nghỉ phép của bác sĩ</p>
+      </div>
+      <div class="header-actions">
+        <!--<select class="filter-select" id="statusFilter">
+          <option value="all">Tất cả trạng thái</option>
+          <option value="pending">Chờ duyệt</option>
+          <option value="approved">Đã duyệt</option>
+          <option value="rejected">Đã từ chối</option>
+        </select>-->
+        <select class="filter-select" id="doctorFilter">
+          <option value="all">Tất cả bác sĩ</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Leave Requests List (CHỈ ĐIỀU CHỈNH PHẦN NÀY) -->
+    <div class="leave-requests-container" id="leaveRequestsContainer">
+      <!-- Phần này sẽ được render động bằng JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+</div>
+
+<!-- Reject Leave Modal -->
+<div id="rejectLeaveModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4><i class="fas fa-times-circle"></i> Từ chối đơn nghỉ phép</h4>
+      <span class="close" onclick="closeRejectModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="reject-info">
+        <p><strong>Bác sĩ:</strong> <span id="rejectDoctorName"></span></p>
+        <p><strong>Thời gian nghỉ:</strong> <span id="rejectLeaveDates"></span></p>
+      </div>
+      <div class="form-group">
+        <label for="rejectReason">Lý do từ chối <span style="color: red;">*</span></label>
+        <textarea id="rejectReason" class="form-control" rows="4"
+                  placeholder="Nhập lý do từ chối đơn nghỉ phép..." required></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Hủy</button>
+      <button type="button" class="btn btn-danger" onclick="confirmRejectLeave()">
+        <i class="fas fa-times"></i> Từ chối đơn
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Leave Detail Modal -->
+<div id="leaveDetailModal" class="modal">
+  <div id="pendingWorkslotList"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4><i class="fas fa-info-circle"></i> Chi tiết đơn nghỉ phép</h4>
+      <span class="close" onclick="closeDetailModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="detail-section">
+        <h5><i class="fas fa-user-md"></i> Thông tin bác sĩ</h5>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Họ tên:</label>
+            <span id="detailDoctorName"></span>
+          </div>
+          <div class="detail-item">
+            <label>Chuyên khoa:</label>
+            <span id="detailDoctorSpecialty"></span>
+          </div>
+          <div class="detail-item">
+            <label>Email:</label>
+            <span id="detailDoctorEmail"></span>
+          </div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <h5><i class="fas fa-calendar-times"></i> Thông tin nghỉ phép</h5>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Loại nghỉ phép:</label>
+            <span id="detailLeaveType"></span>
+          </div>
+          <div class="detail-item">
+            <label>Thời gian nghỉ:</label>
+            <span id="detailLeaveDuration"></span>
+          </div>
+          <div class="detail-item">
+            <label>Số ngày nghỉ:</label>
+            <span id="detailLeaveDays"></span>
+          </div>
+          <div class="detail-item">
+            <label>Ngày đăng ký:</label>
+            <span id="detailSubmitDate"></span>
+          </div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <h5><i class="fas fa-comment"></i> Lý do nghỉ phép</h5>
+        <div class="detail-reason-box">
+          <p id="detailLeaveReason"></p>
+        </div>
+      </div>
+      <div class="detail-section" id="attachmentSection" style="display: none;">
+        <h5><i class="fas fa-paperclip"></i> Tài liệu đính kèm</h5>
+        <div class="attachment-list">
+          <a href="#" class="attachment-link" id="detailAttachment">
+            <i class="fas fa-file-pdf"></i>
+            <span>giay-kham-benh.pdf</span>
+          </a>
+        </div>
+      </div>
+      <div class="detail-section" id="managerResponseSection" style="display: none;">
+        <h5><i class="fas fa-user-tie"></i> Phản hồi của quản lý</h5>
+        <div class="manager-response">
+          <div class="response-info">
+            <span><strong>Xử lý bởi:</strong> <span id="detailManagerName"></span></span>
+            <span><strong>Thời gian:</strong> <span id="detailResponseDate"></span></span>
+          </div>
+          <div class="response-content">
+            <p id="detailManagerResponse"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeDetailModal()">Đóng</button>
+      <div id="detailActions" style="display: none;">
+        <button type="button" class="btn btn-success" onclick="approveFromDetail()">
+          <i class="fas fa-check"></i> Duyệt
+        </button>
+        <button type="button" class="btn btn-danger" onclick="rejectFromDetail()">
+          <i class="fas fa-times"></i> Từ chối
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/sap-xep-lich-bac-si.js"></script>
+<script>
+  let doctorList = [];
+
+  // Fetch danh sách bác sĩ trước, sau đó mới load workslots
+  fetch('/api/doctors')
+          .then(res => res.json())
+          .then(data => {
+            doctorList = data;
+            loadPendingWorkslots(); // Chỉ gọi sau khi đã có doctorList
+          });
+
+  function getDoctorFullName(docId) {
+    const doctor = doctorList.find(d => String(d.docId) === String(docId));
+    return doctor ? doctor.docFullName : `Bác sĩ #${docId}`;
+  }
+
+  function getSlotsInSession(workslots, docId, workDate, fromTime, toTime) {
+    return workslots.filter(slot =>
+            slot.docId === Number(docId) && // So sánh đúng kiểu int
+            slot.workDate === workDate &&
+            slot.slotStatus === "pending" &&
+            slot.startTime >= fromTime && slot.startTime < toTime
+    );
+  }
+
+  function loadPendingWorkslots() {
+    fetch("/api/workslots/pending")
+            .then(res => res.json())
+            .then(workslots => renderPendingLeaveRequests(workslots))
+            .catch(() => {
+              document.getElementById('leaveRequestsContainer').innerHTML = "<p>Lỗi tải dữ liệu ca làm việc!</p>";
+            });
+  }
+
+  function renderPendingLeaveRequests(workslots) {
+    const container = document.getElementById('leaveRequestsContainer');
+    if (!container) return;
+    container.innerHTML = "";
+    if (!workslots || workslots.length === 0) {
+      container.innerHTML = "<p>Không có ca làm việc nào chờ duyệt.</p>";
+      return;
+    }
+
+    const sessions = [
+      { label: "Ca sáng", from: "08:00", to: "12:00" },
+      { label: "Ca chiều", from: "14:00", to: "17:00" }
+    ];
+
+    const grouped = {};
+    workslots.forEach(slot => {
+      if (slot.slotStatus !== "pending") return;
+      const key = `${slot.docId}_${slot.workDate}`;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(slot);
+    });
+
+    Object.keys(grouped).forEach(key => {
+      const [docId, workDate] = key.split('_');
+      sessions.forEach(session => {
+        const slotsInSession = getSlotsInSession(grouped[key], Number(docId), workDate, session.from, session.to);
+        if (slotsInSession.length === 0) return;
+
+        container.innerHTML += `
+        <div class="leave-request-card pending">
+          <div class="leave-card-header">
+            <div class="doctor-info">
+              <div class="doctor-avatar">
+                <i class="fas fa-user-md"></i>
+              </div>
+              <div class="doctor-details">
+                <h4>${getDoctorFullName(docId)}</h4>
+                <p>Ngày: ${workDate}</p>
+                <span><strong>${session.label} (${session.from} - ${session.to})</strong></span>
+              </div>
+            </div>
+            <div class="leave-status">
+              <span class="status-badge pending">
+                <i class="fas fa-clock"></i>
+                Chờ duyệt
+              </span>
+            </div>
+          </div>
+          <div class="leave-card-body">
+            <div class="leave-details">
+              <ul style="padding-left:20px;">
+                ${slotsInSession.map(slot => `
+                  <li><strong>${slot.startTime} - ${slot.endTime}</strong></li>
+                `).join('')}
+              </ul>
+            </div>
+          </div>
+          <div class="leave-card-actions">
+            <button class="btn-action approve" onclick='approveMultipleSlots([${slotsInSession.map(s=>s.slotId).join(",")}])'>
+              <i class="fas fa-check"></i>
+              Duyệt tất cả
+            </button>
+            <button class="btn-action reject" onclick='rejectMultipleSlots([${slotsInSession.map(s=>s.slotId).join(",")}])'>
+              <i class="fas fa-times"></i>
+              Từ chối tất cả
+            </button>
+          </div>
+        </div>
+        `;
+      });
+    });
+  }
+
+  function approveMultipleSlots(slotIds) {
+    if (confirm("Bạn xác nhận DUYỆT tất cả các ca này?")) {
+      updateMultipleWorkslotStatus(slotIds, "cancelled");
+    }
+  }
+  function rejectMultipleSlots(slotIds) {
+    if (confirm("Bạn xác nhận TỪ CHỐI tất cả các ca này?")) {
+      updateMultipleWorkslotStatus(slotIds, "approved");
+    }
+  }
+  function updateMultipleWorkslotStatus(slotIds, status) {
+    Promise.all(slotIds.map(slotId =>
+            fetch(`/api/workslots/${slotId}/status`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ status })
+            })
+    ))
+            .then(() => {
+              loadPendingWorkslots();
+              if (typeof fetchDoctorsAndInit === 'function') fetchDoctorsAndInit();
+            })
+            .catch(err => alert("Lỗi: " + err.message));
+  }
+
+  // KHÔNG cần gọi loadPendingWorkslots trong DOMContentLoaded nữa!
+</script>
+</body>
+</html>

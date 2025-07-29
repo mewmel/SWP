@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedAdmin - Hệ thống quản lý bệnh viện</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <i class="fas fa-file-medical"></i>
+            <div class="logo-text">
+                <h1>Admin</h1>
+                <p>Quản lý hệ thống</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-tab="dashboard">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <div class="nav-item-dropdown">
+            <a href="#" class="nav-item" data-tab="accounts">
+                <i class="fas fa-user-cog"></i>
+                <span>Quản lý tài khoản</span>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </a>
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item" data-tab="customer-accounts">
+                    <i class="fas fa-user"></i>
+                    <span>Tài khoản khách hàng</span>
+                </a>
+                <a href="#" class="dropdown-item" data-tab="doctor-accounts">
+                    <i class="fas fa-user-md"></i>
+                    <span>Tài khoản bác sĩ</span>
+                </a>
+                <a href="#" class="dropdown-item" data-tab="manager-accounts">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Tài khoản quản lý</span>
+                </a>
+            </div>
+        </div>
+        <a href="#" class="nav-item" data-tab="services">
+            <i class="fas fa-stethoscope"></i>
+            <span>Quản lý dịch vụ</span>
+        </a>
+    </nav>
+</div>
+
+<!-- Header -->
+<header class="header">
+    <div class="header-content">
+        <div class="header-left">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2>Hệ thống quản lý bệnh viện</h2>
+        </div>
+
+        <div class="header-right">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Tìm kiếm...">
+            </div>
+
+            <button class="notification-btn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </button>
+
+            <div class="user-profile">
+                <div class="user-info">
+                    <p class="user-name">BS. Nguyễn Ngọc Khánh Linh</p>
+                    <p class="user-role">Quản trị viên</p>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Dashboard Tab -->
+    <div class="tab-content active" id="dashboard">
+        <div class="page-header">
+            <h1>Dashboard</h1>
+            <p>Tổng quan hệ thống quản lý bệnh viện</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p class="stat-title">Tổng số account bệnh nhân đang có trên hệ thống</p>
+                        <p class="stat-value" id="totalPatientsCount">-</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card purple">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p class="stat-title">Dịch vụ khả dụng</p>
+                        <p class="stat-value" id="availableServicesCount">-</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card green">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p class="stat-title">Tổng số nhân viên</p>
+                        <p class="stat-value" id="totalStaffCount">-</p>
+                        <p class="stat-trend positive">Bao gồm bác sĩ và các quản lý</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Customer Accounts Tab -->
+    <div class="tab-content" id="customer-accounts">
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Quản lý tài khoản khách hàng</h1>
+                <p>Danh sách và thông tin tài khoản khách hàng</p>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card filters-card">
+            <div class="filters">
+                <div class="search-filter">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="patientSearch" placeholder="Tìm kiếm theo tên hoặc email...">
+                </div>
+                <div class="filter-group">
+                    <select id="serviceFilter">
+                        <option value="all">Tất cả bệnh nhân</option>
+                        <option value="withService">Đã đặt lịch</option>
+                        <option value="withoutService">Chưa đặt lịch</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patients Table -->
+        <div class="card">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Bệnh nhân</th>
+                        <th>Liên hệ</th>
+                        <th>Trạng thái lịch hẹn</th>
+                        <th>Ngày sinh</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="patientsTableBody">
+                    <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Patients Summary -->
+        <div class="summary-card">
+            <div class="summary-stats">
+                <div class="summary-stat">
+                    <div class="summary-value" id="customerTableTotalCount">0</div>
+                    <div class="summary-label">Tổng số bệnh nhân</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value green" id="customerWithServiceCount">0</div>
+                    <div class="summary-label">Đã đặt lịch</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value yellow" id="customerWithoutServiceCount">0</div>
+                    <div class="summary-label">Chưa đặt lịch</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value purple" id="customerActiveCount">0</div>
+                    <div class="summary-label">Tài khoản active</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Accounts Tab -->
+    <div class="tab-content" id="doctor-accounts">
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Quản lý tài khoản bác sĩ</h1>
+                <p>Danh sách và thông tin tài khoản bác sĩ</p>
+            </div>
+            <button class="btn btn-primary" onclick="openDoctorModal()">
+                <i class="fas fa-plus"></i>
+                Thêm bác sĩ
+            </button>
+        </div>
+
+        <!-- Doctor Filters -->
+        <div class="card filters-card">
+            <div class="filters">
+                <div class="search-filter">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="doctorSearch" placeholder="Tìm kiếm theo tên hoặc email...">
+                </div>
+                <div class="filter-group">
+                    <select id="doctorStatusFilter">
+                        <option value="all">Tất cả trạng thái</option>
+                        <option value="active">Đang hoạt động</option>
+                        <option value="inactive">Tạm khóa</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctors Table -->
+        <div class="card">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Bác sĩ</th>
+                        <th>Liên hệ</th>
+                        <th>Chuyên khoa</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="doctorsTableBody">
+                    <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Doctors Summary -->
+        <div class="summary-card">
+            <div class="summary-stats">
+                <div class="summary-stat">
+                    <div class="summary-value" id="totalDoctorsCount">0</div>
+                    <div class="summary-label">Tổng số bác sĩ</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value green" id="activeDoctorsCount">0</div>
+                    <div class="summary-label">Đang hoạt động</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value yellow" id="inactiveDoctorsCount">0</div>
+                    <div class="summary-label">Tạm khóa</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value purple" id="newDoctorsCount">0</div>
+                    <div class="summary-label">Mới trong tháng</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manager Accounts Tab -->
+    <div class="tab-content" id="manager-accounts">
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Quản lý tài khoản quản lý</h1>
+                <p>Danh sách và thông tin tài khoản quản lý hệ thống</p>
+            </div>
+            <button class="btn btn-primary" onclick="openManagerModal()">
+                <i class="fas fa-plus"></i>
+                Thêm quản lý
+            </button>
+        </div>
+
+        <!-- Manager Filters -->
+        <div class="card filters-card">
+            <div class="filters">
+                <div class="search-filter">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="managerSearch" placeholder="Tìm kiếm theo tên hoặc email...">
+                </div>
+                <div class="filter-group">
+                    <select id="managerRoleFilter">
+                        <option value="all">Tất cả vai trò</option>
+                        <option value="admin">Quản trị viên</option>
+                        <option value="manager">Quản lý</option>
+                        <option value="supervisor">Giám sát</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Managers Table -->
+        <div class="card">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Quản lý</th>
+                        <th>Liên hệ</th>
+                        <th>Vai trò</th>
+                        <th>Quyền hạn</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="managersTableBody">
+                    <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Managers Summary -->
+        <div class="summary-card">
+            <div class="summary-stats">
+                <div class="summary-stat">
+                    <div class="summary-value" id="totalManagersCount">0</div>
+                    <div class="summary-label">Tổng số quản lý</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value blue" id="adminCount">0</div>
+                    <div class="summary-label">Quản trị viên</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value purple" id="managerCount">0</div>
+                    <div class="summary-label">Quản lý</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value orange" id="supervisorCount">0</div>
+                    <div class="summary-label">Giám sát</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Tab -->
+    <div class="tab-content" id="services">
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Quản lý dịch vụ</h1>
+                <p>Danh sách và quản lý các dịch vụ y tế</p>
+            </div>
+            <button class="btn btn-primary" onclick="openServiceModal()">
+                <i class="fas fa-plus"></i>
+                Thêm dịch vụ
+            </button>
+        </div>
+
+        <!-- Service Filters -->
+        <div class="card filters-card">
+            <div class="filters">
+                <div class="search-filter">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="serviceSearch" placeholder="Tìm kiếm dịch vụ...">
+                </div>
+                <div class="filter-group">
+                    <i class="fas fa-filter"></i>
+                    <select id="categoryFilter">
+                        <option value="all">Tất cả danh mục</option>
+                        <option value="IVF">IVF</option>
+                        <option value="Tư vấn">Tư vấn</option>
+                        <option value="Chuyên khoa">Chuyên khoa</option>
+                        <option value="Kiểm tra">Kiểm tra</option>
+                        <option value="Phẫu thuật">Phẫu thuật</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Table -->
+        <div class="card">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Dịch vụ</th>
+                        <th>Danh mục</th>
+                        <th>Thời gian</th>
+                        <th>Giá</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="servicesTableBody">
+                    <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Services Summary -->
+        <div class="summary-card green">
+            <div class="summary-stats">
+                <div class="summary-stat">
+                    <div class="summary-value" id="totalServicesCount">0</div>
+                    <div class="summary-label">Tổng số dịch vụ</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value blue" id="activeServicesCount">0</div>
+                    <div class="summary-label">Đang hoạt động</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value purple" id="categoriesCount">0</div>
+                    <div class="summary-label">Danh mục</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-value orange" id="averagePrice">0</div>
+                    <div class="summary-label">Giá trung bình</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+
+
+
+<!-- Service Modal -->
+<div class="modal" id="serviceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="serviceModalTitle">Thêm dịch vụ mới</h3>
+            <button class="modal-close" onclick="closeServiceModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="serviceForm" class="modal-body">
+            <div class="form-group">
+                <label for="serviceName">Tên dịch vụ *</label>
+                <input type="text" id="serviceName" required>
+            </div>
+            <div class="form-group">
+                <label for="serviceDescription">Mô tả</label>
+                <textarea id="serviceDescription" rows="3"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="serviceDuration">Thời gian (phút) *</label>
+                    <input type="number" id="serviceDuration" min="15" max="240" required>
+                </div>
+                <div class="form-group">
+                    <label for="servicePrice">Giá (VNĐ) *</label>
+                    <input type="number" id="servicePrice" min="0" step="1000" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="serviceCategory">Danh mục *</label>
+                <select id="serviceCategory" required>
+                    <option value="">Chọn danh mục</option>
+                    <option value="IVF">IVF</option>
+                    <option value="Tư vấn">Tư vấn</option>
+                    <option value="Chuyên khoa">Chuyên khoa</option>
+                    <option value="Kiểm tra">Kiểm tra</option>
+                    <option value="Phẫu thuật">Phẫu thuật</option>
+                </select>
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="serviceIsActive" checked>
+                <label for="serviceIsActive">Kích hoạt dịch vụ</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeServiceModal()">Hủy</button>
+                <button type="submit" class="btn btn-primary" id="serviceSubmitBtn">Thêm mới</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Patient Detail Modal -->
+<div class="modal" id="patientDetailModal">
+    <div class="modal-content large">
+        <div class="modal-header">
+            <h3>Chi tiết khách hàng</h3>
+            <button class="modal-close" onclick="closePatientDetailModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body" id="patientDetailContent">
+            <!-- Patient details will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Doctor Modal -->
+<div class="modal" id="doctorModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="doctorModalTitle">Thêm tài khoản bác sĩ</h3>
+            <button class="modal-close" onclick="closeDoctorModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="doctorForm" class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="doctorName">Họ và tên *</label>
+                    <input type="text" id="doctorName" required>
+                </div>
+                <div class="form-group">
+                    <label for="doctorEmail">Email *</label>
+                    <input type="email" id="doctorEmail" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="doctorPhone">Số điện thoại *</label>
+                    <input type="tel" id="doctorPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="doctorSpecialty">Chuyên khoa *</label>
+                    <select id="doctorSpecialty" required>
+                        <option value="">Chọn chuyên khoa</option>
+                        <option value="Sản phụ khoa">Sản phụ khoa</option>
+                        <option value="Hiếm muộn">Hiếm muộn</option>
+                        <option value="IVF">IVF</option>
+                        <option value="Nam khoa">Nam khoa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="doctorDescription">Mô tả về bác sĩ</label>
+                <textarea id="doctorDescription" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="doctorPassword">Mật khẩu *</label>
+                <input type="password" id="doctorPassword" required>
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="doctorIsActive" checked>
+                <label for="doctorIsActive">Kích hoạt tài khoản</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDoctorModal()">Hủy</button>
+                <button type="submit" class="btn btn-primary" id="doctorSubmitBtn">Thêm mới</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Manager Modal -->
+<div class="modal" id="managerModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="managerModalTitle">Thêm tài khoản quản lý</h3>
+            <button class="modal-close" onclick="closeManagerModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="managerForm" class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="managerName">Họ và tên *</label>
+                    <input type="text" id="managerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="managerEmail">Email *</label>
+                    <input type="email" id="managerEmail" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="managerPhone">Số điện thoại *</label>
+                    <input type="tel" id="managerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="managerRole">Vai trò *</label>
+                    <select id="managerRole" required>
+                        <option value="">Chọn vai trò</option>
+                        <option value="admin">Quản trị viên</option>
+                        <option value="manager">Quản lý</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="managerPassword">Mật khẩu *</label>
+                <input type="password" id="managerPassword" required>
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="managerIsActive" checked>
+                <label for="managerIsActive">Kích hoạt tài khoản</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeManagerModal()">Hủy</button>
+                <button type="submit" class="btn btn-primary" id="managerSubmitBtn">Thêm mới</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+    <div class="toast-content">
+        <i class="toast-icon"></i>
+        <span class="toast-message"></span>
+    </div>
+</div>
+
+<script src="js/admin.js"></script>
+<script>
+    // Dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdown = document.querySelector('.nav-item-dropdown');
+        const dropdownToggle = dropdown.querySelector('.nav-item');
+
+        dropdownToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            dropdown.classList.toggle('open');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+    });
+
+    function openServiceModal() {
+        const modal = document.getElementById('serviceModal');
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    function closeServiceModal() {
+        const modal = document.getElementById('serviceModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
+    }
+
+    function closePatientDetailModal() {
+        const modal = document.getElementById('patientDetailModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
+    }
+
+    function openDoctorModal() {
+        const modal = document.getElementById('doctorModal');
+        const title = document.getElementById('doctorModalTitle');
+        const submitBtn = document.getElementById('doctorSubmitBtn');
+        const form = document.getElementById('doctorForm');
+
+        // Reset form và biến editing
+        form.reset();
+        window.currentEditingDoctor = null;
+
+        // Set title và button text cho thêm mới
+        title.textContent = 'Thêm bác sĩ mới';
+        submitBtn.textContent = 'Thêm mới';
+
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    function closeDoctorModal() {
+        const modal = document.getElementById('doctorModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
+        document.getElementById('doctorForm').reset();
+        window.currentEditingDoctor = null;
+    }
+
+    function openManagerModal() {
+        const modal = document.getElementById('managerModal');
+        const title = document.getElementById('managerModalTitle');
+        const submitBtn = document.getElementById('managerSubmitBtn');
+        const form = document.getElementById('managerForm');
+
+        // Reset form và biến editing
+        form.reset();
+        window.currentEditingManager = null;
+
+        // Set title và button text cho thêm mới
+        title.textContent = 'Thêm quản lý mới';
+        submitBtn.textContent = 'Thêm mới';
+
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    function closeManagerModal() {
+        const modal = document.getElementById('managerModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
+        document.getElementById('managerForm').reset();
+        window.currentEditingManager = null;
+    }
+
+    // Đóng modal khi click vào background
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                if (this.id === 'serviceModal') closeServiceModal();
+                else if (this.id === 'patientDetailModal') closePatientDetailModal();
+                else if (this.id === 'doctorModal') closeDoctorModal();
+                else if (this.id === 'managerModal') closeManagerModal();
+            }
+        });
+    });
+
+    // Đóng modal khi nhấn ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const openModal = document.querySelector('.modal.show');
+            if (openModal) {
+                if (openModal.id === 'serviceModal') closeServiceModal();
+                else if (openModal.id === 'patientDetailModal') closePatientDetailModal();
+                else if (openModal.id === 'doctorModal') closeDoctorModal();
+                else if (openModal.id === 'managerModal') closeManagerModal();
+            }
+        }
+    });
+</script>
+</body>
+</html>
