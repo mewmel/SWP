@@ -37,6 +37,9 @@ Optional<BookingStep> findByBookIdAndSubId(@Param("bookId") Integer bookId, @Par
 List<String> findSubNamesByBookId(@Param("bookId") Integer bookId);
 
 
+// Lấy tất cả bookingStep theo list bookId
+List<BookingStep> findByBookIdIn(List<Integer> bookIds);
+
 
 
 }

@@ -23,11 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.BookingStepInfo;
 import com.example.project.dto.BookingStepResultDTO;
+import com.example.project.dto.BookingWithStepsAndDrug;
 import com.example.project.dto.TestResult;
 import com.example.project.dto.VisitSubService;
 import com.example.project.entity.BookingStep;
 import com.example.project.entity.SubService;
 import com.example.project.repository.BookingStepRepository;
+import com.example.project.repository.MedicalRecordBookingRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.BookingStepService;
 
@@ -43,6 +45,8 @@ public class BookingStepController {
     @Autowired
     private SubServiceRepository subServiceRepo;
 
+    @Autowired
+    private MedicalRecordBookingRepository medicalRecordBookingRepository;
 
 
     @Autowired
@@ -256,7 +260,20 @@ public ResponseEntity<List<Map<String, Object>>> getFollowUpSubservices(@PathVar
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Không thể tạo bước dịch vụ: " + e.getMessage());
         }
-    }    
+    }   
+    
+    
+    @GetMapping("/all-booking-steps/{recordId}")
+    public ResponseEntity<?> getBookingWithStepsAndDrug(@PathVariable Integer recordId) {
+        try {
+            List<BookingWithStepsAndDrug> data = bookingStepService.getBookingsWithStepsAndDrugByRecordId(recordId);
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Lỗi khi lấy dữ liệu: " + e.getMessage());
+        }
+    }
+    
 
 
 }

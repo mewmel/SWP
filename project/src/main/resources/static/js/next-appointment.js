@@ -490,8 +490,8 @@ function renderMedicalHistory(historyData) {
                 
                 // Fetch treatment plan using bookId
                 let treatmentData = null;
-                if (patientData.bookId) {
-                    const response = await fetch(`/api/booking-steps/by-booking/${patientData.bookId}`);
+                if (patientData.recordId) {
+                    const response = await fetch(`/api/booking-steps/all-booking-steps/${patientData.recordId}`);
                     if (response.ok) {
                         treatmentData = await response.json();
                     }
@@ -506,72 +506,126 @@ function renderMedicalHistory(historyData) {
 
         function renderTreatmentPlan(treatmentData, patientData) {
             const treatmentContent = document.getElementById('treatmentContent');
-            
-            if (treatmentData && treatmentData.length > 0) {
-                let treatmentHtml = `
-                    <div class="current-service">
-                        <h5><i class="fas fa-medical-kit"></i> Dịch vụ hiện tại</h5>
-                        <div class="service-card">
-                            <h6>${patientData.currentBooking?.serviceName || 'Dịch vụ điều trị'}</h6>
-                            <p class="service-description">Các bước điều trị được thực hiện theo kế hoạch của bác sĩ</p>
+
+            if (!treatmentData || treatmentData.length === 0) {
+                renderSampleTreatmentPlan();
+                return;
+            }
+
+            let treatmentHtml = `
+                <div class="current-service">
+                    <h5><i class="fas fa-medical-kit"></i> Dịch vụ hiện tại</h5>
+                    <div class="service-card">
+                        <h6>${patientData?.currentBooking?.serviceName || 'Dịch vụ điều trị'}</h6>
+                        <p class="service-description">Các bước điều trị được thực hiện theo kế hoạch của bác sĩ</p>
+                    </div>
+                </div>
+            `;
+
+            treatmentData.forEach((booking, bIndex) => {
+                // Tiêu đề cho từng đợt điều trị/booking
+                treatmentHtml += `
+                    <div class="booking-section">
+                        <h5 class="booking-title"><i class="fas fa-calendar-check"></i> Đợt điều trị #${bIndex + 1} (Booking ID: ${booking.bookId})</h5>
+                        <div class="sub-services">
+                            <h6><i class="fas fa-list-check"></i> Các bước điều trị chi tiết</h6>
+                `;
+
+                if (booking.bookingSteps && booking.bookingSteps.length > 0) {
+                    booking.bookingSteps.forEach((step, stepIndex) => {
+                        const statusClass = step.stepStatus === 'completed' ? 'completed'
+                            : step.stepStatus === 'pending' ? 'current'
+                                : 'pending';
+                        const statusIcon = step.stepStatus === 'completed' ? 'fa-check-circle'
+                            : step.stepStatus === 'pending' ? 'fa-clock'
+                                : 'fa-circle';
+
+                        treatmentHtml += `
+                            <div class="sub-service-item ${statusClass}">
+                                <div class="sub-service-header">
+                                    <span class="step-number">${stepIndex + 1}</span>
+                                    <div class="sub-service-info">
+                                        <h6>${step.subName || `Bước ${stepIndex + 1}`}</h6>
+                                        <p>${step.result || 'Đang thực hiện theo kế hoạch'}</p>
+                                        ${step.note ? `<div class="step-note"><i class="fas fa-sticky-note"></i> ${step.note}</div>` : ''}
+                                    </div>
+                                    <div class="sub-service-details">
+                                        <span class="estimated-day">${formatDate(step.performedAt) || 'Dự kiến'}</span>
+                                    </div>
+                                    <span class="status-icon ${statusClass}"><i class="fas ${statusIcon}"></i></span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    treatmentHtml += `<p style="color:#888;">Chưa có bước điều trị nào cho booking này.</p>`;
+                }
+
+                // Hiện thuốc nếu có
+                if (booking.drugId && booking.drugItems && booking.drugItems.length > 0) {
+                    treatmentHtml += `
+                        <div class="drug-section">
+                            <h6 style="margin-top:1.2em;"><i class="fas fa-capsules"></i> Đơn thuốc đã kê (Drug ID: ${booking.drugId})</h6>
+                            <div class="drug-items-table-wrapper">
+                                <table class="drug-items-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Tên thuốc</th>
+                                            <th>Liều dùng</th>
+                                            <th>Tần suất</th>
+                                            <th>Thời gian</th>
+                                            <th>Ghi chú</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                    `;
+                    booking.drugItems.forEach((item, dIndex) => {
+                        treatmentHtml += `
+                            <tr>
+                                <td>${dIndex + 1}</td>
+                                <td>${item.drugName || '-'}</td>
+                                <td>${item.dosage || '-'}</td>
+                                <td>${item.frequency || '-'}</td>
+                                <td>${item.duration || '-'}</td>
+                                <td>${item.drugItemNote || ''}</td>
+                            </tr>
+                        `;
+                    });
+                    treatmentHtml += `</tbody></table></div>`;
+                }
+                treatmentHtml += `</div></div>`;
+            });
+
+            // Tổng kết toàn bộ các bước (tổng tất cả booking)
+            let totalSteps = 0, completedSteps = 0, pendingSteps = 0;
+            treatmentData.forEach(b => {
+                totalSteps += b.bookingSteps?.length || 0;
+                completedSteps += (b.bookingSteps?.filter(s => s.stepStatus === 'completed').length || 0);
+                pendingSteps += (b.bookingSteps?.filter(s => s.stepStatus === 'pending').length || 0);
+            });
+
+            treatmentHtml += `
+                <div class="treatment-summary">
+                    <h5><i class="fas fa-chart-pie"></i> Tổng quan điều trị</h5>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">Tổng số bước:</span>
+                            <span class="summary-value">${totalSteps}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Đã hoàn thành:</span>
+                            <span class="summary-value">${completedSteps}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Đang thực hiện:</span>
+                            <span class="summary-value">${pendingSteps}</span>
                         </div>
                     </div>
-                    
-                    <div class="sub-services">
-                        <h5><i class="fas fa-list-check"></i> Các bước điều trị chi tiết</h5>
-                `;
-                
-                treatmentData.forEach((step, index) => {
-                    const statusClass = step.stepStatus === 'completed' ? 'completed' : 
-                                      step.stepStatus === 'pending' ? 'current' : 'pending';
-                    const statusIcon = step.stepStatus === 'completed' ? 'fa-check-circle' : 
-                                      step.stepStatus === 'pending' ? 'fa-clock' : 'fa-circle';
-                    
-                    treatmentHtml += `
-                        <div class="sub-service-item ${statusClass}">
-                            <div class="sub-service-header">
-                                <span class="step-number">${index + 1}</span>
-                                <div class="sub-service-info">
-                                    <h6>${step.subServiceName || `Bước ${index + 1}`}</h6>
-                                    <p>${step.stepResult || 'Đang thực hiện theo kế hoạch'}</p>
-                                </div>
-                                <div class="sub-service-details">
-                                    <span class="estimated-day">${formatDate(step.performedAt) || 'Dự kiến'}</span>
-                                </div>
-                                <span class="status-icon ${statusClass}"><i class="fas ${statusIcon}"></i></span>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                const completedSteps = treatmentData.filter(step => step.stepStatus === 'completed').length;
-                const pendingSteps = treatmentData.filter(step => step.stepStatus === 'pending').length;
-                
-                treatmentHtml += `
-                        </div>
-                        <div class="treatment-summary">
-                            <h5><i class="fas fa-chart-pie"></i> Tổng quan điều trị</h5>
-                            <div class="summary-grid">
-                                <div class="summary-item">
-                                    <span class="summary-label">Tổng số bước:</span>
-                                    <span class="summary-value">${treatmentData.length}</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-label">Đã hoàn thành:</span>
-                                    <span class="summary-value">${completedSteps}</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-label">Đang thực hiện:</span>
-                                    <span class="summary-value">${pendingSteps}</span>
-                                </div>
-                            </div>
-                        </div>
-                `;
-                
-                treatmentContent.innerHTML = treatmentHtml;
-            } else {
-                renderSampleTreatmentPlan();
-            }
+                </div>
+            `;
+
+            treatmentContent.innerHTML = treatmentHtml;
         }
 
         function renderSampleTreatmentPlan() {
