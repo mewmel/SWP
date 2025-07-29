@@ -1716,3 +1716,127 @@ body {
     color: #3b82f6;
     border-right-color: #3b82f6;
 }
+
+/* Services Hierarchy Styles */
+.services-container {
+    padding: 20px;
+}
+
+.service-item {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.service-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.service-header:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.service-main-info h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.service-main-info p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.service-details {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.service-duration, .service-price {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.service-toggle {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.sub-services {
+    background: #f8f9fa;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.sub-services.show {
+    padding: 20px;
+    max-height: 1000px;
+    overflow: visible;
+}
+
+.sub-service-item {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sub-service-item:last-child {
+    margin-bottom: 0;
+}
+
+.sub-service-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    color: #495057;
+}
+
+.sub-service-info p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.sub-service-details {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.sub-service-duration, .sub-service-price {
+    background: #e9ecef;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    color: #495057;
+}
+
+.sub-service-price {
+    background: #d4edda;
+    color: #155724;
+    font-weight: 600;
+}
+
+.sub-service-actions {
+    display: flex;
+    gap: 8px;
+}

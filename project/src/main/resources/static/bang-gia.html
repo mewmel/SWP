@@ -413,16 +413,27 @@
     <div class="pricing-table-container">
         <div class="pricing-table-title">Bảng giá dịch vụ hiếm muộn</div>
         <div class="pricing-table-desc">Tham khảo chi phí các dịch vụ hỗ trợ sinh sản, khám và điều trị hiếm muộn tại phòng khám FertilityEHR.</div>
-        <div style="margin-bottom: 18px; text-align: right;">
-            <label for="categoryFilter" style="font-weight: 500; color: #1976d2; margin-right: 8px;">Lọc theo danh mục:</label>
-            <select id="categoryFilter" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #b0bec5;">
-                <option value="">Tất cả</option>
-                <option value="Khám">Khám</option>
-                <option value="Xét nghiệm">Xét nghiệm</option>
-                <option value="Tư vấn">Tư vấn</option>
-                <option value="IVF">IVF</option>
-                <option value="IUI">IUI</option>
-            </select>
+        <div style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #1976d2;">
+            <h4 style="margin: 0 0 10px 0; color: #1976d2;">
+                <i class="fas fa-info-circle"></i> Thông tin cập nhật
+            </h4>
+            <p style="margin: 0; color: #424242; font-size: 14px;">
+                Bảng giá được cập nhật tự động từ hệ thống quản lý. Mọi thay đổi về giá dịch vụ sẽ được phản ánh ngay lập tức trên trang này.
+            </p>
+        </div>
+        <div style="margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="searchInput" style="font-weight: 500; color: #1976d2;">Tìm kiếm:</label>
+                <input type="text" id="searchInput" placeholder="Nhập tên dịch vụ..." 
+                       style="padding: 6px 12px; border-radius: 6px; border: 1px solid #b0bec5; min-width: 200px;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="categoryFilter" style="font-weight: 500; color: #1976d2;">Lọc theo danh mục:</label>
+                <select id="categoryFilter" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #b0bec5;">
+                    <option value="">Tất cả</option>
+                    <!-- Categories sẽ được load động từ API -->
+                </select>
+            </div>
         </div>
         <table class="pricing-table">
             <thead>
@@ -434,146 +445,15 @@
             </tr>
             </thead>
             <tbody id="subservice-table-body">
-            <tr>
-                <td>Khám lâm sàng tổng quát</td>
-                <td>Khám</td>
-                <td>200.000</td>
-                <td>Đánh giá sức khỏe sinh sản tổng thể cho vợ/chồng</td>
-            </tr>
-            <tr>
-                <td>Khám chuyên khoa nam/nữ</td>
-                <td>Khám</td>
-                <td>250.000</td>
-                <td>Khám chi tiết bộ phận sinh dục nam hoặc nữ</td>
-            </tr>
-            <tr>
-                <td>Xét nghiệm AMH (dự trữ buồng trứng)</td>
-                <td>Xét nghiệm</td>
-                <td>500.000</td>
-                <td>Đánh giá dự trữ buồng trứng ở nữ</td>
-            </tr>
-            <tr>
-                <td>Xét nghiệm nội tiết tố nữ (FSH, LH, E2)</td>
-                <td>Xét nghiệm</td>
-                <td>300.000</td>
-                <td>Kiểm tra hormone sinh sản nữ</td>
-            </tr>
-            <tr>
-                <td>Xét nghiệm tinh dịch đồ</td>
-                <td>Xét nghiệm</td>
-                <td>300.000</td>
-                <td>Đánh giá chất lượng tinh trùng nam</td>
-            </tr>
-            <tr>
-                <td>Siêu âm tử cung, buồng trứng</td>
-                <td>Chuyên khoa</td>
-                <td>250.000</td>
-                <td>Kiểm tra cấu trúc tử cung và dự trữ noãn</td>
-            </tr>
-            <tr>
-                <td>Chụp HSG/siêu âm vòi trứng</td>
-                <td>Chuyên khoa</td>
-                <td>700.000</td>
-                <td>Kiểm tra thông vòi trứng ở nữ</td>
-            </tr>
-            <tr>
-                <td>Tư vấn kết quả, định hướng điều trị</td>
-                <td>Tư vấn</td>
-                <td>200.000</td>
-                <td>Tư vấn phác đồ IVF/IUI hoặc hướng điều trị khác</td>
-            </tr>
-            <tr>
-                <td>Kích thích buồng trứng (IVF)</td>
-                <td>IVF</td>
-                <td>600.000</td>
-                <td>Tiêm thuốc, theo dõi nang noãn</td>
-            </tr>
-            <tr>
-                <td>Siêu âm noãn (IVF)</td>
-                <td>IVF</td>
-                <td>250.000</td>
-                <td>Theo dõi nang noãn phát triển</td>
-            </tr>
-            <tr>
-                <td>Tiêm hCG (IVF)</td>
-                <td>IVF</td>
-                <td>300.000</td>
-                <td>Kích thích trưởng thành noãn, chuẩn bị chọc trứng</td>
-            </tr>
-            <tr>
-                <td>Chọc hút trứng</td>
-                <td>IVF</td>
-                <td>7.000.000</td>
-                <td>Lấy trứng ra khỏi buồng trứng</td>
-            </tr>
-            <tr>
-                <td>Lấy tinh trùng (IVF)</td>
-                <td>IVF</td>
-                <td>1.000.000</td>
-                <td>Lấy mẫu tinh trùng vào ngày chọc trứng</td>
-            </tr>
-            <tr>
-                <td>Tạo phôi, nuôi phôi trong lab</td>
-                <td>IVF</td>
-                <td>5.000.000</td>
-                <td>Nuôi cấy và chọn lọc phôi</td>
-            </tr>
-            <tr>
-                <td>Chuyển phôi</td>
-                <td>IVF</td>
-                <td>6.000.000</td>
-                <td>Đưa phôi vào buồng tử cung</td>
-            </tr>
-            <tr>
-                <td>Thử β-hCG (IVF)</td>
-                <td>IVF</td>
-                <td>200.000</td>
-                <td>Xét nghiệm kiểm tra thai sau chuyển phôi</td>
-            </tr>
-            <tr>
-                <td>Siêu âm tim thai (IVF)</td>
-                <td>IVF</td>
-                <td>350.000</td>
-                <td>Theo dõi sự phát triển của thai (nếu có)</td>
-            </tr>
-            <tr>
-                <td>Kích thích buồng trứng nhẹ (IUI)</td>
-                <td>IUI</td>
-                <td>400.000</td>
-                <td>Tiêm thuốc nhẹ, theo dõi nang noãn</td>
-            </tr>
-            <tr>
-                <td>Siêu âm noãn (IUI)</td>
-                <td>IUI</td>
-                <td>200.000</td>
-                <td>Theo dõi sự phát triển của nang noãn</td>
-            </tr>
-            <tr>
-                <td>Tiêm hCG (IUI)</td>
-                <td>IUI</td>
-                <td>200.000</td>
-                <td>Định ngày rụng trứng</td>
-            </tr>
-            <tr>
-                <td>Bơm tinh trùng vào buồng tử cung (IUI)</td>
-                <td>IUI</td>
-                <td>2.500.000</td>
-                <td>Thực hiện thủ thuật IUI</td>
-            </tr>
-            <tr>
-                <td>Thử β-hCG (IUI)</td>
-                <td>IUI</td>
-                <td>200.000</td>
-                <td>Xét nghiệm kiểm tra thai sau IUI</td>
-            </tr>
-            <tr>
-                <td>Siêu âm túi thai (IUI)</td>
-                <td>IUI</td>
-                <td>250.000</td>
-                <td>Theo dõi sự phát triển của thai (nếu có)</td>
-            </tr>
+                <!-- Dữ liệu sẽ được load động từ API -->
             </tbody>
         </table>
+        <div id="loading-message" style="text-align: center; padding: 20px; color: #666;">
+            <i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...
+        </div>
+        <div id="error-message" style="text-align: center; padding: 20px; color: #d32f2f; display: none;">
+            <i class="fas fa-exclamation-triangle"></i> Không thể tải dữ liệu dịch vụ
+        </div>
     </div>
 </main>
 <footer id="footer">
@@ -611,5 +491,158 @@
     </div>
 </footer>
 <script src="js/script.js"></script>
+<script>
+// Biến global để lưu dữ liệu
+let allServices = [];
+let filteredServices = [];
+
+// Format currency
+function formatCurrency(amount) {
+    if (!amount) return '0';
+    return new Intl.NumberFormat('vi-VN').format(amount);
+}
+
+// Load dữ liệu dịch vụ từ API
+async function loadServicesData() {
+    const loadingMessage = document.getElementById('loading-message');
+    const errorMessage = document.getElementById('error-message');
+    const tableBody = document.getElementById('subservice-table-body');
+    
+    try {
+        loadingMessage.style.display = 'block';
+        errorMessage.style.display = 'none';
+        
+        const response = await fetch('/api/services/pricing');
+        if (response.ok) {
+            allServices = await response.json();
+            filteredServices = [...allServices];
+            
+            // Cập nhật dropdown categories
+            updateCategoryFilter();
+            
+            // Hiển thị dữ liệu
+            renderServicesTable();
+            
+            loadingMessage.style.display = 'none';
+        } else {
+            throw new Error('Failed to load services');
+        }
+    } catch (error) {
+        console.error('Error loading services:', error);
+        loadingMessage.style.display = 'none';
+        errorMessage.style.display = 'block';
+        tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #d32f2f;">Không thể tải dữ liệu dịch vụ</td></tr>';
+    }
+}
+
+// Cập nhật dropdown filter với categories từ dữ liệu
+function updateCategoryFilter() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const categories = [...new Set(allServices.map(service => service.category))];
+    
+    // Giữ lại option "Tất cả"
+    categoryFilter.innerHTML = '<option value="">Tất cả</option>';
+    
+    // Thêm các categories từ dữ liệu
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+    });
+}
+
+// Hiển thị bảng dịch vụ
+function renderServicesTable() {
+    const tableBody = document.getElementById('subservice-table-body');
+    
+    if (filteredServices.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #666;">Không có dịch vụ nào</td></tr>';
+        return;
+    }
+    
+    tableBody.innerHTML = filteredServices.map(service => `
+        <tr>
+            <td>
+                <div style="font-weight: 600; color: #1976d2; margin-bottom: 4px;">${service.name || 'Chưa có tên'}</div>
+                <div style="font-size: 12px; color: #666;">
+                    <i class="fas fa-clock"></i> ${service.duration || 0} ngày
+                </div>
+            </td>
+            <td>
+                <span style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;">
+                    ${service.category || 'Chưa phân loại'}
+                </span>
+            </td>
+            <td style="font-weight: 700; color: #2e7d32; font-size: 16px;">${formatCurrency(service.price)}</td>
+            <td style="max-width: 300px; line-height: 1.4;">${service.description || 'Chưa có mô tả'}</td>
+        </tr>
+    `).join('');
+}
+
+// Filter dịch vụ theo category và search
+function filterServices() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchInput = document.getElementById('searchInput');
+    const selectedCategory = categoryFilter.value;
+    const searchTerm = searchInput.value.toLowerCase();
+    
+    filteredServices = allServices.filter(service => {
+        const matchesCategory = selectedCategory === '' || service.category === selectedCategory;
+        const matchesSearch = service.name.toLowerCase().includes(searchTerm) || 
+                             service.description.toLowerCase().includes(searchTerm);
+        
+        return matchesCategory && matchesSearch;
+    });
+    
+    renderServicesTable();
+    updateResultsCount();
+}
+
+// Cập nhật số lượng kết quả
+function updateResultsCount() {
+    const totalCount = allServices.length;
+    const filteredCount = filteredServices.length;
+    
+    // Tạo hoặc cập nhật element hiển thị số lượng
+    let countElement = document.getElementById('results-count');
+    if (!countElement) {
+        countElement = document.createElement('div');
+        countElement.id = 'results-count';
+        countElement.style.cssText = 'margin-bottom: 15px; color: #666; font-size: 14px;';
+        const table = document.querySelector('.pricing-table');
+        table.parentNode.insertBefore(countElement, table);
+    }
+    
+    if (filteredCount === totalCount) {
+        countElement.textContent = `Hiển thị tất cả ${totalCount} dịch vụ`;
+    } else {
+        countElement.textContent = `Hiển thị ${filteredCount} trong tổng số ${totalCount} dịch vụ`;
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Load dữ liệu khi trang load
+    loadServicesData();
+    
+    // Event listener cho category filter
+    const categoryFilter = document.getElementById('categoryFilter');
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', filterServices);
+    }
+    
+    // Event listener cho search input
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', filterServices);
+    }
+});
+
+// Auto-refresh dữ liệu mỗi 5 phút để cập nhật thay đổi từ admin
+setInterval(() => {
+    loadServicesData();
+}, 5 * 60 * 1000);
+</script>
 </body>
 </html>

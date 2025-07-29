@@ -992,54 +992,94 @@ function deleteManager(managerId) {
 }
 
 // Service Functions
-function loadServices() {
-    renderServicesTable();
-    updateServicesSummary();
-    initServiceFilters();
+async function loadServices() {
+    try {
+        console.log('Loading services...');
+        
+        // Test API trước
+        const testResponse = await fetch('/api/services/test');
+        if (testResponse.ok) {
+            const testData = await testResponse.json();
+            console.log('Test data:', testData);
+        }
+        
+        const response = await fetch('/api/services/hierarchy');
+        if (response.ok) {
+            const servicesData = await response.json();
+            console.log('Services data:', servicesData);
+            renderServicesHierarchy(servicesData);
+            updateServicesSummary(servicesData);
+        } else {
+            console.error('Failed to load services:', response.status);
+            showToast('Không thể tải danh sách dịch vụ', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading services:', error);
+        showToast('Lỗi kết nối khi tải danh sách dịch vụ', 'error');
+    }
 }
 
-function renderServicesTable() {
-    const tbody = document.getElementById('servicesTableBody');
-    if (!tbody) return;
+function renderServicesHierarchy(servicesData) {
+    const container = document.getElementById('servicesContainer');
+    if (!container) {
+        console.error('Services container not found');
+        return;
+    }
     
-    tbody.innerHTML = filteredServices.map(service => `
-        <tr>
-            <td>
-                <div class="service-info">
-                    <h4>${service.name}</h4>
-                    <p>${service.description}</p>
+    console.log('Rendering services hierarchy...');
+    console.log('Services data length:', servicesData.length);
+    
+    if (servicesData.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">Không có dữ liệu dịch vụ</div>';
+        return;
+    }
+    
+    container.innerHTML = servicesData.map(service => `
+        <div class="service-item" style="border: 1px solid #e9ecef; border-radius: 8px; margin-bottom: 15px; overflow: hidden;">
+            <div class="service-header" onclick="toggleSubServices('${service.serviceId}')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                <div class="service-main-info">
+                    <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600;">${service.serviceName}</h3>
+                    <p style="margin: 0; opacity: 0.9; font-size: 14px;">${service.serviceDescription || 'Không có mô tả'}</p>
                 </div>
-            </td>
-            <td>
-                <span class="status-badge category">${service.category}</span>
-            </td>
-            <td>${formatDuration(service.duration)}</td>
-            <td><strong>${formatCurrency(service.price)}</strong></td>
-            
-            <td>
-                <div class="action-buttons">
-                    <button class="action-btn edit" onclick="editService('${service.id}')" title="Chỉnh sửa">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteService('${service.id}')" title="Xóa">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                <div class="service-details" style="display: flex; gap: 20px; align-items: center;">
+                    <span class="service-duration" style="background: rgba(255, 255, 255, 0.2); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">${service.serviceDuration} phút</span>
+                    <span class="service-price" style="background: rgba(255, 255, 255, 0.2); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">${formatCurrency(service.servicePrice)}</span>
                 </div>
-            </td>
-        </tr>
+                <div class="service-toggle">
+                    <i class="fas fa-chevron-down" id="toggle-${service.serviceId}" style="font-size: 16px;"></i>
+                </div>
+            </div>
+            <div class="sub-services" id="sub-services-${service.serviceId}" style="background: #f8f9fa; padding: 0; max-height: 0; overflow: hidden; transition: all 0.3s ease;">
+                ${service.subServices.map(subService => `
+                    <div class="sub-service-item" style="background: white; border: 1px solid #e9ecef; border-radius: 6px; padding: 15px; margin: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="sub-service-info">
+                            <h4 style="margin: 0 0 5px 0; font-size: 16px; color: #495057;">${subService.subName}</h4>
+                            <p style="margin: 0; color: #6c757d; font-size: 13px;">${subService.subDescription || 'Không có mô tả'}</p>
+                        </div>
+                        <div class="sub-service-details" style="display: flex; gap: 15px; align-items: center;">
+                            <span class="sub-service-duration" style="background: #e9ecef; padding: 4px 10px; border-radius: 15px; font-size: 12px; color: #495057;">${subService.subDuration || 0} ngày</span>
+                            <span class="sub-service-price" style="background: #d4edda; color: #155724; font-weight: 600; padding: 4px 10px; border-radius: 15px; font-size: 12px;">${formatCurrency(subService.subPrice)}</span>
+                        </div>
+                        <div class="sub-service-actions" style="display: flex; gap: 8px;">
+                            <button class="action-btn edit" onclick="editSubService('${subService.subId}', '${subService.subName}', ${subService.subPrice})" title="Chỉnh sửa" style="background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
     `).join('');
 }
 
-function updateServicesSummary() {
-    const categories = [...new Set(filteredServices.map(s => s.category))];
-    const averagePrice = filteredServices.length > 0 
-        ? filteredServices.reduce((sum, s) => sum + s.price, 0) / filteredServices.length 
-        : 0;
+function updateServicesSummary(servicesData) {
+    const totalSubServices = servicesData.reduce((sum, service) => sum + service.subServices.length, 0);
+    const totalServices = servicesData.length;
     
-    document.getElementById('totalServicesCount').textContent = filteredServices.length;
-    document.getElementById('activeServicesCount').textContent = filteredServices.filter(s => s.isActive).length;
-    document.getElementById('categoriesCount').textContent = categories.length;
-    document.getElementById('averagePrice').textContent = formatCurrency(averagePrice);
+    document.getElementById('totalServicesCount').textContent = totalServices;
+    document.getElementById('activeServicesCount').textContent = totalServices;
+    document.getElementById('categoriesCount').textContent = totalServices;
+    document.getElementById('averagePrice').textContent = totalSubServices + ' dịch vụ con';
 }
 
 function initServiceFilters() {
@@ -1127,13 +1167,82 @@ function deleteService(serviceId) {
     }
 }
 
-function toggleServiceStatus(serviceId) {
-    const service = services.find(s => s.id === serviceId);
-    if (service) {
-        service.isActive = !service.isActive;
-        saveToLocalStorage();
-        filterServices();
-        showToast(`Đã ${service.isActive ? 'kích hoạt' : 'vô hiệu hóa'} dịch vụ`);
+function toggleSubServices(serviceId) {
+    console.log('Toggling sub services for service ID:', serviceId);
+    const subServicesDiv = document.getElementById(`sub-services-${serviceId}`);
+    const toggleIcon = document.getElementById(`toggle-${serviceId}`);
+    
+    if (!subServicesDiv) {
+        console.error('Sub services div not found for service ID:', serviceId);
+        return;
+    }
+    
+    if (!toggleIcon) {
+        console.error('Toggle icon not found for service ID:', serviceId);
+        return;
+    }
+    
+    const currentMaxHeight = subServicesDiv.style.maxHeight;
+    if (currentMaxHeight === '0px' || !currentMaxHeight) {
+        // Mở dropdown
+        subServicesDiv.style.maxHeight = '1000px';
+        subServicesDiv.style.padding = '20px';
+        subServicesDiv.style.overflow = 'visible';
+        toggleIcon.classList.remove('fa-chevron-down');
+        toggleIcon.classList.add('fa-chevron-up');
+        console.log('Sub services shown');
+    } else {
+        // Đóng dropdown
+        subServicesDiv.style.maxHeight = '0px';
+        subServicesDiv.style.padding = '0px';
+        subServicesDiv.style.overflow = 'hidden';
+        toggleIcon.classList.remove('fa-chevron-up');
+        toggleIcon.classList.add('fa-chevron-down');
+        console.log('Sub services hidden');
+    }
+}
+
+function editSubService(subId, subName, subPrice) {
+    const newName = prompt('Nhập tên dịch vụ mới:', subName);
+    if (newName === null) return; // User cancelled
+    
+    const newPrice = prompt('Nhập giá mới:', subPrice);
+    if (newPrice === null) return; // User cancelled
+    
+    const price = parseInt(newPrice);
+    if (isNaN(price) || price <= 0) {
+        showToast('Giá phải là số dương', 'error');
+        return;
+    }
+    
+    // Call API to update
+    updateSubService(subId, newName, price);
+}
+
+async function updateSubService(subId, subName, subPrice) {
+    try {
+        const response = await fetch(`/api/services/subservice/${subId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                subName: subName,
+                subPrice: subPrice
+            })
+        });
+
+        if (response.ok) {
+            showToast('Cập nhật dịch vụ thành công!', 'success');
+            // Reload services
+            await loadServices();
+        } else {
+            const error = await response.json();
+            showToast(error.error || 'Lỗi khi cập nhật dịch vụ', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating sub service:', error);
+        showToast('Lỗi kết nối khi cập nhật dịch vụ', 'error');
     }
 }
 
@@ -1716,6 +1825,8 @@ window.editDoctor = editDoctor;
 window.viewDoctor = viewDoctor;
 window.editManager = editManager;
 window.viewManager = viewManager;
+window.toggleSubServices = toggleSubServices;
+window.editSubService = editSubService;
 
 window.openServiceModal = openServiceModal;
 window.closeServiceModal = closeServiceModal;
