@@ -33,6 +33,14 @@ List<Object[]> findInactiveStepDTOByBookId(@Param("bookId") Integer bookId);
 Optional<BookingStep> findByBookIdAndSubId(@Param("bookId") Integer bookId, @Param("subId") Integer subId);
 
 
+@Query(value = "SELECT ss.subName FROM BookingStep bs JOIN SubService ss ON bs.subId = ss.subId WHERE bs.bookId = :bookId", nativeQuery = true)
+List<String> findSubNamesByBookId(@Param("bookId") Integer bookId);
+
+
+// Lấy tất cả bookingStep theo list bookId
+List<BookingStep> findByBookIdIn(List<Integer> bookIds);
+
+
 
 
 

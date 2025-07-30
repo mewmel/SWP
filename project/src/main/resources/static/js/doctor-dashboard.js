@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Set data
                 clone.dataset.patient = b.cusId || '';
                 clone.dataset.status = b.bookStatus || '';
+                clone.dataset.bookid = b.bookId || '';
 
                 // Time
                 clone.querySelector('.time').textContent = info.startTime ? info.startTime.slice(0, 5) : '--:--';
@@ -147,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.closePatientListModal();
         window.viewPatientRecord(patientId, bookId);
     };
+
 
     window.searchPatients = function () {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -261,6 +263,8 @@ window.checkout = async function (bookId, cusId, bookType) {
 
 
 
+
+
     // Mark patient as cancelled
     window.markAsCancelled = async function (cusId, serId, docId, bookId) {
         const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
@@ -275,7 +279,7 @@ window.checkout = async function (bookId, cusId, bookType) {
 
     // Mark patient as examined
     window.markAsExamined = async function (cusId, serId, docId, bookId) {
-        const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
+        const appointmentItem = document.querySelector(`[data-bookid="${bookId}"]`);
         if (!appointmentItem) return;
 
         // 2. Đổi nút/action
@@ -291,8 +295,8 @@ window.checkout = async function (bookId, cusId, bookType) {
         // 3. Kiểm tra có medical record chưa, nếu chưa thì tạo
         try {
             // API kiểm tra đã có medical record chưa
-            const res = await fetch(`/api/medical-records/exist?cusId=${cusId}&serId=${serId}`);
-            const { exists } = await res.json();
+            const mres = await fetch(`/api/medical-records/exist?cusId=${cusId}&serId=${serId}`);
+            const { exists } = await mres.json();
             if (!exists) {
                 // Tạo mới medical record
 
@@ -319,19 +323,6 @@ window.checkout = async function (bookId, cusId, bookType) {
                     })
                 });
 
-                // Tạo mới drug
-                const drugRes = await fetch(`/api/drugs/create/${bookId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        docId,
-                        cusId,
-                    })
-                });
-
-                const drugId = await drugRes.json();
-                localStorage.setItem('drugId', drugId);
-
 
 
                 await fetch(`/api/booking-steps/set-pending/${bookId}`, {
@@ -347,6 +338,30 @@ window.checkout = async function (bookId, cusId, bookType) {
                     showNotification(`Đã check-in bệnh nhân thành công`, 'success');
                 }
             }
+        //4.  nếu có medicalRecord rồi thì kiểm tra xem trường drugId của booking đó có chưa            
+            const dres = await fetch(`/api/booking/${bookId}/has-drug`);
+            const { hasDrug } = await dres.json();
+            // nếu chưa thì tạo mới rồi gán vô
+            if(!hasDrug) {
+                    // Tạo mới drug
+                    const drugRes = await fetch(`/api/drugs/create/${bookId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            docId,
+                            cusId,
+                        })
+                    });
+                    const drugId = await drugRes.json();  
+
+                    // Gán drugId cho booking:
+                    await fetch(`/api/booking/${bookId}/set-drug/${drugId}`, {
+                        method: 'PUT'
+                    });
+    
+                    if (typeof showNotification === 'function') console.log('Đã tạo đơn thuốc cho booking:', bookId);
+                }
+            
         } catch (err) {
             console.error('Lỗi tạo hồ sơ bệnh án:', err);
             if (typeof showNotification === 'function') showNotification('Không thể tạo hồ sơ bệnh án', 'error');
@@ -469,7 +484,7 @@ window.checkout = async function (bookId, cusId, bookType) {
             document.getElementById('emergencyContact').textContent = patientData.emergencyContact || 'Không rõ';
             document.getElementById('patientStatus').textContent = (patientData.cusStatus === 'active'
                 ? 'Hoạt động' : 'Không hoạt động');
-            document.getElementById('prescriptionNumber').textContent = patientData.drugId || 'Không rõ';
+            document.getElementById('prescriptionNumber').value = patientData.drugId || 'Không rõ';
 
             // 3. Booking hiện tại
             if (patientData.currentBooking) {
@@ -649,6 +664,7 @@ window.checkout = async function (bookId, cusId, bookType) {
             // (4) Gọi API insert Drug cho từng thuốc
 
 
+
             alert('Đã lưu hồ sơ bệnh án thành công!');
 
         } catch (err) {
@@ -784,6 +800,7 @@ window.checkout = async function (bookId, cusId, bookType) {
         const resultGrid = button.parentElement.querySelector('.result-grid');
         resultGrid.insertAdjacentHTML('beforeend', createResultItemHtml());
     };
+
 
 
     // Remove individual test result item
@@ -1007,23 +1024,34 @@ window.checkout = async function (bookId, cusId, bookType) {
                 // **ĐÂY LÀ ĐIỂM QUAN TRỌNG NHẤT**
                 // Gán lại onchange sau khi render options!
                 serviceSelect.onchange = function () {
-                    const selectedOption = this.options[this.selectedIndex];
-                    if (this.value) {
-                        selectedSubId = this.value;
-                        selectedSubName = selectedOption.textContent;
+                const selectedOption = this.options[this.selectedIndex];
+                const subName = selectedOption?.textContent?.toLowerCase() || '';
 
-                        selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
-                        stepForm.style.display = 'block';
+                // Ẩn cả 2 form trước
+                document.getElementById('stepForm').style.display = 'none';
+                document.getElementById('testResultForm').style.display = 'none';
+
+                if (this.value) {
+                    selectedSubId = this.value;
+                    selectedSubName = selectedOption.textContent;
+                    selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
+
+                    if (subName.includes('xét nghiệm')) {
+                        document.getElementById('testResultForm').style.display = '';
+                        document.getElementById('selectedTestServiceTitle').innerHTML = `<i class="fas fa-vial"></i> ${subName}`;
+                        document.getElementById('testResultForm').setAttribute('data-bookid', bookId);
+                    } else {
+                        document.getElementById('stepForm').style.display = '';
                         document.getElementById('performedAt').value = getLocalDateTimeValue();
                         document.getElementById('stepResult').value = '';
                         document.getElementById('stepNote').value = '';
                         document.getElementById('stepStatus').value = 'pending';
-                    } else {
-                        stepForm.style.display = 'none';
-                        selectedSubId = null;
-                        selectedSubName = '';
                     }
-                };
+                } else {
+                    selectedSubId = null;
+                    selectedSubName = '';
+                }
+            };
 
                 // Nếu cần mặc định ẩn form
                 stepForm.style.display = 'none';
@@ -1050,75 +1078,84 @@ window.checkout = async function (bookId, cusId, bookType) {
     }
 
     function setupServiceSelectionForFollowUp(bookId) {
-        const serviceSelect = document.getElementById('serviceSelect');
-        const stepForm = document.getElementById('stepForm');
-        const selectedServiceTitle = document.getElementById('selectedServiceTitle');
-        const emptyStepsDiv = document.getElementById('emptySteps');
+    const serviceSelect = document.getElementById('serviceSelect');
+    const stepForm = document.getElementById('stepForm');
+    const selectedServiceTitle = document.getElementById('selectedServiceTitle');
+    const emptyStepsDiv = document.getElementById('emptySteps');
 
-        // 1. Fetch subservice list
-        fetch(`/api/booking-steps/${bookId}/subservice-of-visit-follow-up`)
-            .then(res => {
-                if (!res.ok) throw new Error(`API lỗi: ${res.status}`);
-                return res.json();
-            })
-            .then(async subs => {
-                serviceSelect.innerHTML = '<option value="">-- Chọn dịch vụ/bước --</option>';
-                if (!Array.isArray(subs) || subs.length === 0) {
-                    serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
-                    emptyStepsDiv.style.display = '';
-                    return;
+    fetch(`/api/booking-steps/${bookId}/subservice-of-visit-follow-up`)
+        .then(res => {
+            if (!res.ok) throw new Error(`API lỗi: ${res.status}`);
+            return res.json();
+        })
+        .then(async subs => {
+            serviceSelect.innerHTML = '<option value="">-- Chọn dịch vụ/bước --</option>';
+            if (!Array.isArray(subs) || subs.length === 0) {
+                serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
+                emptyStepsDiv.style.display = '';
+                return;
+            }
+            for (const sub of subs) {
+                const opt = document.createElement('option');
+                opt.value = sub.subId;
+                opt.textContent = sub.subName;
+                serviceSelect.appendChild(opt);
+
+                try {
+                    await fetch(`/api/booking-steps/set-pending/${bookId}/${sub.subId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            stepStatus: 'pending',
+                            performedAt: new Date().toISOString(),
+                            note: 'Đang tiến hành...',
+                        }),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                } catch (e) {
+                    console.error('Lỗi update step:', bookId, sub.subId, e);
                 }
-                for (const sub of subs) {
-                    const opt = document.createElement('option');
-                    opt.value = sub.subId;
-                    opt.textContent = sub.subName;
-                    serviceSelect.appendChild(opt);
+            }
 
-                    try {
-                        await fetch(`/api/booking-steps/set-pending/${bookId}/${sub.subId}`, {
-                            method: 'PUT',
-                            body: JSON.stringify({
-                                stepStatus: 'pending',
-                                performedAt: new Date().toISOString(),
-                                note: 'Đang tiến hành...',
-                            }),
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                    } catch (e) {
-                        console.error('Lỗi update step:', bookId, sub.subId, e);
-                    }
-                }
+            // Đặt event onchange ở đây mới đúng
+            serviceSelect.onchange = function () {
+                const selectedOption = this.options[this.selectedIndex];
+                const subName = selectedOption?.textContent?.toLowerCase() || '';
 
-                // **ĐÂY LÀ ĐIỂM QUAN TRỌNG NHẤT**
-                // Gán lại onchange sau khi render options!
-                serviceSelect.onchange = function () {
-                    const selectedOption = this.options[this.selectedIndex];
-                    if (this.value) {
-                        selectedSubId = this.value;
-                        selectedSubName = selectedOption.textContent;
+                // Ẩn cả 2 form trước
+                document.getElementById('stepForm').style.display = 'none';
+                document.getElementById('testResultForm').style.display = 'none';
 
-                        selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
-                        stepForm.style.display = 'block';
+                if (this.value) {
+                    selectedSubId = this.value;
+                    selectedSubName = selectedOption.textContent;
+                    selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
+
+                    if (subName.includes('xét nghiệm')) {
+                        document.getElementById('testResultForm').style.display = '';
+                        document.getElementById('selectedTestServiceTitle').innerHTML = `<i class="fas fa-vial"></i> ${subName}`;
+                        document.getElementById('testResultForm').setAttribute('data-bookid', bookId);
+                    } else {
+                        document.getElementById('stepForm').style.display = '';
                         document.getElementById('performedAt').value = getLocalDateTimeValue();
                         document.getElementById('stepResult').value = '';
                         document.getElementById('stepNote').value = '';
                         document.getElementById('stepStatus').value = 'pending';
-                    } else {
-                        stepForm.style.display = 'none';
-                        selectedSubId = null;
-                        selectedSubName = '';
                     }
-                };
+                } else {
+                    selectedSubId = null;
+                    selectedSubName = '';
+                }
+            };
 
-                // Nếu cần mặc định ẩn form
-                stepForm.style.display = 'none';
-            })
-            .catch(err => {
-                console.error('Lỗi lấy subservice:', err);
-                serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
-                emptyStepsDiv.style.display = '';
-            });
-    }
+            stepForm.style.display = 'none';
+        })
+        .catch(err => {
+            console.error('Lỗi lấy subservice:', err);
+            serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
+            emptyStepsDiv.style.display = '';
+        });
+}
+
 
 
 
@@ -1427,7 +1464,6 @@ window.checkout = async function (bookId, cusId, bookType) {
         });
 
 
-        document.querySelector('#prescriptionNumber').value = localStorage.getItem('drugId') || '';
         // Final prescription data
         return {
             prescriptionNumber: document.getElementById('prescriptionNumber')?.value || '',
@@ -1443,13 +1479,13 @@ window.checkout = async function (bookId, cusId, bookType) {
     window.savePrescription = async function () {
         const data = collectPrescriptionData();
 
-        const drugId = localStorage.getItem('drugId') || '';
-
+        
         if (!data.prescriptionNumber) {
             showNotification('❌ Không tìm thấy prescriptionNumber. Vui lòng kiểm tra lại.', 'error');
             return;
         }
 
+        const drugId = data.prescriptionNumber;
         try {
             // 1. Cập nhật bảng Drug
             const updateDrugRes = await fetch(`/api/drugs/update/${drugId}`, {
@@ -1458,7 +1494,7 @@ window.checkout = async function (bookId, cusId, bookType) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    createdAt: data.prescriptionDate || new Date().toISOString(),
+                    createdAt: data.prescriptionDate || new Date().toISOString().replace('Z','').split('.')[0],
                     note: data.diagnosis || ''
                 })
             });
@@ -1508,9 +1544,9 @@ window.checkout = async function (bookId, cusId, bookType) {
                 <ul style="margin-left: 20px;">
                     ${prescriptionData.drugs.map((drug, index) => `
                         <li style="margin-bottom: 10px;">
-                            <strong>${drug.name} ${drug.dosage}</strong><br>
+                            <strong>${drug.drugName} ${drug.dosage}</strong><br>
                             ${drug.frequency}, ${drug.duration}<br>
-                            <em>${drug.instructions}</em>
+                            <em>${drug.drugItemNote}</em>
                         </li>
                     `).join('')}
                 </ul>
@@ -1550,6 +1586,137 @@ window.checkout = async function (bookId, cusId, bookType) {
 
 
     // Patient List functionality is defined outside DOMContentLoaded for global access
+
+
+// Tạo 1 row chỉ số mới
+function createTestIndexRowHtml() {
+    return `
+    <div class="test-index-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
+        <input type="text" class="test-index-name" placeholder="Tên chỉ số" style="width: 120px;">
+        <input type="text" class="test-index-value" placeholder="Giá trị" style="width: 60px;">
+        <select class="test-index-unit" style="width: 80px;">
+            <option value="triệu/ml">triệu/ml</option>
+            <option value="mg/ml">mg/ml</option>
+            <option value="%">%</option>
+            <option value="ng/ml">ng/ml</option>
+        </select>
+        <select class="test-index-status" style="width: 100px;">
+            <option value="Bình thường">Bình thường</option>
+            <option value="Cao">Cao</option>
+            <option value="Thấp">Thấp</option>
+            <option value="Bất thường">Bất thường</option>
+        </select>
+        <button type="button" onclick="window.removeTestResultRow(this)" style="color:red;"><i class="fas fa-trash"></i></button>
+    </div>
+    `;
+}
+
+// Thêm chỉ số mới
+window.addTestResultRow = function () {
+    const grid = document.getElementById('testResultGrid');
+    if (!grid) {
+        alert('Không tìm thấy testResultGrid');
+        return;
+    }
+    grid.insertAdjacentHTML('beforeend', createTestIndexRowHtml());
+};
+
+// Xóa 1 chỉ số
+window.removeTestResultRow = function (btn) {
+    if (btn && btn.parentElement) {
+        btn.parentElement.remove();
+    }
+};
+
+// Hàm saveTestResultStep, collect all values (ví dụ, bạn tuỳ ý gọi API lưu)
+window.saveTestResultStep = async function () {
+    // 1. Lấy dữ liệu form
+    const performedAt = document.getElementById('testPerformedAt').value;
+    const note = document.getElementById('testNote').value || '';
+    const grid = document.getElementById('testResultGrid');
+    const rows = grid.querySelectorAll('.test-index-row');
+    const results = [];
+    rows.forEach(row => {
+        results.push({
+            indexName: row.querySelector('.test-index-name').value,
+            value: row.querySelector('.test-index-value').value,
+            unit: row.querySelector('.test-index-unit').value,
+            status: row.querySelector('.test-index-status').value
+        });
+    });
+
+    // Lấy subId, subName từ select hoặc biến toàn cục
+    const serviceSelect = document.getElementById('serviceSelect');
+    const subId = serviceSelect ? serviceSelect.value : window.selectedSubId;
+    const subName = serviceSelect
+        ? serviceSelect.options[serviceSelect.selectedIndex].textContent
+        : window.selectedSubName;
+
+    // Lấy bookId
+    const testResultForm = document.getElementById('testResultForm');
+    const bookingId = testResultForm.getAttribute('data-bookid') || window.currentBookingId;
+
+    // Trạng thái
+    const stepStatus = document.getElementById('testStatus').value;
+
+    // 2. Tìm bookingStepId từ API
+    let bookingStepId = null;
+    try {
+        const res = await fetch(`/api/booking-steps/find-id/${bookingId}/${subId}`);
+        if (res.ok) {
+            const data = await res.json();
+            bookingStepId = data.bookingStepId || null;
+        }
+    } catch (err) {
+        console.error('Không tìm được bookingStepId:', err);
+    }
+
+    // 3. Build payload
+    const testResultPayload = [{
+        bookingStepId: bookingStepId, // Đảm bảo đúng bookingStepId
+        bookingId: bookingId,
+        subId: subId,
+        subName: subName,
+        performedAt: performedAt,
+        results: results,
+        note: note,
+        stepStatus: stepStatus
+    }];
+    console.log("Type of stepStatus:", typeof stepStatus, stepStatus);
+
+    // 4. Gửi về backend để lưu
+    try {
+        const response = await fetch('/api/booking-steps/save-test-results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(testResultPayload)
+        });
+        if (!response.ok) {
+            const errMsg = await response.text();
+            throw new Error(errMsg);
+        }
+        // Optional: reload kết quả hoặc show thông báo
+        if (typeof showNotification === 'function') showNotification('Đã lưu kết quả xét nghiệm!', 'success');
+        else alert('Đã lưu kết quả xét nghiệm!');
+        window.cancelTestResultForm();
+        // Nếu muốn reload lại danh sách đã thực hiện, gọi hàm render lại luôn
+        // loadAndRenderTestResults(bookingId);
+    } catch (err) {
+        alert('Lưu thất bại!');
+        console.error('Lỗi khi lưu test results:', err);
+    }
+};
+
+
+
+// Cancel form
+window.cancelTestResultForm = function () {
+    document.getElementById('testResultForm').style.display = 'none';
+    document.getElementById('testResultGrid').innerHTML = '';
+    document.getElementById('testPerformedAt').value = '';
+    document.getElementById('testNote').value = '';
+};
+
 
 
 

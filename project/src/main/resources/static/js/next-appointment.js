@@ -162,10 +162,10 @@ function showNotification(message, type) {
                     <td>
                         <div class="action-buttons">
                             ${patient.recordStatus === 'closed' 
-                                ? `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId})">
+                                ? `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId}, ${patient.recordId})">
                                     <i class="fas fa-eye"></i> Xem hồ sơ
                                    </button>`
-                                : `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId})">
+                                : `<button class="btn-action btn-view" onclick="viewPatientRecord(${patient.cusId}, ${patient.bookId}, ${patient.recordId})">
                                     <i class="fas fa-edit"></i> Sửa hồ sơ
                                    </button>`
                             }
@@ -293,7 +293,7 @@ function showNotification(message, type) {
                         loadAndRenderTestResults(currentPatientData.bookId);
                         break;
                     case 'history':
-                        loadMedicalHistory(currentPatientData);
+                        loadMedicalHistory(currentPatientData.recordId);
                         break;
                     case 'treatment':
                         loadTreatmentPlan(currentPatientData);
@@ -310,7 +310,8 @@ function showNotification(message, type) {
         }
 
         // Enhanced patient record viewing - ✅ FIXED: Sử dụng dữ liệu đã load  
-        async function viewPatientRecord(cusId, bookId) {
+        async function viewPatientRecord(cusId, bookId, recordId) {
+            if(recordId) {
             try {
                 showLoading();
                 
@@ -349,7 +350,20 @@ function showNotification(message, type) {
                 // Load medical record data
                 if (bookId) {
                     console.log('Loading medical record data for bookId:', bookId);
-                    
+
+            const res = await fetch(`/api/medical-records/${recordId}`);
+            if (!res.ok) throw new Error('Không tìm thấy hồ sơ bệnh án');
+            const record = await res.json();
+            console.log('🎯 DEBUG: Loaded medical record:', record);
+
+            // Gán vào UI tab "Hồ sơ bệnh án"
+            document.getElementById('recordStatus').value = record.recordStatus || '';
+            document.getElementById('recordCreatedDate').value = formatDateTimeForInput(record.createdAt);
+            document.getElementById('diagnosis').value = record.diagnosis || '';
+            document.getElementById('treatmentPlan').value = record.treatmentPlan || '';
+            document.getElementById('dischargeDate').value = formatDateTimeForInput(record.dischargeDate);
+            document.getElementById('medicalNote').value = record.note || '';
+                        
                     // Load test results and prescription data
                     loadAndRenderTestResults(bookId);
                     await loadExistingPrescriptionData(bookId);
@@ -362,7 +376,7 @@ function showNotification(message, type) {
                 hideLoading();
                 showErrorMessage('Không thể tải hồ sơ bệnh nhân. Vui lòng thử lại sau.');
             }
-        }
+        }}
 
         function populatePatientInfo(patientData) {
             // Basic patient information - using correct field names
@@ -428,73 +442,45 @@ function showNotification(message, type) {
             document.getElementById('serviceName').textContent = patientData.serviceName || 'Chưa xác định';
         }
 
-        async function loadMedicalHistory(patientData) {
-            const historyContent = document.getElementById('historyContent');
-            
+        async function loadMedicalHistory(recordId) {
             try {
-                // Show loading
-                historyContent.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Đang tải lịch sử khám...</div>';
-                
-                // Fetch medical history
-                const response = await fetch(`/api/customer/${patientData.cusId}/medical-history`);
-                
-                if (response.ok) {
-                    const historyData = await response.json();
-                    renderMedicalHistory(historyData);
-                } else {
-                    // Use sample data if API not available
-                    renderSampleHistory();
-                }
-            } catch (error) {
-                console.error('Error loading medical history:', error);
-                renderSampleHistory();
+                const res = await fetch(`/api/medical-records/customer/${recordId}/medical-history`);
+                if (!res.ok) throw new Error("Lỗi server");
+                const history = await res.json();
+                console.log('✅ Lấy lịch sử khám thành công:', history); // <== log này
+                renderMedicalHistory(history); // ✅ dùng hàm đúng
+            } catch (err) {
+                console.error("Error loading medical history:", err);
+                showNotification("Không thể tải lịch sử khám", "error");
             }
         }
 
-        function renderMedicalHistory(historyData) {
-            const historyContent = document.getElementById('historyContent');
-            
-            if (historyData && historyData.length > 0) {
-                let historyHtml = '';
-                historyData.forEach(record => {
-                    historyHtml += `
-                        <div class="history-item">
-                            <div class="history-header">
-                                <div class="history-date">${formatDate(record.createdAt)}</div>
-                                <div class="history-status ${record.recordStatus}">${record.recordStatus === 'active' ? 'Đang điều trị' : 'Đã kết thúc'}</div>
-                            </div>
-                            <div class="history-content">
-                                <div class="history-info">
-                                    <p><strong>Mã hồ sơ:</strong> MR${String(record.recordId).padStart(3, '0')}</p>
-                                    <p><strong>Dịch vụ:</strong> ${record.serviceName || 'N/A'}</p>
-                                    <p><strong>Bác sĩ điều trị:</strong> ${record.doctorName || 'N/A'}</p>
-                                </div>
-                                <div class="history-details">
-                                    <p><strong>Chẩn đoán:</strong> ${record.diagnosis || 'N/A'}</p>
-                                    <p><strong>Kế hoạch điều trị:</strong> ${record.treatmentPlan || 'N/A'}</p>
-                                    <p><strong>Ngày dự kiến kết thúc:</strong> ${formatDate(record.dischargeDate) || 'N/A'}</p>
-                                </div>
-                                <div class="history-notes">
-                                    <p><strong>Ghi chú:</strong> ${record.medicalNotes || 'Không có ghi chú'}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                historyContent.innerHTML = historyHtml;
-            } else {
-                renderSampleHistory();
-            }
-        }
 
-        function renderSampleHistory() {
-            document.getElementById('historyContent').innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: #64748b;">
-                    <i class="fas fa-history" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                    <p>Chưa có lịch sử bệnh án</p>
-                </div>
-            `;
-        }
+function renderMedicalHistory(historyData) {
+    const historyContainer = document.getElementById('medical-history-content');
+    if (!historyContainer) {
+        console.warn('Không tìm thấy #medical-history-content trong DOM');
+        return;
+    }
+
+    if (!historyData || historyData.length === 0) {
+        historyContainer.innerHTML = '<p class="text-muted">Không có lịch sử khám.</p>';
+        return;
+    }
+
+    historyContainer.innerHTML = historyData.map(item => `
+        <div class="history-item">
+            <p><strong>Mã đặt:</strong> ${item.bookId}</p>
+            <p><strong>Loại:</strong> ${item.bookType}</p>
+            <p><strong>Trạng thái:</strong> ${item.bookStatus}</p>
+            <p><strong>Thời gian:</strong> ${item.date} | ${item.time}</p>
+            <p><strong>Dịch vụ con:</strong> ${(item.subNames || []).join(', ')}</p>
+            <hr>
+        </div>
+    `).join('');
+}
+
+
 
         async function loadTreatmentPlan(patientData) {
             const treatmentContent = document.getElementById('treatmentContent');
@@ -504,8 +490,8 @@ function showNotification(message, type) {
                 
                 // Fetch treatment plan using bookId
                 let treatmentData = null;
-                if (patientData.bookId) {
-                    const response = await fetch(`/api/booking-steps/by-booking/${patientData.bookId}`);
+                if (patientData.recordId) {
+                    const response = await fetch(`/api/booking-steps/all-booking-steps/${patientData.recordId}`);
                     if (response.ok) {
                         treatmentData = await response.json();
                     }
@@ -520,79 +506,154 @@ function showNotification(message, type) {
 
         function renderTreatmentPlan(treatmentData, patientData) {
             const treatmentContent = document.getElementById('treatmentContent');
-            
-            if (treatmentData && treatmentData.length > 0) {
-                let treatmentHtml = `
-                    <div class="current-service">
-                        <h5><i class="fas fa-medical-kit"></i> Dịch vụ hiện tại</h5>
-                        <div class="service-card">
-                            <h6>${patientData.currentBooking?.serviceName || 'Dịch vụ điều trị'}</h6>
-                            <p class="service-description">Các bước điều trị được thực hiện theo kế hoạch của bác sĩ</p>
-                        </div>
-                    </div>
-                    
-                    <div class="sub-services">
-                        <h5><i class="fas fa-list-check"></i> Các bước điều trị chi tiết</h5>
-                `;
-                
-                treatmentData.forEach((step, index) => {
-                    const statusClass = step.stepStatus === 'completed' ? 'completed' : 
-                                      step.stepStatus === 'pending' ? 'current' : 'pending';
-                    const statusIcon = step.stepStatus === 'completed' ? 'fa-check-circle' : 
-                                      step.stepStatus === 'pending' ? 'fa-clock' : 'fa-circle';
-                    
-                    treatmentHtml += `
-                        <div class="sub-service-item ${statusClass}">
-                            <div class="sub-service-header">
-                                <span class="step-number">${index + 1}</span>
-                                <div class="sub-service-info">
-                                    <h6>${step.subServiceName || `Bước ${index + 1}`}</h6>
-                                    <p>${step.stepResult || 'Đang thực hiện theo kế hoạch'}</p>
-                                </div>
-                                <div class="sub-service-details">
-                                    <span class="estimated-day">${formatDate(step.performedAt) || 'Dự kiến'}</span>
-                                </div>
-                                <span class="status-icon ${statusClass}"><i class="fas ${statusIcon}"></i></span>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                const completedSteps = treatmentData.filter(step => step.stepStatus === 'completed').length;
-                const pendingSteps = treatmentData.filter(step => step.stepStatus === 'pending').length;
-                
-                treatmentHtml += `
-                        </div>
-                        <div class="treatment-summary">
-                            <h5><i class="fas fa-chart-pie"></i> Tổng quan điều trị</h5>
-                            <div class="summary-grid">
-                                <div class="summary-item">
-                                    <span class="summary-label">Tổng số bước:</span>
-                                    <span class="summary-value">${treatmentData.length}</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-label">Đã hoàn thành:</span>
-                                    <span class="summary-value">${completedSteps}</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-label">Đang thực hiện:</span>
-                                    <span class="summary-value">${pendingSteps}</span>
-                                </div>
-                            </div>
-                        </div>
-                `;
-                
-                treatmentContent.innerHTML = treatmentHtml;
-            } else {
+
+            if (!treatmentData || treatmentData.length === 0) {
                 renderSampleTreatmentPlan();
+                return;
             }
+
+            // Calculate progress statistics
+            let totalSteps = 0;
+            let completedSteps = 0;
+            let currentSteps = 0;
+            let pendingSteps = 0;
+
+            treatmentData.forEach(booking => {
+                if (booking.bookingSteps) {
+                    booking.bookingSteps.forEach(step => {
+                        totalSteps++;
+                        if (step.stepStatus === 'completed') completedSteps++;
+                        else if (step.stepStatus === 'pending') currentSteps++;
+                        else pendingSteps++;
+                    });
+                }
+            });
+
+            const progressPercentage = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+
+            let treatmentHtml = `
+                <!-- Treatment Header -->
+                <div class="treatment-header">
+                    <h3><i class="fas fa-stethoscope"></i> Kế hoạch điều trị</h3>
+                    <p>${patientData?.currentBooking?.serviceName || 'Dịch vụ điều trị'}</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">${totalSteps}</div>
+                        <div class="stat-label">Tổng bước</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${completedSteps}</div>
+                        <div class="stat-label">Hoàn thành</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${currentSteps}</div>
+                        <div class="stat-label">Đang thực hiện</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${pendingSteps}</div>
+                        <div class="stat-label">Chờ thực hiện</div>
+                    </div>
+                </div>
+
+                <!-- Progress Section -->
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <div class="progress-title">Tiến độ điều trị</div>
+                        <div class="progress-percentage">${progressPercentage}%</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                    </div>
+                </div>
+
+                <!-- Steps Container -->
+                <div class="steps-container">
+                    <div class="steps-title">
+                        <i class="fas fa-list-check"></i>
+                        Các bước điều trị
+                    </div>
+            `;
+
+            let stepCounter = 1;
+            treatmentData.forEach((booking, bIndex) => {
+                if (booking.bookingSteps && booking.bookingSteps.length > 0) {
+                    booking.bookingSteps.forEach((step, stepIndex) => {
+                        const statusClass = step.stepStatus === 'completed' ? 'completed'
+                            : step.stepStatus === 'pending' ? 'current'
+                                : 'pending';
+                        
+                        const statusText = step.stepStatus === 'completed' ? 'Hoàn thành'
+                            : step.stepStatus === 'pending' ? 'Đang thực hiện'
+                                : 'Chờ thực hiện';
+
+                        treatmentHtml += `
+                            <div class="step-item ${statusClass}">
+                                <div class="step-number ${statusClass}">${stepCounter}</div>
+                                <div class="step-content">
+                                    <div class="step-name">${step.subName || `Bước ${stepCounter}`}</div>
+                                    <div class="step-description">${formatStepResult(step.result) || 'Đang thực hiện theo kế hoạch'}</div>
+                                    <div class="step-date">${formatDate(step.performedAt) || 'Dự kiến thực hiện'}</div>
+                                </div>
+                                <div class="step-status ${statusClass}">${statusText}</div>
+                            </div>
+                        `;
+                        stepCounter++;
+                    });
+                }
+            });
+
+            treatmentHtml += `</div>`;
+
+            // Add drug information if available
+            treatmentData.forEach((booking, bIndex) => {
+                if (booking.drugId && booking.drugItems && booking.drugItems.length > 0) {
+                    treatmentHtml += `
+                        <div class="drug-section">
+                            <div class="drug-title">
+                                <i class="fas fa-pills"></i>
+                                Đơn thuốc đã kê (Đợt ${bIndex + 1})
+                            </div>
+                            <table class="drug-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tên thuốc</th>
+                                        <th>Liều dùng</th>
+                                        <th>Tần suất</th>
+                                        <th>Thời gian</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    booking.drugItems.forEach((item, dIndex) => {
+                        treatmentHtml += `
+                            <tr>
+                                <td>${dIndex + 1}</td>
+                                <td>${item.drugName || '-'}</td>
+                                <td>${item.dosage || '-'}</td>
+                                <td>${item.frequency || '-'}</td>
+                                <td>${item.duration || '-'}</td>
+                                <td>${item.drugItemNote || ''}</td>
+                            </tr>
+                        `;
+                    });
+                    treatmentHtml += `</tbody></table></div>`;
+                }
+            });
+
+            treatmentContent.innerHTML = treatmentHtml;
         }
 
         function renderSampleTreatmentPlan() {
             document.getElementById('treatmentContent').innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: #64748b;">
-                    <i class="fas fa-tasks" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                    <p>Chưa có kế hoạch điều trị</p>
+                <div class="treatment-empty">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>Chưa có kế hoạch điều trị</h3>
+                    <p>Bệnh nhân chưa có kế hoạch điều trị nào được thiết lập.</p>
                 </div>
             `;
         }
@@ -656,15 +717,16 @@ function showNotification(message, type) {
                             prescriptionHtml += `
                                 <div class="drug-item" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
                                     <div class="drug-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                        <h6 style="margin: 0; color: #1e293b; font-weight: 600;">${item.itemName}</h6>
+                                        <h6 style="margin: 0; color: #1e293b; font-weight: 600;">${item.drugName || 'Tên thuốc'}</h6>
                                         <span style="background: #f0fdf4; color: #166534; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 500;">
-                                            ${item.quantity} ${item.unit || 'viên'}
+                                            ${item.dosage || 'Liều dùng'}
                                         </span>
                                     </div>
                                     <div class="drug-details" style="color: #6b7280; font-size: 0.9rem;">
                                         <p style="margin: 0.25rem 0;"><strong>Liều dùng:</strong> ${item.dosage || 'Theo chỉ định bác sĩ'}</p>
-                                        <p style="margin: 0.25rem 0;"><strong>Cách dùng:</strong> ${item.instructions || 'Uống sau ăn'}</p>
-                                        <p style="margin: 0.25rem 0;"><strong>Ghi chú:</strong> ${item.note || 'Không có ghi chú đặc biệt'}</p>
+                                        <p style="margin: 0.25rem 0;"><strong>Tần suất:</strong> ${item.frequency || 'Theo chỉ định'}</p>
+                                        <p style="margin: 0.25rem 0;"><strong>Thời gian:</strong> ${item.duration || 'Theo chỉ định'}</p>
+                                        <p style="margin: 0.25rem 0;"><strong>Ghi chú:</strong> ${item.drugItemNote || 'Không có ghi chú đặc biệt'}</p>
                                     </div>
                                 </div>
                             `;
@@ -714,35 +776,50 @@ function showNotification(message, type) {
         }
 
         function renderTestResults(testData) {
-            const testResultsContent = document.getElementById('testResultsContent');
+            console.log('🔍 renderTestResults called with data:', testData);
+            
+            // Tìm element chứa test results trong tab "Xét nghiệm"
+            const testResultsContent = document.querySelector('#testsTab .booking-steps-results');
+            
+            if (!testResultsContent) {
+                console.error('❌ Không tìm thấy element chứa test results');
+                return;
+            }
+            
+            console.log('✅ Found test results container:', testResultsContent);
             
             if (testData && testData.length > 0) {
                 let testHtml = `
-                    <div class="booking-steps-results">
-                        <h5><i class="fas fa-vial"></i> Kết quả các bước đã thực hiện</h5>
+                    <!-- Test Results Header -->
+                    <div class="test-results-header">
+                        <h3><i class="fas fa-flask"></i> Kết quả xét nghiệm</h3>
+                        <p>Xem chi tiết các kết quả xét nghiệm đã thực hiện</p>
+                    </div>
+
+                    <!-- Test Results Container -->
+                    <div class="test-results-container">
+                        <div class="test-results-title">
+                            <i class="fas fa-vial"></i>
+                            Danh sách xét nghiệm
+                        </div>
                 `;
                 
                 testData.forEach(test => {
                     const statusClass = test.stepStatus === 'completed' ? 'completed' : 'pending';
+                    const statusText = test.stepStatus === 'completed' ? 'Hoàn thành' : 'Đang thực hiện';
                     
                     testHtml += `
-                        <div class="step-result-item" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 1rem; padding: 1rem;">
-                            <div class="step-result-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                <div class="step-info">
-                                    <h6 style="margin: 0; color: #1e293b; font-weight: 600;">${test.subServiceName}</h6>
-                                    <span style="color: #64748b; font-size: 0.9rem;">${formatDateTime(test.performedAt)}</span>
+                        <div class="test-result-item ${statusClass}">
+                            <div class="test-result-header">
+                                <div>
+                                    <div class="test-result-name">${test.subServiceName}</div>
+                                    <div class="test-result-date">${formatDateTime(test.performedAt)}</div>
                                 </div>
-                                <span class="step-status ${statusClass}" style="padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 500;">
-                                    ${test.stepStatus === 'completed' ? 'Hoàn thành' : 'Đang chờ'}
-                                </span>
+                                <div class="test-result-status ${statusClass}">${statusText}</div>
                             </div>
-                            <div class="step-result-content">
-                                <div class="result-summary" style="background: #f8fafc; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
-                                    <p style="margin: 0; color: #374151;"><strong>Kết quả:</strong> ${test.stepResult || 'Chưa có kết quả'}</p>
-                                </div>
-                                <div class="result-note" style="color: #6b7280;">
-                                    <strong>Ghi chú:</strong> ${test.stepNote || 'Không có ghi chú đặc biệt'}
-                                </div>
+                            <div class="test-result-content">
+                                ${formatTestResult(test.stepResult)}
+                                ${test.stepNote ? `<div class="test-result-note"><strong>Ghi chú:</strong> ${test.stepNote}</div>` : ''}
                             </div>
                         </div>
                     `;
@@ -755,11 +832,165 @@ function showNotification(message, type) {
             }
         }
 
+        // Helper function to format test result JSON
+        function formatTestResult(resultString) {
+            console.log('🔍 formatTestResult called with:', resultString);
+            
+            if (!resultString) {
+                console.log('❌ No result string provided');
+                return '<div class="raw-result">Chưa có kết quả</div>';
+            }
+
+            try {
+                // Try to parse as JSON
+                const results = JSON.parse(resultString);
+                console.log('✅ Parsed JSON successfully:', results);
+                
+                if (Array.isArray(results) && results.length > 0) {
+                    // Check if it's the expected format with indexName, unit, status, value
+                    if (results[0].indexName && results[0].unit && results[0].status && results[0].value) {
+                        console.log('✅ Expected format detected, formatting results...');
+                        let formattedHtml = '<div class="formatted-results">';
+                        
+                        results.forEach((item, index) => {
+                            const statusClass = getStatusClass(item.status);
+                            console.log(`📊 Formatting item ${index}:`, item, 'status class:', statusClass);
+                            formattedHtml += `
+                                <div class="result-item">
+                                    <div class="result-label">${item.indexName}</div>
+                                    <div class="result-value">${item.value}</div>
+                                    <div class="result-unit">${item.unit}</div>
+                                    <div class="result-status ${statusClass}">${item.status}</div>
+                                </div>
+                            `;
+                        });
+                        
+                        formattedHtml += '</div>';
+                        console.log('✅ Formatted HTML generated');
+                        return formattedHtml;
+                    } else {
+                        console.log('❌ Unexpected format, showing as formatted JSON');
+                    }
+                }
+                
+                // If not the expected format, show as formatted JSON
+                return `<div class="raw-result">${JSON.stringify(results, null, 2)}</div>`;
+                
+            } catch (error) {
+                console.error('❌ Error parsing JSON:', error);
+                // If not valid JSON, show as plain text
+                return `<div class="raw-result">${resultString}</div>`;
+            }
+        }
+
+        // Helper function to get status class
+        function getStatusClass(status) {
+            if (!status) return 'normal';
+            
+            const statusLower = status.toLowerCase();
+            if (statusLower.includes('bình thường') || statusLower.includes('normal')) return 'normal';
+            if (statusLower.includes('cao') || statusLower.includes('high')) return 'high';
+            if (statusLower.includes('thấp') || statusLower.includes('low')) return 'low';
+            if (statusLower.includes('bất thường') || statusLower.includes('abnormal')) return 'abnormal';
+            
+            return 'normal';
+        }
+
+        // Helper function to format step result JSON for treatment tab
+        function formatStepResult(resultString) {
+            if (!resultString) {
+                return 'Đang thực hiện theo kế hoạch';
+            }
+
+            try {
+                // Try to parse as JSON
+                const results = JSON.parse(resultString);
+                
+                if (Array.isArray(results) && results.length > 0) {
+                    // Check if it's the expected format with indexName, unit, status, value
+                    if (results[0].indexName && results[0].unit && results[0].status && results[0].value) {
+                        let formattedText = '';
+                        
+                        results.forEach((item, index) => {
+                            if (index > 0) formattedText += ', ';
+                            formattedText += `${item.indexName}: ${item.value} ${item.unit} (${item.status})`;
+                        });
+                        
+                        return formattedText;
+                    }
+                }
+                
+                // If not the expected format, return as is
+                return resultString;
+                
+            } catch (error) {
+                // If not valid JSON, return as plain text
+                return resultString;
+            }
+        }
+
+        // Test function to verify formatting works
+        function testFormatTestResult() {
+            const testJson = '[{"indexName":"uihui","unit":"mg/ml","status":"Bình thường","value":"1.2"},{"indexName":"1323","unit":"mg/ml","status":"Bình thường","value":"33"}]';
+            console.log('🧪 Testing formatTestResult with:', testJson);
+            const result = formatTestResult(testJson);
+            console.log('🧪 Test result:', result);
+            
+            // Hiển thị kết quả test trong tab "Xét nghiệm"
+            const testResultsContent = document.querySelector('#testsTab .booking-steps-results');
+            if (testResultsContent) {
+                testResultsContent.innerHTML = `
+                    <div class="test-results-header">
+                        <h3><i class="fas fa-flask"></i> Test Format Results</h3>
+                        <p>Kết quả test format JSON</p>
+                    </div>
+                    <div class="test-results-container">
+                        <div class="test-results-title">
+                            <i class="fas fa-vial"></i>
+                            Test Data
+                        </div>
+                        <div class="test-result-item completed">
+                            <div class="test-result-header">
+                                <div>
+                                    <div class="test-result-name">Test Xét nghiệm</div>
+                                    <div class="test-result-date">${new Date().toLocaleString()}</div>
+                                </div>
+                                <div class="test-result-status completed">Test</div>
+                            </div>
+                            <div class="test-result-content">
+                                ${result}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return result;
+        }
+
+        // Test function for treatment tab formatting
+        function testTreatmentFormat() {
+            const testJson = '[{"indexName":"uihui","unit":"mg/ml","status":"Bình thường","value":"1.2"},{"indexName":"1323","unit":"mg/ml","status":"Bình thường","value":"33"}]';
+            console.log('🧪 Testing formatStepResult with:', testJson);
+            const result = formatStepResult(testJson);
+            console.log('🧪 Treatment format result:', result);
+            alert('Treatment format result: ' + result);
+            return result;
+        }
+
         function renderSampleTestResults() {
-            document.getElementById('testResultsContent').innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: #64748b;">
-                    <i class="fas fa-flask" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                    <p>Chưa có kết quả xét nghiệm</p>
+            const testResultsContent = document.querySelector('#testsTab .booking-steps-results');
+            
+            if (!testResultsContent) {
+                console.error('Không tìm thấy element chứa test results');
+                return;
+            }
+            
+            testResultsContent.innerHTML = `
+                <div class="test-results-empty">
+                    <i class="fas fa-flask"></i>
+                    <h3>Chưa có kết quả xét nghiệm</h3>
+                    <p>Bệnh nhân chưa có kết quả xét nghiệm nào được thực hiện.</p>
                 </div>
             `;
         }
@@ -1459,14 +1690,17 @@ function showNotification(message, type) {
         }
 
         async function loadAndRenderTestResults(bookId) {
+            console.log('🔍 loadAndRenderTestResults called with bookId:', bookId);
             try {
                 const res = await fetch(`/api/booking-steps/test-results/${bookId}`);
+                console.log('📡 API response status:', res.status);
                 if (!res.ok) throw new Error('API error');
                 const data = await res.json();
-                console.log('Test Results API:', data);
-                window.renderTestResults(data);
+                console.log('📊 Test Results API data:', data);
+                renderTestResults(data);
             } catch (e) {
-                window.renderTestResults([]);
+                console.error('❌ Error loading test results:', e);
+                renderTestResults([]);
             }
         }
 

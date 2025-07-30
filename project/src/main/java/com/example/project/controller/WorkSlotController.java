@@ -9,7 +9,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.DoctorWeekScheduleDTO;
 import com.example.project.dto.WorkSlotBookingDTO;
@@ -154,5 +161,23 @@ public class WorkSlotController {
         Optional<WorkSlot> updated = workSlotService.updateSlotStatus(slotId, status);
         return updated.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+       /**
+     * ✅ API MỚI: Lấy tất cả WorkSlot cho tất cả bác sĩ trong một ngày
+     * GET /api/workslots/all?date={date}
+     * @param date Ngày cần lấy WorkSlot (yyyy-MM-dd)
+     * @return List<WorkSlot> với thông tin đầy đủ
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<WorkSlot>> getAllWorkSlotsByDate(@RequestParam String date) {
+        try {
+            LocalDate workDate = LocalDate.parse(date);
+            List<WorkSlot> workSlots = workSlotRepository.findByWorkDate(workDate);
+            return ResponseEntity.ok(workSlots);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 }

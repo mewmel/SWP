@@ -105,25 +105,11 @@
                 <div class="stat-card blue">
                     <div class="stat-content">
                         <div class="stat-info">
-                            <p class="stat-title">Tổng số bệnh nhân</p>
-                            <p class="stat-value">156</p>
-                            <!-- <p class="stat-trend positive">+12% so với tháng trước</p> -->
+                            <p class="stat-title">Tổng số account bệnh nhân đang có trên hệ thống</p>
+                            <p class="stat-value" id="totalPatientsCount">-</p>
                         </div>
                         <div class="stat-icon">
                             <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card green">
-                    <div class="stat-content">
-                        <div class="stat-info">
-                            <p class="stat-title">Doanh thu tháng</p>
-                            <p class="stat-value">45.600.000</p>
-                            <p class="stat-trend positive">+8% so với tháng trước</p>
-                        </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-chart-line"></i>
                         </div>
                     </div>
                 </div>
@@ -132,7 +118,7 @@
                     <div class="stat-content">
                         <div class="stat-info">
                             <p class="stat-title">Dịch vụ khả dụng</p>
-                            <p class="stat-value">12</p>
+                            <p class="stat-value" id="availableServicesCount">-</p>
                         </div>
                         <div class="stat-icon">
                             <i class="fas fa-stethoscope"></i>
@@ -140,51 +126,15 @@
                     </div>
                 </div>
 
-                <!-- <div class="stat-card yellow">
+                <div class="stat-card green">
                     <div class="stat-content">
                         <div class="stat-info">
-                            <p class="stat-title">Lịch hẹn hôm nay</p>
-                            <p class="stat-value">8</p>
+                            <p class="stat-title">Tổng số nhân viên</p>
+                            <p class="stat-value" id="totalStaffCount">-</p>
+                            <p class="stat-trend positive">Bao gồm bác sĩ và các quản lý</p>
                         </div>
                         <div class="stat-icon">
-                            <i class="fas fa-calendar"></i>
-                        </div>
-                    </div>
-                </div> -->
-            </div>
-
-            <!-- Revenue and System Status -->
-            <div class="dashboard-row">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Doanh thu tháng</h3>
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="card-content">
-                        <p class="revenue-amount">45.600.000 ₫</p>
-                        <p class="revenue-detail">Từ 89 lượt khám hoàn thành</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Trạng thái hệ thống</h3>
-                        <div class="status-indicator online"></div>
-                    </div>
-                    <div class="card-content">
-                        <div class="system-stats">
-                            <div class="system-stat">
-                                <span>Uptime hệ thống</span>
-                                <span class="value">99.9%</span>
-                            </div>
-                            <div class="system-stat">
-                                <span>Phản hồi trung bình</span>
-                                <span class="value">120ms</span>
-                            </div>
-                            <div class="system-stat">
-                                <span>Người dùng online</span>
-                                <span class="value">24</span>
-                            </div>
+                            <i class="fas fa-user-md"></i>
                         </div>
                     </div>
                 </div>
@@ -211,9 +161,9 @@
                     </div>
                     <div class="filter-group">
                         <select id="serviceFilter">
-                            <option value="all">Tất cả dịch vụ</option>
-                            <option value="withService">Có dịch vụ</option>
-                            <option value="withoutService">Chưa có dịch vụ</option>
+                            <option value="all">Tất cả bệnh nhân</option>
+                            <option value="withService">Đã đặt lịch</option>
+                            <option value="withoutService">Chưa đặt lịch</option>
                         </select>
                     </div>
                 </div>
@@ -227,8 +177,8 @@
                             <tr>
                                 <th>Bệnh nhân</th>
                                 <th>Liên hệ</th>
-                                <th>Dịch vụ</th>
-                                <th>Ngày đăng ký</th>
+                                <th>Trạng thái lịch hẹn</th>
+                                <th>Ngày sinh</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -243,20 +193,20 @@
             <div class="summary-card">
                 <div class="summary-stats">
                     <div class="summary-stat">
-                        <div class="summary-value" id="totalPatientsCount">0</div>
-                        <div class="summary-label">Tổng số hiển thị</div>
+                        <div class="summary-value" id="customerTableTotalCount">0</div>
+                        <div class="summary-label">Tổng số bệnh nhân</div>
                     </div>
                     <div class="summary-stat">
-                        <div class="summary-value green" id="withServiceCount">0</div>
-                        <div class="summary-label">Có dịch vụ</div>
+                        <div class="summary-value green" id="customerWithServiceCount">0</div>
+                        <div class="summary-label">Đã đặt lịch</div>
                     </div>
                     <div class="summary-stat">
-                        <div class="summary-value yellow" id="withoutServiceCount">0</div>
-                        <div class="summary-label">Chưa có dịch vụ</div>
+                        <div class="summary-value yellow" id="customerWithoutServiceCount">0</div>
+                        <div class="summary-label">Chưa đặt lịch</div>
                     </div>
                     <div class="summary-stat">
-                        <div class="summary-value purple" id="activeCount">0</div>
-                        <div class="summary-label">Đang hoạt động</div>
+                        <div class="summary-value purple" id="customerActiveCount">0</div>
+                        <div class="summary-label">Tài khoản active</div>
                     </div>
                 </div>
             </div>
@@ -302,7 +252,6 @@
                                 <th>Liên hệ</th>
                                 <th>Chuyên khoa</th>
                                 <th>Trạng thái</th>
-                                <th>Ngày tạo</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -447,21 +396,8 @@
 
             <!-- Services Table -->
             <div class="card">
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Dịch vụ</th>
-                                <th>Danh mục</th>
-                                <th>Thời gian</th>
-                                <th>Giá</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="servicesTableBody">
-                            <!-- Table rows will be populated by JavaScript -->
-                        </tbody>
-                    </table>
+                <div class="services-container" id="servicesContainer">
+                    <!-- Services will be populated by JavaScript -->
                 </div>
             </div>
 
@@ -599,6 +535,10 @@
                     <label for="doctorDescription">Mô tả về bác sĩ</label>
                     <textarea id="doctorDescription" rows="3"></textarea>
                 </div>
+                <div class="form-group">
+                    <label for="doctorPassword">Mật khẩu *</label>
+                    <input type="password" id="doctorPassword" required>
+                </div>
                 <div class="form-group checkbox-group">
                     <input type="checkbox" id="doctorIsActive" checked>
                     <label for="doctorIsActive">Kích hoạt tài khoản</label>
@@ -642,18 +582,12 @@
                             <option value="">Chọn vai trò</option>
                             <option value="admin">Quản trị viên</option>
                             <option value="manager">Quản lý</option>
-                            <option value="supervisor">Giám sát</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="managerPermissions">Quyền hạn</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="permissions" value="user_management"> Quản lý người dùng</label>
-                        <label><input type="checkbox" name="permissions" value="service_management"> Quản lý dịch vụ</label>
-                        <label><input type="checkbox" name="permissions" value="report_access"> Xem báo cáo</label>
-                        <label><input type="checkbox" name="permissions" value="system_config"> Cấu hình hệ thống</label>
-                    </div>
+                    <label for="managerPassword">Mật khẩu *</label>
+                    <input type="password" id="managerPassword" required>
                 </div>
                 <div class="form-group checkbox-group">
                     <input type="checkbox" id="managerIsActive" checked>
@@ -717,6 +651,18 @@
     
     function openDoctorModal() {
         const modal = document.getElementById('doctorModal');
+        const title = document.getElementById('doctorModalTitle');
+        const submitBtn = document.getElementById('doctorSubmitBtn');
+        const form = document.getElementById('doctorForm');
+        
+        // Reset form và biến editing
+        form.reset();
+        window.currentEditingDoctor = null;
+        
+        // Set title và button text cho thêm mới
+        title.textContent = 'Thêm bác sĩ mới';
+        submitBtn.textContent = 'Thêm mới';
+        
         modal.style.display = 'flex';
         modal.style.alignItems = 'center';
         modal.style.justifyContent = 'center';
@@ -728,10 +674,23 @@
         modal.classList.remove('show');
         setTimeout(() => modal.style.display = 'none', 300);
         document.getElementById('doctorForm').reset();
+        window.currentEditingDoctor = null;
     }
     
     function openManagerModal() {
         const modal = document.getElementById('managerModal');
+        const title = document.getElementById('managerModalTitle');
+        const submitBtn = document.getElementById('managerSubmitBtn');
+        const form = document.getElementById('managerForm');
+        
+        // Reset form và biến editing
+        form.reset();
+        window.currentEditingManager = null;
+        
+        // Set title và button text cho thêm mới
+        title.textContent = 'Thêm quản lý mới';
+        submitBtn.textContent = 'Thêm mới';
+        
         modal.style.display = 'flex';
         modal.style.alignItems = 'center';
         modal.style.justifyContent = 'center';
@@ -743,6 +702,7 @@
         modal.classList.remove('show');
         setTimeout(() => modal.style.display = 'none', 300);
         document.getElementById('managerForm').reset();
+        window.currentEditingManager = null;
     }
     
     // Đóng modal khi click vào background
