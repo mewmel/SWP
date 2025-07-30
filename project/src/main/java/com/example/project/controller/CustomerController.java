@@ -1,6 +1,10 @@
 package com.example.project.controller;
 
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.project.dto.CusCurrentBooking;
 import com.example.project.entity.Booking;
 import com.example.project.entity.Customer;
-import com.example.project.entity.Drug;
 import com.example.project.entity.MedicalRecord;
 import com.example.project.entity.Service;
 import com.example.project.repository.BookingRepository;
@@ -78,7 +81,7 @@ public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @Reques
     return ResponseEntity.ok(saved);
 }
 
-    @GetMapping("/full-record/{cusId}, {bookId}")
+    @GetMapping("/full-record/{cusId},{bookId}")
 public ResponseEntity<CusCurrentBooking> getFullRecord(@PathVariable Integer cusId, @PathVariable Integer bookId) {
     try {
     // 1. Tìm customer
@@ -143,17 +146,19 @@ public ResponseEntity<CusCurrentBooking> getFullRecord(@PathVariable Integer cus
     if (booking.getSerId() != null) {
         service = serviceRepository.findById(booking.getSerId()).orElse(null);
     }
-    bookingDTO.setSerName(service != null ? service.getSerName() : null);
+
+    // lấy drugId từ booking nếu có
+    if (booking.getDrugId() != null) {  
+        dto.setDrugId(booking.getDrugId());
+    } else {
+        dto.setDrugId(null); // hoặc để null nếu không có
+    }
+        // Gán tên dịch vụ vào DTO
+        bookingDTO.setSerName(service != null ? service.getSerName() : null);
         dto.setCurrentBooking(bookingDTO);
     }
 
-    // lấy drugId
-    Drug drug = drugRepository.findByBookId(booking.getBookId()).orElse(null);
-    if (drug != null) {
-        dto.setDrugId(drug.getDrugId());
-    } else {
-        dto.setDrugId(null);
-    }
+
 
     return ResponseEntity.ok(dto);
 
@@ -161,7 +166,6 @@ public ResponseEntity<CusCurrentBooking> getFullRecord(@PathVariable Integer cus
       log.error("Lỗi khi lấy full-record cho cusId={}", cusId, ex);
       return ResponseEntity.status(500).build();
     }
-
 }
 
 @PutMapping("/update-full-record/{cusId}")
@@ -207,9 +211,115 @@ public ResponseEntity<?> updateFullRecord(@PathVariable Integer cusId, @RequestB
     }
 }
 
+    /**
+     * API lấy tổng số bệnh nhân (chỉ đếm tài khoản active)
+     * GET /api/customer/count
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Object>> getCustomerCount() {
+        try {
+            // Chỉ đếm những bệnh nhân có trạng thái active hoặc null (mặc định là active)
+            long totalActiveCustomers = customerRepository.findAll().stream()
+                .filter(customer -> "active".equals(customer.getCusStatus()) || 
+                                  customer.getCusStatus() == null)
+                .count();
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalCustomers", totalActiveCustomers);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", "Lỗi khi lấy số lượng bệnh nhân"));
+        }
+    }
+
+    /**
+     * API lấy danh sách tất cả bệnh nhân cho quản lý (chỉ trả về tài khoản active)
+     * GET /api/customer/all
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<Map<String, Object>>> getAllCustomers() {
+        try {
+            List<Customer> allCustomers = customerRepository.findAll();
+            List<Map<String, Object>> customerList = new ArrayList<>();
+            
+            for (Customer customer : allCustomers) {
+                // Chỉ xử lý những bệnh nhân có trạng thái active hoặc null (mặc định là active)
+                if ("active".equals(customer.getCusStatus()) || customer.getCusStatus() == null) {
+                    Map<String, Object> customerData = new HashMap<>();
+                    customerData.put("cusId", customer.getCusId());
+                    customerData.put("cusFullName", customer.getCusFullName());
+                    customerData.put("cusGender", customer.getCusGender());
+                    customerData.put("cusDate", customer.getCusDate());
+                    customerData.put("cusEmail", customer.getCusEmail());
+                    customerData.put("cusPhone", customer.getCusPhone());
+                    customerData.put("cusAddress", customer.getCusAddress());
+                    customerData.put("cusStatus", customer.getCusStatus());
+                    customerData.put("cusOccupation", customer.getCusOccupation());
+                    customerData.put("emergencyContact", customer.getEmergencyContact());
+                    customerData.put("cusProvider", customer.getCusProvider());
+                    
+                    // Kiểm tra xem bệnh nhân có booking nào không
+                    List<Booking> customerBookings = bookingRepository.findByCusIdOrderByBookIdDesc(customer.getCusId());
+                    customerData.put("hasBookings", !customerBookings.isEmpty());
+                    customerData.put("totalBookings", customerBookings.size());
+                    
+                    // Lấy booking gần nhất (đã được sắp xếp theo BookId giảm dần)
+                    if (!customerBookings.isEmpty()) {
+                        Booking latestBooking = customerBookings.get(0);
+                        customerData.put("lastBookingDate", latestBooking.getCreatedAt());
+                        customerData.put("lastBookingStatus", latestBooking.getBookStatus());
+                    }
+                    
+                    customerList.add(customerData);
+                }
+            }
+            
+            return ResponseEntity.ok(customerList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * API cập nhật trạng thái bệnh nhân (active/inactive)
+     * PUT /api/customer/{cusId}/status
+     */
+    @PutMapping("/{cusId}/status")
+    public ResponseEntity<Map<String, Object>> updateCustomerStatus(
+            @PathVariable Integer cusId,
+            @RequestBody Map<String, String> request) {
+        try {
+            String status = request.get("status");
+            if (status == null || (!status.equals("active") && !status.equals("inactive"))) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("error", "Trạng thái không hợp lệ. Phải là 'active' hoặc 'inactive'");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            Optional<Customer> customerOpt = customerRepository.findById(cusId);
+            if (customerOpt.isEmpty()) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("error", "Không tìm thấy bệnh nhân với ID: " + cusId);
+                return ResponseEntity.notFound().build();
+            }
+
+            Customer customer = customerOpt.get();
+            customer.setCusStatus(status);
+            customerRepository.save(customer);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Cập nhật trạng thái bệnh nhân thành công");
+            response.put("cusId", cusId);
+            response.put("status", status);
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Lỗi khi cập nhật trạng thái bệnh nhân");
+            return ResponseEntity.status(500).body(error);
+        }
+    }
 }
-
-
-
-
-
