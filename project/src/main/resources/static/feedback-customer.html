@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá dịch vụ - FertilityEHR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .feedback-container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 20px;
+        }
+
+        .feedback-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 15px;
+        }
+
+        .feedback-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .feedback-header p {
+            margin: 10px 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .feedback-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .feedback-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .rating-section {
+            margin-bottom: 25px;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .star {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffd700;
+        }
+
+        .rating-text {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .feedback-history {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .feedback-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .feedback-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feedback-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .doctor-service-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .doctor-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .service-name {
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        .feedback-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .feedback-rating {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 10px;
+        }
+
+        .feedback-rating .star {
+            font-size: 1.2rem;
+        }
+
+        .feedback-comment {
+            color: #555;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #888;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        .subtitle {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .service-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .service-item.rated {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: #f8f9fa;
+        }
+
+        .service-item.rated:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #e0e0e0;
+        }
+
+        .service-info {
+            flex: 1;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .doctor-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .service-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .service-status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .service-status.rated {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .service-name {
+            color: #667eea;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .service-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .feedback-action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .feedback-action.rated {
+            background: #6c757d;
+        }
+
+        .feedback-action i {
+            font-size: 1.1rem;
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .close-modal {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.2s ease;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .selected-service-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .selected-service-info > div {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .selected-service-info strong {
+            color: #333;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .cancel-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .cancel-btn:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .feedback-container {
+                padding: 10px;
+            }
+
+            .feedback-header h1 {
+                font-size: 2rem;
+            }
+
+            .feedback-tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                padding: 12px 20px;
+            }
+
+            .feedback-form,
+            .feedback-history {
+                padding: 20px;
+            }
+
+            .feedback-header-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .service-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .service-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .feedback-action {
+                align-self: stretch;
+                justify-content: center;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .modal-header,
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .modal-footer button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Dashboard Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><img src="img/logo.png" alt="Logo Meditab"></a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Bệnh án</a></li>
+                    <li><a href="lich-dieu-tri.html">Lịch điều trị</a></li>
+                    <li><a href="ket-qua-xet-nghiem.html">Kết quả xét nghiệm</a></li>
+                    <li><a href="ho-so-ca-nhan.html">Hồ sơ cá nhân</a></li>
+                    <div class="notification-wrapper" style="position: relative;">
+                        <button class="notification-icon" id="notificationBtn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge"></span>
+                        </button>
+
+                        <!-- Dropdown Notification -->
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-dropdown-header">
+                                <h3>Thông báo</h3>
+                                <button class="notification-settings-btn">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+
+                            <div class="notification-dropdown-body" id="notificationDropdownBody">
+                                <!-- JS sẽ render động -->
+                            </div>
+                        </div>
+                    </div>
+                    </li>
+                </ul>
+            </nav>
+            <div class="user-menu" style="display:none;">
+                <h4>Welcome</h4><span style="font-weight: bold; color:#4A90E2" class="user-name"></span>
+                <button class="user-sidebar-btn" id="openSidebar" aria-label="Mở menu cá nhân">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <button class="logout-btn"
+                    style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+    <!-- Sidebar giống trang index -->
+    <aside class="sidebar" id="sidebar" style="display:none;">
+        <button class="close-sidebar" id="closeSidebar" aria-label="Đóng menu">&times;</button>
+        <div class="sidebar-user">
+            <i class="fas fa-user-circle"></i>
+            <span class="sidebar-username"></span>
+        </div>
+        <a href="dashboard.html"><i class="fas fa-user"></i> Bệnh án</a>
+        <a href="lich-dieu-tri.html"><i class="fas fa-calendar-check"></i> Lịch điều trị</a>
+        <a href="index.html#blog"><i class="fas fa-book-open"></i> Blog</a>
+        <a href="dat-lich.html"><i class="fas fa-calendar-alt"></i> Đặt lịch</a>
+        <a href="ho-so-ca-nhan.html"><i class="fas fa-cog"></i> Cài đặt</a>
+        <a href="#"><i class="fas fa-headset"></i> Hỗ trợ & liên hệ</a>
+        <a href="bac-si-dashboard.html">Bác sĩ dashboard</a>
+        <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+    </aside>
+    <main class="feedback-container">
+        <div class="feedback-header">
+            <h1><i class="fas fa-star"></i> Đánh giá dịch vụ</h1>
+            <p>Chia sẻ trải nghiệm của bạn để chúng tôi cải thiện chất lượng dịch vụ</p>
+        </div>
+
+        <div class="feedback-tabs">
+            <button class="tab-button active" onclick="switchTab('new-feedback')">
+                <i class="fas fa-plus-circle"></i> Đánh giá mới
+            </button>
+            <button class="tab-button" onclick="switchTab('feedback-history')">
+                <i class="fas fa-history"></i> Lịch sử đánh giá
+            </button>
+        </div>
+
+                <!-- Tab Đánh giá mới -->
+        <div id="new-feedback" class="tab-content active">
+            <div class="feedback-history">
+                <h3><i class="fas fa-list"></i> Chọn dịch vụ để đánh giá</h3>
+                <p class="subtitle">Bạn chỉ có thể đánh giá những dịch vụ đã hoàn thành</p>
+                
+                <div id="completedServicesList">
+                    <!-- Data will be loaded from API -->
+                    <div class="loading-state" style="text-align: center; padding: 50px; color: #666;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Đang tải danh sách dịch vụ...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal form feedback -->
+            <div id="feedbackModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-star"></i> Đánh giá dịch vụ</h3>
+                        <span class="close-modal" onclick="closeFeedbackModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="selected-service-info">
+                            <div class="selected-doctor">Bác sĩ: <strong id="selectedDoctor"></strong></div>
+                            <div class="selected-service">Dịch vụ: <strong id="selectedService"></strong></div>
+                            <div class="selected-date">Ngày khám: <strong id="selectedDate"></strong></div>
+                        </div>
+
+                        <form id="feedbackForm">
+                            <input type="hidden" id="selectedDocId">
+                            <input type="hidden" id="selectedSerId">
+
+                            <div class="rating-section">
+                                <label>Đánh giá tổng thể:</label>
+                                <div class="rating-stars" id="ratingStars">
+                                    <span class="star" data-rating="1"><i class="fas fa-star"></i></span>
+                                    <span class="star" data-rating="2"><i class="fas fa-star"></i></span>
+                                    <span class="star" data-rating="3"><i class="fas fa-star"></i></span>
+                                    <span class="star" data-rating="4"><i class="fas fa-star"></i></span>
+                                    <span class="star" data-rating="5"><i class="fas fa-star"></i></span>
+                                </div>
+                                <div class="rating-text" id="ratingText">Vui lòng chọn số sao đánh giá</div>
+                                <input type="hidden" id="rating" name="rating" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="comment">Nhận xét chi tiết:</label>
+                                <textarea id="comment" class="form-control" rows="4" 
+                                        placeholder="Chia sẻ trải nghiệm của bạn về dịch vụ, thái độ phục vụ, chất lượng khám chữa bệnh..."></textarea>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="cancel-btn" onclick="closeFeedbackModal()">Hủy</button>
+                                <button type="submit" class="submit-btn">
+                                    <i class="fas fa-paper-plane"></i> Gửi đánh giá
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Lịch sử đánh giá -->
+        <div id="feedback-history" class="tab-content">
+            <div class="feedback-history">
+                <h3><i class="fas fa-history"></i> Lịch sử đánh giá của bạn</h3>
+
+                                <div id="feedbackList">
+                    <!-- Data will be loaded from API -->
+                    <div class="loading-state" style="text-align: center; padding: 50px; color: #666;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Đang tải lịch sử đánh giá...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer id="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>FertilityEHR</h3>
+                    <p>Hệ thống quản lý điều trị vô sinh hiếm muộn hàng đầu Việt Nam</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Liên hệ</h3>
+                    <p><i class="fas fa-phone"></i> 1900 1234</p>
+                    <p><i class="fas fa-envelope"></i> contact@fertilityehr.vn</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Modal functions
+        function openFeedbackForm(docId, serId, doctorName, serviceName, serviceDate) {
+            // Set selected service information
+            document.getElementById('selectedDoctor').textContent = doctorName;
+            document.getElementById('selectedService').textContent = serviceName;
+            document.getElementById('selectedDate').textContent = serviceDate;
+            document.getElementById('selectedDocId').value = docId;
+            document.getElementById('selectedSerId').value = serId;
+            
+            // Reset form
+            document.getElementById('feedbackForm').reset();
+            document.getElementById('rating').value = '';
+            document.getElementById('ratingText').textContent = 'Vui lòng chọn số sao đánh giá';
+            document.querySelectorAll('.rating-stars .star').forEach(s => s.classList.remove('active'));
+            
+            // Show modal
+            document.getElementById('feedbackModal').style.display = 'flex';
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'none';
+        }
+
+        // Rating functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            setupRatingSystem();
+            setupFormSubmission();
+            loadCompletedServices();
+            loadFeedbackHistory();
+        });
+
+        function setupRatingSystem() {
+            const stars = document.querySelectorAll('.rating-stars .star');
+            const ratingInput = document.getElementById('rating');
+            const ratingText = document.getElementById('ratingText');
+            
+            const ratingTexts = {
+                1: 'Rất không hài lòng',
+                2: 'Không hài lòng',
+                3: 'Bình thường',
+                4: 'Hài lòng',
+                5: 'Rất hài lòng'
+            };
+
+            stars.forEach(star => {
+                star.addEventListener('click', function () {
+                    const rating = parseInt(this.dataset.rating);
+                    ratingInput.value = rating;
+                    ratingText.textContent = ratingTexts[rating];
+
+                    // Update star display
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+
+                star.addEventListener('mouseenter', function () {
+                    const rating = parseInt(this.dataset.rating);
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.style.color = '#ffd700';
+                        } else {
+                            s.style.color = '#ddd';
+                        }
+                    });
+                });
+            });
+
+            // Reset hover effect when mouse leaves rating area
+            document.querySelector('.rating-stars').addEventListener('mouseleave', function () {
+                const currentRating = parseInt(ratingInput.value) || 0;
+                stars.forEach((s, index) => {
+                    if (index < currentRating) {
+                        s.style.color = '#ffd700';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+        }
+
+        function setupFormSubmission() {
+            document.getElementById('feedbackForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                
+                const ratingInput = document.getElementById('rating');
+                
+                // Validate rating
+                if (!ratingInput.value) {
+                    alert('Vui lòng chọn số sao đánh giá!');
+                    return;
+                }
+
+                // Get form data
+                const formData = {
+                    cusId: parseInt(localStorage.getItem('cusId') || 1), // Will get from user session
+                    docId: parseInt(document.getElementById('selectedDocId').value),
+                    serId: parseInt(document.getElementById('selectedSerId').value),
+                    rating: parseInt(ratingInput.value),
+                    comment: document.getElementById('comment').value
+                };
+
+                console.log('Submitting feedback data:', formData);
+                
+                try {
+                    // Call the API
+                    const response = await fetch('/api/feedback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Cảm ơn bạn đã gửi đánh giá!');
+                        
+                        // Close modal and refresh data
+                        closeFeedbackModal();
+                        
+                        // Reload both completed services and feedback history
+                        loadCompletedServices();
+                        loadFeedbackHistory();
+                    } else {
+                        alert('Lỗi: ' + result.message);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error submitting feedback:', error);
+                    alert('Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại!');
+                }
+            });
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('feedbackModal');
+            if (event.target === modal) {
+                closeFeedbackModal();
+            }
+        });
+
+        // Load completed services from API
+        async function loadCompletedServices() {
+            try {
+                const cusId = localStorage.getItem('cusId') || 1; // Get from user session
+                console.log('Loading completed services for cusId:', cusId);
+                
+                const response = await fetch(`/api/feedback/completed-services/${cusId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load completed services');
+                }
+                
+                const completedServices = await response.json();
+                console.log('Completed services:', completedServices);
+                
+                renderCompletedServices(completedServices);
+                
+            } catch (error) {
+                console.error('Error loading completed services:', error);
+                showEmptyCompletedServices();
+            }
+        }
+
+        // Render completed services list
+        function renderCompletedServices(services) {
+            const container = document.getElementById('completedServicesList');
+            
+            if (services.length === 0) {
+                showEmptyCompletedServices();
+                return;
+            }
+            
+            let html = '';
+            services.forEach(service => {
+                const isRated = service.alreadyFeedback;
+                const statusClass = isRated ? 'rated' : '';
+                const statusText = isRated ? 'Đã đánh giá' : 'Đã hoàn thành';
+                const statusColor = isRated ? 'rated' : 'completed';
+                const actionIcon = isRated ? 'fas fa-check-circle' : 'fas fa-star';
+                const actionText = isRated ? 'Đã đánh giá' : 'Đánh giá';
+                const onclickAttr = isRated ? '' : `onclick="openFeedbackForm(${service.docId}, ${service.serId}, '${service.doctorName}', '${service.serviceName}', '${service.serviceDate}')"`;
+                
+                html += `
+                    <div class="service-item ${statusClass}" ${onclickAttr}>
+                        <div class="service-info">
+                            <div class="service-header">
+                                <div class="doctor-name">${service.doctorName}</div>
+                                <div class="service-status ${statusColor}">${statusText}</div>
+                            </div>
+                            <div class="service-name">${service.serviceName}</div>
+                            <div class="service-date">Ngày khám: ${formatDate(service.serviceDate)}</div>
+                        </div>
+                        <div class="feedback-action ${statusClass}">
+                            <i class="${actionIcon}"></i>
+                            <span>${actionText}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Show empty state for completed services
+        function showEmptyCompletedServices() {
+            const container = document.getElementById('completedServicesList');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>Chưa có dịch vụ nào hoàn thành</h3>
+                    <p>Bạn chưa hoàn thành dịch vụ nào để có thể đánh giá.</p>
+                </div>
+            `;
+        }
+
+        // Load feedback history from API
+        async function loadFeedbackHistory() {
+            try {
+                const cusId = localStorage.getItem('cusId') || 1; // Get from user session
+                console.log('Loading feedback history for cusId:', cusId);
+                
+                const response = await fetch(`/api/feedback/history/${cusId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load feedback history');
+                }
+                
+                const feedbackHistory = await response.json();
+                console.log('Feedback history:', feedbackHistory);
+                
+                renderFeedbackHistory(feedbackHistory);
+                
+            } catch (error) {
+                console.error('Error loading feedback history:', error);
+                showEmptyFeedbackHistory();
+            }
+        }
+
+        // Render feedback history
+        function renderFeedbackHistory(feedbacks) {
+            const container = document.getElementById('feedbackList');
+            
+            if (feedbacks.length === 0) {
+                showEmptyFeedbackHistory();
+                return;
+            }
+            
+            let html = '';
+            feedbacks.forEach(feedback => {
+                const stars = generateStarsHTML(feedback.rating);
+                const date = formatDate(feedback.feedbackDate);
+                
+                html += `
+                    <div class="feedback-card">
+                        <div class="feedback-header-info">
+                            <div class="doctor-service-info">
+                                <div class="doctor-name">${feedback.doctorName}</div>
+                                <div class="service-name">${feedback.serviceName}</div>
+                            </div>
+                            <div class="feedback-date">${date}</div>
+                        </div>
+                        <div class="feedback-rating">
+                            ${stars}
+                        </div>
+                        <div class="feedback-comment">
+                            "${feedback.comment || 'Không có nhận xét'}"
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Show empty state for feedback history
+        function showEmptyFeedbackHistory() {
+            const container = document.getElementById('feedbackList');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-comment-slash"></i>
+                    <h3>Chưa có đánh giá nào</h3>
+                    <p>Bạn chưa gửi đánh giá nào. Hãy chia sẻ trải nghiệm của mình!</p>
+                </div>
+            `;
+        }
+
+        // Generate stars HTML for rating display
+        function generateStarsHTML(rating) {
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const activeClass = i <= rating ? 'active' : '';
+                starsHTML += `<span class="star ${activeClass}"><i class="fas fa-star"></i></span>`;
+            }
+            return starsHTML;
+        }
+
+        // Format date helper
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        // Load user info when page loads
+        window.addEventListener('DOMContentLoaded', function () {
+            const userName = localStorage.getItem('cusFullName') || 'Người dùng';
+            const userNameElement = document.querySelector('.user-name');
+            if (userNameElement) {
+                userNameElement.textContent = userName;
+            }
+        });
+
+        // Logout function
+        function logout() {
+            localStorage.clear();
+            localStorage.setItem('logoutMessage', 'Đăng xuất thành công!');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,6 @@
 package com.example.project.repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -149,5 +148,7 @@ BookingPatientService findBookingPatientServiceByBookId(@Param("bookId") Integer
         """, nativeQuery = true)
     List<Object[]> findAllBookingsWithSubServices(@Param("cusId") Integer cusId);
 
+        // Thêm method để lấy booking theo customer và status
+    List<Booking> findByCusIdAndBookStatusOrderByCreatedAtDesc(Integer cusId, String bookStatus);
 
 }

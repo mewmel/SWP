@@ -615,80 +615,16 @@
     <section class="testimonials">
         <div class="container">
             <h2 class="section-title">Khách hàng nói gì về chúng tôi</h2>
-            <div class="testimonial-slider">
-                <div class="testimonial">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"FertilityEHR đã hoàn toàn thay đổi quy trình làm việc của phòng khám
-                        chúng tôi. Các tính năng chuyên biệt cho y học sinh sản đã cải thiện đáng kể hiệu quả của chúng
-                        tôi."</p>
-                    <div class="testimonial-author">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Bác sĩ Nguyễn Thị Hương">
-                        <div class="author-info">
-                            <h4>Bác sĩ Nguyễn Thị Hương</h4>
-                            <p>Trung tâm Hỗ trợ Sinh sản Hà Nội</p>
-                        </div>
+            <div class="testimonial-slider" id="testimonialSlider">
+                <!-- Loading state -->
+                <div class="testimonial-loading" id="testimonialLoading">
+                    <div class="loading-content">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
+                        <p style="color: #666;">Đang tải đánh giá từ khách hàng...</p>
                     </div>
                 </div>
-                <div class="testimonial">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"Hệ thống theo dõi bệnh nhân rất chuyên nghiệp. Chúng tôi có thể dễ dàng
-                        truy cập thông tin và theo dõi tiến trình điều trị của từng bệnh nhân."</p>
-                    <div class="testimonial-author">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Bác sĩ Trần Văn Minh">
-                        <div class="author-info">
-                            <h4>Bác sĩ Trần Văn Minh</h4>
-                            <p>Phòng khám IVF Sài Gòn</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                    <p class="testimonial-text">"Tích hợp phòng xét nghiệm giúp chúng tôi tiết kiệm thời gian và giảm
-                        thiểu sai sót. Quy trình làm việc trở nên hiệu quả hơn nhiều."</p>
-                    <div class="testimonial-author">
-                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Bác sĩ Lê Thị Hà">
-                        <div class="author-info">
-                            <h4>Bác sĩ Lê Thị Hà</h4>
-                            <p>Bệnh viện Phụ sản Trung ương</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"Cổng thông tin bệnh nhân rất tiện lợi. Bệnh nhân có thể dễ dàng truy
-                        cập thông tin và liên lạc với chúng tôi mọi lúc."</p>
-                    <div class="testimonial-author">
-                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Bác sĩ Phạm Văn An">
-                        <div class="author-info">
-                            <h4>Bác sĩ Phạm Văn An</h4>
-                            <p>Phòng khám Nam khoa Hà Nội</p>
-                        </div>
-                    </div>
-                </div>
+                
+                <!-- Testimonials will be loaded here from API -->
             </div>
         </div>
     </section>
