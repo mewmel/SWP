@@ -189,409 +189,624 @@
 
     <div class="main-content">
         <div class="left-content">
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="test-results">
+                    <i class="fas fa-vial"></i> Kết quả xét nghiệm
+                </button>
+                <button class="tab-btn" data-tab="treatment-results">
+                    <i class="fas fa-stethoscope"></i> Kết quả bước điều trị
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Tab 1: Kết quả xét nghiệm -->
+                <div id="test-results" class="tab-pane active">
             <div class="results-list">
                 <div class="results-header">
-                    <h3><i class="fas fa-list"></i> Kết quả xét nghiệm & Kết quả bước điều trị</h3>
-                </div>
+                            <h3><i class="fas fa-vial"></i> Kết quả xét nghiệm</h3>
+                        </div>
+                        
+                        <!-- Loading và Error states -->
+                        <div id="test-results-loading" class="loading-message">
+                            <i class="fas fa-spinner fa-spin"></i> Đang tải kết quả xét nghiệm...
+                        </div>
+                        <div id="test-results-error" class="error-message" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i> Không thể tải kết quả xét nghiệm
+                        </div>
+                        
+                        <!-- Dynamic test results will be loaded here -->
+                        <div id="test-results-container" class="booking-steps-results" style="display: none;">
+                            <!-- Test results will be populated by JavaScript -->
+                        </div>
+                    </div>
+                            </div>
 
-                <!-- Kết quả các bước đã thực hiện -->
-                <div class="booking-steps-results">
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm AMH (dự trữ buồng trứng)</h4>
-                                <div class="test-date">18/06/2024 - 14:30</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-value">
-                                <strong>Kết quả:</strong>
-                                <span class="result-number">2.5</span>
-                                <span class="result-unit">ng/ml</span>
-                                <span class="result-status">(Bình thường)</span>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Dự trữ buồng trứng ở mức tốt, phù hợp cho điều trị IVF</span>
-                            </div>
-                        </div>
+                <!-- Tab 2: Kết quả bước điều trị -->
+                <div id="treatment-results" class="tab-pane">
+                    <div class="results-list">
+                        <div class="results-header">
+                            <h3><i class="fas fa-stethoscope"></i> Kết quả bước điều trị</h3>
                     </div>
 
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm nội tiết tố nữ (FSH, LH, E2)</h4>
-                                <div class="test-date">18/06/2024 - 14:30</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
+                        <!-- Loading và Error states -->
+                        <div id="treatment-results-loading" class="loading-message">
+                            <i class="fas fa-spinner fa-spin"></i> Đang tải kết quả điều trị...
                         </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">FSH:</span>
-                                    <span class="result-number">8.2</span>
-                                    <span class="result-unit">mIU/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">LH:</span>
-                                    <span class="result-number">5.1</span>
-                                    <span class="result-unit">mIU/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">E2:</span>
-                                    <span class="result-number">45</span>
-                                    <span class="result-unit">pg/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Các chỉ số nội tiết trong giới hạn bình thường</span>
-                            </div>
-                        </div>
+                        <div id="treatment-results-error" class="error-message" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i> Không thể tải kết quả điều trị
                     </div>
 
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm tinh dịch đồ</h4>
-                                <div class="test-date">18/06/2024 - 16:00</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
+                        <!-- Dynamic treatment results will be loaded here -->
+                        <div id="treatment-results-container" class="booking-steps-results" style="display: none;">
+                            <!-- Treatment results will be populated by JavaScript -->
                         </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">Nồng độ:</span>
-                                    <span class="result-number">45</span>
-                                    <span class="result-unit">triệu/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Khả năng vận động:</span>
-                                    <span class="result-number">65</span>
-                                    <span class="result-unit">%</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Hình thái:</span>
-                                    <span class="result-number">8</span>
-                                    <span class="result-unit">%</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Chất lượng tinh trùng tốt, phù hợp cho IVF</span>
+                    </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Siêu âm tử cung, buồng trứng</h4>
-                                <div class="test-date">19/06/2024 - 09:00</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-value">
-                                <strong>Kết quả:</strong>
-                                <span class="result-description">Tử cung bình thường, không có u xơ hay polyp. Buồng trứng có 12 nang noãn ở bên phải, 10 nang noãn ở bên trái.</span>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Cấu trúc tử cung và buồng trứng bình thường, thuận lợi cho điều trị</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm máu, viêm gan, HIV, giang mai</h4>
-                                <div class="test-date">19/06/2024 - 10:30</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">HBsAg:</span>
-                                    <span class="result-value">Âm tính</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Anti-HCV:</span>
-                                    <span class="result-value">Âm tính</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Anti-HIV:</span>
-                                    <span class="result-value">Âm tính</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">VDRL:</span>
-                                    <span class="result-value">Âm tính</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Không có bệnh truyền nhiễm, đủ điều kiện điều trị</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm hormone E2 (Estradiol) - Theo dõi điều trị</h4>
-                                <div class="test-date">24/06/2024 - 08:30</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">E2:</span>
-                                    <span class="result-number">245</span>
-                                    <span class="result-unit">pg/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">LH:</span>
-                                    <span class="result-number">12.3</span>
-                                    <span class="result-unit">mIU/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">FSH:</span>
-                                    <span class="result-number">8.7</span>
-                                    <span class="result-unit">mIU/ml</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Mức độ hormone E2 phù hợp với giai đoạn kích thích buồng trứng. Tiếp tục theo dõi và điều chỉnh liều thuốc.</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Siêu âm kiểm tra nang trứng - Theo dõi kích thích</h4>
-                                <div class="test-date">22/06/2024 - 14:00</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">Số nang trứng (phải):</span>
-                                    <span class="result-number">8</span>
-                                    <span class="result-unit">nang</span>
-                                    <span class="result-status">(Tốt)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Số nang trứng (trái):</span>
-                                    <span class="result-number">6</span>
-                                    <span class="result-unit">nang</span>
-                                    <span class="result-status">(Tốt)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Nang lớn nhất:</span>
-                                    <span class="result-number">15</span>
-                                    <span class="result-unit">mm</span>
-                                    <span class="result-status">(Phát triển tốt)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Nang noãn phát triển tốt, đáp ứng tích cực với thuốc kích thích buồng trứng</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm máu tổng quát</h4>
-                                <div class="test-date">20/06/2024 - 07:45</div>
-                            </div>
-                            <div class="test-status status-abnormal">Cần chú ý</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">Hemoglobin:</span>
-                                    <span class="result-number">10.2</span>
-                                    <span class="result-unit">g/dl</span>
-                                    <span class="result-status">(Thấp)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Tiểu cầu:</span>
-                                    <span class="result-number">380</span>
-                                    <span class="result-unit">K/μl</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">Bạch cầu:</span>
-                                    <span class="result-number">6.8</span>
-                                    <span class="result-unit">K/μl</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Cần bổ sung sắt và theo dõi chế độ ăn uống. Tái khám sau 2 tuần.</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm đường huyết</h4>
-                                <div class="test-date">18/06/2024 - 09:15</div>
-                            </div>
-                            <div class="test-status status-normal">Hoàn thành</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-label">Glucose:</span>
-                                    <span class="result-number">92</span>
-                                    <span class="result-unit">mg/dl</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-label">HbA1c:</span>
-                                    <span class="result-number">5.4</span>
-                                    <span class="result-unit">%</span>
-                                    <span class="result-status">(Bình thường)</span>
-                                </div>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Chỉ số đường huyết trong giới hạn bình thường</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-result-item">
-                        <div class="step-result-header">
-                            <div class="step-info">
-                                <h4>Xét nghiệm hormone AMH - Kiểm tra dự trữ buồng trứng</h4>
-                                <div class="test-date">25/06/2024 - 10:00</div>
-                            </div>
-                            <div class="test-status status-pending">Đang chờ kết quả</div>
-                        </div>
-                        <div class="step-result-content">
-                            <div class="result-value">
-                                <strong>Kết quả:</strong>
-                                <span class="result-pending">Đang xử lý, kết quả sẽ có trong 24-48 giờ</span>
-                            </div>
-                            <div class="result-note">
-                                <strong>Ghi chú:</strong>
-                                <span>Xét nghiệm để đánh giá lại dự trữ buồng trứng sau quá trình kích thích</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Test Summary -->
-                <div class="test-summary-section">
-                    <h4><i class="fas fa-chart-line"></i> Tổng kết xét nghiệm</h4>
-                    <div class="summary-card">
-                        <div class="summary-status success">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Hầu hết xét nghiệm đều bình thường</span>
-                        </div>
-                        <div class="summary-recommendation">
-                            <strong>Kết luận:</strong> Bệnh nhân đang có tiến triển tốt trong quá trình điều trị IVF.
-                            Cần theo dõi và bổ sung sắt để cải thiện tình trạng thiếu máu nhẹ.
-                        </div>
-                        <div class="next-step">
-                            <strong>Bước tiếp theo:</strong> Tiếp tục kích thích buồng trứng và chuẩn bị cho giai đoạn chọc hút trứng.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sidebar">
-                <div class="trend-chart">
-                    <div class="chart-header">
-                        <h3>Biểu đồ hormone E2</h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="hormoneChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="upcoming-tests">
-                    <h3><i class="fas fa-calendar-alt"></i> Xét nghiệm sắp tới</h3>
-                    <div class="upcoming-item">
-                        <div class="upcoming-date">
-                            <div class="day">28</div>
-                            <div class="month">T6</div>
-                        </div>
-                        <div class="upcoming-details">
-                            <div class="upcoming-title">Siêu âm theo dõi</div>
-                            <div class="upcoming-time">09:30 - Phòng siêu âm</div>
-                        </div>
-                    </div>
-                    <div class="upcoming-item">
-                        <div class="upcoming-date">
-                            <div class="day">30</div>
-                            <div class="month">CN</div>
-                        </div>
-                        <div class="upcoming-details">
-                            <div class="upcoming-title">Xét nghiệm máu</div>
-                            <div class="upcoming-time">08:00 - Phòng xét nghiệm</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="notes-section">
-                    <h3><i class="fas fa-sticky-note"></i> Ghi chú bác sĩ</h3>
-                    <div class="doctor-note">
-                        <div class="note-header">Kết quả E2 tốt</div>
-                        <div class="note-content">Mức độ hormone E2 phù hợp với giai đoạn kích thích buồng trứng. Tiếp tục theo dõi và điều chỉnh liều thuốc.</div>
-                        <div class="note-author">- BS. Nguyễn Thị Hương</div>
-                    </div>
-                    <div class="doctor-note">
-                        <div class="note-header">Hemoglobin thấp</div>
-                        <div class="note-content">Cần bổ sung sắt và theo dõi chế độ ăn uống. Tái khám sau 2 tuần.</div>
-                        <div class="note-author">- BS. Trần Văn Nam</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="right-content">
-            <div class="test-summary">
-                <div class="summary-card">
-                    <div class="summary-icon">
-                        <i class="fas fa-vial"></i>
-                    </div>
-                    <div class="summary-value">24</div>
-                    <div class="summary-label">Tổng xét nghiệm</div>
-                </div>
-            </div>
-        </div>
     </div>
 </main>
 <script src="js/auth-access.js"></script>
-<script src="js/result.js"></script>
 <script src="js/script.js"></script>
 <script src="js/notification-dropdown.js"></script>
+
+<script>
+// Function to check if a string is valid JSON with IndexResult structure
+function isIndexResultJSON(str) {
+    if (!str || typeof str !== 'string') return false;
+    
+    try {
+        const parsed = JSON.parse(str);
+        
+        // Check if it's an array of objects with IndexResult structure
+        if (Array.isArray(parsed)) {
+            return parsed.every(item => 
+                typeof item === 'object' && 
+                item !== null &&
+                'indexName' in item &&
+                'unit' in item &&
+                'status' in item &&
+                'value' in item
+            );
+        }
+        
+        // Check if it's a single object with IndexResult structure
+        if (typeof parsed === 'object' && parsed !== null) {
+            return 'indexName' in parsed && 
+                   'unit' in parsed && 
+                   'status' in parsed && 
+                   'value' in parsed;
+        }
+        
+        return false;
+    } catch (error) {
+        return false;
+    }
+}
+
+// Function to format IndexResult JSON to HTML
+function formatIndexResultJSON(jsonString) {
+    try {
+        const data = JSON.parse(jsonString);
+        
+        if (Array.isArray(data)) {
+            // Multiple test results
+            const resultHTML = data.map(item => {
+                const statusClass = getStatusClass(item.status);
+                return `
+                                <div class="result-item">
+                        <span class="result-label">${item.indexName}:</span>
+                        <span class="result-number">${item.value}</span>
+                        <span class="result-unit">${item.unit}</span>
+                        <span class="result-status ${statusClass}">(${item.status})</span>
+                    </div>
+                `;
+            }).join('');
+            
+            return `<div class="result-grid">${resultHTML}</div>`;
+        } else {
+            // Single test result
+            const statusClass = getStatusClass(data.status);
+            return `
+                                <div class="result-item">
+                    <span class="result-label">${data.indexName}:</span>
+                    <span class="result-number">${data.value}</span>
+                    <span class="result-unit">${data.unit}</span>
+                    <span class="result-status ${statusClass}">(${data.status})</span>
+                                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error parsing IndexResult JSON:', error);
+        return `<span class="result-description">Lỗi hiển thị kết quả</span>`;
+    }
+}
+
+// Function to format regular test result
+function formatRegularResult(resultString) {
+    if (!resultString || resultString.trim() === '') {
+        return '<span class="result-description">Chưa có kết quả</span>';
+    }
+    
+    // Try to parse as JSON first
+    try {
+        const parsed = JSON.parse(resultString);
+        // If it's not IndexResult structure, treat as regular JSON
+        if (!isIndexResultJSON(resultString)) {
+            return `<span class="result-description">${JSON.stringify(parsed, null, 2)}</span>`;
+        }
+    } catch (error) {
+        // Not JSON, treat as plain text
+        return `<span class="result-description">${resultString}</span>`;
+    }
+}
+
+// Function to get CSS class based on status
+function getStatusClass(status) {
+    if (!status) return '';
+    
+    const statusLower = status.toLowerCase();
+    if (statusLower.includes('bình thường') || statusLower.includes('normal') || statusLower.includes('tốt')) {
+        return 'status-normal';
+    } else if (statusLower.includes('thấp') || statusLower.includes('cao') || statusLower.includes('abnormal')) {
+        return 'status-abnormal';
+    } else if (statusLower.includes('chờ') || statusLower.includes('pending')) {
+        return 'status-pending';
+    }
+    return '';
+}
+
+// Function to format test result (main function)
+function formatTestResult(resultString) {
+    if (!resultString || resultString.trim() === '') {
+        return '<span class="result-description">Chưa có kết quả</span>';
+    }
+    
+    // Check if it's IndexResult JSON structure
+    if (isIndexResultJSON(resultString)) {
+        return formatIndexResultJSON(resultString);
+    } else {
+        return formatRegularResult(resultString);
+    }
+}
+
+// Tab switching functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Remove active class from all buttons and panes
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabPanes.forEach(p => p.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding pane
+            this.classList.add('active');
+            document.getElementById(targetTab).classList.add('active');
+            
+            // Load data based on active tab
+            if (targetTab === 'test-results') {
+                loadTestResults();
+            } else if (targetTab === 'treatment-results') {
+                loadTreatmentResults();
+            }
+        });
+    });
+    
+    // Load test results on page load
+    loadTestResults();
+});
+
+// Function to load test results from API
+async function loadTestResults() {
+    const loadingDiv = document.getElementById('test-results-loading');
+    const errorDiv = document.getElementById('test-results-error');
+    const containerDiv = document.getElementById('test-results-container');
+    
+    try {
+        loadingDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        containerDiv.style.display = 'none';
+        
+        // Debug: Log all localStorage items
+        console.log('All localStorage items:', Object.keys(localStorage).reduce((obj, key) => {
+            obj[key] = localStorage.getItem(key);
+            return obj;
+        }, {}));
+        
+        // Get customer ID from localStorage or session (check multiple possible keys)
+        const customerId = localStorage.getItem('customerId') || 
+                          localStorage.getItem('cusId') || 
+                          sessionStorage.getItem('customerId') || 
+                          sessionStorage.getItem('cusId');
+        
+        console.log('Found customerId:', customerId);
+        
+        if (!customerId) {
+            // Show login message instead of error
+            loadingDiv.style.display = 'none';
+            containerDiv.style.display = 'block';
+            containerDiv.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-user-lock"></i>
+                    <p>Vui lòng đăng nhập để xem kết quả xét nghiệm</p>
+                    <button onclick="openAuthModal('login')" class="btn-login" style="margin-top: 16px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                    </button>
+                                </div>
+            `;
+            return;
+        }
+        
+        const response = await fetch(`/api/booking-steps/results?cusId=${customerId}`);
+        
+        if (!response.ok) {
+            throw new Error('Không thể tải dữ liệu từ server');
+        }
+        
+        const testResults = await response.json();
+        
+        // Hide loading, show container
+        loadingDiv.style.display = 'none';
+        containerDiv.style.display = 'block';
+        
+        // Render test results (filter for test results)
+        renderTestResults(testResults);
+        
+    } catch (error) {
+        console.error('Error loading test results:', error);
+        loadingDiv.style.display = 'none';
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${error.message}`;
+    }
+}
+
+// Function to render test results
+function renderTestResults(results) {
+    const container = document.getElementById('test-results-container');
+    
+    // Filter for test results (only include results with "xét nghiệm" in the name)
+    const testResults = results.filter(result => 
+        result.subName && result.subName.toLowerCase().includes('xét nghiệm')
+    );
+    
+    if (testResults.length === 0) {
+        container.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-info-circle"></i>
+                <p>Chưa có kết quả xét nghiệm nào</p>
+                                </div>
+        `;
+        return;
+    }
+    
+    const resultsHTML = testResults.map(result => {
+        const performedDate = result.performedAt ? new Date(result.performedAt).toLocaleDateString('vi-VN') : 'N/A';
+        const performedTime = result.performedAt ? new Date(result.performedAt).toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'}) : '';
+        
+        let statusClass = 'status-normal';
+        let statusText = 'Hoàn thành';
+        
+        if (result.stepStatus === 'pending') {
+            statusClass = 'status-pending';
+            statusText = 'Đang chờ kết quả';
+        } else if (result.stepStatus === 'abnormal') {
+            statusClass = 'status-abnormal';
+            statusText = 'Cần chú ý';
+        }
+        
+        return `
+                    <div class="step-result-item">
+                        <div class="step-result-header">
+                            <div class="step-info">
+                        <h4>${result.subName}</h4>
+                        <div class="test-date">${performedDate} - ${performedTime}</div>
+                    </div>
+                    <div class="test-status ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="step-result-content">
+                            <div class="result-value">
+                                <strong>Kết quả:</strong>
+                        ${formatTestResult(result.result)}
+                            </div>
+                    ${result.note ? `
+                            <div class="result-note">
+                                <strong>Ghi chú:</strong>
+                            <span>${result.note}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = resultsHTML;
+}
+
+// Function to load treatment results from API
+async function loadTreatmentResults() {
+    const loadingDiv = document.getElementById('treatment-results-loading');
+    const errorDiv = document.getElementById('treatment-results-error');
+    const containerDiv = document.getElementById('treatment-results-container');
+    
+    try {
+        loadingDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        containerDiv.style.display = 'none';
+        
+        // Debug: Log all localStorage items
+        console.log('All localStorage items (treatment):', Object.keys(localStorage).reduce((obj, key) => {
+            obj[key] = localStorage.getItem(key);
+            return obj;
+        }, {}));
+        
+        // Get customer ID from localStorage or session (check multiple possible keys)
+        const customerId = localStorage.getItem('customerId') || 
+                          localStorage.getItem('cusId') || 
+                          sessionStorage.getItem('customerId') || 
+                          sessionStorage.getItem('cusId');
+        
+        console.log('Found customerId (treatment):', customerId);
+        
+        if (!customerId) {
+            // Show login message instead of error
+            loadingDiv.style.display = 'none';
+            containerDiv.style.display = 'block';
+            containerDiv.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-user-lock"></i>
+                    <p>Vui lòng đăng nhập để xem kết quả điều trị</p>
+                    <button onclick="openAuthModal('login')" class="btn-login" style="margin-top: 16px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        const response = await fetch(`/api/booking-steps/results?cusId=${customerId}`);
+        
+        if (!response.ok) {
+            throw new Error('Không thể tải dữ liệu từ server');
+        }
+        
+        const treatmentResults = await response.json();
+        
+        // Hide loading, show container
+        loadingDiv.style.display = 'none';
+        containerDiv.style.display = 'block';
+        
+        // Render treatment results (filter out test results)
+        renderTreatmentResults(treatmentResults);
+        
+    } catch (error) {
+        console.error('Error loading treatment results:', error);
+        loadingDiv.style.display = 'none';
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${error.message}`;
+    }
+}
+
+// Function to render treatment results
+function renderTreatmentResults(results) {
+    const container = document.getElementById('treatment-results-container');
+    
+    // Filter out test results (keep only non-test results)
+    const treatmentResults = results.filter(result => 
+        !result.subName || !result.subName.toLowerCase().includes('xét nghiệm')
+    );
+    
+    if (treatmentResults.length === 0) {
+        container.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-stethoscope"></i>
+                <p>Chưa có kết quả điều trị nào</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const resultsHTML = treatmentResults.map(result => {
+        const performedDate = result.performedAt ? new Date(result.performedAt).toLocaleDateString('vi-VN') : 'N/A';
+        const performedTime = result.performedAt ? new Date(result.performedAt).toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'}) : '';
+        
+        let statusClass = 'status-normal';
+        let statusText = 'Hoàn thành';
+        
+        if (result.stepStatus === 'pending') {
+            statusClass = 'status-pending';
+            statusText = 'Đang chờ kết quả';
+        } else if (result.stepStatus === 'abnormal') {
+            statusClass = 'status-abnormal';
+            statusText = 'Cần chú ý';
+        }
+        
+        return `
+            <div class="step-result-item">
+                <div class="step-result-header">
+                    <div class="step-info">
+                        <h4>${result.subName}</h4>
+                        <div class="test-date">${performedDate} - ${performedTime}</div>
+                    </div>
+                    <div class="test-status ${statusClass}">${statusText}</div>
+                </div>
+                <div class="step-result-content">
+                    <div class="result-value">
+                        <strong>Kết quả:</strong>
+                        ${formatTestResult(result.result)}
+                    </div>
+                    ${result.note ? `
+                        <div class="result-note">
+                            <strong>Ghi chú:</strong>
+                            <span>${result.note}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = resultsHTML;
+}
+
+// Add CSS for better formatting
+const style = document.createElement('style');
+style.textContent = `
+/* Tab Navigation Styles */
+.tab-navigation {
+    display: flex;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.tab-btn.active {
+    background: #007bff;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+}
+
+.tab-content {
+    position: relative;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.loading-message, .error-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 16px;
+}
+
+.error-message {
+    color: #dc3545;
+}
+
+.loading-message i {
+    margin-right: 10px;
+    color: #007bff;
+}
+
+.error-message i {
+    margin-right: 10px;
+    color: #dc3545;
+}
+
+.result-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid #007bff;
+}
+
+.result-label {
+    font-weight: 500;
+    color: #495057;
+    min-width: 80px;
+}
+
+.result-number {
+    font-weight: bold;
+    color: #007bff;
+    font-size: 16px;
+}
+
+.result-unit {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.result-status {
+    font-size: 14px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.result-status.status-normal {
+    background: #d4edda;
+    color: #155724;
+}
+
+.result-status.status-abnormal {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.result-status.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.result-description {
+    color: #495057;
+    line-height: 1.5;
+}
+
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.no-results i {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.no-results p {
+    font-size: 16px;
+    margin: 0;
+}
+`;
+document.head.appendChild(style);
+</script>
 </body>
 </html> 
