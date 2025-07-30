@@ -1,8 +1,8 @@
 ﻿USE [master]
 GO
-CREATE DATABASE [Healthcare_ServiceVer9]
+CREATE DATABASE [Healthcare_Service]
 GO
-USE [Healthcare_ServiceVer9]
+USE [Healthcare_Service]
 GO
 
 ----------------------------------------------------------------------------------------------------------
