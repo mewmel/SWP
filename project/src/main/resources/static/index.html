@@ -204,7 +204,6 @@
         <a href="#" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
     </aside>
 
-    <!-- Modal trong phần Đăng nhập và Đăng ký -->
     <div class="auth-modal" id="authModal">
         <div class="auth-modal-content">
             <div class="auth-modal-left">
@@ -386,6 +385,8 @@
                         </div>
                     </div>
                     
+
+                    
                     <div class="form-group">
                         <label for="forgotNewPassword">Mật khẩu mới</label>
                         <div class="input-group">
@@ -404,20 +405,26 @@
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group" id="otpFieldGroup">
                         <label for="forgotOtp">Mã xác nhận (OTP)</label>
-                        <div class="input-group">
-                            <i class="fas fa-key"></i>
-                            <input type="text" id="forgotOtp" required placeholder="Nhập mã OTP 6 số" maxlength="6" pattern="[0-9]{6}">
+                        <div class="otp-input-group">
+                            <div class="input-group">
+                                <i class="fas fa-key"></i>
+                                <input type="text" id="forgotOtp" placeholder="Nhập mã OTP 6 số" maxlength="6" pattern="[0-9]{6}">
+                            </div>
+                            <button type="button" id="sendOtpBtn" class="btn-send-otp">
+                                <i class="fas fa-paper-plane"></i>
+                                Gửi mã OTP
+                            </button>
                         </div>
                         <div class="otp-note">
-                            <small>Mã OTP sẽ được gửi đến email của bạn sau khi bấm "Đặt lại mật khẩu"</small>
+                            <small>Mã OTP sẽ được gửi đến email của bạn</small>
                         </div>
                     </div>
                     
-                    <button type="submit" class="btn-primary">
+                    <button type="submit" class="btn-primary" id="submitBtn">
                         <span>Đặt lại mật khẩu</span>
-                        <i class="fas fa-save"></i>
+                        <i class="fas fa-paper-plane"></i>
                     </button>
                 </form>
             </div>
@@ -602,11 +609,12 @@
                         <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
                         <p style="color: #666;">Đang tải bài viết...</p>
                     </div>
-                </div>                     
-            <!-- Blog posts will be loaded here from API -->
+                </div>
+                
+                <!-- Blog posts will be loaded here from API -->
             </div>
             <div class="blog-view-all">
-            <a href="#" class="btn-secondary" id="viewAllBlogs" style="display: none;">Xem tất cả bài viết</a>
+                <a href="#" class="btn-secondary" id="viewAllBlogs" style="display: none;">Xem tất cả bài viết</a>
             </div>
         </div>
     </section>
@@ -682,31 +690,30 @@
     </footer>
     <script src="js/script.js"></script>
     <script src="js/blogViewAll.js"></script>
-
-
+    
     <style>
         .testimonial-loading {
             text-align: center;
             padding: 60px 20px;
         }
-
+        
         .loading-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 15px;
         }
-
+        
         .testimonial {
             opacity: 0;
             animation: fadeInUp 0.6s ease forwards;
         }
-
+        
         .testimonial:nth-child(1) { animation-delay: 0.1s; }
         .testimonial:nth-child(2) { animation-delay: 0.2s; }
         .testimonial:nth-child(3) { animation-delay: 0.3s; }
         .testimonial:nth-child(4) { animation-delay: 0.4s; }
-
+        
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -717,39 +724,39 @@
                 transform: translateY(0);
             }
         }
-
+        
         .testimonial-error {
             text-align: center;
             padding: 60px 20px;
             color: #666;
         }
-
+        
         .testimonial-error i {
             font-size: 3rem;
             color: #ddd;
             margin-bottom: 20px;
         }
-
+        
         /* Force display for forgot password form */
         #forgotPasswordModal .auth-form.active {
             display: block !important;
         }
-
+        
         #forgotPasswordModal #forgotPasswordForm {
             display: block !important;
         }
-
+        
         /* OTP input group styling */
         .otp-input-group {
             display: flex;
             gap: 10px;
             align-items: flex-end;
         }
-
+        
         .otp-input-group .input-group {
             flex: 1;
         }
-
+        
         .btn-send-otp {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -765,23 +772,23 @@
             align-items: center;
             gap: 8px;
         }
-
+        
         .btn-send-otp:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
-
+        
         .btn-send-otp:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
-
+        
         .btn-send-otp i {
             font-size: 12px;
         }
-
+        
         /* Blog loading and error states */
         .blog-loading {
             text-align: center;
@@ -815,10 +822,10 @@
         }
         
 
-
+        
 
     </style>
-
+    
     <script>
         // Load testimonials when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -828,33 +835,33 @@
         async function loadTestimonials() {
             const testimonialSlider = document.getElementById('testimonialSlider');
             const loadingElement = document.getElementById('testimonialLoading');
-
+            
             try {
                 console.log('Loading testimonials from API...');
-
+                
                 // First, test if we can reach the API
                 const testResponse = await fetch('/api/feedback/test');
                 if (testResponse.ok) {
                     const testData = await testResponse.json();
                     console.log('Test API response:', testData);
                 }
-
+                
                 // Try the main testimonials API first
                 let response = await fetch('/api/feedback/testimonials');
                 console.log('Main testimonials API response status:', response.status);
-
+                
                 let testimonials = [];
-
+                
                 if (response.ok) {
                     testimonials = await response.json();
                     console.log('Main testimonials loaded:', testimonials);
                 } else {
                     console.log('Main API failed, trying simple API...');
-
+                    
                     // Fallback to simple API
                     response = await fetch('/api/feedback/testimonials-simple');
                     console.log('Simple testimonials API response status:', response.status);
-
+                    
                     if (response.ok) {
                         testimonials = await response.json();
                         console.log('Simple testimonials loaded:', testimonials);
@@ -862,20 +869,20 @@
                         throw new Error(`Both APIs failed. Last error: HTTP ${response.status}: ${response.statusText}`);
                     }
                 }
-
+                
                 // Hide loading
                 if (loadingElement) {
                     loadingElement.style.display = 'none';
                 }
-
+                
                 if (!testimonials || testimonials.length === 0) {
                     console.log('No testimonials found, showing empty state');
                     showNoTestimonials();
                     return;
                 }
-
+                
                 renderTestimonials(testimonials);
-
+                
             } catch (error) {
                 console.error('Error loading testimonials:', error);
                 showTestimonialError(error.message);
@@ -885,12 +892,12 @@
         function renderTestimonials(testimonials) {
             const testimonialSlider = document.getElementById('testimonialSlider');
             let html = '';
-
+            
             testimonials.forEach((testimonial, index) => {
                 const stars = generateStarsForTestimonial(testimonial.rating);
                 const customerInitials = getInitials(testimonial.customerName);
                 const avatarUrl = generateAvatarUrl(customerInitials);
-
+                
                 html += `
                     <div class="testimonial">
                         <div class="testimonial-rating">
@@ -908,7 +915,7 @@
                     </div>
                 `;
             });
-
+            
             testimonialSlider.innerHTML = html;
         }
 
@@ -952,11 +959,11 @@
         function showTestimonialError(errorMessage = '') {
             const testimonialSlider = document.getElementById('testimonialSlider');
             const loadingElement = document.getElementById('testimonialLoading');
-
+            
             if (loadingElement) {
                 loadingElement.style.display = 'none';
             }
-
+            
             testimonialSlider.innerHTML = `
                 <div class="testimonial-error">
                     <i class="fas fa-exclamation-triangle"></i>
@@ -970,6 +977,5 @@
             `;
         }
     </script>
-
 </body>
 </html>
