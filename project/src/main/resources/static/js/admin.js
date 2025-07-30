@@ -390,15 +390,35 @@ function showErrorOnElements(elementIds) {
 // Patient Functions
 async function loadPatients() {
     try {
+        console.log('Loading patients...');
         const response = await fetch('/api/customer/all');
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
         if (response.ok) {
-            allCustomers = await response.json();
+            const responseText = await response.text();
+            console.log('Response text:', responseText);
+            
+            if (responseText.trim() === '') {
+                console.log('Empty response received');
+                allCustomers = [];
+                filteredCustomers = [];
+                renderPatientsTable(filteredCustomers);
+                updatePatientsSummary(filteredCustomers);
+                initPatientFilters();
+                return;
+            }
+            
+            allCustomers = JSON.parse(responseText);
+            console.log('Parsed customers:', allCustomers);
             filteredCustomers = [...allCustomers];
             renderPatientsTable(filteredCustomers);
             updatePatientsSummary(filteredCustomers);
-    initPatientFilters();
+            initPatientFilters();
         } else {
-            console.error('Failed to load patients:', response.status);
+            console.error('Failed to load patients:', response.status, response.statusText);
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
             showToast('Không thể tải danh sách bệnh nhân', 'error');
         }
     } catch (error) {

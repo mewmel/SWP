@@ -240,10 +240,14 @@ public ResponseEntity<?> updateFullRecord(@PathVariable Integer cusId, @RequestB
     @GetMapping("/all")
     public ResponseEntity<List<Map<String, Object>>> getAllCustomers() {
         try {
+            log.info("Starting getAllCustomers API call");
             List<Customer> allCustomers = customerRepository.findAll();
+            log.info("Found {} total customers in database", allCustomers.size());
+            
             List<Map<String, Object>> customerList = new ArrayList<>();
             
             for (Customer customer : allCustomers) {
+                log.info("Processing customer: ID={}, Status={}", customer.getCusId(), customer.getCusStatus());
                 // Chỉ xử lý những bệnh nhân có trạng thái active hoặc null (mặc định là active)
                 if ("active".equals(customer.getCusStatus()) || customer.getCusStatus() == null) {
                     Map<String, Object> customerData = new HashMap<>();
@@ -272,11 +276,14 @@ public ResponseEntity<?> updateFullRecord(@PathVariable Integer cusId, @RequestB
                     }
                     
                     customerList.add(customerData);
+                    log.info("Added customer {} to response", customer.getCusId());
                 }
             }
             
+            log.info("Returning {} active customers", customerList.size());
             return ResponseEntity.ok(customerList);
         } catch (Exception e) {
+            log.error("Error in getAllCustomers: ", e);
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
