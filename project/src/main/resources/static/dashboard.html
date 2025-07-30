@@ -607,6 +607,24 @@
         </div>
     </aside>
 </main>
+
+<!-- Medications Modal -->
+<div id="medicationsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-pills"></i> Thuốc đã kê</h3>
+            <button class="close" onclick="closeMedicationsModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="medicationsContent">
+            <!-- Content will be loaded dynamically -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeMedicationsModal()">
+                <i class="fas fa-times"></i> Đóng
+            </button>
+        </div>
+    </div>
+</div>
 <script src="js/profile-summary.js"></script>
 <script src="js/notification-dropdown.js"></script>
 <script src="js/script.js"></script>
