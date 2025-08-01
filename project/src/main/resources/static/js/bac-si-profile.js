@@ -30,9 +30,9 @@ function handleAvatarUpload(e) {
         return;
     }
     
-    // Validate file size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-        showAlert('error', 'Kích thước file không được vượt quá 5MB');
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+        showAlert('error', 'Kích thước file không được vượt quá 10MB');
         return;
     }
     

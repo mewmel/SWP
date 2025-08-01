@@ -14,25 +14,63 @@ const workingHours = {
 // ================================
 // Dữ liệu workslot từ backend
 let currentSlots = [];
+let approvedSlots = []; // Danh sách slot đã được duyệt
 
 // ================================
-// Hàm fetch workslot từ backend
+// Hàm fetch workslot đã được duyệt cho bác sĩ trong khoảng thời gian
+function fetchApprovedSlotsForDoctor(docId, fromDate, toDate) {
+    if (!docId || !fromDate || !toDate) {
+        approvedSlots = [];
+        return Promise.resolve([]);
+    }
+    
+    return fetch(`/api/workslots/${docId}/slots?from=${fromDate}&to=${toDate}`)
+        .then(res => res.json())
+        .then(data => {
+            approvedSlots = data;
+            console.log('Approved slots for doctor:', data);
+            return data;
+        })
+        .catch(err => {
+            console.error('Error fetching approved slots:', err);
+            approvedSlots = [];
+            return [];
+        });
+}
+
+// ================================
+// Hàm fetch workslot từ backend (giữ nguyên để tương thích)
 function fetchWorkslotsForDoctorAndDate(docId, date) {
     if (!docId || !date) {
         currentSlots = [];
         updateTimeSlots(date);
         return;
     }
-    fetch(`/api/workslots?docId=${docId}&date=${date}`)
-        .then(res => res.json())
-        .then(data => {
-            currentSlots = data;
-            updateTimeSlots(date);
-        })
-        .catch(err => {
-            currentSlots = [];
-            updateTimeSlots(date);
-        });
+    
+    // Tính toán khoảng thời gian 1 tuần (7 ngày) xung quanh ngày được chọn
+    const selectedDate = new Date(date);
+    const fromDate = new Date(selectedDate);
+    fromDate.setDate(selectedDate.getDate() - 3); // 3 ngày trước
+    const toDate = new Date(selectedDate);
+    toDate.setDate(selectedDate.getDate() + 3); // 3 ngày sau
+    
+    const fromDateStr = fromDate.toISOString().split('T')[0];
+    const toDateStr = toDate.toISOString().split('T')[0];
+    
+    // Fetch cả approved slots và current booking count
+    Promise.all([
+        fetchApprovedSlotsForDoctor(docId, fromDateStr, toDateStr),
+        fetch(`/api/workslots?docId=${docId}&date=${date}`).then(res => res.json()).catch(() => [])
+    ])
+    .then(([approvedData, currentData]) => {
+        currentSlots = currentData;
+        updateTimeSlots(date);
+    })
+    .catch(err => {
+        console.error('Error fetching workslots:', err);
+        currentSlots = [];
+        updateTimeSlots(date);
+    });
 }
 
 // ================================
@@ -54,19 +92,67 @@ function updateTimeSlots(selectedDate) {
         return;
     }
 
+    // Kiểm tra xem có slot nào được duyệt cho ngày này không
+    const hasApprovedSlots = approvedSlots.some(slot => {
+        const slotDate = slot.workDate || slot.date;
+        return slotDate === selectedDate && slot.slotStatus === 'approved';
+    });
+
+    if (!hasApprovedSlots && document.getElementById('doctor').value) {
+        timeSlotsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #ff6b35; padding: 20px; background: #fff3f0; border: 1px solid #ff6b35; border-radius: 8px;">Bác sĩ chưa mở lịch làm việc cho ngày này. Vui lòng chọn ngày khác!</p>';
+        return;
+    }
+
+    // Lấy thời gian hiện tại
+    const now = new Date();
+    const selectedDateObj = new Date(selectedDate);
+    const isToday = selectedDateObj.toDateString() === now.toDateString();
+
     // Tạo các slot giờ
     availableHours.forEach(hour => {
         const endHour = parseInt(hour.split(':')[0]) + 1;
         const endTime = endHour.toString().padStart(2, '0') + ':00';
         const slotKey = `${hour}-${endTime}`;
 
-        // Tìm workslot tương ứng từ backend
+        // Tìm workslot tương ứng từ backend (booking count)
         const slot = currentSlots.find(s =>
             s.startTime.substring(0,5) === hour && s.endTime.substring(0,5) === endTime
         );
+        
+        // Kiểm tra xem slot có được duyệt không từ approvedSlots
+        const approvedSlot = approvedSlots.find(s => {
+            const slotDate = s.workDate || s.date; // Hỗ trợ cả 2 format
+            const slotStartTime = s.startTime ? s.startTime.substring(0,5) : '';
+            const slotEndTime = s.endTime ? s.endTime.substring(0,5) : '';
+            return slotDate === selectedDate && 
+                   slotStartTime === hour && 
+                   slotEndTime === endTime &&
+                   s.slotStatus === 'approved';
+        });
+        
         let disabled = false;
         let title = '';
-        if (slot) {
+        let isApproved = !!approvedSlot;
+        
+        // Kiểm tra xem slot có trong quá khứ không (chỉ áp dụng cho ngày hôm nay)
+        if (isToday) {
+            const slotEndTime = new Date();
+            slotEndTime.setHours(parseInt(hour.split(':')[0]), parseInt(hour.split(':')[1]), 0, 0);
+            
+            if (slotEndTime <= now) {
+                disabled = true;
+                title = 'Khung giờ đã qua';
+            }
+        }
+        
+        // Chỉ cho phép đặt lịch nếu slot đã được duyệt
+        if (!disabled && !isApproved) {
+            disabled = true;
+            title = 'Bác sĩ chưa mở lịch cho khung giờ này';
+        }
+        
+        // Kiểm tra slot từ backend (chỉ khi đã được duyệt và chưa bị disable vì quá khứ)
+        if (!disabled && isApproved && slot) {
             let max = Number(slot.maxPatient);
             let booked = Number(slot.currentBooking);
             if (!isNaN(max) && !isNaN(booked)) {
@@ -77,18 +163,48 @@ function updateTimeSlots(selectedDate) {
                     title = `Còn ${max - booked} chỗ`;
                 }
             } else {
-                title = 'Dữ liệu slot lỗi!';
+                title = 'Có thể đặt lịch';
+            }
+        } else if (!disabled && isApproved && !slot) {
+            // Slot đã được duyệt nhưng chưa có thông tin booking
+            title = 'Có thể đặt lịch';
+        }
+        
+        const timeSlot = document.createElement('div');
+        let className = 'time-slot';
+        
+        if (isApproved && !disabled) {
+            className += ' approved'; // Class mới cho slot đã được duyệt
+        }
+        
+        if (disabled) {
+            className += ' disabled';
+            // Thêm class riêng cho slot quá khứ
+            if (title === 'Khung giờ đã qua') {
+                className += ' past-time';
             }
         }
-        const timeSlot = document.createElement('div');
-        timeSlot.className = 'time-slot' + (disabled ? ' disabled' : '');
+        
+        timeSlot.className = className;
         timeSlot.setAttribute('data-time', slotKey);
         timeSlot.textContent = slotKey;
         if (title) timeSlot.title = title;
 
         // Sự kiện click chọn khung giờ
         timeSlot.addEventListener('click', function () {
-            if (this.classList.contains('disabled')) return;
+            if (this.classList.contains('disabled')) {
+                // Hiển thị thông báo tùy theo lý do disable
+                if (title === 'Khung giờ đã qua') {
+                    alert('Không thể chọn khung giờ đã qua. Vui lòng chọn khung giờ khác!');
+                } else if (title.includes('Đã đủ số lượng')) {
+                    alert('Khung giờ này đã đầy. Vui lòng chọn khung giờ khác!');
+                } else if (title === 'Bác sĩ chưa mở lịch cho khung giờ này') {
+                    alert('Bác sĩ chưa mở lịch cho khung giờ này. Vui lòng chọn khung giờ khác!');
+                } else {
+                    alert('Khung giờ này không khả dụng. Vui lòng chọn khung giờ khác!');
+                }
+                return;
+            }
             document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
             this.classList.add('selected');
             document.getElementById('selectedTime').value = this.dataset.time;
@@ -179,6 +295,61 @@ function loadDoctors() {
                 option.textContent = doctor.docFullName + (doctor.expertise ? ' - ' + doctor.expertise : '');
                 doctorSelect.appendChild(option);
             });
+            
+            // Auto-select doctor nếu có trong localStorage
+            const selectedDoctorName = localStorage.getItem('selectedDoctorName');
+            if (selectedDoctorName) {
+                console.log('Trying to auto-select doctor:', selectedDoctorName);
+                
+                // Tìm option có tên khớp với tên bác sĩ được chọn
+                const options = doctorSelect.querySelectorAll('option');
+                console.log('Available doctors in dropdown:', Array.from(options).map(opt => opt.textContent));
+                
+                for (let option of options) {
+                    const optionText = option.textContent.toLowerCase();
+                    const searchName = selectedDoctorName.replace('Bác sĩ ', '').toLowerCase();
+                    
+                    // Xử lý tên viết tắt đặc biệt cho các bác sĩ
+                    let isMatch = false;
+                    
+                    if (selectedDoctorName.includes('Nguyễn N. Kh. Linh')) {
+                        // Kiểm tra nhiều pattern cho bác sĩ Linh
+                        isMatch = optionText.includes('nguyễn ngọc khánh linh') || 
+                                 optionText.includes('nguyễn n. kh. linh') ||
+                                 optionText.includes('khánh linh') ||
+                                 optionText.includes('n. kh. linh') ||
+                                 optionText.includes('nguyễn khánh linh');
+                    } else if (selectedDoctorName.includes('Trương Quốc Lập')) {
+                        isMatch = optionText.includes('trương quốc lập') || optionText.includes('quốc lập');
+                    } else if (selectedDoctorName.includes('Tất Vĩnh Hùng')) {
+                        isMatch = optionText.includes('tất vĩnh hùng') || optionText.includes('vĩnh hùng');
+                    } else if (selectedDoctorName.includes('Phạm Thị Hồng Anh')) {
+                        isMatch = optionText.includes('phạm thị hồng anh') || optionText.includes('hồng anh');
+                    } else if (selectedDoctorName.includes('Lê Minh Đức')) {
+                        isMatch = optionText.includes('lê minh đức') || optionText.includes('minh đức');
+                    } else if (selectedDoctorName.includes('Trần Thị Tú')) {
+                        isMatch = optionText.includes('trần thị tú') || optionText.includes('thị tú');
+                    } else {
+                        // Logic thông thường cho các bác sĩ khác
+                        isMatch = optionText.includes(searchName);
+                    }
+                    
+                    console.log(`Checking option: "${optionText}" against search: "${searchName}" - Match: ${isMatch}`);
+                    
+                    if (isMatch) {
+                        doctorSelect.value = option.value;
+                        console.log('Successfully selected doctor with ID:', option.value);
+                        
+                        // Trigger change event để cập nhật slots
+                        const changeEvent = new Event('change');
+                        doctorSelect.dispatchEvent(changeEvent);
+                        break;
+                    }
+                }
+                
+                // Xóa selectedDoctorName sau khi đã sử dụng
+                localStorage.removeItem('selectedDoctorName');
+            }
         })
         .catch(error => {
             console.error('Lỗi lấy danh sách bác sĩ:', error);
@@ -241,6 +412,25 @@ function setupBookingFormSubmission() {
         } else if (!selectedTime.value) {
             errorMsg = "Vui lòng chọn khung giờ khám!";
             errorField = selectedTime;
+        } else {
+            // Kiểm tra slot thời gian có trong quá khứ không (chỉ áp dụng cho ngày hôm nay)
+            const selectedDate = new Date(appointmentDate.value);
+            const today = new Date();
+            const isToday = selectedDate.toDateString() === today.toDateString();
+            
+            if (isToday) {
+                const timeRange = selectedTime.value.trim();
+                const [startTime] = timeRange.split('-').map(t => t.trim());
+                const [hour, minute] = startTime.split(':').map(Number);
+                
+                const slotDateTime = new Date();
+                slotDateTime.setHours(hour, minute, 0, 0);
+                
+                if (slotDateTime <= today) {
+                    errorMsg = "Không thể đặt lịch cho khung giờ đã qua. Vui lòng chọn khung giờ khác!";
+                    errorField = selectedTime;
+                }
+            }
         }
 
         if (errorMsg) {
@@ -427,6 +617,108 @@ function contactSupport() {
     window.location.href = 'tel:19001234';
 }
 
+// ========== Auto refresh slots for today to handle past time validation ==========
+function startTimeSlotRefresh() {
+    setInterval(function() {
+        const selectedDate = document.getElementById('appointmentDate').value;
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Chỉ refresh nếu đang chọn ngày hôm nay
+        if (selectedDate === today) {
+            const docId = document.getElementById('doctor').value;
+            if (docId) {
+                fetchWorkslotsForDoctorAndDate(docId, selectedDate);
+            } else {
+                updateTimeSlots(selectedDate);
+            }
+        }
+    }, 60000); // Refresh mỗi phút
+}
+
+// ========== Debug function để test doctor selection ==========
+function debugDoctorSelection() {
+    console.log('=== DEBUG DOCTOR SELECTION ===');
+    const selectedDoctorName = localStorage.getItem('selectedDoctorName');
+    console.log('Stored doctor name in localStorage:', selectedDoctorName);
+    
+    const doctorSelect = document.getElementById('doctor');
+    const options = doctorSelect.querySelectorAll('option');
+    console.log('Available doctors in dropdown:');
+    options.forEach((option, index) => {
+        console.log(`${index}: "${option.textContent}" (value: ${option.value})`);
+    });
+    
+    if (selectedDoctorName) {
+        const searchName = selectedDoctorName.replace('Bác sĩ ', '').toLowerCase();
+        console.log('Search name (after removing "Bác sĩ"):', searchName);
+        
+        console.log('Matching attempts:');
+        options.forEach((option, index) => {
+            const optionText = option.textContent.toLowerCase();
+            const normalMatch = optionText.includes(searchName);
+            
+            // Special check for Linh
+            let specialMatch = false;
+            if (selectedDoctorName.includes('Nguyễn N. Kh. Linh')) {
+                specialMatch = optionText.includes('nguyễn ngọc khánh linh') || 
+                             optionText.includes('nguyễn n. kh. linh') ||
+                             optionText.includes('khánh linh') ||
+                             optionText.includes('n. kh. linh');
+            }
+            
+            console.log(`${index}: "${optionText}" - Normal: ${normalMatch}, Special: ${specialMatch}`);
+        });
+    }
+}
+function debugTimeValidation() {
+    console.log('=== DEBUG TIME VALIDATION ===');
+    const now = new Date();
+    console.log('Current time:', now.toLocaleTimeString());
+    
+    console.log('=== DEBUG APPROVED SLOTS ===');
+    console.log('Current approved slots:', approvedSlots);
+    console.log('Current booking slots:', currentSlots);
+    
+    const selectedDate = document.getElementById('appointmentDate').value;
+    const selectedDoctor = document.getElementById('doctor').value;
+    console.log('Selected date:', selectedDate);
+    console.log('Selected doctor:', selectedDoctor);
+    
+    const approvedForDate = approvedSlots.filter(slot => {
+        const slotDate = slot.workDate || slot.date;
+        return slotDate === selectedDate && slot.slotStatus === 'approved';
+    });
+    console.log('Approved slots for selected date:', approvedForDate);
+    
+    const today = new Date().toISOString().split('T')[0];
+    const isToday = selectedDate === today;
+    
+    console.log('Today:', today);
+    console.log('Is today:', isToday);
+    
+    if (isToday) {
+        const slots = document.querySelectorAll('.time-slot');
+        slots.forEach(slot => {
+            const timeRange = slot.getAttribute('data-time');
+            const [startTime] = timeRange.split('-');
+            const [hour, minute] = startTime.split(':').map(Number);
+            
+            const slotTime = new Date();
+            slotTime.setHours(hour, minute, 0, 0);
+            
+            const isPast = slotTime <= now;
+            const isDisabled = slot.classList.contains('disabled');
+            const isApproved = slot.classList.contains('approved');
+            
+            console.log(`Slot ${timeRange}: Time=${slotTime.toLocaleTimeString()}, IsPast=${isPast}, IsDisabled=${isDisabled}, IsApproved=${isApproved}`);
+        });
+    }
+}
+
+// Expose debug functions to global scope for testing
+window.debugTimeValidation = debugTimeValidation;
+window.debugDoctorSelection = debugDoctorSelection;
+
 // ========== Initialize all functionality ===========
 document.addEventListener('DOMContentLoaded', function() {
     initializeDateInputs();
@@ -434,6 +726,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setupBookingFormSubmission();
     setupMobileMenu();
     setupDateDoctorChangeListener();
+    
+    // Bắt đầu auto refresh slots
+    startTimeSlotRefresh();
 
     // Khi load trang lần đầu, nếu có sẵn ngày & bác sĩ thì load workslot luôn
     const docIdInit = document.getElementById('doctor').value;

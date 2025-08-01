@@ -65,11 +65,6 @@
             </div>
             
             <div class="header-right">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Tìm kiếm...">
-                </div>
-                
                 <button class="notification-btn">
                     <i class="fas fa-bell"></i>
                     <span class="notification-badge">3</span>
@@ -77,13 +72,13 @@
                 
                 <div class="user-profile">
                     <div class="user-info">
-                        <p class="user-name">BS. Nguyễn Ngọc Khánh Linh</p>
-                        <p class="user-role">Quản trị viên</p>
+                        <p class="user-name" id="adminUserName">Quản trị viên</p>
+                        <p class="user-role" id="adminUserRole">Quản trị viên</p>
                     </div>
                     <div class="user-avatar">
                         <i class="fas fa-user"></i>
                     </div>
-                    <button class="logout-btn">
+                    <button class="logout-btn" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
@@ -611,6 +606,44 @@
 
     <script src="js/admin.js"></script>
     <script>
+    // ========== LOAD USER INFO FROM LOCALSTORAGE ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        loadUserInfo();
+    });
+    
+    function loadUserInfo() {
+        // Lấy thông tin từ localStorage
+        const adminFullName = localStorage.getItem('adminFullName') || localStorage.getItem('maFullName');
+        const adminRole = localStorage.getItem('adminRole') || 'Quản trị viên';
+        
+        // Cập nhật giao diện
+        const userNameElement = document.getElementById('adminUserName');
+        const userRoleElement = document.getElementById('adminUserRole');
+        
+        if (adminFullName) {
+            userNameElement.textContent = adminFullName;
+        }
+        
+        if (adminRole) {
+            userRoleElement.textContent = adminRole;
+        }
+        
+        // Kiểm tra xem có đăng nhập không, nếu không thì chuyển về trang login
+        if (!adminFullName && !localStorage.getItem('maFullName')) {
+            console.log('Không tìm thấy thông tin đăng nhập, chuyển về trang chủ');
+            window.location.href = 'index.html';
+        }
+    }
+    
+    // ========== LOGOUT FUNCTION ==========
+    function logout() {
+        // Xóa tất cả thông tin trong localStorage
+        localStorage.clear();
+        
+        // Chuyển về trang chủ
+        window.location.href = 'index.html';
+    }
+    
     // Dropdown functionality
     document.addEventListener('DOMContentLoaded', function() {
         const dropdown = document.querySelector('.nav-item-dropdown');

@@ -1,9 +1,12 @@
 package com.example.project.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -304,4 +307,27 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
         }
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/booking/{bookId}/has-drug")
+public ResponseEntity<?> checkBookingHasDrug(@PathVariable Integer bookId) {
+    Optional<Booking> bookingOpt = bookingRepository.findByBookId(bookId);
+    if (bookingOpt.isPresent()) {
+        Booking booking = bookingOpt.get();
+        boolean hasDrug = booking.getDrugId() != null;
+        return ResponseEntity.ok(Collections.singletonMap("hasDrug", hasDrug));
+    }
+    return ResponseEntity.status(404).body("Không tìm thấy booking");
+}
+
+@PutMapping("/booking/{bookId}/set-drug/{drugId}")
+public ResponseEntity<?> setBookingDrugId(@PathVariable Integer bookId, @PathVariable Integer drugId) {
+    Optional<Booking> bookingOpt = bookingRepository.findByBookId(bookId);
+    if (bookingOpt.isPresent()) {
+        Booking booking = bookingOpt.get();
+        booking.setDrugId(drugId);   // gán drugId
+        bookingRepository.save(booking);
+        return ResponseEntity.ok(Collections.singletonMap("drugId", booking.getDrugId()));
+    }
+    return ResponseEntity.status(404).body("Không tìm thấy booking");
+}    
 }

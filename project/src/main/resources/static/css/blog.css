@@ -275,11 +275,8 @@ body {
     font-size: 0.8125rem;
 }
 
-/* Editor Content */
+/* Editor Content - Updated for two panel layout */
 .editor-content {
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 2rem;
     padding: 1.5rem;
 }
 
@@ -302,22 +299,32 @@ body {
 }
 
 .form-input {
-    padding: 0.75rem;
+    padding: 0.875rem;
     border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
+    border-radius: 8px;
     outline: none;
     transition: all 0.2s ease;
     font-size: 0.875rem;
+    line-height: 1.5;
+    background-color: white;
 }
 
 .form-input:focus {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background-color: #fefefe;
 }
 
 .title-input {
-    font-size: 1.125rem;
-    padding: 1rem;
+    font-size: 1.25rem;
+    padding: 1rem 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.title-input::placeholder {
+    font-weight: normal;
+    color: #9ca3af;
 }
 
 .form-select {
@@ -379,27 +386,92 @@ body {
     margin: 0 0.5rem;
 }
 
-/* Content Editor */
+/* Two Panel Layout */
+.two-panel-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    min-height: 600px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.editor-panel,
+.preview-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0; /* Prevent overflow */
+    box-sizing: border-box;
+}
+
+.editor-panel .editor-section,
+.preview-panel .preview-section {
+    flex: 1;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-panel .content-editor {
+    flex: 1;
+    min-height: 400px;
+}
+
+.preview-panel .preview-container {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+/* Preview Images Styling */
+.preview-images {
+    margin: 1rem 0;
+}
+
+.preview-images img {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove preview-summary since we don't show it in preview */
+.preview-summary {
+    display: none;
+}
+
+.preview-summary:empty {
+    display: none;
+}
 .content-editor {
     min-height: 500px;
-    padding: 1rem;
+    padding: 1.5rem;
     border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
+    border-radius: 12px;
     outline: none;
     line-height: 1.7;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     transition: all 0.2s ease;
+    background: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .content-editor:focus {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: #fefefe;
 }
 
 .content-editor:empty:before {
     content: attr(placeholder);
     color: #9ca3af;
     pointer-events: none;
+    white-space: pre-line;
 }
 
 /* Preview Section */
@@ -1082,9 +1154,87 @@ body {
 
 .metadata-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.metadata-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.metadata-item.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Editor Tools Section */
+.editor-tools-section {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.tools-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.tools-row .btn {
+    min-width: auto;
+    padding: 0.6rem 1rem;
+    font-size: 0.875rem;
+}
+
+.tools-row .btn i {
+    margin-right: 0.5rem;
+}
+
+.image-preview-container {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+}
+
+.image-preview-item {
+    position: relative;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+}
+
+.image-preview-item img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+}
+
+.image-preview-item .remove-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.image-preview-item .remove-btn:hover {
+    background: rgb(239, 68, 68);
 }
 
 .metadata-item .form-label {
@@ -1909,6 +2059,7 @@ body {
 }
 
 /* Responsive Design Updates */
+/* Mobile responsive for two panel layout */
 @media (max-width: 768px) {
     .page-header-content {
         flex-direction: column;
@@ -1924,6 +2075,35 @@ body {
     .metadata-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
+    }
+
+    .tools-row {
+        justify-content: center;
+    }
+
+    .tools-row .btn {
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .image-preview-container {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 0.5rem;
+    }
+
+    /* Stack panels vertically on mobile */
+    .two-panel-layout {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .preview-panel {
+        order: 2;
+    }
+
+    .editor-panel {
+        order: 1;
     }
 
     .toolbar {

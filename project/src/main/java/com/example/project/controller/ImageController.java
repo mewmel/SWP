@@ -47,8 +47,8 @@ public class ImageController {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("File rỗng");
             }
-            if (file.getSize() > 5 * 1024 * 1024) {
-                return ResponseEntity.badRequest().body("Ảnh quá lớn, tối đa 5MB");
+            if (file.getSize() > 10 * 1024 * 1024) {
+                return ResponseEntity.badRequest().body("Ảnh quá lớn, tối đa 10MB");
             }
 
             // Kiểm tra doctor tồn tại

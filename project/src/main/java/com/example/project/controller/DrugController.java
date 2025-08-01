@@ -23,7 +23,6 @@ import com.example.project.repository.DrugItemRepository;
 import com.example.project.repository.DrugRepository;
 
 
-
 @RestController
 @RequestMapping("/api/drugs")
 @CrossOrigin
@@ -35,8 +34,6 @@ public class DrugController {
 
     @Autowired
     private DrugItemRepository drugItemRepository;
-
-    
 
     // GET /api/drugs/by-booking/{bookId}
     @GetMapping("/by-booking/{bookId}")
@@ -108,7 +105,7 @@ public class DrugController {
             return ResponseEntity.status(500).body("Lỗi tạo thuốc: " + e.getMessage());
         }
     }
-
+    
 
     //PUT /api/drugs/update/${drugId}
 @PutMapping("/update/{drugId}")
@@ -138,5 +135,5 @@ public ResponseEntity<?> updateDrug(@PathVariable Integer drugId, @RequestBody M
         return ResponseEntity.status(400).body("Invalid input: " + e.getMessage());
     }
 }
-
+  
 }

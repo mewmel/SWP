@@ -71,10 +71,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Trạng thái + badge
                 const badge = clone.querySelector('.status-badge');
                 if (b.bookStatus === 'pending') {
-                    badge.textContent = 'Không đến khám';
+                    badge.textContent = 'Chưa xác nhận';
                     badge.className = 'status-badge waiting';
-                } 
-                if (b.bookStatus === 'completed') {
+                } else if (b.bookStatus === 'rejected') {
+                    badge.textContent = 'Không đến khám';
+                    badge.className = 'status-badge rejected';
+                } else if (b.bookStatus === 'confirmed') {
+                    badge.textContent = 'Đã xác nhận';
+                    badge.className = 'status-badge confirmed';
+                } else if (b.bookStatus === 'completed') {
                     badge.textContent = 'Đã khám xong';
                     badge.className = 'status-badge completed';
                 }
@@ -358,6 +363,9 @@ window.checkout = async function (bookId, cusId, bookType) {
                     await fetch(`/api/booking/${bookId}/set-drug/${drugId}`, {
                         method: 'PUT'
                     });
+                    
+                    // ✅ FIX: Lưu drugId vào localStorage sau khi tạo mới
+                    localStorage.setItem('drugId', drugId);
     
                     if (typeof showNotification === 'function') console.log('Đã tạo đơn thuốc cho booking:', bookId);
                 }
@@ -386,6 +394,11 @@ window.checkout = async function (bookId, cusId, bookType) {
         const tabContent = document.getElementById(tabContentId);
         if (tabContent) {
             tabContent.classList.add('active');
+            
+            // ✅ FIX: Fill prescription header when switching to prescription tab
+            if (tabName === 'prescription') {
+                fillPrescriptionHeader();
+            }
         }
     };
 
@@ -485,6 +498,14 @@ window.checkout = async function (bookId, cusId, bookType) {
             document.getElementById('patientStatus').textContent = (patientData.cusStatus === 'active'
                 ? 'Hoạt động' : 'Không hoạt động');
             document.getElementById('prescriptionNumber').value = patientData.drugId || 'Không rõ';
+            
+            // ✅ FIX: Lưu drugId vào localStorage để các function khác sử dụng
+            if (patientData.drugId) {
+                localStorage.setItem('drugId', patientData.drugId);
+                console.log('viewPatientRecord - drugId saved to localStorage:', patientData.drugId); // Debug log
+            } else {
+                console.log('viewPatientRecord - no drugId in patientData'); // Debug log
+            }
 
             // 3. Booking hiện tại
             if (patientData.currentBooking) {
@@ -520,8 +541,19 @@ window.checkout = async function (bookId, cusId, bookType) {
             const statusBadge = appointmentItem?.querySelector('.status-badge');
             const curStatus = statusBadge?.textContent || 'Đang khám';
             document.getElementById('currentStatus').textContent = curStatus;
-            document.getElementById('currentStatus').className =
-                'status-badge ' + (curStatus === 'Đã khám' ? 'completed' : 'waiting');
+            
+            // Cập nhật class theo status mới
+            let statusClass = 'waiting';
+            if (curStatus === 'Đã khám xong') {
+                statusClass = 'completed';
+            } else if (curStatus === 'Đã xác nhận') {
+                statusClass = 'confirmed';
+            } else if (curStatus === 'Không đến khám') {
+                statusClass = 'rejected';
+            } else if (curStatus === 'Chưa xác nhận') {
+                statusClass = 'waiting';
+            }
+            document.getElementById('currentStatus').className = 'status-badge ' + statusClass;
 
 
 
@@ -1384,19 +1416,112 @@ window.checkout = async function (bookId, cusId, bookType) {
     };
 
     // Fill prescription header with doctor name and drug ID
-    const drugId = localStorage.getItem('drugId') || '';
     function fillPrescriptionHeader() {
         const nameInput = document.getElementById('prescribingDoctorName');
-
-
         const fullName = localStorage.getItem('docFullName');
-
-
+        
         if (nameInput) nameInput.value = fullName || '';
-
-
-        // lấy ttin dưới db lên bằng api
-
+        
+        // ✅ FIX: Set prescription date to current time if empty
+        const prescriptionDateInput = document.getElementById('prescriptionDate');
+        if (prescriptionDateInput && !prescriptionDateInput.value) {
+            prescriptionDateInput.value = getLocalDateTimeValue();
+        }
+        
+        // ✅ FIX: Set prescription number from localStorage
+        const prescriptionNumberInput = document.getElementById('prescriptionNumber');
+        const drugId = localStorage.getItem('drugId');
+        console.log('fillPrescriptionHeader - drugId from localStorage:', drugId); // Debug log
+        if (prescriptionNumberInput) {
+            prescriptionNumberInput.value = drugId || 'Không rõ';
+            console.log('fillPrescriptionHeader - prescriptionNumber set to:', prescriptionNumberInput.value); // Debug log
+        }
+        
+        // ✅ FIX: Load existing drug items if any
+        loadExistingPrescriptionData();
+    }
+    
+    // Load existing prescription data
+    async function loadExistingPrescriptionData() {
+        const drugId = document.getElementById('prescriptionNumber')?.value;
+        if (!drugId || drugId === 'Không rõ') return;
+        
+        try {
+            const bookId = localStorage.getItem('bookId');
+            const res = await fetch(`/api/drugs/by-booking/${bookId}`);
+            if (res.ok) {
+                const drugData = await res.json();
+                if (drugData && drugData.length > 0) {
+                    const drug = drugData[0];
+                    
+                    // Fill prescription header info
+                    if (drug.createdAt) {
+                        document.getElementById('prescriptionDate').value = formatDateTimeLocal(drug.createdAt);
+                    }
+                    if (drug.drugNote) {
+                        document.getElementById('prescriptionDiagnosis').value = drug.drugNote;
+                    }
+                    
+                    // Clear existing drug items and load from database
+                    const drugsList = document.getElementById('drugsList');
+                    drugsList.innerHTML = '';
+                    
+                    if (drug.drugItems && drug.drugItems.length > 0) {
+                        drug.drugItems.forEach((item, index) => {
+                            drugCounter = index + 1;
+                            addDrugItemFromData(item);
+                        });
+                    }
+                }
+            }
+        } catch (err) {
+            console.log('No existing prescription data found:', err);
+        }
+    }
+    
+    // Add drug item from existing data
+    function addDrugItemFromData(itemData) {
+        const drugsList = document.getElementById('drugsList');
+        const itemId = `drugItem${drugCounter}`;
+        
+        const newDrugItem = document.createElement('div');
+        newDrugItem.className = 'drug-item';
+        newDrugItem.innerHTML = `
+        <div class="drug-header">
+            <h6><i class="fas fa-capsules"></i> Thuốc #${drugCounter}</h6>
+            <button type="button" class="btn-remove-drug" onclick="window.removeDrugPrescription(this)" title="Xóa thuốc này">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        <div class="drug-content">
+            <div class="record-grid">
+                <div class="record-section">
+                    <label><i class="fas fa-pills"></i> Tên thuốc:</label>
+                    <input type="text" placeholder="Nhập tên thuốc..." id="drugName-${itemId}" class="form-control" value="${itemData.drugName || ''}">
+                </div>
+                <div class="record-section">
+                    <label><i class="fas fa-weight"></i> Hàm lượng:</label>
+                    <input type="text" placeholder="Ví dụ: 5mg" id="dosage-${itemId}" class="form-control" value="${itemData.dosage || ''}">
+                </div>
+            </div>
+            <div class="record-section">
+                <div class="record-section">
+                    <label><i class="fas fa-clock"></i> Tần suất sử dụng:</label>
+                    <input type="text" id="frequency-${itemId}" class="form-control" value="${itemData.frequency || ''}">
+                </div>
+                <div class="record-section">
+                    <label><i class="fas fa-calendar-days"></i> Thời gian dùng:</label>
+                    <input type="text" placeholder="Ví dụ: 30 ngày" id="duration-${itemId}" class="form-control" value="${itemData.duration || '30 ngày'}">
+                </div>
+            </div>
+            <div class="record-section">
+                <label><i class="fas fa-comment-medical"></i> Hướng dẫn sử dụng & Lưu ý:</label>
+                <textarea rows="2" placeholder="Ghi chú cách sử dụng thuốc..." id="drugItemNote-${itemId}" class="form-control">${itemData.drugItemNote || ''}</textarea>
+            </div>
+        </div>
+    `;
+        
+        drugsList.appendChild(newDrugItem);
     }
     fillPrescriptionHeader();
 

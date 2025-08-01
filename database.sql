@@ -1,8 +1,8 @@
 ﻿USE [master]
 GO
-CREATE DATABASE [Healthcare_ServiceVer]
+CREATE DATABASE [Healthcare_ServiceVer992]
 GO
-USE [Healthcare_ServiceVer]
+USE [Healthcare_ServiceVer992]
 GO
 
 ----------------------------------------------------------------------------------------------------------
@@ -125,7 +125,8 @@ CREATE TABLE Booking (
     bookType    NVARCHAR(20)    NOT NULL CONSTRAINT CK_Booking_Type CHECK (bookType IN ('initial','follow-up'))
                                          CONSTRAINT DF_Booking_Type DEFAULT 'initial',
 
-    bookStatus  NVARCHAR(20)    NOT NULL CONSTRAINT CK_Booking_Status CHECK (bookStatus IN ('pending','confirmed','completed'))
+    bookStatus  NVARCHAR(20)    NOT NULL CONSTRAINT CK_Booking_Status CHECK (bookStatus IN ('pending','confirmed','completed','rejected'))
+                                             CONSTRAINT DF_Booking_Status DEFAULT 'pending',
 										 CONSTRAINT DF_Booking_Status DEFAULT 'pending',
     createdAt   DATETIME        NOT NULL DEFAULT GETDATE(),
     note        NVARCHAR(1000)  NULL,
@@ -295,6 +296,24 @@ CREATE TABLE DrugItem (
 );
 GO
 
+  CREATE TABLE BookingRevenue (
+    revenueId   INT IDENTITY(1,1) PRIMARY KEY,
+    bookId      INT NOT NULL CONSTRAINT FK_BookingRevenue_Booking FOREIGN KEY (bookId) REFERENCES Booking(bookId),
+    serId       INT NOT NULL CONSTRAINT FK_BookingRevenue_Service FOREIGN KEY (serId) REFERENCES Service(serId),
+    totalAmount DECIMAL(12,2) NOT NULL,
+    createdAt   DATETIME      NOT NULL DEFAULT GETDATE()
+);
+GO
+
+CREATE TABLE BookingRevenueDetail (
+    revenueDetailId INT IDENTITY(1,1) PRIMARY KEY,
+    bookId      INT NOT NULL CONSTRAINT FK_BRD_Booking FOREIGN KEY (bookId) REFERENCES Booking(bookId),
+    serId       INT NOT NULL CONSTRAINT FK_BRD_Service FOREIGN KEY (serId) REFERENCES Service(serId),
+    subId       INT NOT NULL CONSTRAINT FK_BRD_SubService FOREIGN KEY (subId) REFERENCES SubService(subId),
+    subPrice    DECIMAL(12,2) NOT NULL,
+    createdAt   DATETIME      NOT NULL DEFAULT GETDATE()
+);
+GO
 
 
 INSERT INTO Customer ( cusFullName, cusGender, cusDate, cusEmail, cusPhone, cusPassword, cusAddress, cusStatus,  cusOccupation,  emergencyContact)
@@ -378,3 +397,6 @@ VALUES
   (3, N'Bơm tinh trùng vào buồng tử cung', N'Thực hiện thủ thuật IUI',                  8, 2500000),
   (3, N'Thử β-hCG',                    N'Xét nghiệm kiểm tra thai sau IUI',               22, 200000),
   (3, N'Siêu âm túi thai',             N'Theo dõi sự phát triển của thai (nếu có)',      29, 250000);
+
+
+

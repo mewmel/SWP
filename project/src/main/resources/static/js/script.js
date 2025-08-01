@@ -1594,6 +1594,18 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('doctorDetailModal').classList.remove('show');
             document.body.style.overflow = '';
         }
+        
+        // Function để đặt lịch với bác sĩ được chọn
+        window.bookAppointmentWithDoctor = function(doctorName) {
+            // Lưu tên bác sĩ được chọn vào localStorage
+            localStorage.setItem('selectedDoctorName', doctorName);
+            
+            // Đóng modal
+            closeDoctorDetailModal();
+            
+            // Chuyển đến trang đặt lịch
+            window.location.href = 'dat-lich.html';
+        }
         function attachDoctorDetailEvents() {
             document.querySelectorAll('.doctor-profile').forEach(btn => {
                 btn.onclick = function(e) {
@@ -1601,6 +1613,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const card = btn.closest('.doctor-card');
                     if (!card) return;
                     const name = card.querySelector('h3')?.textContent.trim() || '';
+                    console.log('Doctor card clicked, name extracted:', name); // Debug log
                     const imgSrc = card.querySelector('img')?.getAttribute('src') || 'img/doctor1.png';
                     const title = card.querySelector('.doctor-title')?.textContent || '';
                     const specialty = card.querySelector('.doctor-specialty')?.textContent || '';
@@ -1630,7 +1643,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             profileDescription: 'Bác sĩ Trần Thị Tú là chuyên gia về kiểm soát chất lượng phôi và thụ tinh trong ống nghiệm, với hơn 8 năm kinh nghiệm tại các trung tâm hàng đầu.'
                         }
                     };
-                    const info = doctorData[name] || { degree: 'Đang cập nhật', profileDescription: 'Đang cập nhật...' };
+                    const info = window.getDoctorDataByName ? window.getDoctorDataByName(name) : 
+                        (doctorData[name] || { degree: 'Đang cập nhật', profileDescription: 'Đang cập nhật...' });
                     document.getElementById('doctorDetailContent').innerHTML = `
                         <img class="doctor-modal-avatar" src="${imgSrc}" alt="${name}">
                         <div class="doctor-modal-name">${name}</div>
@@ -1638,6 +1652,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="doctor-modal-specialty"><i class="fas fa-stethoscope"></i> ${specialty}</div>
                         <div class="doctor-modal-degree"><i class="fas fa-graduation-cap"></i> ${info.degree}</div>
                         <div class="doctor-modal-profile"><i class="fas fa-info-circle"></i> ${info.profileDescription}</div>
+                        <div class="doctor-modal-actions">
+                            <button class="btn-book-appointment" onclick="bookAppointmentWithDoctor('${name}')">
+                                <i class="fas fa-calendar-plus"></i> Đặt lịch khám
+                            </button>
+                        </div>
                     `;
                     document.getElementById('doctorDetailModal').classList.add('show');
                     document.body.style.overflow = 'hidden';

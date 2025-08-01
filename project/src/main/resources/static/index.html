@@ -63,6 +63,40 @@
             border-color: #ccc;
             color: #ccc;
         }
+        
+        /* Doctor Modal Styles */
+        .doctor-modal-actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .btn-book-appointment {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-book-appointment:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a67d8 0%, #6c5ce7 100%);
+        }
+        
+        .btn-book-appointment:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -507,11 +541,6 @@
                     <i class="fas fa-mobile-alt"></i>
                     <h3>Cổng thông tin bệnh nhân</h3>
                     <p>Cổng thông tin truy cập hồ sơ và liên lạc bảo mật dành cho bệnh nhân.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    <h3>Tích hợp thanh toán</h3>
-                    <p>Hệ thống thanh toán hợp lý với xác minh bảo hiểm.</p>
                 </div>
             </div>
         </div>
@@ -976,6 +1005,79 @@
                 </div>
             `;
         }
+    </script>
+    
+    <script>
+        // ============= ENHANCED DOCTOR DETAIL SYSTEM =============
+        let doctorsData = [];
+        
+        // Load doctors from API
+        async function loadDoctorsFromAPI() {
+            try {
+                const response = await fetch('/api/doctors/public');
+                if (response.ok) {
+                    doctorsData = await response.json();
+                    console.log('Doctors loaded from API:', doctorsData);
+                }
+            } catch (error) {
+                console.error('Failed to load doctors from API:', error);
+            }
+        }
+        
+        // Enhanced function to get doctor data by name
+        function getDoctorDataByName(doctorName) {
+            // Try to find exact match in API data first
+            const apiDoctor = doctorsData.find(doc => {
+                const fullName = `Bác sĩ ${doc.docFullName}`;
+                return fullName === doctorName || doc.docFullName === doctorName.replace('Bác sĩ ', '');
+            });
+            
+            if (apiDoctor) {
+                return {
+                    degree: apiDoctor.degree || 'Đang cập nhật',
+                    profileDescription: apiDoctor.profileDescription || 'Đang cập nhật...',
+                    docId: apiDoctor.docId,
+                    docFullName: apiDoctor.docFullName,
+                    expertise: apiDoctor.expertise,
+                    avatarUrl: apiDoctor.avatarUrl
+                };
+            }
+            
+            // Fallback to hardcoded data if API data not available
+            const hardcodedData = {
+                'Bác sĩ Trương Quốc Lập': {
+                    degree: 'Bác sĩ Chuyên khoa I Sản Phụ khoa',
+                    profileDescription: 'Bác sĩ Trương Quốc Lập có 8 năm kinh nghiệm trong lĩnh vực IUI, đã hỗ trợ thành công nhiều cặp vợ chồng trên toàn quốc.'
+                },
+                'Bác sĩ Nguyễn N. Kh. Linh': {
+                    degree: 'Tiến sĩ Sản Phụ khoa',
+                    profileDescription: 'Tiến sĩ Nguyễn Ngọc Khánh Linh là chuyên gia về kiểm soát chất lượng phôi và thụ tinh trong ống nghiệm, với hơn 12 năm công tác tại các trung tâm sinh sản hàng đầu.'
+                },
+                'Bác sĩ Tất Vĩnh Hùng': {
+                    degree: 'Thạc sĩ Sản Phụ khoa',
+                    profileDescription: 'Bác sĩ Tất Vĩnh Hùng có hơn 10 năm kinh nghiệm điều trị vô sinh – hiếm muộn, chuyên sâu về IVF tại các trung tâm hàng đầu.'
+                },
+                'Bác sĩ Phạm Thị Hồng Anh': {
+                    degree: 'Bác sĩ Chuyên khoa II Sản Phụ khoa',
+                    profileDescription: 'Bác sĩ Phạm Thị Hồng Anh là chuyên gia về thụ tinh trong ống nghiệm và hỗ trợ sinh sản, với 7 năm kinh nghiệm tại các trung tâm hỗ trợ sinh sản uy tín.'
+                },
+                'Bác sĩ Lê Minh Đức': {
+                    degree: 'Thạc sĩ Sản Phụ khoa',
+                    profileDescription: 'Bác sĩ Lê Minh Đức chuyên sâu về điều trị vô sinh – hiếm muộn và hỗ trợ sinh sản, với 5 năm kinh nghiệm làm việc tại các bệnh viện đầu ngành.'
+                },
+                'Bác sĩ Trần Thị Tú': {
+                    degree: 'Tiến sĩ Sinh học Phôi',
+                    profileDescription: 'Bác sĩ Trần Thị Tú là chuyên gia về kiểm soát chất lượng phôi và thụ tinh trong ống nghiệm, với hơn 8 năm kinh nghiệm tại các trung tâm hàng đầu.'
+                }
+            };
+            
+            return hardcodedData[doctorName] || { degree: 'Đang cập nhật', profileDescription: 'Đang cập nhật...' };
+        }
+        
+        // Load doctors data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDoctorsFromAPI();
+        });
     </script>
 </body>
 </html>

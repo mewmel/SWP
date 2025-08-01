@@ -50,6 +50,14 @@ if (avatarInput) {
             return;
         }
 
+        // Kiểm tra kích thước file (10MB = 10 * 1024 * 1024 bytes)
+        const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSizeInBytes) {
+            showAlert('error', 'Kích thước ảnh phải nhỏ hơn 10MB!');
+            avatarInput.value = "";
+            return;
+        }
+
         // Gửi file lên server (chỉ preview nếu upload thành công)
         const formData = new FormData();
         formData.append('avatar', file);

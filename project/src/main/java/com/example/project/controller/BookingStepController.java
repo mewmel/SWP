@@ -32,6 +32,7 @@ import com.example.project.entity.SubService;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.BookingStepService;
+import com.example.project.dto.BookingWithStepsAndDrug;
 
 
 
@@ -272,5 +273,29 @@ public ResponseEntity<List<Map<String, Object>>> getFollowUpSubservices(@PathVar
         }
     }
 
+    @GetMapping("/all-booking-steps/{recordId}")
+    public ResponseEntity<?> getBookingWithStepsAndDrug(@PathVariable Integer recordId) {
+        try {
+            List<BookingWithStepsAndDrug> data = bookingStepService.getBookingsWithStepsAndDrugByRecordId(recordId);
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Lỗi khi lấy dữ liệu: " + e.getMessage());
+        }
+    }
+    
+@GetMapping("/find-id/{bookingId}/{subId}")
+public ResponseEntity<?> getBookingStepId(
+    @PathVariable Integer bookingId,
+    @PathVariable Integer subId
+) {
+    BookingStep step = bookingStepRepo.findByBookIdAndSubId(bookingId, subId)
+        .orElse(null);
+    if (step != null) {
+        return ResponseEntity.ok(Collections.singletonMap("bookingStepId", step.getBookingStepId()));
+    } else {
+        return ResponseEntity.ok(Collections.singletonMap("bookingStepId", null));
+    }
+}    
 
 }
