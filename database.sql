@@ -398,5 +398,56 @@ VALUES
   (3, N'Thử β-hCG',                    N'Xét nghiệm kiểm tra thai sau IUI',               22, 200000),
   (3, N'Siêu âm túi thai',             N'Theo dõi sự phát triển của thai (nếu có)',      29, 250000);
 
+-- Thêm dữ liệu mẫu cho WorkSlot
+INSERT INTO WorkSlot (docId, maId, workDate, startTime, endTime, maxPatient, slotStatus)
+VALUES
+  (1, 1, '2024-12-20', '08:00:00', '09:00:00', 2, 'approved'),
+  (1, 1, '2024-12-20', '09:00:00', '10:00:00', 2, 'approved'),
+  (2, 1, '2024-12-20', '08:00:00', '09:00:00', 2, 'approved');
+
+-- Thêm dữ liệu mẫu cho Booking
+INSERT INTO Booking (cusId, docId, slotId, bookType, bookStatus, createdAt, note, serId)
+VALUES
+  (1, 1, 1, 'initial', 'completed', '2024-12-20 08:00:00', 'Khám lần đầu', 1),
+  (1, 1, 2, 'follow-up', 'completed', '2024-12-20 09:00:00', 'Tái khám', 1);
+
+-- Thêm dữ liệu mẫu cho MedicalRecord
+INSERT INTO MedicalRecord (cusId, docId, serId, createdAt, recordStatus, note, diagnosis, treatmentPlan, dischargeDate)
+VALUES
+  (1, 1, 1, '2024-12-20 08:00:00', 'active', 'Bệnh nhân cần điều trị IVF', 'Vô sinh nguyên phát', 'Kế hoạch điều trị IVF', NULL);
+
+-- Thêm dữ liệu mẫu cho MedicalRecordBooking
+INSERT INTO MedicalRecordBooking (recordId, bookId)
+VALUES
+  (1, 1),
+  (1, 2);
+
+-- Thêm dữ liệu mẫu cho BookingStep để test tiến độ điều trị
+-- Booking 1: Một số bước đã hoàn thành, một số đang thực hiện
+INSERT INTO BookingStep (bookId, subId, performedAt, result, note, stepStatus)
+VALUES
+  (1, 1, '2024-12-20 08:30:00', '[{"indexName":"Huyết áp","value":"120/80","unit":"mmHg","status":"Bình thường"}]', 'Huyết áp ổn định', 'completed'),
+  (1, 2, '2024-12-20 09:00:00', '[{"indexName":"Khám phụ khoa","value":"Bình thường","unit":"","status":"Bình thường"}]', 'Khám phụ khoa bình thường', 'completed'),
+  (1, 3, '2024-12-20 10:00:00', '[{"indexName":"AMH","value":"2.5","unit":"ng/ml","status":"Bình thường"}]', 'Dự trữ buồng trứng tốt', 'completed'),
+  (1, 4, '2024-12-20 11:00:00', '[{"indexName":"FSH","value":"8.5","unit":"mIU/ml","status":"Bình thường"},{"indexName":"LH","value":"6.2","unit":"mIU/ml","status":"Bình thường"}]', 'Hormone sinh sản ổn định', 'pending'),
+  (1, 5, NULL, NULL, NULL, 'inactive'),
+  (1, 6, NULL, NULL, NULL, 'inactive'),
+  (1, 7, NULL, NULL, NULL, 'inactive'),
+  (1, 8, NULL, NULL, NULL, 'inactive'),
+  (1, 9, NULL, NULL, NULL, 'inactive');
+
+-- Booking 2: Một số bước khác
+INSERT INTO BookingStep (bookId, subId, performedAt, result, note, stepStatus)
+VALUES
+  (2, 1, '2024-12-20 09:30:00', '[{"indexName":"Huyết áp","value":"118/78","unit":"mmHg","status":"Bình thường"}]', 'Huyết áp ổn định', 'completed'),
+  (2, 2, '2024-12-20 10:00:00', '[{"indexName":"Khám phụ khoa","value":"Bình thường","unit":"","status":"Bình thường"}]', 'Khám phụ khoa bình thường', 'completed'),
+  (2, 3, '2024-12-20 11:00:00', '[{"indexName":"AMH","value":"2.8","unit":"ng/ml","status":"Bình thường"}]', 'Dự trữ buồng trứng tốt', 'completed'),
+  (2, 4, '2024-12-20 12:00:00', '[{"indexName":"FSH","value":"7.8","unit":"mIU/ml","status":"Bình thường"},{"indexName":"LH","value":"5.9","unit":"mIU/ml","status":"Bình thường"}]', 'Hormone sinh sản ổn định', 'completed'),
+  (2, 5, '2024-12-20 13:00:00', '[{"indexName":"Số lượng tinh trùng","value":"45","unit":"triệu/ml","status":"Bình thường"}]', 'Chất lượng tinh trùng tốt', 'completed'),
+  (2, 6, '2024-12-20 14:00:00', '[{"indexName":"HIV","value":"Âm tính","unit":"","status":"Bình thường"},{"indexName":"HBsAg","value":"Âm tính","unit":"","status":"Bình thường"}]', 'Xét nghiệm bệnh truyền nhiễm âm tính', 'completed'),
+  (2, 7, '2024-12-20 15:00:00', '[{"indexName":"Siêu âm tử cung","value":"Bình thường","unit":"","status":"Bình thường"}]', 'Cấu trúc tử cung bình thường', 'completed'),
+  (2, 8, '2024-12-20 16:00:00', '[{"indexName":"HSG","value":"Thông","unit":"","status":"Bình thường"}]', 'Vòi trứng thông', 'completed'),
+  (2, 9, '2024-12-20 17:00:00', NULL, 'Tư vấn phác đồ IVF', 'pending');
+
 
 

@@ -277,6 +277,9 @@ function showNotification(message, type) {
 
         // Tab switching functionality
         function switchTab(tabName) {
+            console.log('🔍 Switching to tab:', tabName);
+            console.log('🔍 Current patient data:', currentPatientData);
+            
             // Remove active class from all tabs and tab contents
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -287,6 +290,7 @@ function showNotification(message, type) {
 
             // Load data for the selected tab if not already loaded
             if (currentPatientData && currentPatientData.bookId) {
+                console.log('✅ Loading data for tab:', tabName, 'with bookId:', currentPatientData.bookId);
                 switch(tabName) {
                     case 'current':
                         // Refresh current tab data  
@@ -299,13 +303,16 @@ function showNotification(message, type) {
                         loadTreatmentPlan(currentPatientData);
                         break;
                     case 'prescription':
+                        console.log('🔍 Loading prescription data for bookId:', currentPatientData.bookId);
                         loadExistingPrescriptionData(currentPatientData.bookId);
-                        fillPrescriptionHeader();
+                        // fillPrescriptionHeader() sẽ được gọi trong loadExistingPrescriptionData nếu cần
                         break;
                     case 'tests':
                         loadAndRenderTestResults(currentPatientData.bookId);
                         break;
                 }
+            } else {
+                console.log('❌ No current patient data or bookId available');
             }
         }
 
@@ -339,6 +346,16 @@ function showNotification(message, type) {
                 patientData.bookId = bookId;
                 currentPatientData = patientData;
 
+                // Lưu thông tin cần thiết vào localStorage cho việc lưu đơn thuốc
+                localStorage.setItem('currentBookId', bookId);
+                localStorage.setItem('currentCusId', cusId);
+                
+                // Xóa drugId cũ để đảm bảo tạo đơn thuốc mới nếu cần
+                localStorage.removeItem('drugId');
+                
+                // Reset prescription modification flag
+                window.prescriptionModified = false;
+
                 console.log('✅ Patient data from loaded list:', patientData);
 
                 // Populate basic patient information
@@ -355,6 +372,9 @@ function showNotification(message, type) {
             if (!res.ok) throw new Error('Không tìm thấy hồ sơ bệnh án');
             const record = await res.json();
             console.log('🎯 DEBUG: Loaded medical record:', record);
+
+                    // Store the medical record data for later use
+                    currentPatientData.currentMedicalRecord = record;
 
             // Gán vào UI tab "Hồ sơ bệnh án"
             document.getElementById('recordStatus').value = record.recordStatus || '';
@@ -488,72 +508,63 @@ function renderMedicalHistory(historyData) {
             try {
                 treatmentContent.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Đang tải kế hoạch điều trị...</div>';
                 
-                // Fetch treatment plan using bookId
-                let treatmentData = null;
-                if (patientData.recordId) {
-                    const response = await fetch(`/api/booking-steps/all-booking-steps/${patientData.recordId}`);
+                // Fetch treatment progress using bookId
+                let treatmentProgressData = null;
+                if (patientData.bookId) {
+                    const response = await fetch(`/api/booking-steps/treatment-progress/${patientData.bookId}`);
                     if (response.ok) {
-                        treatmentData = await response.json();
+                        treatmentProgressData = await response.json();
                     }
                 }
                 
-                renderTreatmentPlan(treatmentData, patientData);
+                renderTreatmentPlan(treatmentProgressData, patientData);
             } catch (error) {
                 console.error('Error loading treatment plan:', error);
                 renderSampleTreatmentPlan();
             }
         }
 
-        function renderTreatmentPlan(treatmentData, patientData) {
+        function renderTreatmentPlan(treatmentProgressData, patientData) {
             const treatmentContent = document.getElementById('treatmentContent');
 
-            if (!treatmentData || treatmentData.length === 0) {
+            if (!treatmentProgressData || !treatmentProgressData.subServiceDetails) {
                 renderSampleTreatmentPlan();
                 return;
             }
 
-            // Calculate progress statistics
-            let totalSteps = 0;
-            let completedSteps = 0;
-            let currentSteps = 0;
-            let pendingSteps = 0;
-
-            treatmentData.forEach(booking => {
-                if (booking.bookingSteps) {
-                    booking.bookingSteps.forEach(step => {
-                        totalSteps++;
-                        if (step.stepStatus === 'completed') completedSteps++;
-                        else if (step.stepStatus === 'pending') currentSteps++;
-                        else pendingSteps++;
-                    });
-                }
-            });
-
-            const progressPercentage = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+            // Lấy dữ liệu từ API mới
+            const {
+                totalSubServices,
+                completedSubServices,
+                pendingSubServices,
+                inactiveSubServices,
+                progressPercentage,
+                subServiceDetails
+            } = treatmentProgressData;
 
             let treatmentHtml = `
                 <!-- Treatment Header -->
                 <div class="treatment-header">
                     <h3><i class="fas fa-stethoscope"></i> Kế hoạch điều trị</h3>
-                    <p>${patientData?.currentBooking?.serviceName || 'Dịch vụ điều trị'}</p>
-                </div>
+                    <p>${patientData?.serviceName || 'Dịch vụ điều trị'}</p>
+                    </div>
 
                 <!-- Stats Grid -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-number">${totalSteps}</div>
-                        <div class="stat-label">Tổng bước</div>
-                    </div>
+                        <div class="stat-number">${totalSubServices}</div>
+                        <div class="stat-label">Tổng dịch vụ</div>
+                </div>
                     <div class="stat-card">
-                        <div class="stat-number">${completedSteps}</div>
+                        <div class="stat-number">${completedSubServices}</div>
                         <div class="stat-label">Hoàn thành</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">${currentSteps}</div>
+                        <div class="stat-number">${pendingSubServices}</div>
                         <div class="stat-label">Đang thực hiện</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">${pendingSteps}</div>
+                        <div class="stat-number">${inactiveSubServices}</div>
                         <div class="stat-label">Chờ thực hiện</div>
                     </div>
                 </div>
@@ -563,87 +574,47 @@ function renderMedicalHistory(historyData) {
                     <div class="progress-header">
                         <div class="progress-title">Tiến độ điều trị</div>
                         <div class="progress-percentage">${progressPercentage}%</div>
-                    </div>
+                                    </div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${progressPercentage}%"></div>
-                    </div>
-                </div>
+                                    </div>
+                                </div>
 
                 <!-- Steps Container -->
                 <div class="steps-container">
                     <div class="steps-title">
                         <i class="fas fa-list-check"></i>
-                        Các bước điều trị
-                    </div>
-            `;
-
-            let stepCounter = 1;
-            treatmentData.forEach((booking, bIndex) => {
-                if (booking.bookingSteps && booking.bookingSteps.length > 0) {
-                    booking.bookingSteps.forEach((step, stepIndex) => {
-                        const statusClass = step.stepStatus === 'completed' ? 'completed'
-                            : step.stepStatus === 'pending' ? 'current'
-                                : 'pending';
-                        
-                        const statusText = step.stepStatus === 'completed' ? 'Hoàn thành'
-                            : step.stepStatus === 'pending' ? 'Đang thực hiện'
-                                : 'Chờ thực hiện';
-
-                        treatmentHtml += `
-                            <div class="step-item ${statusClass}">
-                                <div class="step-number ${statusClass}">${stepCounter}</div>
-                                <div class="step-content">
-                                    <div class="step-name">${step.subName || `Bước ${stepCounter}`}</div>
-                                    <div class="step-description">${formatStepResult(step.result) || 'Đang thực hiện theo kế hoạch'}</div>
-                                    <div class="step-date">${formatDate(step.performedAt) || 'Dự kiến thực hiện'}</div>
-                                </div>
-                                <div class="step-status ${statusClass}">${statusText}</div>
+                        Các dịch vụ điều trị
                             </div>
                         `;
-                        stepCounter++;
-                    });
-                }
+
+            let stepCounter = 1;
+            subServiceDetails.forEach((subService, index) => {
+                const statusClass = subService.stepStatus === 'completed' ? 'completed'
+                    : subService.stepStatus === 'pending' ? 'current'
+                        : 'pending';
+                
+                const statusText = subService.stepStatus === 'completed' ? 'Hoàn thành'
+                    : subService.stepStatus === 'pending' ? 'Đang thực hiện'
+                        : 'Chờ thực hiện';
+
+            treatmentHtml += `
+                    <div class="step-item ${statusClass}">
+                        <div class="step-number ${statusClass}">${stepCounter}</div>
+                        <div class="step-content">
+                            <div class="step-name">${subService.subName || `Dịch vụ ${stepCounter}`}</div>
+                            <div class="step-description">${subService.subDescription || 'Đang thực hiện theo kế hoạch'}</div>
+                            <div class="step-date">${formatDate(subService.performedAt) || 'Dự kiến thực hiện'}</div>
+                            ${subService.result ? `<div class="step-result">${formatStepResult(subService.result)}</div>` : ''}
+                            ${subService.note ? `<div class="step-note">Ghi chú: ${subService.note}</div>` : ''}
+                        </div>
+                        <div class="step-status ${statusClass}">${statusText}</div>
+                </div>
+            `;
+                stepCounter++;
             });
 
             treatmentHtml += `</div>`;
-
-            // Add drug information if available
-            treatmentData.forEach((booking, bIndex) => {
-                if (booking.drugId && booking.drugItems && booking.drugItems.length > 0) {
-                    treatmentHtml += `
-                        <div class="drug-section">
-                            <div class="drug-title">
-                                <i class="fas fa-pills"></i>
-                                Đơn thuốc đã kê (Đợt ${bIndex + 1})
-                            </div>
-                            <table class="drug-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Tên thuốc</th>
-                                        <th>Liều dùng</th>
-                                        <th>Tần suất</th>
-                                        <th>Thời gian</th>
-                                        <th>Ghi chú</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                    `;
-                    booking.drugItems.forEach((item, dIndex) => {
-                        treatmentHtml += `
-                            <tr>
-                                <td>${dIndex + 1}</td>
-                                <td>${item.drugName || '-'}</td>
-                                <td>${item.dosage || '-'}</td>
-                                <td>${item.frequency || '-'}</td>
-                                <td>${item.duration || '-'}</td>
-                                <td>${item.drugItemNote || ''}</td>
-                            </tr>
-                        `;
-                    });
-                    treatmentHtml += `</tbody></table></div>`;
-                }
-            });
 
             treatmentContent.innerHTML = treatmentHtml;
         }
@@ -1087,9 +1058,14 @@ function renderMedicalHistory(historyData) {
 
         // Refresh patient list
         function refreshPatientList() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('statusFilter').value = 'all';
-            document.getElementById('genderFilter').value = 'all';
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const genderFilter = document.getElementById('genderFilter');
+            
+            if (searchInput) searchInput.value = '';
+            if (statusFilter) statusFilter.value = 'all';
+            if (genderFilter) genderFilter.value = 'all';
+            
             loadPatientDataFromAPI();
         }
 
@@ -1109,17 +1085,25 @@ function renderMedicalHistory(historyData) {
             }
         }
 
-        // Save patient record
+        // Save patient record - Comprehensive save function
         async function savePatientRecord() {
             if (!currentPatientData) {
                 showErrorMessage('Không có dữ liệu bệnh nhân để lưu');
                 return;
             }
 
+            // Kiểm tra xem có đang trong quá trình lưu không
+            if (window.isSavingPatientRecord) {
+                console.log('⚠️ DEBUG: Already saving patient record, skipping...');
+                return;
+            }
+            
+            window.isSavingPatientRecord = true;
+
             try {
                 showLoading();
 
-                // Collect form data (only medical record fields)
+                // 1. Collect medical record form data
                 const recordData = {
                     recordStatus: document.getElementById('recordStatus').value,
                     recordCreatedDate: document.getElementById('recordCreatedDate').value,
@@ -1131,8 +1115,20 @@ function renderMedicalHistory(historyData) {
 
                 console.log('Saving patient record:', recordData);
 
-                // Update medical record if exists
-                if (currentPatientData.currentMedicalRecord) {
+                let saveResults = {
+                    medicalRecord: false,
+                    prescription: false,
+                    testResults: false
+                };
+
+                let hasChanges = false;
+
+                // 2. Update medical record if exists and has changes
+                console.log('🔍 DEBUG: currentPatientData:', currentPatientData);
+                console.log('🔍 DEBUG: currentMedicalRecord:', currentPatientData.currentMedicalRecord);
+                
+                if (currentPatientData.currentMedicalRecord && currentPatientData.currentMedicalRecord.recordId) {
+                    try {
                     const recordUpdateResponse = await fetch(`/api/medical-records/update/${currentPatientData.currentMedicalRecord.recordId}`, {
                         method: 'PUT',
                         headers: {
@@ -1147,23 +1143,241 @@ function renderMedicalHistory(historyData) {
                         })
                     });
 
-                    if (!recordUpdateResponse.ok) {
-                        console.warn('Failed to update medical record');
+                        if (recordUpdateResponse.ok) {
+                            const responseData = await recordUpdateResponse.json();
+                            console.log('Medical record updated successfully:', responseData);
+                            saveResults.medicalRecord = true;
+                            hasChanges = true;
+                        } else {
+                            const errorData = await recordUpdateResponse.json();
+                            console.error('Failed to update medical record:', errorData);
+                            showErrorMessage('Lỗi khi cập nhật hồ sơ: ' + (errorData.message || 'Không xác định'));
+                        }
+                    } catch (error) {
+                        console.error('Error updating medical record:', error);
+                    }
+                } else if (currentPatientData.serId) {
+                    // Create new medical record if it doesn't exist
+                    try {
+                        const recordCreateResponse = await fetch(`/api/medical-records/create/${currentPatientData.serId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                cusId: currentPatientData.cusId,
+                                serId: currentPatientData.serId,
+                                recordStatus: recordData.recordStatus,
+                                diagnosis: recordData.diagnosis,
+                                treatmentPlan: recordData.treatmentPlan,
+                                dischargeDate: recordData.dischargeDate,
+                                note: recordData.medicalNote
+                            })
+                        });
+
+                        if (recordCreateResponse.ok) {
+                            const responseData = await recordCreateResponse.json();
+                            console.log('Medical record created successfully:', responseData);
+                            saveResults.medicalRecord = true;
+                            hasChanges = true;
+                            
+                            // Update currentPatientData with the new record
+                            if (responseData.recordId) {
+                                currentPatientData.currentMedicalRecord = { recordId: responseData.recordId };
+                            }
+                        } else {
+                            const errorData = await recordCreateResponse.json();
+                            console.error('Failed to create medical record:', errorData);
+                            showErrorMessage('Lỗi khi tạo hồ sơ: ' + (errorData.message || 'Không xác định'));
+                        }
+                    } catch (error) {
+                        console.error('Error creating medical record:', error);
+                    }
+                }
+
+                // 3. Save prescription if exists and has changes
+                // LƯU Ý: Đơn thuốc sẽ được lưu riêng bằng button "Lưu đơn thuốc"
+                // Không lưu đơn thuốc ở đây để tránh duplicate
+                console.log('🔍 DEBUG: Skipping prescription save in savePatientRecord - use dedicated savePrescription button');
+
+                // 4. Save test results if exists and has changes
+                const testResultsContainer = document.querySelector('.booking-steps-results');
+                console.log('🔍 DEBUG: Test results container found:', !!testResultsContainer);
+                
+                if (testResultsContainer) {
+                    try {
+                        const testResults = collectTestResultsData();
+                        console.log('🔍 DEBUG: Collected test results:', testResults);
+                        
+                        if (testResults && testResults.length > 0) {
+                            const testResultsResponse = await fetch('/api/booking-steps/save-test-results', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(testResults)
+                            });
+
+                            if (testResultsResponse.ok) {
+                                console.log('Test results saved successfully');
+                                saveResults.testResults = true;
+                                hasChanges = true;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error saving test results:', error);
                     }
                 }
 
                 hideLoading();
-                alert('Đã lưu thông tin bệnh nhân thành công!');
+
+                // 5. Show success message based on what was saved
+                console.log('🔍 DEBUG: Final save results:', { hasChanges, saveResults });
+                
+                if (hasChanges) {
+                    let message = 'Đã lưu thành công: ';
+                    const items = [];
+                    if (saveResults.medicalRecord) items.push('hồ sơ bệnh án');
+                    if (saveResults.testResults) items.push('kết quả xét nghiệm');
+                    
+                    message += items.join(', ');
+                    showNotification(message, 'success');
                 
                 // Refresh patient list
                 refreshPatientList();
+                    
+                    // Reload modal data to show the updated information
+                    if (currentPatientData && currentPatientData.cusId && currentPatientData.bookId) {
+                        setTimeout(async () => {
+                            try {
+                                // Reload the medical record data
+                                if (currentPatientData.currentMedicalRecord && currentPatientData.currentMedicalRecord.recordId) {
+                                    const res = await fetch(`/api/medical-records/${currentPatientData.currentMedicalRecord.recordId}`);
+                                    if (res.ok) {
+                                        const record = await res.json();
+                                        currentPatientData.currentMedicalRecord = record;
+                                        
+                                        // Update UI with fresh data
+                                        document.getElementById('recordStatus').value = record.recordStatus || '';
+                                        document.getElementById('recordCreatedDate').value = formatDateTimeForInput(record.createdAt);
+                                        document.getElementById('diagnosis').value = record.diagnosis || '';
+                                        document.getElementById('treatmentPlan').value = record.treatmentPlan || '';
+                                        document.getElementById('dischargeDate').value = formatDateTimeForInput(record.dischargeDate);
+                                        document.getElementById('medicalNote').value = record.note || '';
+                                    }
+                                }
+                                
+                                // Reload test results only (prescription is managed separately)
+                                loadAndRenderTestResults(currentPatientData.bookId);
+                                
+                            } catch (error) {
+                                console.error('Error reloading modal data:', error);
+                            }
+                        }, 500);
+                    }
+                    
+                    // Close modal after successful save
+                    setTimeout(() => {
+                        closeModal();
+                    }, 3000);
+                } else {
+                    showNotification('Không có thay đổi nào để lưu', 'info');
+                }
 
             } catch (error) {
                 console.error('Error saving patient record:', error);
                 hideLoading();
                 showErrorMessage('Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại.');
+            } finally {
+                window.isSavingPatientRecord = false;
             }
         }
+
+        // Helper function to collect test results data
+        function collectTestResultsData() {
+            const testResults = [];
+            const testResultItems = document.querySelectorAll('.test-result-item');
+            
+            console.log('🔍 DEBUG: Found test result items:', testResultItems.length);
+            
+            testResultItems.forEach((item, index) => {
+                const bookingStepId = item.getAttribute('data-booking-step-id');
+                const subId = item.getAttribute('data-sub-id');
+                const performedAt = item.querySelector('.editable-date')?.value;
+                const stepStatus = item.querySelector('.step-status-select')?.value;
+                const note = item.querySelector('.editable-note')?.value;
+                
+                console.log(`🔍 DEBUG: Item ${index}:`, { bookingStepId, subId, performedAt, stepStatus, note });
+                
+                const results = [];
+                const resultItems = item.querySelectorAll('.result-item');
+                console.log(`🔍 DEBUG: Item ${index} has ${resultItems.length} result items`);
+                
+                resultItems.forEach((resultItem, resultIndex) => {
+                    const label = resultItem.querySelector('.editable-label')?.value;
+                    const value = resultItem.querySelector('.editable-result')?.value;
+                    const unit = resultItem.querySelector('.unit-select')?.value;
+                    const status = resultItem.querySelector('.status-select')?.value;
+                    
+                    console.log(`🔍 DEBUG: Result ${resultIndex}:`, { label, value, unit, status });
+                    
+                    if (label && value) {
+                        results.push({
+                            indexName: label,
+                            value: value,
+                            unit: unit || '',
+                            status: status || 'Bình thường'
+                        });
+                    }
+                });
+                
+                if (bookingStepId && subId) {
+                    testResults.push({
+                        bookingStepId: parseInt(bookingStepId),
+                        subId: parseInt(subId),
+                        bookId: currentPatientData.bookId, // Add bookId for new steps
+                        performedAt: performedAt,
+                        stepStatus: stepStatus || 'completed',
+                        note: note || '',
+                        results: results
+                    });
+                }
+            });
+            
+            console.log('🔍 DEBUG: Final test results to save:', testResults);
+            return testResults;
+        }
+
+        // Save all test results function (for the "Lưu tất cả" button)
+        window.saveAllTestResults = async function() {
+            try {
+                showLoading();
+                
+                const testResults = collectTestResultsData();
+                if (testResults && testResults.length > 0) {
+                    const testResultsResponse = await fetch('/api/booking-steps/save-test-results', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(testResults)
+                    });
+
+                    if (testResultsResponse.ok) {
+                        console.log('All test results saved successfully');
+                        showNotification('Đã lưu tất cả kết quả xét nghiệm thành công!', 'success');
+                    } else {
+                        const errorData = await testResultsResponse.json();
+                        console.error('Failed to save test results:', errorData);
+                        showErrorMessage('Lỗi khi lưu kết quả xét nghiệm: ' + (errorData.message || 'Không xác định'));
+                    }
+                } else {
+                    showNotification('Không có kết quả xét nghiệm nào để lưu', 'info');
+                }
+                
+                hideLoading();
+            } catch (error) {
+                console.error('Error saving all test results:', error);
+                hideLoading();
+                showErrorMessage('Có lỗi xảy ra khi lưu kết quả xét nghiệm. Vui lòng thử lại.');
+            }
+        };
 
         // Cancel changes
         function cancelChanges() {
@@ -1292,6 +1506,9 @@ function renderMedicalHistory(historyData) {
 
             drugsList.appendChild(newDrugItem);
             updatePrescriptionSummary();
+            
+            // Đánh dấu rằng có thay đổi trong UI
+            window.prescriptionModified = true;
         };
 
         window.removeDrugPrescription = function (button) {
@@ -1307,6 +1524,11 @@ function renderMedicalHistory(historyData) {
                     drugItem.remove();
                     updatePrescriptionSummary();
                     renumberDrugs();
+                    console.log('💊 DEBUG: Drug item removed from UI only - will be saved when clicking "Lưu đơn thuốc"');
+                    console.log('💊 DEBUG: Current drugId in localStorage:', localStorage.getItem('drugId'));
+                    
+                    // Đánh dấu rằng có thay đổi trong UI
+                    window.prescriptionModified = true;
                 }, 300);
             }
         };
@@ -1348,6 +1570,37 @@ function renderMedicalHistory(historyData) {
             if (nameInput) nameInput.value = fullName || '';
             if (dateInput) dateInput.value = getLocalDateTimeValue();
             if (numberInput) numberInput.value = drugId;
+            
+            // Thêm event listeners để track thay đổi
+            addPrescriptionChangeListeners();
+        }
+        
+        function addPrescriptionChangeListeners() {
+            // Track thay đổi trong prescription header
+            const prescriptionInputs = [
+                'prescriptionDate',
+                'prescriptionDiagnosis',
+                'generalNotes'
+            ];
+            
+            prescriptionInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('input', () => {
+                        window.prescriptionModified = true;
+                        console.log('💊 DEBUG: Prescription header modified');
+                    });
+                }
+            });
+            
+            // Track thay đổi trong drug items
+            const drugInputs = document.querySelectorAll('#drugsList input, #drugsList textarea');
+            drugInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    window.prescriptionModified = true;
+                    console.log('💊 DEBUG: Drug item modified');
+                });
+            });
         }
 
         function collectPrescriptionData() {
@@ -1389,28 +1642,161 @@ function renderMedicalHistory(historyData) {
         }
 
         window.savePrescription = async function () {
+            console.log('💊 DEBUG: savePrescription() called');
+            
+            // Kiểm tra xem có đang trong quá trình lưu không
+            if (window.isSavingPrescription) {
+                console.log('⚠️ DEBUG: Already saving prescription, skipping...');
+                return;
+            }
+            
+            window.isSavingPrescription = true;
+            
             const data = collectPrescriptionData();
             const drugId = localStorage.getItem('drugId') || '';
+            const bookId = localStorage.getItem('currentBookId') || '';
+            const docId = localStorage.getItem('docId') || '';
+            const cusId = localStorage.getItem('currentCusId') || '';
+            
+            // Kiểm tra xem có thay đổi thực sự không (chỉ áp dụng cho update, không áp dụng cho create mới)
+            if (!window.prescriptionModified && drugId && data.drugs.length === 0) {
+                console.log('💊 DEBUG: No changes detected and no drugs, skipping save');
+                showNotification('ℹ️ Không có thay đổi nào để lưu', 'info');
+                return;
+            }
+            
+            console.log('💊 DEBUG: Collected data:', data);
+            console.log('💊 DEBUG: drugId from localStorage:', drugId);
+            console.log('💊 DEBUG: bookId from localStorage:', bookId);
+            console.log('💊 DEBUG: docId from localStorage:', docId);
+            console.log('💊 DEBUG: cusId from localStorage:', cusId);
 
-            if (!data.prescriptionNumber) {
-                showNotification('❌ Không tìm thấy prescriptionNumber. Vui lòng kiểm tra lại.', 'error');
+            // Không cần kiểm tra prescriptionNumber vì nó sẽ được tạo tự động
+            // khi tạo đơn thuốc mới hoặc đã có sẵn khi cập nhật đơn thuốc cũ
+
+            if (!bookId || !docId || !cusId) {
+                showNotification('❌ Thiếu thông tin booking, doctor hoặc customer. Vui lòng kiểm tra lại.', 'error');
                 return;
             }
 
             try {
-                // 1. Cập nhật bảng Drug
-                const updateDrugRes = await fetch(`/api/drugs/update/${drugId}`, {
+                let currentDrugId = drugId;
+                console.log('💊 DEBUG: Starting savePrescription with drugId:', drugId);
+                console.log('💊 DEBUG: Starting savePrescription with currentDrugId:', currentDrugId);
+
+                // Nếu không có drugId, tạo đơn thuốc mới
+                if (!drugId) {
+                    console.log('🆕 DEBUG: Creating new prescription for bookId:', bookId);
+                    
+                    const createDrugRes = await fetch(`/api/drugs/create/${bookId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            docId: parseInt(docId),
+                            cusId: parseInt(cusId),
+                            bookId: parseInt(bookId),
+                            drugNote: data.diagnosis || '',
+                            createdAt: data.prescriptionDate ? new Date(data.prescriptionDate).toISOString() : new Date().toISOString()
+                        })
+                    });
+
+                    if (!createDrugRes.ok) {
+                        const errorText = await createDrugRes.text();
+                        throw new Error('Không thể tạo đơn thuốc mới: ' + errorText);
+                    }
+
+                    currentDrugId = await createDrugRes.text();
+                    console.log('✅ DEBUG: Created new drug with ID:', currentDrugId);
+                    
+                    // Lưu drugId mới vào localStorage
+                    localStorage.setItem('drugId', currentDrugId);
+                    
+                    // Cập nhật prescriptionNumber trong form
+                    const prescriptionNumberInput = document.getElementById('prescriptionNumber');
+                    if (prescriptionNumberInput) {
+                        prescriptionNumberInput.value = currentDrugId;
+                        console.log('✅ DEBUG: Updated prescriptionNumber in form:', currentDrugId);
+                    }
+                } else {
+                    console.log('🔄 DEBUG: Updating existing prescription with drugId:', drugId);
+                    
+                    // Kiểm tra xem drug có tồn tại không trước khi update
+                    const checkDrugRes = await fetch(`/api/drugs/by-booking/${bookId}`);
+                    if (checkDrugRes.ok) {
+                        const existingDrugs = await checkDrugRes.json();
+                        if (existingDrugs.length > 0 && existingDrugs[0].drugId == drugId) {
+                            console.log('✅ DEBUG: Drug exists, proceeding with update');
+                        } else {
+                            console.log('⚠️ DEBUG: Drug not found, will create new one');
+                            // Nếu drug không tồn tại, xóa drugId khỏi localStorage và tạo mới
+                            localStorage.removeItem('drugId');
+                            currentDrugId = null;
+                            
+                            // Tạo đơn thuốc mới
+                            const createDrugRes = await fetch(`/api/drugs/create/${bookId}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    docId: parseInt(docId),
+                                    cusId: parseInt(cusId),
+                                    bookId: parseInt(bookId),
+                                    drugNote: data.diagnosis || '',
+                                    createdAt: data.prescriptionDate ? new Date(data.prescriptionDate).toISOString() : new Date().toISOString()
+                                })
+                            });
+
+                            if (!createDrugRes.ok) {
+                                const errorText = await createDrugRes.text();
+                                throw new Error('Không thể tạo đơn thuốc mới: ' + errorText);
+                            }
+
+                            currentDrugId = await createDrugRes.text();
+                            console.log('✅ DEBUG: Created new drug with ID:', currentDrugId);
+                            
+                            // Lưu drugId mới vào localStorage
+                            localStorage.setItem('drugId', currentDrugId);
+                            
+                            // Cập nhật prescriptionNumber trong form
+                            const prescriptionNumberInput = document.getElementById('prescriptionNumber');
+                            if (prescriptionNumberInput) {
+                                prescriptionNumberInput.value = currentDrugId;
+                                console.log('✅ DEBUG: Updated prescriptionNumber in form:', currentDrugId);
+                            }
+                        }
+                    }
+                    
+                    // Cập nhật đơn thuốc hiện có
+                    const updateDrugRes = await fetch(`/api/drugs/update/${currentDrugId || drugId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        createdAt: data.prescriptionDate || new Date().toISOString(),
+                            createdAt: data.prescriptionDate ? new Date(data.prescriptionDate).toISOString() : new Date().toISOString(),
                         note: data.diagnosis || ''
                     })
                 });
 
-                if (!updateDrugRes.ok) throw new Error('Không thể cập nhật đơn thuốc');
+                    if (!updateDrugRes.ok) {
+                        const errorText = await updateDrugRes.text();
+                        throw new Error('Không thể cập nhật đơn thuốc: ' + errorText);
+                    }
+                }
 
-                // 2. Tạo mới các bản ghi DrugItem
+                // Xóa drug items cũ trước khi tạo mới (nếu có)
+                if (currentDrugId) {
+                    console.log('🗑️ DEBUG: Deleting old drug items for drugId:', currentDrugId);
+                    const deleteOldItemsRes = await fetch(`/api/drug-items/delete-by-drug/${currentDrugId}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    if (!deleteOldItemsRes.ok) {
+                        console.log('⚠️ DEBUG: Could not delete old drug items, but continuing...');
+                    } else {
+                        console.log('✅ DEBUG: Old drug items deleted successfully');
+                    }
+                }
+
+                // Tạo mới các bản ghi DrugItem
                 const drugItemsPayload = data.drugs.map(item => ({
                     drugName: item.drugName,
                     dosage: item.dosage,
@@ -1419,18 +1805,105 @@ function renderMedicalHistory(historyData) {
                     drugItemNote: item.drugItemNote
                 }));
 
-                const drugItemRes = await fetch(`/api/drug-items/create/${drugId}`, {
+                console.log('💊 DEBUG: Creating drug items for drugId:', currentDrugId);
+                console.log('💊 DEBUG: Drug items payload:', drugItemsPayload);
+
+                const drugItemRes = await fetch(`/api/drug-items/create/${currentDrugId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(drugItemsPayload)
                 });
 
-                if (!drugItemRes.ok) throw new Error('Không thể lưu thuốc con');
+                if (!drugItemRes.ok) {
+                    const errorText = await drugItemRes.text();
+                    throw new Error('Không thể lưu thuốc con: ' + errorText);
+                }
 
                 showNotification('💊 Đã lưu đơn thuốc thành công!', 'success');
+                
+                // Reset flag sau khi save thành công
+                window.prescriptionModified = false;
+                console.log('💊 DEBUG: Prescription saved successfully, reset modification flag');
             } catch (err) {
-                console.error(err);
-                showNotification('❌ Có lỗi khi lưu đơn thuốc', 'error');
+                console.error('❌ DEBUG: Error saving prescription:', err);
+                showNotification('❌ Có lỗi khi lưu đơn thuốc: ' + err.message, 'error');
+            } finally {
+                window.isSavingPrescription = false;
+            }
+        };
+
+        // Thêm chức năng xóa đơn thuốc
+        window.deletePrescription = async function () {
+            // Kiểm tra xem có đang trong quá trình xóa không
+            if (window.isDeletingPrescription) {
+                console.log('⚠️ DEBUG: Already deleting prescription, skipping...');
+                return;
+            }
+            
+            window.isDeletingPrescription = true;
+            
+            const drugId = localStorage.getItem('drugId');
+            
+            if (!drugId) {
+                showNotification('❌ Không tìm thấy đơn thuốc để xóa', 'error');
+                window.isDeletingPrescription = false;
+                return;
+            }
+
+            // Hiển thị hộp thoại xác nhận
+            const confirmed = confirm('⚠️ Bạn có chắc chắn muốn xóa đơn thuốc này không?\n\nHành động này không thể hoàn tác!');
+            
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+                console.log('🗑️ DEBUG: Deleting prescription with drugId:', drugId);
+                
+                const response = await fetch(`/api/drugs/${drugId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Lỗi xóa đơn thuốc: ${errorText}`);
+                }
+
+                const result = await response.text();
+                console.log('✅ DEBUG: Delete prescription response:', result);
+
+                // Xóa drugId khỏi localStorage
+                localStorage.removeItem('drugId');
+                
+                // Xóa tất cả drug items khỏi UI
+                const drugsList = document.getElementById('drugsList');
+                if (drugsList) {
+                    drugsList.innerHTML = '';
+                    drugCounter = 0;
+                }
+
+                // Reset các trường header
+                const prescriptionNumber = document.getElementById('prescriptionNumber');
+                const prescriptionDate = document.getElementById('prescriptionDate');
+                const prescriptionDiagnosis = document.getElementById('prescriptionDiagnosis');
+                const generalNotes = document.getElementById('generalNotes');
+
+                if (prescriptionNumber) prescriptionNumber.value = '';
+                if (prescriptionDate) prescriptionDate.value = '';
+                if (prescriptionDiagnosis) prescriptionDiagnosis.value = '';
+                if (generalNotes) generalNotes.value = '';
+
+                // Cập nhật summary
+                updatePrescriptionSummary();
+
+                showNotification('🗑️ Đã xóa đơn thuốc thành công!', 'success');
+                
+            } catch (error) {
+                console.error('❌ DEBUG: Error deleting prescription:', error);
+                showNotification(`❌ Lỗi xóa đơn thuốc: ${error.message}`, 'error');
+            } finally {
+                window.isDeletingPrescription = false;
             }
         };
 
@@ -1717,61 +2190,127 @@ function renderMedicalHistory(historyData) {
 
         // Load existing prescription data
         async function loadExistingPrescriptionData(bookId) {
-            if (!bookId) return;
+            // Reset prescription modification flag
+            window.prescriptionModified = false;
+            
+            if (!bookId) {
+                console.log('❌ No bookId provided for loading prescription data');
+                // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
+                fillPrescriptionHeader();
+                return;
+            }
 
             try {
+                console.log('🔍 Loading prescription data for bookId:', bookId);
                 const response = await fetch(`/api/drugs/by-booking/${bookId}`);
-                if (!response.ok) return;
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        console.log('❌ No prescription data found for this booking (404)');
+                        // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
+                        fillPrescriptionHeader();
+                        return;
+                    } else {
+                        console.log('❌ Failed to load prescription data, response not ok:', response.status);
+                        return;
+                    }
+                }
 
                 const drugData = await response.json();
-                console.log('Loaded prescription data:', drugData);
+                console.log('✅ Loaded prescription data:', drugData);
 
-                if (drugData && drugData.length > 0) {
+                if (drugData && drugData.length > 0 && drugData[0]) {
+                    console.log('✅ Found prescription data, processing...');
+                    
                     // Populate prescription header
                     const prescriptionNumber = document.getElementById('prescriptionNumber');
                     const prescriptionDate = document.getElementById('prescriptionDate');
                     const prescriptionDiagnosis = document.getElementById('prescriptionDiagnosis');
                     const generalNotes = document.getElementById('generalNotes');
 
+                    console.log('🔍 Checking prescription header elements:');
+                    console.log('- prescriptionNumber:', prescriptionNumber);
+                    console.log('- prescriptionDate:', prescriptionDate);
+                    console.log('- prescriptionDiagnosis:', prescriptionDiagnosis);
+                    console.log('- generalNotes:', generalNotes);
+
                     if (drugData[0].drugId && prescriptionNumber) {
                         prescriptionNumber.value = drugData[0].drugId;
                         localStorage.setItem('drugId', drugData[0].drugId);
+                        console.log('✅ Set prescription number:', drugData[0].drugId);
+                    } else {
+                        console.log('❌ No drugId found in drugData[0] or prescriptionNumber element not found');
+                        // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
+                        fillPrescriptionHeader();
                     }
 
                     if (drugData[0].createdAt && prescriptionDate) {
                         prescriptionDate.value = formatDateTimeForInput(drugData[0].createdAt);
+                        console.log('✅ Set prescription date:', drugData[0].createdAt);
                     }
 
                     if (drugData[0].drugNote && prescriptionDiagnosis) {
                         prescriptionDiagnosis.value = drugData[0].drugNote;
+                        console.log('✅ Set prescription diagnosis:', drugData[0].drugNote);
                     }
 
                     // Load drug items
                     const drugsList = document.getElementById('drugsList');
-                    if (drugsList && drugData[0].drugItems) {
+                    console.log('🔍 drugsList element:', drugsList);
+                    
+                    if (!drugsList) {
+                        console.log('❌ drugsList element not found');
+                        return;
+                    }
+                    
+                    if (drugData[0].drugItems) {
+                        console.log('✅ Loading drug items:', drugData[0].drugItems);
+                        console.log('✅ Number of drug items:', drugData[0].drugItems.length);
                         drugsList.innerHTML = ''; // Clear existing
                         drugCounter = 0;
 
-                        drugData[0].drugItems.forEach(item => {
+                        drugData[0].drugItems.forEach((item, index) => {
+                            console.log(`✅ Adding drug item ${index + 1}:`, item);
                             addExistingDrugItem(item);
                         });
 
                         updatePrescriptionSummary();
+                        console.log('✅ Finished loading prescription data');
+                        console.log('✅ Final drugsList innerHTML length:', drugsList.innerHTML.length);
+                    } else {
+                        console.log('❌ No drug items found');
+                        console.log('- drugItems exists:', !!(drugData[0] && drugData[0].drugItems));
+                        if (drugData[0]) {
+                            console.log('- drugData[0].drugItems:', drugData[0].drugItems);
+                        }
+                        // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
+                        fillPrescriptionHeader();
                     }
+                } else {
+                    console.log('❌ No prescription data found for this booking');
+                    // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
+                    fillPrescriptionHeader();
                 }
 
             } catch (error) {
                 console.error('Error loading prescription data:', error);
+                // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
+                fillPrescriptionHeader();
             }
         }
 
         // Add existing drug item from API data
         function addExistingDrugItem(drugItem) {
+            console.log('🔍 Adding existing drug item:', drugItem);
             drugCounter++;
             const drugsList = document.getElementById('drugsList');
-            if (!drugsList) return;
+            if (!drugsList) {
+                console.log('❌ drugsList element not found');
+                return;
+            }
 
             const itemId = `drugItem${drugCounter}`;
+            console.log('✅ Creating drug item with ID:', itemId);
 
             const newDrugItem = document.createElement('div');
             newDrugItem.className = 'drug-item';
@@ -1786,7 +2325,7 @@ function renderMedicalHistory(historyData) {
                     <div class="record-grid">
                         <div class="record-section">
                             <label><i class="fas fa-pills"></i> Tên thuốc:</label>
-                            <input type="text" value="${drugItem.itemName || ''}" id="drugName-${itemId}" class="form-control">
+                            <input type="text" value="${drugItem.drugName || ''}" id="drugName-${itemId}" class="form-control">
                         </div>
                         <div class="record-section">
                             <label><i class="fas fa-weight"></i> Hàm lượng:</label>
@@ -1796,21 +2335,23 @@ function renderMedicalHistory(historyData) {
                     <div class="record-grid">
                         <div class="record-section">
                             <label><i class="fas fa-clock"></i> Tần suất sử dụng:</label>
-                            <input type="text" value="${drugItem.instructions || ''}" id="frequency-${itemId}" class="form-control">
+                            <input type="text" value="${drugItem.frequency || ''}" id="frequency-${itemId}" class="form-control">
                         </div>
                         <div class="record-section">
                             <label><i class="fas fa-calendar-days"></i> Thời gian dùng:</label>
-                            <input type="text" value="${drugItem.quantity || '30 ngày'}" id="duration-${itemId}" class="form-control">
+                            <input type="text" value="${drugItem.duration || '30 ngày'}" id="duration-${itemId}" class="form-control">
                         </div>
                     </div>
                     <div class="record-section">
                         <label><i class="fas fa-comment-medical"></i> Hướng dẫn sử dụng & Lưu ý:</label>
-                        <textarea rows="2" id="drugItemNote-${itemId}" class="form-control">${drugItem.note || ''}</textarea>
+                        <textarea rows="2" id="drugItemNote-${itemId}" class="form-control">${drugItem.drugItemNote || ''}</textarea>
                     </div>
                 </div>
             `;
 
+            console.log('✅ Created drug item HTML:', newDrugItem.outerHTML);
             drugsList.appendChild(newDrugItem);
+            console.log('✅ Added drug item to drugsList. Total children:', drugsList.children.length);
         }
 
         // Force refresh all patient data

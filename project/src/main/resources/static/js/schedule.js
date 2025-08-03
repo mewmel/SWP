@@ -1017,10 +1017,111 @@ document.addEventListener('DOMContentLoaded', function() {
         if (upcomingElement) upcomingElement.textContent = upcomingCount;
     }
 
+    // Hàm load thuốc hiện tại của customer
+    async function loadCurrentMedications(cusId) {
+        try {
+            console.log('💊 DEBUG: Loading current medications for cusId:', cusId);
+            
+            // 1. Lấy booking hiện tại (gần nhất hoặc đang active) của customer
+            const bookingRes = await fetch(`/api/booking/history/${cusId}`);
+            if (!bookingRes.ok) {
+                throw new Error('Không thể lấy thông tin booking');
+            }
+            
+            const allBookings = await bookingRes.json();
+            console.log('📅 DEBUG: All bookings:', allBookings);
+            
+            // Tìm booking completed gần nhất (vì bệnh nhân vẫn đang sử dụng thuốc từ lần khám trước)
+            const completedBookings = allBookings.filter(booking => booking.bookStatus === 'completed');
+            
+            if (completedBookings.length === 0) {
+                console.log('⚠️ DEBUG: No completed bookings found');
+                document.getElementById('medicationList').innerHTML = 
+                    '<p style="color: #888; text-align: center; padding: 1rem;">Chưa có lịch khám nào hoàn thành.</p>';
+                return;
+            }
+            
+            // Sắp xếp theo thời gian gần nhất trước (workDate)
+            const sortedCompletedBookings = completedBookings.sort((a, b) => {
+                const dateA = new Date(a.workDate);
+                const dateB = new Date(b.workDate);
+                return dateB - dateA; // Giảm dần (gần nhất trước)
+            });
+            
+            const currentBooking = sortedCompletedBookings[0]; // Lấy booking completed gần nhất
+            
+            if (!currentBooking) {
+                console.log('⚠️ DEBUG: No completed booking found');
+                document.getElementById('medicationList').innerHTML = 
+                    '<p style="color: #888; text-align: center; padding: 1rem;">Chưa có lịch khám nào hoàn thành.</p>';
+                return;
+            }
+            
+            console.log('✅ DEBUG: Most recent completed booking found:', currentBooking);
+            
+            // 2. Lấy thuốc theo bookId
+            const drugRes = await fetch(`/api/drugs/by-booking/${currentBooking.bookId}`);
+            if (!drugRes.ok) {
+                console.log('⚠️ DEBUG: No drugs found for booking:', currentBooking.bookId);
+                document.getElementById('medicationList').innerHTML = 
+                    '<p style="color: #888; text-align: center; padding: 1rem;">Không có đơn thuốc cho lịch hẹn này.</p>';
+                return;
+            }
+            
+            const drugData = await drugRes.json();
+            console.log('💊 DEBUG: Drug data:', drugData);
+            
+            if (!drugData || drugData.length === 0) {
+                document.getElementById('medicationList').innerHTML = 
+                    '<p style="color: #888; text-align: center; padding: 1rem;">Chưa có đơn thuốc nào được kê.</p>';
+                return;
+            }
+            
+            // 3. Render danh sách thuốc
+            const medicationList = document.getElementById('medicationList');
+            let medicationsHTML = '';
+            
+            drugData.forEach(drug => {
+                if (drug.drugItems && drug.drugItems.length > 0) {
+                    drug.drugItems.forEach(item => {
+                        const medicationTime = new Date(drug.createdAt).toLocaleTimeString('vi-VN', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        
+                        medicationsHTML += `
+                            <div class="medication-time">
+                                <div class="medication-info">
+                                    <div class="medication-icon">💊</div>
+                                    <div>
+                                        <div class="event-title">${item.drugName || 'Thuốc không tên'}</div>
+                                        <div class="event-time">${medicationTime}</div>
+                                        ${item.dosage ? `<div class="event-note">Liều lượng: ${item.dosage}</div>` : ''}
+                                        ${item.instruction ? `<div class="event-note">Hướng dẫn: ${item.instruction}</div>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            });
+            
+            medicationList.innerHTML = medicationsHTML;
+            console.log('✅ DEBUG: Medications loaded successfully');
+            
+        } catch (error) {
+            console.error('❌ DEBUG: Error loading medications:', error);
+            document.getElementById('medicationList').innerHTML = 
+                '<p style="color: #888; text-align: center; padding: 1rem;">Không thể tải thông tin thuốc.</p>';
+        }
+    }
+
 // GIẢ SỬ bạn đã lấy được cusId (ví dụ lấy từ localStorage hoặc server truyền vào)
     const cusId = localStorage.getItem('cusId');
     if (cusId) {
         loadScheduleForCustomer(cusId);
+        // Load thuốc hiện tại
+        loadCurrentMedications(cusId);
     } else {
         // Xử lý khi chưa đăng nhập hoặc chưa có cusId
         alert("Bạn cần đăng nhập để xem lịch điều trị!");

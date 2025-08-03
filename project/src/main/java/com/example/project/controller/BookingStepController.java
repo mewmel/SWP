@@ -182,10 +182,13 @@ public ResponseEntity<List<Map<String, Object>>> getFollowUpSubservices(@PathVar
 
     @PostMapping("/save-test-results")
         public ResponseEntity<?> saveTestResults(@RequestBody List<TestResult> testResults) {
+            System.out.println("🔍 DEBUG: Saving test results: " + testResults);
             try {
                 bookingStepService.saveTestResults(testResults);
+                System.out.println("✅ DEBUG: Test results saved successfully");
                 return ResponseEntity.ok(Map.of("message", "OK"));
             } catch (Exception e) {
+                System.out.println("❌ DEBUG: Error saving test results: " + e.getMessage());
                 e.printStackTrace();
                 return ResponseEntity.status(500).body(Map.of("message", "Error", "error", e.getMessage()));
             }
@@ -289,13 +292,116 @@ public ResponseEntity<?> getBookingStepId(
     @PathVariable Integer bookingId,
     @PathVariable Integer subId
 ) {
-    BookingStep step = bookingStepRepo.findByBookIdAndSubId(bookingId, subId)
-        .orElse(null);
-    if (step != null) {
-        return ResponseEntity.ok(Collections.singletonMap("bookingStepId", step.getBookingStepId()));
+    Optional<BookingStep> step = bookingStepRepo.findByBookIdAndSubId(bookingId, subId);
+    if (step.isPresent()) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("bookingStepId", step.get().getBookingStepId());
+        return ResponseEntity.ok(response);
     } else {
-        return ResponseEntity.ok(Collections.singletonMap("bookingStepId", null));
+        return ResponseEntity.notFound().build();
     }
 }    
 
+    /**
+     * Tính toán tiến độ điều trị dựa trên số lượng SubService đã hoàn thành
+     * @param bookId ID của booking
+     * @return Thông tin tiến độ điều trị
+     */
+    @GetMapping("/treatment-progress/{bookId}")
+    public ResponseEntity<?> getTreatmentProgress(@PathVariable Integer bookId) {
+        try {
+            // Lấy thông tin booking để biết service
+            Optional<Booking> bookingOpt = bookingRepo.findById(bookId);
+            if (bookingOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            Booking booking = bookingOpt.get();
+            Integer serId = booking.getSerId();
+            
+            // Lấy tất cả SubService của service này
+            List<SubService> allSubServices = subServiceRepo.findBySerId(serId);
+            
+            // Lấy tất cả BookingStep của booking này
+            List<BookingStep> bookingSteps = bookingStepRepo.findByBookId(bookId);
+            
+            // Tính toán tiến độ
+            int totalSubServices = allSubServices.size();
+            int completedSubServices = 0;
+            int pendingSubServices = 0;
+            int inactiveSubServices = 0;
+            
+            // Đếm số lượng SubService đã hoàn thành
+            for (SubService subService : allSubServices) {
+                boolean hasCompletedStep = bookingSteps.stream()
+                    .anyMatch(step -> step.getSubId().equals(subService.getSubId()) 
+                        && "completed".equals(step.getStepStatus()));
+                
+                boolean hasPendingStep = bookingSteps.stream()
+                    .anyMatch(step -> step.getSubId().equals(subService.getSubId()) 
+                        && "pending".equals(step.getStepStatus()));
+                
+                if (hasCompletedStep) {
+                    completedSubServices++;
+                } else if (hasPendingStep) {
+                    pendingSubServices++;
+                } else {
+                    inactiveSubServices++;
+                }
+            }
+            
+            // Tính phần trăm tiến độ
+            double progressPercentage = totalSubServices > 0 ? 
+                (double) completedSubServices / totalSubServices * 100 : 0;
+            
+            // Tạo response
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalSubServices", totalSubServices);
+            response.put("completedSubServices", completedSubServices);
+            response.put("pendingSubServices", pendingSubServices);
+            response.put("inactiveSubServices", inactiveSubServices);
+            response.put("progressPercentage", Math.round(progressPercentage * 100.0) / 100.0);
+            response.put("serviceName", booking.getSerId()); // Có thể thêm service name nếu cần
+            
+            // Thêm chi tiết từng SubService
+            List<Map<String, Object>> subServiceDetails = new ArrayList<>();
+            for (SubService subService : allSubServices) {
+                Map<String, Object> detail = new HashMap<>();
+                detail.put("subId", subService.getSubId());
+                detail.put("subName", subService.getSubName());
+                detail.put("subDescription", subService.getSubDescription());
+                detail.put("subPrice", subService.getSubPrice());
+                
+                // Tìm BookingStep tương ứng
+                Optional<BookingStep> stepOpt = bookingSteps.stream()
+                    .filter(step -> step.getSubId().equals(subService.getSubId()))
+                    .findFirst();
+                
+                if (stepOpt.isPresent()) {
+                    BookingStep step = stepOpt.get();
+                    detail.put("stepStatus", step.getStepStatus());
+                    detail.put("performedAt", step.getPerformedAt());
+                    detail.put("result", step.getResult());
+                    detail.put("note", step.getNote());
+                    detail.put("bookingStepId", step.getBookingStepId());
+                } else {
+                    detail.put("stepStatus", "inactive");
+                    detail.put("performedAt", null);
+                    detail.put("result", null);
+                    detail.put("note", null);
+                    detail.put("bookingStepId", null);
+                }
+                
+                subServiceDetails.add(detail);
+            }
+            response.put("subServiceDetails", subServiceDetails);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Lỗi khi tính toán tiến độ điều trị: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
 }

@@ -405,7 +405,7 @@ async function loadPatients() {
                 filteredCustomers = [];
                 renderPatientsTable(filteredCustomers);
                 updatePatientsSummary(filteredCustomers);
-                initPatientFilters();
+    initPatientFilters();
                 return;
             }
             

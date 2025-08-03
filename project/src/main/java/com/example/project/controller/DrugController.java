@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,7 @@ public class DrugController {
     @GetMapping("/by-booking/{bookId}")
     public ResponseEntity<List<Map<String, Object>>> getDrugsByBooking(@PathVariable Integer bookId) {
         try {
+            System.out.println("🔍 DEBUG: Getting drugs for booking: " + bookId);
             List<Map<String, Object>> result = new ArrayList<>();
             
             // Tìm drug theo bookId
@@ -46,9 +48,11 @@ public class DrugController {
             
             if (drugOpt.isPresent()) {
                 Drug drug = drugOpt.get();
+                System.out.println("✅ DEBUG: Found drug: " + drug);
                 
                 // Lấy tất cả drug items của drug này
                 List<DrugItem> drugItems = drugItemRepository.findByDrugId(drug.getDrugId());
+                System.out.println("✅ DEBUG: Found " + drugItems.size() + " drug items");
                 
                 // Tạo response data
                 Map<String, Object> drugData = new HashMap<>();
@@ -71,14 +75,19 @@ public class DrugController {
                     itemData.put("duration", item.getDuration());
                     itemData.put("drugItemNote", item.getDrugItemNote());
                     itemsList.add(itemData);
+                    System.out.println("✅ DEBUG: Added drug item: " + itemData);
                 }
                 
                 drugData.put("drugItems", itemsList);
                 result.add(drugData);
+                System.out.println("✅ DEBUG: Final response: " + result);
+            } else {
+                System.out.println("❌ DEBUG: No drug found for booking: " + bookId);
             }
             
             return ResponseEntity.ok(result);
         } catch (Exception e) {
+            System.out.println("❌ DEBUG: Error getting drugs: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(500).body(new ArrayList<>());
         }
@@ -108,32 +117,83 @@ public class DrugController {
     
 
     //PUT /api/drugs/update/${drugId}
-@PutMapping("/update/{drugId}")
+    @PutMapping("/update/{drugId}")
 public ResponseEntity<?> updateDrug(@PathVariable Integer drugId, @RequestBody Map<String, String> request) {
+    System.out.println("🔍 DEBUG: Updating drug " + drugId + " with request: " + request);
+    
     Optional<Drug> optionalDrug = drugRepository.findById(drugId);
     if (optionalDrug.isEmpty()) {
+        System.out.println("❌ DEBUG: Drug not found for ID: " + drugId);
         return ResponseEntity.notFound().build();
     }
 
     Drug drug = optionalDrug.get();
+    System.out.println("🔍 DEBUG: Found existing drug: " + drug);
 
     try {
         String createdAtStr = request.get("createdAt");
         String note = request.get("note");
 
+        System.out.println("🔍 DEBUG: Updating drug with createdAt: " + createdAtStr + ", note: " + note);
+
         if (createdAtStr != null && !createdAtStr.isEmpty()) {
-            LocalDateTime createdAt = LocalDateTime.parse(createdAtStr);
+            // Xử lý format date với .000Z ở cuối
+            String cleanDateStr = createdAtStr;
+            if (createdAtStr.endsWith(".000Z")) {
+                cleanDateStr = createdAtStr.substring(0, createdAtStr.length() - 5);
+            }
+            LocalDateTime createdAt = LocalDateTime.parse(cleanDateStr);
             drug.setCreatedAt(createdAt);
         }
 
         drug.setDrugNote(note);
 
-        drugRepository.save(drug);
+        Drug savedDrug = drugRepository.save(drug);
+        System.out.println("✅ DEBUG: Drug updated successfully: " + savedDrug);
         return ResponseEntity.ok("Drug updated successfully");
 
     } catch (Exception e) {
+        System.out.println("❌ DEBUG: Error updating drug: " + e.getMessage());
         return ResponseEntity.status(400).body("Invalid input: " + e.getMessage());
     }
 }
+
+    // DELETE /api/drugs/{drugId}
+    @DeleteMapping("/{drugId}")
+    public ResponseEntity<?> deleteDrug(@PathVariable Integer drugId) {
+        System.out.println("🔍 DEBUG: Deleting drug with ID: " + drugId);
+        
+        try {
+            Optional<Drug> optionalDrug = drugRepository.findById(drugId);
+            if (optionalDrug.isEmpty()) {
+                System.out.println("❌ DEBUG: Drug not found for ID: " + drugId);
+                return ResponseEntity.notFound().build();
+            }
+
+            Drug drug = optionalDrug.get();
+            System.out.println("✅ DEBUG: Found drug to delete: " + drug);
+
+            // Xóa tất cả drug items trước
+            List<DrugItem> drugItems = drugItemRepository.findByDrugId(drugId);
+            System.out.println("🔍 DEBUG: Found " + drugItems.size() + " drug items to delete");
+            
+            for (DrugItem item : drugItems) {
+                System.out.println("🗑️ DEBUG: Deleting drug item: " + item);
+                drugItemRepository.delete(item);
+            }
+            System.out.println("✅ DEBUG: All drug items deleted successfully");
+
+            // Sau đó xóa drug chính
+            drugRepository.delete(drug);
+            System.out.println("✅ DEBUG: Drug deleted successfully");
+
+            return ResponseEntity.ok("Đơn thuốc đã được xóa thành công");
+            
+        } catch (Exception e) {
+            System.out.println("❌ DEBUG: Error deleting drug: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Lỗi xóa đơn thuốc: " + e.getMessage());
+        }
+    }
   
 }

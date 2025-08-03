@@ -12,6 +12,7 @@ import com.example.project.entity.BookingStep;
 
 public interface BookingStepRepository extends JpaRepository<BookingStep, Integer> {
     List<BookingStep> findByBookId(Integer bookId);
+    List<BookingStep> findBySubId(Integer subId); // Add this method
 
     // Nếu performedAt là LocalDateTime
     List<BookingStep> findByPerformedAtBetween(LocalDateTime start, LocalDateTime end);

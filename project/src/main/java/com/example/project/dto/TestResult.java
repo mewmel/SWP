@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class TestResult {
     private Integer bookingStepId;
     private Integer subId;
+    private Integer bookId; // Add bookId field
     private String subName;
     private LocalDateTime performedAt;
     private List<IndexResult> results;

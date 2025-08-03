@@ -101,13 +101,91 @@ public Map<String, Object> createMedicalRecord(@PathVariable Integer serId, @Req
         return ResponseEntity.status(404).body("Medical record not found");
     }
 
+    // ✅ API MỚI: Cập nhật hồ sơ bệnh án đơn giản
+    @PutMapping("/update/{recordId}")
+    public ResponseEntity<?> updateMedicalRecordSimple(
+            @PathVariable Integer recordId, @RequestBody Map<String, Object> request) {
+        try {
+            System.out.println("🔍 DEBUG: Updating medical record " + recordId + " with request: " + request);
+            
+            Optional<MedicalRecord> optionalRecord = medicalRecordRepository.findById(recordId);
+            if (optionalRecord.isEmpty()) {
+                System.out.println("❌ DEBUG: Medical record not found for ID: " + recordId);
+                return ResponseEntity.status(404).body("Medical record not found");
+            }
+
+            MedicalRecord record = optionalRecord.get();
+            System.out.println("🔍 DEBUG: Found existing record: " + record);
+            
+            // Cập nhật các trường từ request
+            if (request.containsKey("recordStatus")) {
+                String newStatus = (String) request.get("recordStatus");
+                System.out.println("🔍 DEBUG: Updating recordStatus from '" + record.getRecordStatus() + "' to '" + newStatus + "'");
+                record.setRecordStatus(newStatus);
+            }
+            if (request.containsKey("diagnosis")) {
+                String newDiagnosis = (String) request.get("diagnosis");
+                System.out.println("🔍 DEBUG: Updating diagnosis from '" + record.getDiagnosis() + "' to '" + newDiagnosis + "'");
+                record.setDiagnosis(newDiagnosis);
+            }
+            if (request.containsKey("treatmentPlan")) {
+                String newPlan = (String) request.get("treatmentPlan");
+                System.out.println("🔍 DEBUG: Updating treatmentPlan from '" + record.getTreatmentPlan() + "' to '" + newPlan + "'");
+                record.setTreatmentPlan(newPlan);
+            }
+            if (request.containsKey("dischargeDate")) {
+                String dischargeDateStr = (String) request.get("dischargeDate");
+                if (dischargeDateStr != null && !dischargeDateStr.isEmpty()) {
+                    System.out.println("🔍 DEBUG: Updating dischargeDate to: " + dischargeDateStr);
+                    record.setDischargeDate(java.time.LocalDateTime.parse(dischargeDateStr.replace("Z", "")));
+                }
+            }
+            if (request.containsKey("medicalNotes")) {
+                String newNotes = (String) request.get("medicalNotes");
+                System.out.println("🔍 DEBUG: Updating note from '" + record.getNote() + "' to '" + newNotes + "'");
+                record.setNote(newNotes);
+            }
+            if (request.containsKey("note")) {
+                String newNote = (String) request.get("note");
+                System.out.println("🔍 DEBUG: Updating note from '" + record.getNote() + "' to '" + newNote + "'");
+                record.setNote(newNote);
+            }
+
+            MedicalRecord savedRecord = medicalRecordRepository.save(record);
+            System.out.println("✅ DEBUG: Record saved successfully: " + savedRecord);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Cập nhật hồ sơ bệnh án thành công");
+            response.put("recordId", recordId);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            System.out.println("❌ DEBUG: Error updating medical record: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", "Có lỗi xảy ra khi cập nhật hồ sơ: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
 
     // Lấy chi tiết MedicalRecord theo recordId
 @GetMapping("/{recordId}")
 public ResponseEntity<MedicalRecord> getMedicalRecordById(@PathVariable Integer recordId) {
-    return medicalRecordRepository.findById(recordId)
-        .map(record -> ResponseEntity.ok(record))
-        .orElse(ResponseEntity.status(404).build());
+    System.out.println("🔍 DEBUG: Getting medical record by ID: " + recordId);
+    
+    Optional<MedicalRecord> optionalRecord = medicalRecordRepository.findById(recordId);
+    if (optionalRecord.isPresent()) {
+        MedicalRecord record = optionalRecord.get();
+        System.out.println("✅ DEBUG: Found medical record: " + record);
+        return ResponseEntity.ok(record);
+    } else {
+        System.out.println("❌ DEBUG: Medical record not found for ID: " + recordId);
+        return ResponseEntity.status(404).build();
+    }
 }
 
 

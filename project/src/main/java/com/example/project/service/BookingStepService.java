@@ -211,25 +211,37 @@ public class BookingStepService {
 
     @Transactional
     public void saveTestResults(List<TestResult> testResults) throws Exception {
+        System.out.println("🔍 DEBUG: saveTestResults called with " + testResults.size() + " test results");
+        
         for (TestResult dto : testResults) {
+            System.out.println("🔍 DEBUG: Processing test result: " + dto);
+            
             // Chỉ lưu nếu status là pending hoặc completed
-        if (!"pending".equalsIgnoreCase(dto.getStepStatus())
-            && !"completed".equalsIgnoreCase(dto.getStepStatus())) {
-                continue; // Bỏ qua
+            if (!"pending".equalsIgnoreCase(dto.getStepStatus())
+                && !"completed".equalsIgnoreCase(dto.getStepStatus())) {
+                    System.out.println("⚠️ DEBUG: Skipping test result with status: " + dto.getStepStatus());
+                    continue; // Bỏ qua
             }
-
 
             BookingStep step = null;
             if (dto.getBookingStepId() != null) {
                 // Đã có, update
                 step = bookingStepRepo.findById(dto.getBookingStepId()).orElse(null);
+                System.out.println("🔍 DEBUG: Found existing step: " + step);
             }
             if (step == null) {
                 // Chưa có, tạo mới
                 step = new BookingStep();
                 step.setSubId(dto.getSubId());
-                // Phải biết bookingId, nếu không gửi lên thì cần truyền từ FE
-                step.setBookingStepId(dto.getBookingStepId());
+                // Use bookId from the DTO
+                if (dto.getBookId() != null) {
+                    step.setBookId(dto.getBookId());
+                    System.out.println("🔍 DEBUG: Using bookId from DTO: " + dto.getBookId());
+                } else {
+                    System.out.println("❌ DEBUG: No bookId provided in DTO for subId: " + dto.getSubId());
+                    continue; // Skip this test result if we don't have bookId
+                }
+                System.out.println("🔍 DEBUG: Created new step: " + step);
             }
             // Update fields
             step.setPerformedAt(dto.getPerformedAt());
@@ -239,8 +251,11 @@ public class BookingStepService {
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(dto.getResults());
             step.setResult(json);
+            
+            System.out.println("🔍 DEBUG: Saving step with result JSON: " + json);
 
-            bookingStepRepo.save(step);
+            BookingStep savedStep = bookingStepRepo.save(step);
+            System.out.println("✅ DEBUG: Step saved successfully: " + savedStep);
         }
     }
 
