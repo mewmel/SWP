@@ -263,10 +263,24 @@ CREATE TABLE PostImage (
 									FOREIGN KEY (imageId) REFERENCES Image(imageId)
 );
 GO
+CREATE TABLE PaymentImage (
+    paymentImageId INT       IDENTITY(1,1) PRIMARY KEY,
+
+    revenueId      INT       NOT NULL      CONSTRAINT FK_PaymentImage_BookingRevenue
+                                           FOREIGN KEY (revenueId) REFERENCES BookingRevenue(revenueId),
+
+    imageId        INT       NOT NULL      CONSTRAINT FK_PaymentImage_Image
+                                           FOREIGN KEY (imageId) REFERENCES Image(imageId),
+
+    uploadedAt     DATETIME  NOT NULL      DEFAULT GETDATE(),
+
+    note           NVARCHAR(255) NULL      -- ghi chú (ví dụ: "biên lai chuyển khoản lần 1")
+);
+GO
 
 CREATE TABLE Drug (
     drugId          INT             IDENTITY(1,1) PRIMARY KEY,  -- ID duy nhất cho mỗi toa thuốc
-    bookId			INT             NOT NULL,                   -- Gắn với bước cụ thể của quá trình điều trị
+    bookId			    INT             NOT NULL,                   -- Gắn với bước cụ thể của quá trình điều trị
     docId           INT             NOT NULL,                   -- Bác sĩ kê thuốc
     cusId           INT             NOT NULL,                   -- Bệnh nhân được kê thuốc
     drugNote        NVARCHAR(200)   NULL,                      
@@ -281,29 +295,42 @@ GO
 
 
 CREATE TABLE DrugItem (
-	drugItemId		INT             IDENTITY(1,1)	PRIMARY KEY,
+	drugItemId		  INT       IDENTITY(1,1)	PRIMARY KEY,
 
-	drugId			INT             NOT NULL		CONSTRAINT FK_DrugItem_Drug
-													FOREIGN KEY (drugId)
-													REFERENCES Drug(drugId),
+	drugId			    INT       NOT NULL		  CONSTRAINT FK_DrugItem_Drug
+													                FOREIGN KEY (drugId)
+													                REFERENCES Drug(drugId),
 
-    drugName        NVARCHAR(100)   NULL,                   -- Tên thuốc
-    dosage          NVARCHAR(50)    NULL,                   -- Liều dùng, ví dụ: "2 viên/lần"
-    frequency       NVARCHAR(50)    NULL,                   -- Tần suất: "3 lần/ngày"
-    duration        NVARCHAR(50)    NULL,                   -- Thời gian dùng: "5 ngày"
+  drugName        NVARCHAR(100)   NULL,                   -- Tên thuốc
+  dosage          NVARCHAR(50)    NULL,                   -- Liều dùng, ví dụ: "2 viên/lần"
+  frequency       NVARCHAR(50)    NULL,                   -- Tần suất: "3 lần/ngày"
+  duration        NVARCHAR(50)    NULL,                   -- Thời gian dùng: "5 ngày"
 	drugItemNote    NVARCHAR(200)   NULL
 
 );
 GO
 
-  CREATE TABLE BookingRevenue (
-    revenueId   INT IDENTITY(1,1) PRIMARY KEY,
-    bookId      INT NOT NULL CONSTRAINT FK_BookingRevenue_Booking FOREIGN KEY (bookId) REFERENCES Booking(bookId),
-    serId       INT NOT NULL CONSTRAINT FK_BookingRevenue_Service FOREIGN KEY (serId) REFERENCES Service(serId),
+CREATE TABLE BookingRevenue (
+    revenueId   INT           IDENTITY(1,1)       PRIMARY KEY,
+
+    bookId      INT           NOT NULL            CONSTRAINT FK_BookingRevenue_Booking 
+                                                  FOREIGN KEY (bookId) REFERENCES Booking(bookId),
+
+    serId       INT           NOT NULL            CONSTRAINT FK_BookingRevenue_Service 
+                                                  FOREIGN KEY (serId) REFERENCES Service(serId),
+
     totalAmount DECIMAL(12,2) NOT NULL,
-    createdAt   DATETIME      NOT NULL DEFAULT GETDATE()
-);
-GO
+
+    imageId     INT           NULL                CONSTRAINT FK_BookingRevenue_Image 
+                                                  FOREIGN KEY (imageId) REFERENCES Image(imageId),
+
+    revenueStatus      NVARCHAR(20) NOT NULL             CONSTRAINT CK_BookingRevenue_Status 
+                                                  CHECK (revenueStatus IN ('pending', 'success')) DEFAULT 'pending',
+
+    createdAt   DATETIME NOT NULL DEFAULT GETDATE()
+  );
+  GO
+
 
 CREATE TABLE BookingRevenueDetail (
     revenueDetailId INT IDENTITY(1,1) PRIMARY KEY,

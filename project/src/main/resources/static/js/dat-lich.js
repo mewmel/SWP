@@ -133,17 +133,19 @@ function updateTimeSlots(selectedDate) {
         let disabled = false;
         let title = '';
         let isApproved = !!approvedSlot;
-        
+
+
+        // tạm bỏ check slot để demo
         // Kiểm tra xem slot có trong quá khứ không (chỉ áp dụng cho ngày hôm nay)
-        if (isToday) {
-            const slotEndTime = new Date();
-            slotEndTime.setHours(parseInt(hour.split(':')[0]), parseInt(hour.split(':')[1]), 0, 0);
+        // if (isToday) {
+        //     const slotEndTime = new Date();
+        //     slotEndTime.setHours(parseInt(hour.split(':')[0]), parseInt(hour.split(':')[1]), 0, 0);
             
-            if (slotEndTime <= now) {
-                disabled = true;
-                title = 'Khung giờ đã qua';
-            }
-        }
+        //     if (slotEndTime <= now) {
+        //         disabled = true;
+        //         title = 'Khung giờ đã qua';
+        //     }
+        // }
         
         // Chỉ cho phép đặt lịch nếu slot đã được duyệt
         if (!disabled && !isApproved) {
@@ -412,26 +414,24 @@ function setupBookingFormSubmission() {
         } else if (!selectedTime.value) {
             errorMsg = "Vui lòng chọn khung giờ khám!";
             errorField = selectedTime;
-        } else {
-            // Kiểm tra slot thời gian có trong quá khứ không (chỉ áp dụng cho ngày hôm nay)
-            const selectedDate = new Date(appointmentDate.value);
-            const today = new Date();
-            const isToday = selectedDate.toDateString() === today.toDateString();
-            
-            if (isToday) {
-                const timeRange = selectedTime.value.trim();
-                const [startTime] = timeRange.split('-').map(t => t.trim());
-                const [hour, minute] = startTime.split(':').map(Number);
-                
-                const slotDateTime = new Date();
-                slotDateTime.setHours(hour, minute, 0, 0);
-                
-                if (slotDateTime <= today) {
-                    errorMsg = "Không thể đặt lịch cho khung giờ đã qua. Vui lòng chọn khung giờ khác!";
-                    errorField = selectedTime;
-                }
-            }
         }
+        // ====== Đã bỏ check không cho đặt lịch quá khứ ======
+        // else {
+        //     const selectedDate = new Date(appointmentDate.value);
+        //     const today = new Date();
+        //     const isToday = selectedDate.toDateString() === today.toDateString();
+        //     if (isToday) {
+        //         const timeRange = selectedTime.value.trim();
+        //         const [startTime] = timeRange.split('-').map(t => t.trim());
+        //         const [hour, minute] = startTime.split(':').map(Number);
+        //         const slotDateTime = new Date();
+        //         slotDateTime.setHours(hour, minute, 0, 0);
+        //         if (slotDateTime <= today) {
+        //             errorMsg = "Không thể đặt lịch cho khung giờ đã qua. Vui lòng chọn khung giờ khác!";
+        //             errorField = selectedTime;
+        //         }
+        //     }
+        // }
 
         if (errorMsg) {
             // In ra tất cả field đang có
@@ -498,6 +498,7 @@ function setupBookingFormSubmission() {
             });
     });
 }
+
 
 // Hàm kiểm tra tuổi đặt lịch
 function calculateAgeBooking(dobStr) {
