@@ -1770,7 +1770,7 @@ function renderMedicalHistory(historyData) {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                            createdAt: data.prescriptionDate ? new Date(data.prescriptionDate).toISOString() : new Date().toISOString(),
+                            createdAt: data.prescriptionDate ? new Date(data.prescriptionDate).toISOString().replace('.000Z', '') : new Date().toISOString().replace('.000Z', ''),
                         note: data.diagnosis || ''
                     })
                 });

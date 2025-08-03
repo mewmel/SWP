@@ -1,5 +1,6 @@
 package com.example.project.controller;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -137,13 +138,20 @@ public ResponseEntity<?> updateDrug(@PathVariable Integer drugId, @RequestBody M
         System.out.println("🔍 DEBUG: Updating drug with createdAt: " + createdAtStr + ", note: " + note);
 
         if (createdAtStr != null && !createdAtStr.isEmpty()) {
-            // Xử lý format date với .000Z ở cuối
-            String cleanDateStr = createdAtStr;
-            if (createdAtStr.endsWith(".000Z")) {
-                cleanDateStr = createdAtStr.substring(0, createdAtStr.length() - 5);
+            try {
+                // Xử lý format date với .000Z ở cuối
+                String cleanDateStr = createdAtStr;
+                if (createdAtStr.endsWith(".000Z")) {
+                    cleanDateStr = createdAtStr.substring(0, createdAtStr.length() - 5);
+                }
+                
+                // Thử parse với format ISO
+                LocalDateTime createdAt = LocalDateTime.parse(cleanDateStr);
+                drug.setCreatedAt(createdAt);
+            } catch (DateTimeParseException e) {
+                System.out.println("⚠️ DEBUG: Could not parse createdAt: " + createdAtStr + ", using current time");
+                drug.setCreatedAt(LocalDateTime.now());
             }
-            LocalDateTime createdAt = LocalDateTime.parse(cleanDateStr);
-            drug.setCreatedAt(createdAt);
         }
 
         drug.setDrugNote(note);

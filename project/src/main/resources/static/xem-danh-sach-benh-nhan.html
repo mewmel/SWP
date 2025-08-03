@@ -1553,6 +1553,40 @@
             background: #047857;
         }
 
+        /* ========== DANGER BUTTON STYLES ========== */
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-danger:active {
+            background: #991b1b;
+            transform: translateY(0);
+        }
+
+        .btn-danger:disabled {
+            background: #f87171;
+            color: #fecaca;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         /* ========== ADDITIONAL DASHBOARD STYLES ========== */
 
         /* Service Selection and Step Form Styles */
