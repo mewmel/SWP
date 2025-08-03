@@ -1,10 +1,9 @@
 ﻿USE [master]
 GO
-CREATE DATABASE [Healthcare_ServiceVer992]
+CREATE DATABASE [Healthcare_ServiceVer997]
 GO
-USE [Healthcare_ServiceVer992]
+USE [Healthcare_ServiceVer997]
 GO
-
 ----------------------------------------------------------------------------------------------------------
 
 CREATE TABLE Customer (
@@ -127,14 +126,14 @@ CREATE TABLE Booking (
 
     bookStatus  NVARCHAR(20)    NOT NULL CONSTRAINT CK_Booking_Status CHECK (bookStatus IN ('pending','confirmed','completed','rejected'))
                                              CONSTRAINT DF_Booking_Status DEFAULT 'pending',
-										 CONSTRAINT DF_Booking_Status DEFAULT 'pending',
+
     createdAt   DATETIME        NOT NULL DEFAULT GETDATE(),
     note        NVARCHAR(1000)  NULL,
 
 	serId      INT             NOT NULL		 CONSTRAINT FK_Booking_Service
 											 FOREIGN KEY (serId) 
 											 REFERENCES dbo.Service(serId), 
-	drugId			   INT			  NULL										 
+	drugId		INT			  NULL										 
 );
 GO
 
@@ -191,7 +190,7 @@ CREATE TABLE MedicalRecordBooking (-- để biết được các booking thuộc
 										FOREIGN KEY (recordId) REFERENCES MedicalRecord(recordId),
 
     bookId		INT		NOT NULL		CONSTRAINT FK_MedicalRecordBooking_Booking
-										FOREIGN KEY (bookId) REFERENCES Booking(bookId),
+										FOREIGN KEY (bookId) REFERENCES Booking(bookId)
 );
 -- -- UNIQUE constraint để 1 booking chỉ gắn 1 lần với 1 record:
 -- ALTER TABLE MedicalRecordBooking ADD CONSTRAINT UQ_RecordBooking UNIQUE (recordId, bookId);
@@ -263,20 +262,7 @@ CREATE TABLE PostImage (
 									FOREIGN KEY (imageId) REFERENCES Image(imageId)
 );
 GO
-CREATE TABLE PaymentImage (
-    paymentImageId INT       IDENTITY(1,1) PRIMARY KEY,
 
-    revenueId      INT       NOT NULL      CONSTRAINT FK_PaymentImage_BookingRevenue
-                                           FOREIGN KEY (revenueId) REFERENCES BookingRevenue(revenueId),
-
-    imageId        INT       NOT NULL      CONSTRAINT FK_PaymentImage_Image
-                                           FOREIGN KEY (imageId) REFERENCES Image(imageId),
-
-    uploadedAt     DATETIME  NOT NULL      DEFAULT GETDATE(),
-
-    note           NVARCHAR(255) NULL      -- ghi chú (ví dụ: "biên lai chuyển khoản lần 1")
-);
-GO
 
 CREATE TABLE Drug (
     drugId          INT             IDENTITY(1,1) PRIMARY KEY,  -- ID duy nhất cho mỗi toa thuốc
@@ -324,8 +310,8 @@ CREATE TABLE BookingRevenue (
     imageId     INT           NULL                CONSTRAINT FK_BookingRevenue_Image 
                                                   FOREIGN KEY (imageId) REFERENCES Image(imageId),
 
-    revenueStatus      NVARCHAR(20) NOT NULL             CONSTRAINT CK_BookingRevenue_Status 
-                                                  CHECK (revenueStatus IN ('pending', 'success')) DEFAULT 'pending',
+    revenueStatus      NVARCHAR(20) NOT NULL      CONSTRAINT CK_BookingRevenue_Status 
+												  CHECK (revenueStatus IN ('pending', 'success')) DEFAULT 'pending',	
 
     createdAt   DATETIME NOT NULL DEFAULT GETDATE()
   );
@@ -333,15 +319,35 @@ CREATE TABLE BookingRevenue (
 
 
 CREATE TABLE BookingRevenueDetail (
-    revenueDetailId INT IDENTITY(1,1) PRIMARY KEY,
-    bookId      INT NOT NULL CONSTRAINT FK_BRD_Booking FOREIGN KEY (bookId) REFERENCES Booking(bookId),
-    serId       INT NOT NULL CONSTRAINT FK_BRD_Service FOREIGN KEY (serId) REFERENCES Service(serId),
-    subId       INT NOT NULL CONSTRAINT FK_BRD_SubService FOREIGN KEY (subId) REFERENCES SubService(subId),
-    subPrice    DECIMAL(12,2) NOT NULL,
-    createdAt   DATETIME      NOT NULL DEFAULT GETDATE()
+    revenueDetailId INT				IDENTITY(1,1) PRIMARY KEY,
+    bookId			INT				NOT NULL	  CONSTRAINT FK_BookingRevenueDetail_Booking 
+												  FOREIGN KEY (bookId) REFERENCES Booking(bookId),
+
+    serId			INT				NOT NULL	  CONSTRAINT FK_BookingRevenueDetail_Servic				
+												  FOREIGN KEY (serId) REFERENCES Service(serId),
+
+    subId			INT				NOT NULL      CONSTRAINT FK_BookingRevenueDetail_SubService
+												  FOREIGN KEY (subId) REFERENCES SubService(subId),
+
+    subPrice		DECIMAL(12,2)	NOT NULL,
+    createdAt		DATETIME		NOT NULL	  DEFAULT GETDATE()
 );
 GO
 
+CREATE TABLE PaymentImage (
+    paymentImageId INT       IDENTITY(1,1) PRIMARY KEY,
+
+    revenueId      INT       NOT NULL      CONSTRAINT FK_PaymentImage_BookingRevenue
+                                           FOREIGN KEY (revenueId) REFERENCES BookingRevenue(revenueId),
+
+    imageId        INT       NOT NULL      CONSTRAINT FK_PaymentImage_Image
+                                           FOREIGN KEY (imageId) REFERENCES Image(imageId),
+
+    uploadedAt     DATETIME  NOT NULL      DEFAULT GETDATE(),
+
+    note           NVARCHAR(255) NULL      -- ghi chú (ví dụ: "biên lai chuyển khoản lần 1")
+);
+GO
 
 INSERT INTO Customer ( cusFullName, cusGender, cusDate, cusEmail, cusPhone, cusPassword, cusAddress, cusStatus,  cusOccupation,  emergencyContact)
 VALUES (N'Trần Anh Thư','F', '2004-09-26','thutase180353@fpt.edu.vn', '0352020737', N'$2a$10$.C1rQAp36kaZsn09oleNlO9DKYuN1S5r0g9BByrz1oSFgwDhn83Oy',  N'HCMC','active', N'Con sen', N'Mơ' --mk:123@
@@ -475,6 +481,3 @@ VALUES
   (2, 7, '2024-12-20 15:00:00', '[{"indexName":"Siêu âm tử cung","value":"Bình thường","unit":"","status":"Bình thường"}]', 'Cấu trúc tử cung bình thường', 'completed'),
   (2, 8, '2024-12-20 16:00:00', '[{"indexName":"HSG","value":"Thông","unit":"","status":"Bình thường"}]', 'Vòi trứng thông', 'completed'),
   (2, 9, '2024-12-20 17:00:00', NULL, 'Tư vấn phác đồ IVF', 'pending');
-
-
-
