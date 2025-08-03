@@ -49,7 +49,8 @@ public class BookingRevenue {
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
     
-    // Relationships
+    // Relationships - Commented out to avoid lazy loading issues
+    /*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bookId", insertable = false, updatable = false)
     private Booking booking;
@@ -61,6 +62,7 @@ public class BookingRevenue {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "imageId", insertable = false, updatable = false)
     private Image image;
+    */
     
     // Constructors
     public BookingRevenue() {
@@ -142,6 +144,7 @@ public class BookingRevenue {
         this.createdAt = createdAt;
     }
     
+    /*
     public Booking getBooking() {
         return booking;
     }
@@ -165,6 +168,7 @@ public class BookingRevenue {
     public void setImage(Image image) {
         this.image = image;
     }
+    */
     
     @PrePersist
     protected void onCreate() {

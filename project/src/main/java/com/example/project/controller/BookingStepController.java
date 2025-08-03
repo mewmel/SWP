@@ -61,6 +61,7 @@ public class BookingStepController {
             SubService sub = subServiceRepo.findById(step.getSubId()).orElse(null);
             Map<String, Object> map = new HashMap<>();
             map.put("bookingStepId", step.getBookingStepId());
+            map.put("subId", step.getSubId()); // Thêm subId
             map.put("subName", sub != null ? sub.getSubName() : "");
             map.put("performedAt", step.getPerformedAt());
             map.put("result", step.getResult());
@@ -116,17 +117,29 @@ public class BookingStepController {
         // Trả về danh sách BookingStep theo bookingId bên doctor dashboard- để hiện bên xác nhận lịch
     @GetMapping("/{bookId}")
         public List<BookingStepInfo> getBookingStepsByBooking(@PathVariable Integer bookId) {
-            List<Object[]> rows = bookingStepRepo.findInactiveStepDTOByBookId(bookId);
-            // Map từ Object[] sang BookingStepInfo
-            return rows.stream().map(r -> new BookingStepInfo(
-                    (Integer) r[0],         // bookingStepId
-                    (Integer) r[1],         // subId
-                    (String)  r[2],         // subName
-                    (String)  r[3],         // result
-                    (String)  r[4],         // note
-                    r[5] == null ? null : ((Number) r[5]).intValue(), // drugId (nullable)
-                    (String)  r[6]          // stepStatus
-            )).collect(Collectors.toList());
+            try {
+                // Check if booking exists first
+                Optional<Booking> booking = bookingRepo.findById(bookId);
+                if (!booking.isPresent()) {
+                    throw new RuntimeException("Booking with ID " + bookId + " not found");
+                }
+                
+                List<Object[]> rows = bookingStepRepo.findInactiveStepDTOByBookId(bookId);
+                // Map từ Object[] sang BookingStepInfo
+                return rows.stream().map(r -> new BookingStepInfo(
+                        (Integer) r[0],         // bookingStepId
+                        (Integer) r[1],         // subId
+                        (String)  r[2],         // subName
+                        (String)  r[3],         // result
+                        (String)  r[4],         // note
+                        r[5] == null ? null : ((Number) r[5]).intValue(), // drugId (nullable)
+                        (String)  r[6]          // stepStatus
+                )).collect(Collectors.toList());
+            } catch (Exception e) {
+                System.err.println("Error in getBookingStepsByBooking: " + e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
         }    
 
     @GetMapping("/{bookId}/subservice-of-visit")

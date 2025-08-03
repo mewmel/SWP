@@ -200,6 +200,106 @@
             grid-column: span 2;
         }
 
+        /* Loading states */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: #64748b;
+        }
+
+        .loading-state i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Revenue specific styles */
+        .revenue-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .revenue-card .metric-value {
+            color: white;
+            font-size: 24px;
+        }
+
+        .revenue-card .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .doctor-revenue-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .doctor-revenue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background-color 0.2s ease;
+        }
+
+        .doctor-revenue-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .doctor-revenue-item:last-child {
+            border-bottom: none;
+        }
+
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doctor-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #4A90E2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .doctor-details h4 {
+            margin: 0;
+            font-size: 14px;
+            color: #1e293b;
+        }
+
+        .doctor-details p {
+            margin: 0;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .revenue-amount {
+            font-weight: 700;
+            color: #10b981;
+            font-size: 16px;
+        }
+
+        /* Override stats overview for 2 cards layout */
+        .stats-overview {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 1200px) {
             .stats-grid {
@@ -227,6 +327,11 @@
             
             .quick-stats {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-overview {
+                grid-template-columns: 1fr;
+                gap: 16px;
             }
         }
 
@@ -260,17 +365,17 @@
         </nav>
         
         <div class="user-profile">
-                    <div class="user-info">
-                        <p class="user-name">BS. Nguyễn Ngọc Khánh Linh</p>
-                        <p class="user-role">Manager</p>
-                    </div>
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <button class="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </div>
+            <div class="user-info">
+                <p class="user-name">BS. Nguyễn Ngọc Khánh Linh</p>
+                <p class="user-role">Manager</p>
+            </div>
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
     </div>
 </header>
 
@@ -291,55 +396,27 @@
 
     <!-- Key Metrics Overview -->
     <div class="stats-overview">
-        <div class="stat-card">
+        <div class="stat-card revenue-card">
             <div class="stat-content">
-                <div class="stat-label">Tổng lịch hẹn</div>
-                <div class="metric-value">342</div>
+                <div class="stat-label">Tổng doanh thu</div>
+                <div class="metric-value" id="totalRevenue">--</div>
                 <div class="metric-change positive">
                     <i class="fas fa-arrow-up"></i>
-                    +12.5% so với tháng trước
+                    <span id="revenueChange">Đang tải...</span>
                 </div>
             </div>
-            <div class="stat-icon blue">
-                <i class="fas fa-calendar-check"></i>
-            </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-content">
-                <div class="stat-label">Doanh thu</div>
-                <div class="metric-value">2.8B VND</div>
-                <div class="metric-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    +8.3% so với tháng trước
-                </div>
-            </div>
-            <div class="stat-icon green">
+            <div class="stat-icon">
                 <i class="fas fa-money-bill-wave"></i>
             </div>
         </div>
         
         <div class="stat-card">
             <div class="stat-content">
-                <div class="stat-label">Tỷ lệ hoàn thành</div>
-                <div class="metric-value">94.2%</div>
-                <div class="metric-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    +2.1% so với tháng trước
-                </div>
-            </div>
-            <div class="stat-icon orange">
-                <i class="fas fa-tasks"></i>
-            </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-content">
                 <div class="stat-label">Đánh giá trung bình</div>
-                <div class="metric-value">4.8/5</div>
+                <div class="metric-value" id="averageRating">--</div>
                 <div class="metric-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    +0.2 so với tháng trước
+                    <i class="fas fa-star"></i>
+                    <span id="ratingChange">Đang tải...</span>
                 </div>
             </div>
             <div class="stat-icon purple">
@@ -350,381 +427,442 @@
 
     <!-- Charts Grid -->
     <div class="stats-grid">
-        <!-- Appointments Trend Chart -->
+        <!-- Revenue Overview Chart -->
         <div class="chart-card chart-wide">
             <div class="chart-header">
                 <h3 class="chart-title">
                     <i class="fas fa-chart-line"></i>
-                    Xu hướng lịch hẹn theo thời gian
+                    Tổng quan doanh thu
                 </h3>
             </div>
             <div class="chart-container large">
-                <canvas id="appointmentTrendChart"></canvas>
+                <canvas id="revenueOverviewChart"></canvas>
             </div>
         </div>
 
-        <!-- Service Revenue Breakdown -->
+        <!-- Doctor Revenue Chart -->
         <div class="chart-card">
             <div class="chart-header">
                 <h3 class="chart-title">
                     <i class="fas fa-chart-pie"></i>
-                    Doanh thu theo dịch vụ
+                    Doanh thu theo bác sĩ
                 </h3>
             </div>
             <div class="chart-container">
-                <canvas id="serviceRevenueChart"></canvas>
+                <canvas id="doctorRevenueChart"></canvas>
             </div>
         </div>
 
-        <!-- Doctor Performance -->
+        <!-- Doctor Revenue List -->
         <div class="chart-card">
             <div class="chart-header">
                 <h3 class="chart-title">
                     <i class="fas fa-user-md"></i>
-                    Hiệu suất bác sĩ
+                    Chi tiết doanh thu bác sĩ
                 </h3>
             </div>
-            <div class="chart-container">
-                <canvas id="doctorPerformanceChart"></canvas>
+            <div class="doctor-revenue-list" id="doctorRevenueList">
+                <div class="loading-state">
+                    <i class="fas fa-spinner"></i>
+                    <p>Đang tải dữ liệu...</p>
+                </div>
             </div>
         </div>
 
-        <!-- Weekly Schedule Utilization -->
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3 class="chart-title">
-                    <i class="fas fa-calendar-week"></i>
-                    Tỷ lệ sử dụng lịch tuần
-                </h3>
-            </div>
-            <div class="chart-container">
-                <canvas id="scheduleUtilizationChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Monthly Comparison -->
+        <!-- Revenue Statistics -->
         <div class="chart-card">
             <div class="chart-header">
                 <h3 class="chart-title">
                     <i class="fas fa-chart-bar"></i>
-                    So sánh theo tháng
+                    Thống kê doanh thu
                 </h3>
             </div>
             <div class="chart-container">
-                <canvas id="monthlyComparisonChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Top Performing Doctors -->
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3 class="chart-title">
-                    <i class="fas fa-trophy"></i>
-                    Top bác sĩ xuất sắc
-                </h3>
-            </div>
-            <table class="performance-table">
-                <thead>
-                    <tr>
-                        <th>Hạng</th>
-                        <th>Bác sĩ</th>
-                        <th>Lịch hẹn</th>
-                        <th>Đánh giá</th>
-                        <th>Hiệu suất</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="rank-badge rank-1">1</span></td>
-                        <td>BS. Nguyễn Văn A</td>
-                        <td>89</td>
-                        <td>4.9⭐</td>
-                        <td>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 95%"></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="rank-badge rank-2">2</span></td>
-                        <td>BS. Trần Thị B</td>
-                        <td>76</td>
-                        <td>4.8⭐</td>
-                        <td>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 88%"></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="rank-badge rank-3">3</span></td>
-                        <td>BS. Lê Văn C</td>
-                        <td>71</td>
-                        <td>4.7⭐</td>
-                        <td>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 82%"></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="rank-badge rank-other">4</span></td>
-                        <td>BS. Phạm Thị D</td>
-                        <td>65</td>
-                        <td>4.6⭐</td>
-                        <td>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 78%"></div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Quick Stats Summary -->
-    <div class="chart-card">
-        <div class="chart-header">
-            <h3 class="chart-title">
-                <i class="fas fa-tachometer-alt"></i>
-                Tóm tắt nhanh
-            </h3>
-        </div>
-        <div class="quick-stats">
-            <div class="quick-stat">
-                <div class="metric-value">6</div>
-                <div class="stat-label">Bác sĩ đang hoạt động</div>
-            </div>
-            <div class="quick-stat">
-                <div class="metric-value">28</div>
-                <div class="stat-label">Lịch hẹn hôm nay</div>
-            </div>
-            <div class="quick-stat">
-                <div class="metric-value">156M</div>
-                <div class="stat-label">Doanh thu tuần</div>
-            </div>
-            <div class="quick-stat">
-                <div class="metric-value">98%</div>
-                <div class="stat-label">Độ hài lòng</div>
-            </div>
-            <div class="quick-stat">
-                <div class="metric-value">42</div>
-                <div class="stat-label">Lịch đã đặt</div>
-            </div>
-            <div class="quick-stat">
-                <div class="metric-value">3.2h</div>
-                <div class="stat-label">Thời gian chờ TB</div>
+                <canvas id="revenueStatsChart"></canvas>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Chart.js Configuration and Data
-const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        legend: {
-            position: 'bottom',
-            labels: {
-                usePointStyle: true,
-                padding: 20
-            }
+// ========== LOADING REVENUE DATA ==========
+let revenueData = null;
+let doctorRevenueData = null;
+
+// Load revenue summary data
+async function loadRevenueSummary() {
+    try {
+        const response = await fetch('/api/stats/summary');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    }
-};
-
-// Appointment Trend Chart
-const appointmentTrendCtx = document.getElementById('appointmentTrendChart').getContext('2d');
-new Chart(appointmentTrendCtx, {
-    type: 'line',
-    data: {
-        labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
-        datasets: [{
-            label: 'Lịch hẹn mới',
-            data: [12, 19, 15, 25, 22, 18, 8, 14, 21, 17, 28, 24, 16, 10],
-            borderColor: '#4A90E2',
-            backgroundColor: 'rgba(74, 144, 226, 0.1)',
-            tension: 0.4,
-            fill: true
-        }, {
-            label: 'Lịch hoàn thành',
-            data: [10, 17, 14, 23, 20, 16, 7, 12, 19, 15, 26, 22, 14, 9],
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            tension: 0.4,
-            fill: true
-        }]
-    },
-    options: {
-        ...chartOptions,
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    color: '#f1f5f9'
-                }
-            },
-            x: {
-                grid: {
-                    display: false
-                }
-            }
-        }
-    }
-});
-
-// Service Revenue Chart
-const serviceRevenueCtx = document.getElementById('serviceRevenueChart').getContext('2d');
-new Chart(serviceRevenueCtx, {
-    type: 'doughnut',
-    data: {
-        labels: ['IVF', 'IUI', 'Tư vấn', 'Xét nghiệm', 'Khác'],
-        datasets: [{
-            data: [45, 25, 15, 10, 5],
-            backgroundColor: [
-                '#4A90E2',
-                '#10b981',
-                '#f59e0b',
-                '#8b5cf6',
-                '#64748b'
-            ],
-            borderWidth: 2,
-            borderColor: '#ffffff'
-        }]
-    },
-    options: {
-        ...chartOptions,
-        cutout: '60%'
-    }
-});
-
-// Doctor Performance Chart
-const doctorPerformanceCtx = document.getElementById('doctorPerformanceChart').getContext('2d');
-new Chart(doctorPerformanceCtx, {
-    type: 'radar',
-    data: {
-        labels: ['Lịch hẹn', 'Đánh giá', 'Hoàn thành', 'Tương tác', 'Chuyên môn'],
-        datasets: [{
-            label: 'BS. Nguyễn Văn A',
-            data: [95, 92, 96, 88, 94],
-            borderColor: '#4A90E2',
-            backgroundColor: 'rgba(74, 144, 226, 0.2)',
-            pointBackgroundColor: '#4A90E2'
-        }, {
-            label: 'Trung bình',
-            data: [75, 78, 82, 70, 80],
-            borderColor: '#64748b',
-            backgroundColor: 'rgba(100, 116, 139, 0.1)',
-            pointBackgroundColor: '#64748b'
-        }]
-    },
-    options: {
-        ...chartOptions,
-        scales: {
-            r: {
-                beginAtZero: true,
-                max: 100,
-                grid: {
-                    color: '#f1f5f9'
-                }
-            }
-        }
-    }
-});
-
-// Schedule Utilization Chart
-const scheduleUtilizationCtx = document.getElementById('scheduleUtilizationChart').getContext('2d');
-new Chart(scheduleUtilizationCtx, {
-    type: 'bar',
-    data: {
-        labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'],
-        datasets: [{
-            label: 'Đã đặt (%)',
-            data: [85, 92, 78, 96, 88, 65, 45],
-            backgroundColor: '#4A90E2',
-            borderRadius: 4
-        }]
-    },
-    options: {
-        ...chartOptions,
-        scales: {
-            y: {
-                beginAtZero: true,
-                max: 100,
-                grid: {
-                    color: '#f1f5f9'
-                }
-            },
-            x: {
-                grid: {
-                    display: false
-                }
-            }
-        }
-    }
-});
-
-// Monthly Comparison Chart
-const monthlyComparisonCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
-new Chart(monthlyComparisonCtx, {
-    type: 'bar',
-    data: {
-        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
-        datasets: [{
-            label: 'Năm nay',
-            data: [180, 220, 195, 250, 285, 320],
-            backgroundColor: '#4A90E2',
-            borderRadius: 4
-        }, {
-            label: 'Năm trước',
-            data: [160, 200, 185, 230, 265, 290],
-            backgroundColor: '#94a3b8',
-            borderRadius: 4
-        }]
-    },
-    options: {
-        ...chartOptions,
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    color: '#f1f5f9'
-                }
-            },
-            x: {
-                grid: {
-                    display: false
-                }
-            }
-        }
-    }
-});
-
-// Time filter functionality
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
+        const data = await response.json();
+        revenueData = data;
+        updateRevenueDisplay(data);
+        updateCharts(data);
         
-        // In a real application, this would trigger data refresh
-        console.log('Filter changed to:', this.dataset.period);
-    });
-});
+        // Load average rating data
+        await loadAverageRating();
+    } catch (error) {
+        console.error('Error loading revenue summary:', error);
+        showError('Không thể tải dữ liệu doanh thu');
+    }
+}
 
-// Animate progress bars on load
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        document.querySelectorAll('.progress-fill').forEach(bar => {
-            const width = bar.style.width;
-            bar.style.width = '0%';
-            setTimeout(() => {
-                bar.style.width = width;
-            }, 100);
+// Load average rating data
+async function loadAverageRating() {
+    try {
+        const response = await fetch('/api/stats/average-rating');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Update rating display
+        const averageRatingElement = document.getElementById('averageRating');
+        const ratingChangeElement = document.getElementById('ratingChange');
+        
+        if (data.formattedRating) {
+            averageRatingElement.textContent = data.formattedRating;
+            ratingChangeElement.textContent = `${data.totalFeedbacks} đánh giá`;
+        }
+    } catch (error) {
+        console.error('Error loading average rating:', error);
+        // Don't show error for rating as it's secondary data
+    }
+}
+
+// Update revenue display
+function updateRevenueDisplay(data) {
+    // Update total revenue
+    const totalRevenueElement = document.getElementById('totalRevenue');
+    if (data.formattedTotalRevenue) {
+        totalRevenueElement.textContent = data.formattedTotalRevenue;
+    }
+
+    // Update doctor revenue list
+    const doctorRevenueList = document.getElementById('doctorRevenueList');
+    if (data.doctorRevenues) {
+        let html = '';
+        const doctorEntries = Object.entries(data.doctorRevenues);
+        
+        if (doctorEntries.length === 0) {
+            html = `
+                <div class="loading-state">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Chưa có dữ liệu doanh thu</p>
+                </div>
+            `;
+        } else {
+            doctorEntries.forEach(([key, doctor]) => {
+                html += `
+                    <div class="doctor-revenue-item">
+                        <div class="doctor-info">
+                            <div class="doctor-avatar">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="doctor-details">
+                                <h4>${doctor.doctorName}</h4>
+                                <p>ID: ${doctor.docId}</p>
+                            </div>
+                        </div>
+                        <div class="revenue-amount">
+                            ${doctor.formattedRevenue}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        doctorRevenueList.innerHTML = html;
+    }
+}
+
+// Update charts
+function updateCharts(data) {
+    if (data.doctorRevenues) {
+        updateDoctorRevenueChart(data.doctorRevenues);
+        updateRevenueStatsChart(data.doctorRevenues);
+    }
+}
+
+// Update doctor revenue pie chart
+function updateDoctorRevenueChart(doctorRevenues) {
+    const ctx = document.getElementById('doctorRevenueChart');
+    if (!ctx) return;
+
+    const labels = [];
+    const values = [];
+    const colors = [
+        '#4A90E2', '#50C878', '#FF6B6B', '#FFD93D', 
+        '#6C5CE7', '#A8E6CF', '#FF8B94', '#96CEB4'
+    ];
+
+    Object.entries(doctorRevenues).forEach(([key, doctor], index) => {
+        labels.push(doctor.doctorName);
+        values.push(doctor.revenue);
+    });
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: colors.slice(0, labels.length),
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed;
+                            return context.label + ': ' + formatCurrency(value);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Update revenue statistics chart
+function updateRevenueStatsChart(doctorRevenues) {
+    const ctx = document.getElementById('revenueStatsChart');
+    if (!ctx) return;
+
+    const doctorEntries = Object.entries(doctorRevenues);
+    const labels = doctorEntries.map(([key, doctor]) => doctor.doctorName);
+    const values = doctorEntries.map(([key, doctor]) => doctor.revenue);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: values,
+                backgroundColor: '#4A90E2',
+                borderColor: '#357ABD',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return formatCurrency(value);
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return formatCurrency(context.parsed.y);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Update revenue overview chart
+async function updateRevenueOverviewChart() {
+    const ctx = document.getElementById('revenueOverviewChart');
+    if (!ctx) return;
+
+    try {
+        // Load real revenue data from API
+        const response = await fetch('/api/stats/revenue-trend');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Process monthly data
+        const monthlyData = data.monthlyData || [];
+        const labels = [];
+        const revenueData = [];
+        
+        // Create array for 12 months (current + 11 previous)
+        const monthNames = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth(); // 0-11
+        const currentYear = currentDate.getFullYear();
+        
+        // Generate labels for last 12 months
+        for (let i = 11; i >= 0; i--) {
+            const monthIndex = (currentMonth - i + 12) % 12;
+            labels.push(monthNames[monthIndex]);
+        }
+        
+        // Initialize revenue data with zeros
+        for (let i = 0; i < 12; i++) {
+            revenueData.push(0);
+        }
+        
+        // Fill in actual revenue data
+        monthlyData.forEach((monthData) => {
+            const year = parseInt(monthData.year);
+            const month = parseInt(monthData.month);
+            const revenue = parseFloat(monthData.revenue);
+            
+            // Calculate position in the array (0-11, where 0 is current month)
+            const monthDiff = (currentYear - year) * 12 + (currentMonth - month + 1);
+            const arrayIndex = 11 - monthDiff;
+            
+            if (arrayIndex >= 0 && arrayIndex < 12) {
+                revenueData[arrayIndex] = revenue;
+            }
         });
-    }, 500);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: revenueData,
+                    borderColor: '#4A90E2',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return formatCurrency(context.parsed.y);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error loading revenue trend data:', error);
+        
+        // Fallback to empty chart if API fails
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    borderColor: '#4A90E2',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return formatCurrency(context.parsed.y);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Helper function to format currency
+function formatCurrency(amount) {
+    if (amount === null || amount === undefined) {
+        return '0 VNĐ';
+    }
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+        minimumFractionDigits: 0
+    }).format(amount);
+}
+
+// Show error message
+function showError(message) {
+    console.error(message);
+    // You can implement a proper error display here
+}
+
+// Initialize the dashboard
+document.addEventListener('DOMContentLoaded', async function() {
+    // Load revenue data
+    await loadRevenueSummary();
+    
+    // Initialize charts
+    await updateRevenueOverviewChart();
+    
+    // Set up time filter buttons
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            // Here you can reload data based on selected time period
+            await loadRevenueSummary();
+            await updateRevenueOverviewChart();
+        });
+    });
 });
 </script>
 </body>

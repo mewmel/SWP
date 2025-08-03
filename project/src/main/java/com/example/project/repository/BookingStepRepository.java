@@ -22,7 +22,7 @@ public interface BookingStepRepository extends JpaRepository<BookingStep, Intege
 
 @Query(value = "SELECT bs.bookingStepId, bs.subId, ss.subName, bs.result, bs.note, bs.drugId, bs.stepStatus " +
         "FROM BookingStep bs JOIN SubService ss ON bs.subId = ss.subId " +
-        "WHERE bs.bookId = :bookId AND bs.stepStatus = 'inactive'", nativeQuery = true)
+        "WHERE bs.bookId = :bookId", nativeQuery = true)
 List<Object[]> findInactiveStepDTOByBookId(@Param("bookId") Integer bookId);
 
 @Query(
