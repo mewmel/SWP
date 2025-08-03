@@ -14,10 +14,10 @@ class BlogEditor {
     init() {
         this.bindEvents();
         this.updateStatus();
-        this.initializeLivePreview(); // Khởi tạo live preview ngay từ đầu
     }
 
     bindEvents() {
+        const previewBtn = document.getElementById('previewBtn');
         const saveDraftBtn = document.getElementById('saveDraftBtn');
         const publishBtn = document.getElementById('publishBtn');
         const postTitle = document.getElementById('postTitle');
@@ -26,6 +26,9 @@ class BlogEditor {
         const uploadImageBtn = document.getElementById('uploadImageBtn');
         const imageInput = document.getElementById('imageInput');
 
+        if (previewBtn) {
+            previewBtn.addEventListener('click', () => this.togglePreview());
+        }
         if (saveDraftBtn) {
             saveDraftBtn.addEventListener('click', () => this.savePost('draft'));
         }
@@ -34,22 +37,13 @@ class BlogEditor {
         }
 
         if (postTitle) {
-            postTitle.addEventListener('input', e => {
-                this.post.title = e.target.value;
-                this.updateLivePreview();
-            });
+            postTitle.addEventListener('input', e => this.post.title = e.target.value);
         }
         if (postSummary) {
-            postSummary.addEventListener('input', e => {
-                this.post.summary = e.target.value;
-                this.updateLivePreview();
-            });
+            postSummary.addEventListener('input', e => this.post.summary = e.target.value);
         }
         if (contentEditor) {
-            contentEditor.addEventListener('input', e => {
-                this.post.content = e.target.innerHTML;
-                this.updateLivePreview();
-            });
+            contentEditor.addEventListener('input', e => this.post.content = e.target.innerHTML);
         }
 
         if (uploadImageBtn) {
@@ -66,49 +60,45 @@ class BlogEditor {
                     this.images.push(file);
                 });
                 this.renderImagePreview();
-                this.updateLivePreview(); // Cập nhật live preview khi thêm ảnh
                 e.target.value = "";
             });
         }
     }
 
-    updateLivePreview() {
-        const previewTitle = document.getElementById('previewTitle');
-        const previewImages = document.getElementById('previewImages');
-        const previewContent = document.getElementById('previewContent');
-        const previewDate = document.getElementById('previewDate');
+    togglePreview() {
+        this.isPreview = !this.isPreview;
+        const editorSection = document.getElementById('editorSection');
+        const previewSection = document.getElementById('previewSection');
+        const previewText = document.getElementById('previewText');
 
-        if (previewTitle) {
-            previewTitle.textContent = this.post.title || 'Chưa có tiêu đề';
-        }
-        
-        // Hiển thị hình ảnh trong preview
-        if (previewImages) {
-            previewImages.innerHTML = '';
-            if (this.images.length > 0) {
-                this.images.forEach(file => {
-                    const img = document.createElement('img');
-                    img.src = URL.createObjectURL(file);
-                    img.style.cssText = 'width: 100%; max-width: 600px; height: auto; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);';
-                    previewImages.appendChild(img);
-                });
-            }
-        }
-        
-        if (previewContent) {
-            previewContent.innerHTML = this.post.content || '<p>Chưa có nội dung</p>';
-        }
-        if (previewDate) {
-            previewDate.textContent = new Date().toLocaleDateString('vi-VN');
-        }
+        editorSection.style.display = this.isPreview ? 'none' : 'block';
+        previewSection.style.display = this.isPreview ? 'block' : 'none';
+        previewText.textContent = this.isPreview ? 'Chỉnh sửa' : 'Xem trước';
+
+        if (this.isPreview) this.updatePreview();
     }
 
-    // Gọi live preview lần đầu khi tải trang
-    initializeLivePreview() {
-        this.updateLivePreview();
+updatePreview() {
+    document.getElementById('previewTitle').textContent = this.post.title;
+
+    const previewContent = document.getElementById('previewContent');
+    previewContent.innerHTML = '';
+
+    // Render ảnh lên trước content
+    if (this.images.length) {
+        this.images.forEach(file => {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.cssText = 'width: 100%; max-width: 600px; height: auto; margin-bottom: 12px; border-radius: 8px;';
+            previewContent.appendChild(img);
+        });
     }
 
-    // Xóa function updatePreview cũ, thay bằng updateLivePreview
+    // Render nội dung bài viết sau ảnh
+    previewContent.innerHTML += this.post.content;
+}
+
+
     renderImagePreview() {
         const previewDiv = document.getElementById('imagePreview');
         previewDiv.innerHTML = '';
@@ -705,11 +695,3 @@ function showNoDrafts() {
         noDraftsElement.style.display = 'block';
     }
 }
-
-// Initialize live preview when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    const blogEditor = window.blogEditor;
-    if (blogEditor) {
-        blogEditor.initializeLivePreview();
-    }
-});

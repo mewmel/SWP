@@ -68,151 +68,174 @@
                                 <h1><i class="fas fa-pen-fancy"></i> Tạo bài viết mới</h1>
                                 <p>Chia sẻ kiến thức và kinh nghiệm y tế với cộng đồng</p>
                             </div>
+                            <div class="page-actions">
+                                <button class="btn btn-outline" id="saveDraftBtn">
+                                    <i class="fas fa-save"></i> Lưu nháp
+                                </button>
+                                <button class="btn btn-secondary" id="previewBtn">
+                                    <i class="fas fa-eye"></i> <span id="previewText">Xem trước</span>
+                                </button>
+                                <button class="btn btn-primary" id="publishBtn">
+                                    <i class="fas fa-paper-plane"></i> Xuất bản
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Blog Editor -->
                     <div class="blog-editor-container">
                         <div class="blog-editor">
+
+
+                            <!-- Post Metadata -->
+                            <div class="post-metadata">
+                                <div class="metadata-grid">
+                                    <div class="metadata-item">
+                                        <label for="postTitle" class="form-label">
+                                            <i class="fas fa-heading"></i> Tiêu đề bài viết
+                                        </label>
+                                        <input type="text" id="postTitle" class="form-input title-input"
+                                            placeholder="Nhập tiêu đề hấp dẫn cho bài viết...">
+                                    </div>
+                                    <!-- BỎ PHẦN CATEGORY Ở ĐÂY -->
+                                </div>
+
+                                <!-- THÊM PHẦN SUMMARY -->
+                                <div class="metadata-item" style="margin-top: 12px;">
+                                    <label for="postSummary" class="form-label">
+                                        <i class="fas fa-align-left"></i> Tóm tắt bài viết
+                                    </label>
+                                    <textarea id="postSummary" class="form-input" rows="2"
+                                        placeholder="Viết tóm tắt (summary) cho bài viết..."></textarea>
+                                </div>
+                                <!-- <div class="tag-section">
+                                    <label class="form-label">
+                                        <i class="fas fa-hashtag"></i> Thẻ tag
+                                    </label>
+                                    <div class="tag-input-group">
+                                        <input type="text" id="tagInput" class="form-input"
+                                            placeholder="Thêm tag (Enter để thêm)...">
+                                        <button class="btn btn-primary btn-sm" id="addTagBtn">
+                                            <i class="fas fa-plus"></i> Thêm
+                                        </button>
+                                    </div>
+                                    <div class="tags-container" id="tagsContainer"></div>
+                                </div> -->
+                            </div>
+
+                            <!-- ĐƯA IMAGE UPLOAD LÊN ĐÂY -->
+                            <div class="image-upload-section" style="margin: 16px 0;">
+                                <button class="btn btn-secondary" id="uploadImageBtn">
+                                    <i class="fas fa-image"></i> Thêm ảnh vào bài viết
+                                </button>
+                                <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+                                <div id="imagePreview" style="margin-top: 12px;"></div>
+                            </div>
                             <!-- Content Editor -->
                             <div class="editor-content">
-                                <div class="two-panel-layout">
-                                    <!-- Left Panel: Editor -->
-                                    <div class="editor-panel">
-                                        <!-- Post Metadata -->
-                                        <div class="post-metadata">
-                                            <div class="metadata-grid">
-                                                <div class="metadata-item full-width">
-                                                    <label for="postTitle" class="form-label">
-                                                        <i class="fas fa-heading"></i> Tiêu đề bài viết
-                                                    </label>
-                                                    <input type="text" id="postTitle" class="form-input title-input"
-                                                        placeholder="Nhập tiêu đề hấp dẫn cho bài viết...">
-                                                </div>
-                                            </div>
+                                <div class="editor-main">
 
-                                            <!-- PHẦN SUMMARY -->
-                                            <div class="metadata-item full-width" style="margin-top: 12px;">
-                                                <label for="postSummary" class="form-label">
-                                                    <i class="fas fa-align-left"></i> Tóm tắt bài viết
-                                                </label>
-                                                <textarea id="postSummary" class="form-input" rows="3"
-                                                    placeholder="Viết tóm tắt ngắn gọn để người đọc hiểu được nội dung chính của bài viết..."></textarea>
+                                    <div class="editor-section" id="editorSection">
+                                        <div class="editor-header">
+                                            <h3><i class="fas fa-edit"></i> Nội dung bài viết</h3>
+                                            <div class="editor-tools">
+                                                <div class="word-count" id="wordCount">0 từ</div>
+                                                <button class="btn btn-sm btn-outline" id="fullscreenBtn">
+                                                    <i class="fas fa-expand"></i>
+                                                </button>
                                             </div>
                                         </div>
 
-                                        <!-- IMAGE UPLOAD & TOOLS SECTION -->
-                                        <div class="editor-tools-section">
-                                            <div class="tools-row">
-                                                <button class="btn btn-outline" id="saveDraftBtn">
-                                                    <i class="fas fa-save"></i> Lưu nháp
+                                        <div class="toolbar">
+                                            <div class="toolbar-group">
+                                                <button class="toolbar-btn" data-command="bold" title="Đậm (Ctrl+B)">
+                                                    <i class="fas fa-bold"></i>
                                                 </button>
-                                                <button class="btn btn-primary" id="publishBtn">
-                                                    <i class="fas fa-paper-plane"></i> Xuất bản
+                                                <button class="toolbar-btn" data-command="italic"
+                                                    title="Nghiêng (Ctrl+I)">
+                                                    <i class="fas fa-italic"></i>
+                                                </button>
+                                                <button class="toolbar-btn" data-command="underline"
+                                                    title="Gạch chân (Ctrl+U)">
+                                                    <i class="fas fa-underline"></i>
                                                 </button>
                                             </div>
-                                            <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
-                                            <div id="imagePreview" class="image-preview-container"></div>
+
+                                            <div class="toolbar-divider"></div>
+
+                                            <div class="toolbar-group">
+                                                <button class="toolbar-btn" data-command="insertUnorderedList"
+                                                    title="Danh sách">
+                                                    <i class="fas fa-list-ul"></i>
+                                                </button>
+                                                <button class="toolbar-btn" data-command="insertOrderedList"
+                                                    title="Danh sách số">
+                                                    <i class="fas fa-list-ol"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="toolbar-divider"></div>
+
+                                            <div class="toolbar-group">
+                                                <button class="toolbar-btn" onclick="insertLink()"
+                                                    title="Thêm liên kết">
+                                                    <i class="fas fa-link"></i>
+                                                </button>
+                                                <button class="toolbar-btn" onclick="insertImage()"
+                                                    title="Thêm hình ảnh">
+                                                    <i class="fas fa-image"></i>
+                                                </button>
+                                                <button class="toolbar-btn" data-command="insertHorizontalRule"
+                                                    title="Đường kẻ ngang">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="toolbar-divider"></div>
+
+                                            <div class="toolbar-group">
+                                                <select class="toolbar-select" onchange="formatText(this.value)">
+                                                    <option value="">Định dạng</option>
+                                                    <option value="h1">Tiêu đề 1</option>
+                                                    <option value="h2">Tiêu đề 2</option>
+                                                    <option value="h3">Tiêu đề 3</option>
+                                                    <option value="p">Đoạn văn</option>
+                                                    <option value="blockquote">Trích dẫn</option>
+                                                </select>
+                                                <button class="toolbar-btn" onclick="insertCode()" title="Code">
+                                                    <i class="fas fa-code"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="editor-section" id="editorSection">
-                                            <div class="editor-header">
-                                                <h3><i class="fas fa-edit"></i> Nội dung bài viết</h3>
-                                            </div>
 
-                                            <div class="toolbar">
-                                                <div class="toolbar-group">
-                                                    <button class="toolbar-btn" data-command="bold" title="Đậm (Ctrl+B)">
-                                                        <i class="fas fa-bold"></i>
-                                                    </button>
-                                                    <button class="toolbar-btn" data-command="italic"
-                                                        title="Nghiêng (Ctrl+I)">
-                                                        <i class="fas fa-italic"></i>
-                                                    </button>
-                                                    <button class="toolbar-btn" data-command="underline"
-                                                        title="Gạch chân (Ctrl+U)">
-                                                        <i class="fas fa-underline"></i>
-                                                    </button>
-                                                </div>
-
-                                                <div class="toolbar-divider"></div>
-
-                                                <div class="toolbar-group">
-                                                    <button class="toolbar-btn" data-command="insertUnorderedList"
-                                                        title="Danh sách">
-                                                        <i class="fas fa-list-ul"></i>
-                                                    </button>
-                                                    <button class="toolbar-btn" data-command="insertOrderedList"
-                                                        title="Danh sách số">
-                                                        <i class="fas fa-list-ol"></i>
-                                                    </button>
-                                                </div>
-
-                                                <div class="toolbar-divider"></div>
-
-                                                <div class="toolbar-group">
-                                                    <button class="toolbar-btn" onclick="insertLink()"
-                                                        title="Thêm liên kết">
-                                                        <i class="fas fa-link"></i>
-                                                    </button>
-                                                    <button class="toolbar-btn" id="uploadImageBtn" onclick="insertImage()"
-                                                        title="Thêm hình ảnh">
-                                                        <i class="fas fa-image"></i>
-                                                    </button>
-                                                    <button class="toolbar-btn" data-command="insertHorizontalRule"
-                                                        title="Đường kẻ ngang">
-                                                        <i class="fas fa-minus"></i>
-                                                    </button>
-                                                </div>
-
-                                                <div class="toolbar-divider"></div>
-
-                                                <div class="toolbar-group">
-                                                    <select class="toolbar-select" onchange="formatText(this.value)">
-                                                        <option value="">Định dạng</option>
-                                                        <option value="h1">Tiêu đề 1</option>
-                                                        <option value="h2">Tiêu đề 2</option>
-                                                        <option value="h3">Tiêu đề 3</option>
-                                                        <option value="p">Đoạn văn</option>
-                                                        <option value="blockquote">Trích dẫn</option>
-                                                    </select>
-                                                    <button class="toolbar-btn" onclick="insertCode()" title="Code">
-                                                        <i class="fas fa-code"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            <div class="content-editor" id="contentEditor" contenteditable="true"
-                                                placeholder="Bắt đầu viết nội dung bài viết của bạn...
+                                        <div class="content-editor" id="contentEditor" contenteditable="true"
+                                            placeholder="Bắt đầu viết nội dung bài viết của bạn...
 
 Mẹo: Sử dụng các tiêu đề để tổ chức nội dung, thêm hình ảnh minh họa và chia sẻ kinh nghiệm thực tế."></div>
+                                    </div>
+
+                                    <!-- Preview Section -->
+                                    <div class="preview-section" id="previewSection" style="display: none;">
+                                        <div class="preview-header">
+                                            <h3><i class="fas fa-eye"></i> Xem trước bài viết</h3>
+                                            <div class="preview-meta">
+                                                <span class="author-info">
+                                                    <i class="fas fa-user-md"></i> BS. Nguyễn Ngọc Khánh Linh
+                                                </span>
+                                                <span class="publish-date">
+                                                    <i class="fas fa-calendar"></i> <span id="currentDate"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="preview-container">
+                                            <h1 class="preview-title" id="previewTitle">Tiêu đề bài viết</h1>
+                                            <!-- <div class="preview-tags" id="previewTags"></div> -->
+                                            <div class="preview-content" id="previewContent">
+                                                <p>Nội dung bài viết sẽ hiển thị ở đây...</p>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <!-- Right Panel: Live Preview -->
-                                    <div class="preview-panel">
-                                        <div class="preview-section" id="previewSection">
-                                            <div class="preview-header">
-                                                <h3><i class="fas fa-eye"></i> Xem trước bài viết</h3>
-                                                <div class="preview-meta">
-                                                    <span class="author-info">
-                                                        <i class="fas fa-user-md"></i> <span id="previewAuthor">BS. Nguyễn Ngọc Khánh Linh</span>
-                                                    </span>
-                                                    <span class="publish-date">
-                                                        <i class="fas fa-calendar"></i> <span id="currentDate"></span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="preview-container">
-                                                <h1 class="preview-title" id="previewTitle">Tiêu đề bài viết</h1>
-                                                <div class="preview-images" id="previewImages">
-                                                    <!-- Hình ảnh sẽ hiển thị ở đây -->
-                                                </div>
-                                                <div class="preview-content" id="previewContent">
-                                                    <p>Nội dung bài viết sẽ hiển thị ở đây...</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
