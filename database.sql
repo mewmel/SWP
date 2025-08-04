@@ -156,7 +156,27 @@ CREATE TABLE BookingStep (
 													CONSTRAINT DF_BookingStep_Status DEFAULT 'inactive',
 );
 GO
+CREATE TABLE BookingStatusDetail (
+    statusDetailId     INT IDENTITY(1,1) PRIMARY KEY,
 
+    bookId             INT NOT NULL
+                          CONSTRAINT FK_BookingStatusDetail_Booking 
+                          FOREIGN KEY (bookId) REFERENCES Booking(bookId),
+
+    checkInTime        DATETIME NULL,
+    checkOutTime       DATETIME NULL,
+
+    prescriptionStatus NVARCHAR(20) NOT NULL
+                          CONSTRAINT CK_BookingStatusDetail_Prescription
+                          CHECK (prescriptionStatus IN ('pending', 'success'))
+                          DEFAULT 'pending',
+
+    revenueStatus      NVARCHAR(20) NOT NULL
+                          CONSTRAINT CK_BookingStatusDetail_Revenue
+                          CHECK (revenueStatus IN ('pending', 'success'))
+                          DEFAULT 'pending'
+);
+GO
 -- 9. MedicalRecord - benh an
 
 CREATE TABLE MedicalRecord (
@@ -176,7 +196,7 @@ CREATE TABLE MedicalRecord (
 
     createdAt       DATETIME			 DEFAULT GETDATE(),
 
-    recordStatus    NVARCHAR(20)   NOT NULL CONSTRAINT CK_MedicalRecord_Status CHECK (recordStatus IN ('active','closed','pending'))
+    recordStatus    NVARCHAR(20)   NOT NULL CONSTRAINT CK_MedicalRecord_Status CHECK (recordStatus IN ('active','closed'))
 											CONSTRAINT DF_MedicalRecord_Status DEFAULT 'active',
     note            NVARCHAR(1000) NULL,
     diagnosis       NVARCHAR(500)  NULL,  -- chuan doan benh
@@ -194,6 +214,7 @@ CREATE TABLE MedicalRecordBooking (-- để biết được các booking thuộc
 );
 -- -- UNIQUE constraint để 1 booking chỉ gắn 1 lần với 1 record:
 -- ALTER TABLE MedicalRecordBooking ADD CONSTRAINT UQ_RecordBooking UNIQUE (recordId, bookId);
+
 
 
 

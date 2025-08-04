@@ -1,10 +1,10 @@
 package com.example.project.controller;
 
-import java.util.Optional;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +97,7 @@ public ResponseEntity<CusCurrentBooking> getFullRecord(@PathVariable Integer cus
 
     // 3. Lấy hồ sơ bệnh án 
     MedicalRecord medicalRecord = medicalRecordRepository
-        .findByCusId(cusId)
+        .findActiveByCusId(cusId)
         .orElse(null);
 
     // 4. Map sang DTO

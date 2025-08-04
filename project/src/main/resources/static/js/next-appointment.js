@@ -253,15 +253,14 @@ function showNotification(message, type) {
                     patient.cusFullName.toLowerCase().includes(searchTerm) ||
                     (patient.serviceName && patient.serviceName.toLowerCase().includes(searchTerm));
                 
-                // Map status filter to recordStatus instead of bookStatus
+                // Map status filter to recordStatus - chỉ còn 'active' và 'closed'
                 let statusMatch = true;
                 if (statusFilter === 'active') {
                     statusMatch = patient.recordStatus === 'active';
                 } else if (statusFilter === 'closed') {
                     statusMatch = patient.recordStatus === 'closed';
-                } else if (statusFilter === 'pending') {
-                    statusMatch = patient.recordStatus === 'pending';
                 }
+                // Xóa check cho 'pending' vì đã bỏ khỏi database schema
                 
                 return searchMatch && statusMatch;
             });

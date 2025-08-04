@@ -91,6 +91,55 @@ public class FeedbackController {
     }
     
     /**
+     * API MỚI: Lấy danh sách MedicalRecord đã hoàn thành để feedback
+     * GET /api/feedback/completed-medical-records/{cusId}
+     */
+    @GetMapping("/completed-medical-records/{cusId}")
+    public ResponseEntity<List<Map<String, Object>>> getCompletedMedicalRecords(@PathVariable Integer cusId) {
+        try {
+            List<Map<String, Object>> completedMedicalRecords = new ArrayList<>();
+            
+            // Lấy các MedicalRecord đã có booking completed của customer
+            List<Object[]> records = bookingRepository.findCompletedMedicalRecordsForFeedback(cusId);
+            
+            for (Object[] row : records) {
+                Integer recordId = (Integer) row[0];
+                Integer cusIdFromRecord = (Integer) row[1]; 
+                Integer docId = (Integer) row[2];
+                Integer serId = (Integer) row[3];
+                Object recordCreatedAt = row[4];
+                String doctorName = (String) row[5];
+                String serviceName = (String) row[6];
+                String recordStatus = (String) row[7];
+                
+                // Kiểm tra đã feedback cho MedicalRecord này chưa
+                boolean alreadyFeedback = feedbackRepository.existsByCusIdAndDocIdAndSerId(
+                    cusId, docId, serId);
+                
+                Map<String, Object> recordData = new HashMap<>();
+                recordData.put("recordId", recordId);
+                recordData.put("cusId", cusId);
+                recordData.put("docId", docId);
+                recordData.put("serId", serId);
+                recordData.put("doctorName", doctorName);
+                recordData.put("serviceName", serviceName);
+                recordData.put("recordCreatedAt", recordCreatedAt.toString());
+                recordData.put("recordStatus", recordStatus);
+                recordData.put("alreadyFeedback", alreadyFeedback);
+                recordData.put("canFeedback", !alreadyFeedback); // Có thể feedback không
+                
+                completedMedicalRecords.add(recordData);
+            }
+            
+            return ResponseEntity.ok(completedMedicalRecords);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+    
+    /**
      * API lưu feedback mới
      * POST /api/feedback
      */
@@ -248,8 +297,15 @@ public class FeedbackController {
             }
             
             // Try to get testimonials
-            List<Object[]> testimonialData = feedbackRepository.findTestimonialsForHomepage();
-            System.out.println("Testimonials found: " + testimonialData.size());
+            List<Object[]> testimonialData;
+            try {
+                testimonialData = feedbackRepository.findTestimonialsForHomepage();
+                System.out.println("Testimonials found from query: " + testimonialData.size());
+            } catch (Exception queryError) {
+                System.err.println("Query failed: " + queryError.getMessage());
+                queryError.printStackTrace();
+                return ResponseEntity.ok(new ArrayList<>());
+            }
             
             List<Map<String, Object>> testimonials = new ArrayList<>();
             

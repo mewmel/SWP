@@ -151,4 +151,36 @@ BookingPatientService findBookingPatientServiceByBookId(@Param("bookId") Integer
         // Thêm method để lấy booking theo customer và status
     List<Booking> findByCusIdAndBookStatusOrderByCreatedAtDesc(Integer cusId, String bookStatus);
 
+    /**
+     * Lấy các MedicalRecord đã hoàn thành để feedback
+     * - Chỉ cần có ít nhất 1 booking trong MedicalRecord có status "completed"
+     * - Trả về thông tin MedicalRecord, Doctor, Service để feedback
+     */
+    @Query(value = """
+        SELECT DISTINCT
+            mr.recordId,
+            mr.cusId,
+            mr.docId,
+            mr.serId,
+            mr.createdAt as recordCreatedAt,
+            d.docFullName,
+            s.serName,
+            mr.recordStatus
+        FROM MedicalRecord mr
+        JOIN Doctor d ON mr.docId = d.docId
+        JOIN Service s ON mr.serId = s.serId
+        JOIN MedicalRecordBooking mrb ON mr.recordId = mrb.recordId
+        JOIN Booking b ON mrb.bookId = b.bookId
+        WHERE mr.cusId = :cusId
+        AND EXISTS (
+            SELECT 1 
+            FROM MedicalRecordBooking mrb2
+            JOIN Booking b2 ON mrb2.bookId = b2.bookId
+            WHERE mrb2.recordId = mr.recordId
+            AND b2.bookStatus = 'completed'
+        )
+        ORDER BY mr.createdAt DESC
+        """, nativeQuery = true)
+    List<Object[]> findCompletedMedicalRecordsForFeedback(@Param("cusId") Integer cusId);
+
 }
