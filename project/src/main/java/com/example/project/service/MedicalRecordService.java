@@ -32,76 +32,83 @@ public class MedicalRecordService {
     private ServiceRepository serviceRepository;
 
     /**
-     * ✅ Lấy danh sách bệnh nhân có medical record của doctor cụ thể
+     * ✅ Lấy tất cả medical records của bệnh nhân mà bác sĩ phụ trách (kể cả closed)
      */
     public List<Map<String, Object>> getPatientsWithMedicalRecordsByDoctor(Integer docId) {
         List<Map<String, Object>> result = new ArrayList<>();
         
         try {
-            // 1. Lấy tất cả booking của doctor này
-            List<Booking> bookings = bookingRepository.findByDocIdOrderByCreatedAt(docId);
+            // 1. Lấy tất cả MedicalRecord của bác sĩ này (kể cả closed)
+            List<MedicalRecord> medicalRecords = medicalRecordRepository.findByDocIdOrderByCreatedAtDesc(docId);
             
-            // 2. Lọc các customer unique đã có medical record
-            Map<Integer, Booking> uniqueCustomers = new HashMap<>();
+            // 2. Tạo Map để nhóm medical records theo customer
+            Map<Integer, List<MedicalRecord>> recordsByCustomer = new HashMap<>();
             
-            for (Booking booking : bookings) {
-                Integer cusId = booking.getCusId();
-                
-                // Kiểm tra customer này đã có medical record chưa
-                Optional<MedicalRecord> medicalRecordOpt = medicalRecordRepository.findTopByCusIdOrderByCreatedAtDesc(cusId);
-                
-                if (medicalRecordOpt.isPresent() && !uniqueCustomers.containsKey(cusId)) {
-                    uniqueCustomers.put(cusId, booking);
+            for (MedicalRecord record : medicalRecords) {
+                Integer cusId = record.getCusId();
+                if (!recordsByCustomer.containsKey(cusId)) {
+                    recordsByCustomer.put(cusId, new ArrayList<>());
                 }
+                recordsByCustomer.get(cusId).add(record);
             }
             
-            // 3. Tạo response data cho từng customer
-            for (Map.Entry<Integer, Booking> entry : uniqueCustomers.entrySet()) {
+            // 3. Tạo response data cho từng customer với tất cả medical records
+            for (Map.Entry<Integer, List<MedicalRecord>> entry : recordsByCustomer.entrySet()) {
                 Integer cusId = entry.getKey();
-                Booking booking = entry.getValue();
+                List<MedicalRecord> customerRecords = entry.getValue();
                 
                 // Lấy thông tin customer
                 Optional<Customer> customerOpt = customerRepository.findById(cusId);
                 if (customerOpt.isPresent()) {
                     Customer customer = customerOpt.get();
                     
-                    // Tạo response object
-                    Map<String, Object> patientData = new HashMap<>();
-                    
-                    // Customer info
-                    patientData.put("cusId", customer.getCusId());
-                    patientData.put("cusFullName", customer.getCusFullName());
-                    patientData.put("cusGender", customer.getCusGender());
-                    patientData.put("cusDate", customer.getCusDate());
-                    patientData.put("cusEmail", customer.getCusEmail());
-                    patientData.put("cusPhone", customer.getCusPhone());
-                    patientData.put("cusAddress", customer.getCusAddress());
-                    patientData.put("cusStatus", customer.getCusStatus());
-                    patientData.put("cusOccupation", customer.getCusOccupation());
-                    patientData.put("emergencyContact", customer.getEmergencyContact());
-                    
-                    // Booking info
-                    patientData.put("bookStatus", booking.getBookStatus());
-                    patientData.put("lastVisit", booking.getCreatedAt());
-                    patientData.put("bookId", booking.getBookId());
-                    patientData.put("serId", booking.getSerId());
-                    
-                    // Service name
-                    com.example.project.entity.Service service = serviceRepository.findById(booking.getSerId()).orElse(null);
-                    patientData.put("serviceName", service != null ? service.getSerName() : "N/A");
-                    
-                    // Medical Record info - thêm recordStatus
-                    Optional<MedicalRecord> medicalRecordOpt = medicalRecordRepository.findTopByCusIdOrderByCreatedAtDesc(cusId);
-                    if (medicalRecordOpt.isPresent()) {
-                        MedicalRecord medicalRecord = medicalRecordOpt.get();
-                        patientData.put("recordStatus", medicalRecord.getRecordStatus());
-                        patientData.put("recordId", medicalRecord.getRecordId());
-                    } else {
-                        patientData.put("recordStatus", "pending");
-                        patientData.put("recordId", null);
+                    // Tạo response object cho từng medical record
+                    for (MedicalRecord record : customerRecords) {
+                        Map<String, Object> patientData = new HashMap<>();
+                        
+                        // Customer info
+                        patientData.put("cusId", customer.getCusId());
+                        patientData.put("cusFullName", customer.getCusFullName());
+                        patientData.put("cusGender", customer.getCusGender());
+                        patientData.put("cusDate", customer.getCusDate());
+                        patientData.put("cusEmail", customer.getCusEmail());
+                        patientData.put("cusPhone", customer.getCusPhone());
+                        patientData.put("cusAddress", customer.getCusAddress());
+                        patientData.put("cusStatus", customer.getCusStatus());
+                        patientData.put("cusOccupation", customer.getCusOccupation());
+                        patientData.put("emergencyContact", customer.getEmergencyContact());
+                        
+                        // Medical Record info
+                        patientData.put("recordId", record.getRecordId());
+                        patientData.put("recordStatus", record.getRecordStatus()); // Bao gồm cả 'closed'
+                        patientData.put("recordCreatedAt", record.getCreatedAt());
+                        patientData.put("diagnosis", record.getDiagnosis());
+                        patientData.put("treatmentPlan", record.getTreatmentPlan());
+                        patientData.put("dischargeDate", record.getDischargeDate());
+                        patientData.put("note", record.getNote());
+                        
+                        // Service info từ MedicalRecord
+                        com.example.project.entity.Service service = serviceRepository.findById(record.getSerId()).orElse(null);
+                        patientData.put("serId", record.getSerId());
+                        patientData.put("serviceName", service != null ? service.getSerName() : "N/A");
+                        
+                        // Thông tin lần khám mới nhất từ booking thuộc recordId này
+                        // Lấy booking có bookId lớn nhất thuộc record này thông qua MedicalRecordBooking
+                        Optional<Booking> latestBookingOpt = bookingRepository.findLatestBookingByRecordId(record.getRecordId());
+                        
+                        if (latestBookingOpt.isPresent()) {
+                            Booking latestBooking = latestBookingOpt.get();
+                            patientData.put("bookId", latestBooking.getBookId());
+                            patientData.put("bookStatus", latestBooking.getBookStatus());
+                            patientData.put("lastVisit", latestBooking.getCreatedAt());
+                        } else {
+                            patientData.put("bookId", null);
+                            patientData.put("bookStatus", "N/A");
+                            patientData.put("lastVisit", record.getCreatedAt()); // Fallback to record date
+                        }
+                        
+                        result.add(patientData);
                     }
-                    
-                    result.add(patientData);
                 }
             }
             

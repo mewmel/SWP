@@ -1,10 +1,12 @@
 package com.example.project.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,12 +16,12 @@ import com.example.project.entity.MedicalRecordBooking;
 import com.example.project.repository.MedicalRecordBookingRepository;
 
 @RestController
-@RequestMapping("/api/medical-records-booking")
+@RequestMapping("/api/medical-record-booking")
 public class MedicalRecordBookingController {
     @Autowired
     private MedicalRecordBookingRepository medicalRecordBookingRepository;
 
-    // POST /api/medical-records-booking/create/{recordId},{bookId}
+    // POST /api/medical-record-booking/create/{recordId},{bookId}
     @PostMapping("/create/{recordId},{bookId}")
     public ResponseEntity<?> createMedicalRecordBooking(
             @PathVariable Integer recordId,
@@ -44,5 +46,3 @@ public class MedicalRecordBookingController {
         }
     }
 }
-
-    

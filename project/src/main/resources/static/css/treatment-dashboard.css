@@ -1,0 +1,647 @@
+/* Treatment Dashboard Styles */
+
+/* Treatment Details Section - New section for dashboard */
+.treatment-details-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 2rem 0;
+}
+
+.treatment-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.treatment-header h2 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.treatment-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 1rem;
+}
+
+/* Treatment Stats Grid */
+.treatment-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.treatment-stat-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.treatment-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.treatment-stat-card .stat-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+}
+
+.treatment-stat-card .stat-content {
+    flex: 1;
+}
+
+.treatment-stat-card .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.treatment-stat-card .stat-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Treatment Progress Section */
+.treatment-progress-section {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.progress-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.progress-percentage {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #059669;
+}
+
+.treatment-progress-bar {
+    background: #e2e8f0;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.treatment-progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 10px;
+    transition: width 0.8s ease;
+    position: relative;
+}
+
+/* Treatment Steps Container */
+.treatment-steps-container {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.steps-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.treatment-step-item {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.treatment-step-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.treatment-step-item:last-child {
+    margin-bottom: 0;
+}
+
+.treatment-step-item.completed {
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+    border-color: #bbf7d0;
+}
+
+.treatment-step-item.current {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-color: #fbbf24;
+}
+
+.treatment-step-item.pending {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-color: #cbd5e1;
+}
+
+.treatment-step-number {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 80px;
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+}
+
+.treatment-step-item.completed .step-number {
+    background: #10b981;
+}
+
+.treatment-step-item.current .step-number {
+    background: #f59e0b;
+}
+
+.treatment-step-item.pending .step-number {
+    background: #94a3b8;
+}
+
+.step-status-text {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.treatment-step-item.completed .step-status-text {
+    color: #059669;
+}
+
+.treatment-step-item.current .step-status-text {
+    color: #d97706;
+}
+
+.treatment-step-item.pending .step-status-text {
+    color: #64748b;
+}
+
+.treatment-step-content {
+    flex: 1;
+}
+
+.step-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.step-description {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+}
+
+.step-date {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+.step-result {
+    background: #e0f2fe;
+    border: 1px solid #b3e5fc;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #0277bd;
+}
+
+.step-note {
+    background: #fef3c7;
+    border: 1px solid #fed7aa;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #92400e;
+}
+
+/* Empty State */
+.treatment-empty {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: #64748b;
+}
+
+.treatment-empty i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+    color: #94a3b8;
+}
+
+.treatment-empty h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.treatment-empty p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Treatment Stats Section */
+.treatment-stats-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 1.5rem 0;
+}
+
+.treatment-stats-section h3 {
+    margin: 0 0 1rem 0;
+    color: #1e293b;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.stat-icon {
+    font-size: 1.2rem;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    opacity: 0.7;
+}
+
+/* Treatment Timeline Styles */
+.treatment-steps-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.timeline-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.timeline-step:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-step.completed {
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+    border-color: #bbf7d0;
+}
+
+.timeline-step.current {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-color: #fbbf24;
+}
+
+.timeline-step.upcoming {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-color: #cbd5e1;
+}
+
+.step-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 60px;
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: white;
+}
+
+.timeline-step.completed .step-number {
+    background: #10b981;
+}
+
+.timeline-step.current .step-number {
+    background: #f59e0b;
+}
+
+.timeline-step.upcoming .step-number {
+    background: #94a3b8;
+}
+
+.step-icon {
+    font-size: 1rem;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-title {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+.step-description {
+    color: #64748b;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+.step-date {
+    color: #9ca3af;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+/* Legend Styles */
+#timeline-legend {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legend-dot.completed {
+    background: #10b981;
+}
+
+.legend-dot.current {
+    background: #f59e0b;
+}
+
+.legend-dot.upcoming {
+    background: #94a3b8;
+}
+
+/* Progress Bar Enhancements */
+.progress-bar {
+    position: relative;
+    background: #e2e8f0;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 10px;
+    position: relative;
+    transition: width 0.8s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-text {
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar Treatment Info Enhancements */
+.sidebar-card .treatment-info .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.sidebar-card .treatment-info .info-row:last-child {
+    border-bottom: none;
+}
+
+.sidebar-card .treatment-info .info-label {
+    font-weight: 500;
+    color: #64748b;
+    font-size: 0.85rem;
+    flex: 0 0 40%;
+}
+
+.sidebar-card .treatment-info .info-value {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.85rem;
+    flex: 1;
+    text-align: right;
+    word-wrap: break-word;
+}
+
+/* Overview Cards Enhancement */
+.dashboard-overview .overview-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.dashboard-overview .overview-card .subtitle {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .treatment-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .treatment-stat-card {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .treatment-step-item {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .treatment-step-number {
+        flex-direction: row;
+        min-width: auto;
+        align-self: flex-start;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .timeline-step {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .step-marker {
+        flex-direction: row;
+        min-width: auto;
+    }
+    
+    #timeline-legend {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .treatment-steps-timeline {
+        gap: 0.75rem;
+    }
+
+    .treatment-details-section {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .treatment-header h2 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .treatment-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .treatment-stat-card .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        padding: 0.75rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .treatment-details-section {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+}
