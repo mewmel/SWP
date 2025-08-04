@@ -72,7 +72,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("SELECT b FROM Booking b " +
           "JOIN WorkSlot w ON b.slotId = w.slotId " +
           "WHERE b.docId = :docId " +
-          "AND b.bookStatus IN ('pending', 'confirmed', 'completed') " +
+          "AND b.bookStatus IN ('pending', 'confirmed', 'completed', 'rejected') " +
           "AND w.workDate = :today")
     List<Booking> findBookingsToday(
         @Param("docId") Integer docId,

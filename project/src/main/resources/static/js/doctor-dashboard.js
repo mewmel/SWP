@@ -265,21 +265,70 @@ window.checkout = async function (bookId, cusId, bookType) {
     loadTodayBookings();
 };
 
-
-
-
-
-
     // Mark patient as cancelled
     window.markAsCancelled = async function (cusId, serId, docId, bookId) {
         const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
         if (!appointmentItem) return;
-        // 1. Đổi trạng thái UI
-        appointmentItem.setAttribute('data-status', 'pending');
-        // Ở ngay sau khi đổi trạng thái UI (hoặc trước khi tạo hồ sơ)
 
-        //check trạng thái cus nếu lần đầu đi khám thì xóa Booking còn nếu là tái khám thì cho về lại pending+ setnote là ko đi khám+ liên hệ cus xem cus có muốn tiếp tục dịch vụ không
+        try {
+            // Xác nhận trước khi thực hiện
+            const confirmed = confirm('Bạn có chắc chắn đánh dấu bệnh nhân này không đến khám?');
+            if (!confirmed) return;
 
+            // 1. Gọi API đánh dấu booking bị hủy
+            const response = await fetch(`/api/booking/${bookId}/mark-cancelled`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                // 2. Cập nhật UI - đổi trạng thái thành rejected
+                appointmentItem.setAttribute('data-status', 'rejected');
+                
+                // 3. Cập nhật badge trạng thái
+                const badge = appointmentItem.querySelector('.status-badge');
+                if (badge) {
+                    badge.textContent = 'Không đến khám';
+                    badge.className = 'status-badge rejected';
+                }
+
+                // 4. Ẩn các nút action vì đã rejected
+                const actions = appointmentItem.querySelector('.appointment-actions');
+                if (actions) {
+                    actions.innerHTML = '<span style="color: #dc3545; font-style: italic;">Đã hủy</span>';
+                }
+
+                // 5. Hiển thị thông báo thành công
+                if (typeof showNotification === 'function') {
+                    showNotification('✅ Đã đánh dấu bệnh nhân không đến khám. ' + 
+                        (result.isFollowUp ? 'Email cảnh báo đã được gửi.' : ''), 'success');
+                } else {
+                    alert('✅ ' + result.message);
+                }
+
+                // 6. Reload lại danh sách để cập nhật trạng thái
+                setTimeout(() => {
+                    loadTodayBookings();
+                }, 1000);
+
+            } else {
+                if (typeof showNotification === 'function') {
+                    showNotification('❌ ' + result.message, 'error');
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            }
+
+        } catch (error) {
+            console.error('Lỗi khi đánh dấu bệnh nhân không đến khám:', error);
+            if (typeof showNotification === 'function') {
+                showNotification('❌ Lỗi hệ thống khi xử lý yêu cầu', 'error');
+            } else {
+                alert('❌ Lỗi hệ thống khi xử lý yêu cầu');
+            }
+        }
     }
 
     // Mark patient as examined
@@ -412,10 +461,24 @@ window.checkout = async function (bookId, cusId, bookType) {
             
             // Load treatment data when switching to treatment tab
             if (tabName === 'treatment') {
+                const cusId = localStorage.getItem('cusId');
                 const bookId = localStorage.getItem('bookId');
                 
                 if (bookId) {
-                    window.loadSimpleTreatmentData(bookId);
+                    // Get patient data from modal
+                    const modal = document.getElementById('patientModal');
+                    const patientData = {
+                        cusId: cusId,
+                        bookId: bookId,
+                        serviceName: document.getElementById('serviceName')?.textContent || 'Dịch vụ điều trị'
+                    };
+                    
+                    // Use the comprehensive treatment loading function from next-appointment.js
+                    if (typeof window.loadTreatmentPlan === 'function') {
+                        window.loadTreatmentPlan(patientData);
+                    } else {
+                        console.error('loadTreatmentPlan function not found - make sure next-appointment.js is loaded');
+                    }
                 }
             }
             
@@ -548,12 +611,10 @@ window.checkout = async function (bookId, cusId, bookType) {
                 document.getElementById('serviceName').textContent = patientData.currentBooking.serName || '';
             }
             // Load sub-services cho booking này
-            if (patientData.currentBooking.bookId && patientData.currentBooking.bookType === 'initial') {
+
+
                 setupServiceSelection(patientData.currentBooking.bookId);
-            }
-            if (patientData.currentBooking.bookId && patientData.currentBooking.bookType === 'follow-up') {
-                setupServiceSelectionForFollowUp(patientData.currentBooking.bookId);
-            }
+
 
 
             // 4. Hồ sơ y tế hiện tại
@@ -568,23 +629,27 @@ window.checkout = async function (bookId, cusId, bookType) {
                 document.getElementById('medicalNote').value = mr.medicalNotes || '';
             }
 
-            // 5. (Ví dụ) Cập nhật UI badge trạng thái cuộc hẹn
-            const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
-            const statusBadge = appointmentItem?.querySelector('.status-badge');
-            const curStatus = statusBadge?.textContent || 'Đang khám';
-            document.getElementById('currentStatus').textContent = curStatus;
-            
-            // Cập nhật class theo status mới
+            // 5. Cập nhật UI badge trạng thái cuộc hẹn dựa trên bookStatus từ API
+            const bookStatus = patientData.currentBooking?.bookStatus || 'pending';
+            let statusText = 'Đang khám';
             let statusClass = 'waiting';
-            if (curStatus === 'Đã khám xong') {
-                statusClass = 'completed';
-            } else if (curStatus === 'Đã xác nhận') {
-                statusClass = 'confirmed';
-            } else if (curStatus === 'Không đến khám') {
-                statusClass = 'rejected';
-            } else if (curStatus === 'Chưa xác nhận') {
+            
+            // Mapping từ bookStatus sang text và class như trong loadTodayBookings
+            if (bookStatus === 'pending') {
+                statusText = 'Chưa xác nhận';
                 statusClass = 'waiting';
+            } else if (bookStatus === 'rejected') {
+                statusText = 'Không đến khám';
+                statusClass = 'rejected';
+            } else if (bookStatus === 'confirmed') {
+                statusText = 'Đang khám';
+                statusClass = 'confirmed';
+            } else if (bookStatus === 'completed') {
+                statusText = 'Đã khám xong';
+                statusClass = 'completed';
             }
+            
+            document.getElementById('currentStatus').textContent = statusText;
             document.getElementById('currentStatus').className = 'status-badge ' + statusClass;
 
 
@@ -1045,14 +1110,29 @@ window.checkout = async function (bookId, cusId, bookType) {
     let selectedSubId = null;
     let selectedSubName = '';
 
+    async function getSubServiceIdsForInitial(bookId) {
+        const res = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit`);
+        if (!res.ok) return [];
+        const subs = await res.json();
+        return Array.isArray(subs) ? subs.map(sub => sub.subId) : [];
+    }
+
+    async function getSubServiceIds(bookId) {
+        const res = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit`);
+        if (!res.ok) return [];
+        const subs = await res.json();
+        return Array.isArray(subs) ? subs.map(sub => sub.subId) : [];
+    }
+
     function setupServiceSelection(bookId) {
         const serviceSelect = document.getElementById('serviceSelect');
         const stepForm = document.getElementById('stepForm');
         const selectedServiceTitle = document.getElementById('selectedServiceTitle');
         const emptyStepsDiv = document.getElementById('emptySteps');
 
-        // 1. Fetch subservice list
-        fetch(`/api/booking-steps/${bookId}/subservice-of-visit`)
+        const apiEndpoint = `/api/booking-steps/${bookId}/subservice-of-visit`;
+
+        fetch(apiEndpoint)
             .then(res => {
                 if (!res.ok) throw new Error(`API lỗi: ${res.status}`);
                 return res.json();
@@ -1085,39 +1165,37 @@ window.checkout = async function (bookId, cusId, bookType) {
                     }
                 }
 
-                // **ĐÂY LÀ ĐIỂM QUAN TRỌNG NHẤT**
-                // Gán lại onchange sau khi render options!
+                // Đặt event onchange ở đây mới đúng
                 serviceSelect.onchange = function () {
-                const selectedOption = this.options[this.selectedIndex];
-                const subName = selectedOption?.textContent?.toLowerCase() || '';
+                    const selectedOption = this.options[this.selectedIndex];
+                    const subName = selectedOption?.textContent?.toLowerCase() || '';
 
-                // Ẩn cả 2 form trước
-                document.getElementById('stepForm').style.display = 'none';
-                document.getElementById('testResultForm').style.display = 'none';
+                    // Ẩn cả 2 form trước
+                    document.getElementById('stepForm').style.display = 'none';
+                    document.getElementById('testResultForm').style.display = 'none';
 
-                if (this.value) {
-                    selectedSubId = this.value;
-                    selectedSubName = selectedOption.textContent;
-                    selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
+                    if (this.value) {
+                        selectedSubId = this.value;
+                        selectedSubName = selectedOption.textContent;
+                        selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
 
-                    if (subName.includes('xét nghiệm')) {
-                        document.getElementById('testResultForm').style.display = '';
-                        document.getElementById('selectedTestServiceTitle').innerHTML = `<i class="fas fa-vial"></i> ${subName}`;
-                        document.getElementById('testResultForm').setAttribute('data-bookid', bookId);
+                        if (subName.includes('xét nghiệm')) {
+                            document.getElementById('testResultForm').style.display = '';
+                            document.getElementById('selectedTestServiceTitle').innerHTML = `<i class="fas fa-vial"></i> ${subName}`;
+                            document.getElementById('testResultForm').setAttribute('data-bookid', bookId);
+                        } else {
+                            document.getElementById('stepForm').style.display = '';
+                            document.getElementById('performedAt').value = getLocalDateTimeValue();
+                            document.getElementById('stepResult').value = '';
+                            document.getElementById('stepNote').value = '';
+                            document.getElementById('stepStatus').value = 'pending';
+                        }
                     } else {
-                        document.getElementById('stepForm').style.display = '';
-                        document.getElementById('performedAt').value = getLocalDateTimeValue();
-                        document.getElementById('stepResult').value = '';
-                        document.getElementById('stepNote').value = '';
-                        document.getElementById('stepStatus').value = 'pending';
+                        selectedSubId = null;
+                        selectedSubName = '';
                     }
-                } else {
-                    selectedSubId = null;
-                    selectedSubName = '';
-                }
-            };
+                };
 
-                // Nếu cần mặc định ẩn form
                 stepForm.style.display = 'none';
             })
             .catch(err => {
@@ -1126,99 +1204,6 @@ window.checkout = async function (bookId, cusId, bookType) {
                 emptyStepsDiv.style.display = '';
             });
     }
-
-    async function getSubServiceIdsForInitial(bookId) {
-        const res = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit-follow-up`);
-        if (!res.ok) return [];
-        const subs = await res.json();
-        return Array.isArray(subs) ? subs.map(sub => sub.subId) : [];
-    }
-
-        async function getSubServiceIds(bookId) {
-        const res = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit`);
-        if (!res.ok) return [];
-        const subs = await res.json();
-        return Array.isArray(subs) ? subs.map(sub => sub.subId) : [];
-    }
-
-    function setupServiceSelectionForFollowUp(bookId) {
-    const serviceSelect = document.getElementById('serviceSelect');
-    const stepForm = document.getElementById('stepForm');
-    const selectedServiceTitle = document.getElementById('selectedServiceTitle');
-    const emptyStepsDiv = document.getElementById('emptySteps');
-
-    fetch(`/api/booking-steps/${bookId}/subservice-of-visit-follow-up`)
-        .then(res => {
-            if (!res.ok) throw new Error(`API lỗi: ${res.status}`);
-            return res.json();
-        })
-        .then(async subs => {
-            serviceSelect.innerHTML = '<option value="">-- Chọn dịch vụ/bước --</option>';
-            if (!Array.isArray(subs) || subs.length === 0) {
-                serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
-                emptyStepsDiv.style.display = '';
-                return;
-            }
-            for (const sub of subs) {
-                const opt = document.createElement('option');
-                opt.value = sub.subId;
-                opt.textContent = sub.subName;
-                serviceSelect.appendChild(opt);
-
-                try {
-                    await fetch(`/api/booking-steps/set-pending/${bookId}/${sub.subId}`, {
-                        method: 'PUT',
-                        body: JSON.stringify({
-                            stepStatus: 'pending',
-                            performedAt: new Date().toISOString(),
-                            note: 'Đang tiến hành...',
-                        }),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                } catch (e) {
-                    console.error('Lỗi update step:', bookId, sub.subId, e);
-                }
-            }
-
-            // Đặt event onchange ở đây mới đúng
-            serviceSelect.onchange = function () {
-                const selectedOption = this.options[this.selectedIndex];
-                const subName = selectedOption?.textContent?.toLowerCase() || '';
-
-                // Ẩn cả 2 form trước
-                document.getElementById('stepForm').style.display = 'none';
-                document.getElementById('testResultForm').style.display = 'none';
-
-                if (this.value) {
-                    selectedSubId = this.value;
-                    selectedSubName = selectedOption.textContent;
-                    selectedServiceTitle.innerHTML = `<i class="fas fa-edit"></i> Thực hiện: ${selectedSubName}`;
-
-                    if (subName.includes('xét nghiệm')) {
-                        document.getElementById('testResultForm').style.display = '';
-                        document.getElementById('selectedTestServiceTitle').innerHTML = `<i class="fas fa-vial"></i> ${subName}`;
-                        document.getElementById('testResultForm').setAttribute('data-bookid', bookId);
-                    } else {
-                        document.getElementById('stepForm').style.display = '';
-                        document.getElementById('performedAt').value = getLocalDateTimeValue();
-                        document.getElementById('stepResult').value = '';
-                        document.getElementById('stepNote').value = '';
-                        document.getElementById('stepStatus').value = 'pending';
-                    }
-                } else {
-                    selectedSubId = null;
-                    selectedSubName = '';
-                }
-            };
-
-            stepForm.style.display = 'none';
-        })
-        .catch(err => {
-            console.error('Lỗi lấy subservice:', err);
-            serviceSelect.innerHTML = '<option value="">Không có bước nào</option>';
-            emptyStepsDiv.style.display = '';
-        });
-}
 
 
 
@@ -2316,6 +2301,125 @@ window.displaySimpleTreatmentData = function (subServicesData) {
 
 // ========== PAYMENT TAB FUNCTIONALITY ==========
 
+/**
+ * Load service details from BookingRevenueDetail entity
+ * This provides more accurate pricing information for payment tab
+ */
+window.loadServiceDetailsFromRevenueDetail = async function (bookId) {
+    try {
+        console.log('🔄 Loading service details from BookingRevenueDetail for booking:', bookId);
+        const response = await fetch(`/api/booking-revenue-detail/${bookId}/service-details`);
+        
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        
+        const serviceDetails = await response.json();
+        console.log('✅ Service details loaded from BookingRevenueDetail:', serviceDetails);
+        
+        return serviceDetails.map(detail => ({
+            revenueDetailId: detail.revenueDetailId,
+            subId: detail.subId,
+            subName: detail.subName || 'Dịch vụ',
+            subDescription: detail.subDescription || 'Mô tả dịch vụ',
+            subPrice: detail.subPrice || 0,
+            createdAt: detail.createdAt,
+            // Additional fields for display
+            formattedPrice: new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(detail.subPrice || 0)
+        }));
+        
+    } catch (error) {
+        console.error('❌ Error loading service details from BookingRevenueDetail:', error);
+        return [];
+    }
+};
+
+/**
+ * Tạo BookingRevenueDetail từ SubService nếu chưa có dữ liệu
+ * This helps populate revenue detail data for bookings that don't have it yet
+ */
+window.createBookingRevenueDetailFromSubServices = async function (bookId) {
+    try {
+        console.log('🔧 Creating BookingRevenueDetail from SubServices for booking:', bookId);
+        
+        // Lấy thông tin booking để có serId
+        const bookingResponse = await fetch(`/api/booking/${bookId}`);
+        if (!bookingResponse.ok) {
+            const errorText = await bookingResponse.text();
+            throw new Error(`Cannot get booking info: ${bookingResponse.status} - ${errorText}`);
+        }
+        const booking = await bookingResponse.json();
+        console.log('📋 Booking info:', booking);
+        
+        if (!booking.serId) {
+            throw new Error('Booking does not have serId');
+        }
+        
+        // Lấy danh sách SubService cho booking này
+        const subServicesResponse = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit`);
+        if (!subServicesResponse.ok) {
+            const errorText = await subServicesResponse.text();
+            throw new Error(`Cannot get sub-services: ${subServicesResponse.status} - ${errorText}`);
+        }
+        const subServices = await subServicesResponse.json();
+        
+        console.log('📋 SubServices to create revenue details:', subServices);
+        
+        if (!Array.isArray(subServices) || subServices.length === 0) {
+            console.warn('⚠️ No sub-services found for booking:', bookId);
+            return [];
+        }
+        
+        // Tạo BookingRevenueDetail cho mỗi SubService
+        const createdDetails = [];
+        for (const subService of subServices) {
+            try {
+                // Validate required fields
+                if (!subService.subId) {
+                    console.warn(`⚠️ Skipping sub-service without subId:`, subService);
+                    continue;
+                }
+                
+                const payload = {
+                    bookId: parseInt(bookId),
+                    serId: parseInt(booking.serId),
+                    subId: parseInt(subService.subId),
+                    subPrice: parseFloat(subService.subPrice || 0)
+                };
+                
+                console.log('📤 Creating revenue detail with payload:', payload);
+                
+                const createResponse = await fetch('/api/booking-revenue-detail/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (createResponse.ok) {
+                    const created = await createResponse.json();
+                    createdDetails.push(created);
+                    console.log(`✅ Created revenue detail for ${subService.subName}: ${subService.subPrice}`);
+                } else {
+                    const errorText = await createResponse.text();
+                    console.error(`❌ Failed to create revenue detail for ${subService.subName}: ${createResponse.status} - ${errorText}`);
+                }
+            } catch (e) {
+                console.warn(`⚠️ Failed to create revenue detail for ${subService.subName}:`, e);
+            }
+        }
+        
+        console.log('🎉 Created revenue details:', createdDetails);
+        return createdDetails;
+        
+    } catch (error) {
+        console.error('❌ Error creating BookingRevenueDetail from SubServices:', error);
+        return [];
+    }
+};
+
 // Load and display payment data
 window.loadPaymentData = async function (bookId) {
     const loadingPayment = document.getElementById('loading-payment');
@@ -2350,22 +2454,87 @@ window.loadPaymentData = async function (bookId) {
                     revenueDetails: [] // We'll populate this from sub-services
                 };
                 
-                // Get sub-services for this booking to populate details
+                // Get service details from BookingRevenueDetail for more accurate pricing
                 try {
-                    const subServicesResponse = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit`);
-                    if (subServicesResponse.ok) {
-                        const subServices = await subServicesResponse.json();
-                        paymentData.revenueDetails = subServices.map((service, index) => ({
-                            revenueDetailId: `DET-${bookId}-${index + 1}`,
-                            subId: service.subId,
-                            subName: service.subName,
-                            subDescription: service.subDescription || 'Mô tả dịch vụ',
-                            subPrice: service.subPrice || 0,
-                            status: revenue.revenueStatus // Use revenue status instead of hardcoded 'pending'
-                        }));
+                    console.log('🔄 Fetching service details from BookingRevenueDetail for booking:', bookId);
+                    const serviceDetailsResponse = await fetch(`/api/booking-revenue-detail/${bookId}/service-details`);
+                    if (serviceDetailsResponse.ok) {
+                        const serviceDetails = await serviceDetailsResponse.json();
+                        console.log('📊 Service details from BookingRevenueDetail:', serviceDetails);
+                        
+                        if (serviceDetails && serviceDetails.length > 0) {
+                            // Use BookingRevenueDetail data (more accurate for payment)
+                            paymentData.revenueDetails = serviceDetails.map(detail => ({
+                                revenueDetailId: detail.revenueDetailId,
+                                subId: detail.subId,
+                                subName: detail.subName || 'Dịch vụ',
+                                subDescription: detail.subDescription || 'Mô tả dịch vụ',
+                                subPrice: detail.subPrice || 0,
+                                status: revenue.revenueStatus,
+                                createdAt: detail.createdAt
+                            }));
+                            console.log('✅ Using BookingRevenueDetail data with prices:', paymentData.revenueDetails);
+                        } else {
+                            console.log('⚠️ No service details from BookingRevenueDetail, trying to create them');
+                            // Try to create BookingRevenueDetail from SubServices
+                            const createdDetails = await window.createBookingRevenueDetailFromSubServices(bookId);
+                            if (createdDetails && createdDetails.length > 0) {
+                                console.log('✅ Created BookingRevenueDetail, reloading...');
+                                // Reload after creating
+                                const retryResponse = await fetch(`/api/booking-revenue-detail/${bookId}/service-details`);
+                                if (retryResponse.ok) {
+                                    const retryDetails = await retryResponse.json();
+                                    if (retryDetails && retryDetails.length > 0) {
+                                        paymentData.revenueDetails = retryDetails.map(detail => ({
+                                            revenueDetailId: detail.revenueDetailId,
+                                            subId: detail.subId,
+                                            subName: detail.subName || 'Dịch vụ',
+                                            subDescription: detail.subDescription || 'Mô tả dịch vụ',
+                                            subPrice: detail.subPrice || 0,
+                                            status: revenue.revenueStatus,
+                                            createdAt: detail.createdAt
+                                        }));
+                                        console.log('🎉 Successfully loaded created revenue details with prices');
+                                    } else {
+                                        await loadSubServicesAsRevenueDetails();
+                                    }
+                                } else {
+                                    await loadSubServicesAsRevenueDetails();
+                                }
+                            } else {
+                                // Fallback to sub-services if creation failed
+                                await loadSubServicesAsRevenueDetails();
+                            }
+                        }
+                    } else {
+                        console.log('❌ BookingRevenueDetail API failed, using fallback');
+                        // Fallback to sub-services if API fails
+                        await loadSubServicesAsRevenueDetails();
                     }
                 } catch (error) {
-                    console.warn('⚠️ Could not load sub-services for revenue details:', error);
+                    console.warn('⚠️ Could not load service details from BookingRevenueDetail, falling back to sub-services:', error);
+                    await loadSubServicesAsRevenueDetails();
+                }
+                
+                // Helper function to load sub-services as fallback
+                async function loadSubServicesAsRevenueDetails() {
+                    try {
+                        const subServicesResponse = await fetch(`/api/booking-steps/${bookId}/subservice-of-visit`);
+                        if (subServicesResponse.ok) {
+                            const subServices = await subServicesResponse.json();
+                            paymentData.revenueDetails = subServices.map((service, index) => ({
+                                revenueDetailId: `DET-${bookId}-${index + 1}`,
+                                subId: service.subId,
+                                subName: service.subName,
+                                subDescription: service.subDescription || 'Mô tả dịch vụ',
+                                subPrice: service.subPrice || 0,
+                                status: revenue.revenueStatus
+                            }));
+                        }
+                    } catch (error) {
+                        console.warn('⚠️ Could not load sub-services for revenue details:', error);
+                        paymentData.revenueDetails = [];
+                    }
                 }
                 
                 // Hide loading and show content
@@ -2469,6 +2638,8 @@ window.loadPaymentData = async function (bookId) {
 
 // Display payment data
 window.displayPaymentData = function (paymentData) {
+    console.log('🎨 Displaying payment data:', paymentData);
+    
     // Update revenue information
     document.getElementById('revenue-id').textContent = paymentData.revenueId;
     document.getElementById('revenue-created-date').textContent = paymentData.createdAt;
@@ -2481,25 +2652,33 @@ window.displayPaymentData = function (paymentData) {
     // Generate revenue details table
     const tbody = document.getElementById('revenue-details-tbody');
     let detailsHtml = '';
+    let totalCalculated = 0;
     
     paymentData.revenueDetails.forEach((detail, index) => {
         // Use revenue status for all sub-services
         const subServiceStatus = paymentData.revenueStatus;
+        const price = detail.subPrice || 0;
+        totalCalculated += price;
+        
+        console.log(`💰 Service ${index + 1}: ${detail.subName} - Price: ${price}`);
+        
         detailsHtml += `
             <tr>
                 <td>${index + 1}</td>
                 <td><strong>${detail.subName}</strong></td>
                 <td>${detail.subDescription}</td>
-                <td>${window.formatPrice(detail.subPrice)}</td>
+                <td class="price-column"><strong>${window.formatPrice(price)}</strong></td>
                 <td><span class="status-badge ${subServiceStatus}">${subServiceStatus === 'pending' ? 'Chờ thanh toán' : 'Đã thanh toán'}</span></td>
             </tr>
         `;
     });
     
+    console.log(`💵 Total calculated from details: ${totalCalculated}, Original total: ${paymentData.totalAmount}`);
+    
     tbody.innerHTML = detailsHtml;
 
-    // Update payment summary
-    const totalAmount = paymentData.totalAmount;
+    // Update payment summary - use calculated total if original is 0
+    const totalAmount = paymentData.totalAmount || totalCalculated;
     const paidAmount = paymentData.revenueStatus === 'success' ? totalAmount : 0;
     const remainingAmount = totalAmount - paidAmount;
 

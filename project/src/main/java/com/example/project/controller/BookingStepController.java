@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.example.project.entity.Booking;
-import com.example.project.repository.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.BookingStepInfo;
 import com.example.project.dto.BookingStepResultDTO;
+import com.example.project.dto.BookingWithStepsAndDrug;
 import com.example.project.dto.TestResult;
-import com.example.project.dto.VisitSubService;
+import com.example.project.entity.Booking;
 import com.example.project.entity.BookingStep;
 import com.example.project.entity.SubService;
+import com.example.project.repository.BookingRepository;
 import com.example.project.repository.BookingStepRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.BookingStepService;
-import com.example.project.dto.BookingWithStepsAndDrug;
 
 
 
@@ -142,19 +141,19 @@ public class BookingStepController {
             }
         }    
 
-    @GetMapping("/{bookId}/subservice-of-visit")
-    public List<SubService> getSubServiceOfVisit(@PathVariable Integer bookId) {
-        VisitSubService dto = bookingStepService.getSubServicesForBooking(bookId);
+    // @GetMapping("/{bookId}/subservice-of-visit")
+    // public List<SubService> getSubServiceOfVisit(@PathVariable Integer bookId) {
+    //     VisitSubService dto = bookingStepService.getSubServicesForBooking(bookId);
 
-        // Lấy group theo visitNumber (lần khám hiện tại)
-        List<SubService> currentVisitSubs = dto.getSubServicesGrouped().get(dto.getVisitNumber());
+    //     // Lấy group theo visitNumber (lần khám hiện tại)
+    //     List<SubService> currentVisitSubs = dto.getSubServicesGrouped().get(dto.getVisitNumber());
 
-        // Nếu chưa có (ví dụ chưa thực hiện lần khám này), trả về empty list
-        return currentVisitSubs != null ? currentVisitSubs : List.of();
-    }
+    //     // Nếu chưa có (ví dụ chưa thực hiện lần khám này), trả về empty list
+    //     return currentVisitSubs != null ? currentVisitSubs : List.of();
+    // }
 
 
-     @GetMapping("/{bookId}/subservice-of-visit-follow-up")
+     @GetMapping("/{bookId}/subservice-of-visit")
 public ResponseEntity<List<Map<String, Object>>> getFollowUpSubservices(@PathVariable Integer bookId) {
     // 1. Lấy tất cả các BookingStep theo bookId
     List<BookingStep> steps = bookingStepRepo.findByBookId(bookId);
@@ -174,6 +173,7 @@ public ResponseEntity<List<Map<String, Object>>> getFollowUpSubservices(@PathVar
         Map<String, Object> item = new HashMap<>();
         item.put("subId", sub.getSubId());
         item.put("subName", sub.getSubName());
+        item.put("subPrice", sub.getSubPrice());
         return item;
     }).collect(Collectors.toList());
 

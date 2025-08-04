@@ -329,5 +329,27 @@ public ResponseEntity<?> setBookingDrugId(@PathVariable Integer bookId, @PathVar
         return ResponseEntity.ok(Collections.singletonMap("drugId", booking.getDrugId()));
     }
     return ResponseEntity.status(404).body("Không tìm thấy booking");
-}    
+}
+
+    /**
+     * API đánh dấu booking bị hủy (không đến khám)
+     * PUT /api/booking/{bookId}/mark-cancelled
+     */
+    @PutMapping("/booking/{bookId}/mark-cancelled")
+    public ResponseEntity<?> markBookingAsCancelled(@PathVariable Integer bookId) {
+        try {
+            Map<String, Object> result = bookingService.markAsCancelled(bookId);
+            
+            if ((Boolean) result.get("success")) {
+                return ResponseEntity.ok(result);
+            } else {
+                return ResponseEntity.status(404).body(result);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Lỗi hệ thống: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }    
 }

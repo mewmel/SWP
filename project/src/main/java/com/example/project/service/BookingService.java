@@ -4,13 +4,12 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,6 +26,8 @@ import com.example.project.repository.CustomerRepository;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.repository.ServiceRepository;
 import com.example.project.repository.WorkSlotRepository;
+
+import jakarta.mail.internet.MimeMessage;
 
 
 @Service
@@ -373,6 +374,159 @@ public class BookingService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Xử lý đánh dấu booking bị hủy (không đến khám)
+     * - Lần đầu: chuyển status sang "rejected"
+     * - Tái khám: chuyển status sang "rejected" + gửi email cảnh báo
+     * @return Map chứa thông tin kết quả và loại booking
+     */
+    public Map<String, Object> markAsCancelled(Integer bookId) {
+        Map<String, Object> result = new HashMap<>();
+        
+        Optional<Booking> optBooking = bookingRepo.findById(bookId);
+        if (!optBooking.isPresent()) {
+            result.put("success", false);
+            result.put("message", "Không tìm thấy booking");
+            return result;
+        }
+
+        Booking booking = optBooking.get();
+        String bookType = booking.getBookType();
+        boolean isFollowUp = "follow-up".equals(bookType);
+        
+        // Cập nhật trạng thái thành cancelled
+        booking.setBookStatus("rejected");
+        bookingRepo.save(booking);
+        // Nếu là lần đầu khám, không gửi email cảnh báo
+        if (!isFollowUp) {
+            result.put("success", true);
+            result.put("isFollowUp", false);
+            result.put("bookType", bookType);
+            result.put("message", "Đã đánh dấu bệnh nhân không đến khám lần đầu");
+            return result;
+        }
+        // Nếu là tái khám, gửi email cảnh báo
+        if (isFollowUp) {
+            sendCancellationWarningEmail(booking);
+        }
+
+        result.put("success", true);
+        result.put("isFollowUp", isFollowUp);
+        result.put("bookType", bookType);
+        result.put("message", isFollowUp ? 
+            "Đã đánh dấu bệnh nhân không đến tái khám và gửi email cảnh báo" : 
+            "Đã đánh dấu bệnh nhân không đến khám lần đầu");
+        
+        return result;
+    }
+
+    /**
+     * Gửi email cảnh báo khi bệnh nhân tái khám không đến
+     */
+    private void sendCancellationWarningEmail(Booking booking) {
+        try {
+            // Lấy thông tin customer, doctor, service
+            Customer customer = customerRepo.findById(booking.getCusId()).orElse(null);
+            Doctor doctor = doctorRepo.findById(booking.getDocId()).orElse(null);
+            com.example.project.entity.Service service = serviceRepo.findById(booking.getSerId()).orElse(null);
+
+            if (customer == null || customer.getCusEmail() == null || customer.getCusEmail().trim().isEmpty()) {
+                return;
+            }
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(customer.getCusEmail());
+            helper.setSubject("CẢNH BÁO: Vắng mặt lịch tái khám tại FertilityEHR");
+
+            String htmlContent = buildCancellationWarningEmailContent(customer, doctor, service, booking);
+            helper.setText(htmlContent, true);
+
+            // Thêm logo
+            File logoFile = ResourceUtils.getFile("classpath:static/img/logo.png");
+            if (logoFile.exists()) {
+                helper.addInline("logoImage", logoFile);
+            }
+
+            mailSender.send(message);
+
+            System.out.println("=== Đã gửi email cảnh báo vắng mặt tái khám cho " + customer.getCusEmail() + " ===");
+            System.out.println(htmlContent);
+        } catch (Exception e) {
+            System.err.println("Lỗi gửi email cảnh báo: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Xây dựng nội dung HTML email cảnh báo vắng mặt tái khám
+     */
+    private String buildCancellationWarningEmailContent(Customer customer, Doctor doctor, 
+                                                       com.example.project.entity.Service service, Booking booking) {
+        String logoCid = "cid:logoImage";
+        String doctorName = doctor != null ? doctor.getDocFullName() : "Bác sĩ điều trị";
+        String serviceName = service != null ? service.getSerName() : "Dịch vụ điều trị";
+        String bookingDate = booking.getCreatedAt() != null ? booking.getCreatedAt().toLocalDate().toString() : "Không rõ";
+
+        StringBuilder html = new StringBuilder();
+        html.append("<div style=\"max-width:600px;margin:auto;font-family:Arial,Helvetica,sans-serif;background:#fff;\">")
+                // Header với màu đỏ cảnh báo
+                .append("<div style=\"background:#dc3545;color:#fff;padding:0;border-radius:8px 8px 0 0;\">")
+                .append("<div style=\"display:flex;align-items:center;justify-content:flex-start;padding:18px 24px;\">")
+                .append("<img src=\"").append(logoCid).append("\" alt=\"FertilityEHR Logo\" style=\"height:60px;width:auto;display:inline-block;margin-right:16px;\">")
+                .append("<span style=\"font-size:22px;font-weight:bold;letter-spacing:1px;\">⚠️ CẢNH BÁO VẮNG MẶT</span>")
+                .append("</div>")
+                .append("</div>")
+                // Main content box
+                .append("<div style=\"border:1.5px solid #ddd;padding:24px;border-radius:0 0 8px 8px;\">")
+                .append("<p style=\"color:#dc3545;font-weight:bold;font-size:16px;margin-bottom:10px;\">⚠️ THÔNG BÁO QUAN TRỌNG</p>")
+                .append("<p>Xin chào <b>").append(customer.getCusFullName()).append("</b>,</p>")
+                .append("<p style=\"margin-top:0;color:#666;\">")
+                .append("Chúng tôi ghi nhận rằng bạn <b style=\"color:#dc3545;\">KHÔNG ĐẾN KHÁM</b> theo lịch tái khám đã được bác sĩ ")
+                .append(doctorName).append(" đặt cho bạn tại phòng khám <b>FertilityEHR</b>.")
+                .append("</p>")
+                
+                // Warning box
+                .append("<div style=\"background:#fff3cd;border:1px solid #ffeaa7;padding:16px;border-radius:6px;margin:16px 0;\">")
+                .append("<div style=\"color:#856404;font-weight:bold;margin-bottom:8px;\">🚨 LƯU Ý QUAN TRỌNG:</div>")
+                .append("<ul style=\"color:#856404;padding-left:20px;margin:0;\">")
+                .append("<li>Việc vắng mặt không báo trước có thể ảnh hưởng đến quá trình điều trị của bạn</li>")
+                .append("<li>Lịch điều trị cần được thực hiện đúng thời gian để đạt hiệu quả tối ưu</li>")
+                .append("<li>Nếu có lý do bất khả kháng, vui lòng liên hệ trước để sắp xếp lại lịch khám</li>")
+                .append("</ul>")
+                .append("</div>")
+                
+                // Thông tin chi tiết lịch khám bị vắng mặt
+                .append("<div style=\"margin-bottom:10px;\"><b>Thông tin lịch khám bị vắng mặt:</b></div>")
+                .append("<table style=\"width:100%;border-collapse:collapse;font-size:15px;background:#f8f9fa;border-radius:6px;\">")
+                .append("<tr><td style=\"padding:10px;width:140px;color:#dc3545;font-weight:bold;\">Ngày khám</td><td style=\"padding:10px;\">").append(bookingDate).append("</td></tr>")
+                .append("<tr><td style=\"padding:10px;color:#dc3545;font-weight:bold;\">Bác sĩ</td><td style=\"padding:10px;\">").append(doctorName).append("</td></tr>")
+                .append("<tr><td style=\"padding:10px;color:#dc3545;font-weight:bold;\">Dịch vụ</td><td style=\"padding:10px;\">").append(serviceName).append("</td></tr>")
+                .append("<tr><td style=\"padding:10px;color:#dc3545;font-weight:bold;\">Loại khám</td><td style=\"padding:10px;\">Tái khám</td></tr>")
+                .append("</table>")
+                
+                // Hướng dẫn tiếp theo
+                .append("<div style=\"background:#e7f3ff;border:1px solid #b3d9ff;padding:16px;border-radius:6px;margin:16px 0;\">")
+                .append("<div style=\"color:#0c5460;font-weight:bold;margin-bottom:8px;\">📞 HƯỚNG DẪN TIẾP THEO:</div>")
+                .append("<div style=\"color:#0c5460;\">")
+                .append("• <b>Liên hệ ngay</b> với phòng khám để được tư vấn và đặt lại lịch khám<br>")
+                .append("• <b>Giải thích lý do</b> vắng mặt để bác sĩ có thể điều chỉnh phương án điều trị phù hợp<br>")
+                .append("• <b>Đặt lịch mới</b> trong thời gian sớm nhất để không gián đoạn quá trình điều trị")
+                .append("</div>")
+                .append("</div>")
+                
+                .append("<div style=\"margin-top:20px;padding-top:16px;border-top:1px solid #eee;color:#666;font-size:13px;\">")
+                .append("Sức khỏe sinh sản của bạn là ưu tiên hàng đầu của chúng tôi. ")
+                .append("Vui lòng liên hệ với phòng khám để được hỗ trợ tốt nhất.<br><br>")
+                .append("<b>Trân trọng,</b><br>")
+                .append("Đội ngũ FertilityEHR")
+                .append("</div>")
+                .append("</div>") // end box
+                .append("</div>");
+
+        return html.toString();
     }
 
 }

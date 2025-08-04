@@ -2838,3 +2838,6 @@ const bookingResponse = await fetch('/api/booking/create-follow-up-booking', {
                 });
             }, 300);
         }
+
+        // Expose functions to global scope for use in bac-si-dashboard.html
+        window.loadTreatmentPlan = loadTreatmentPlan;
