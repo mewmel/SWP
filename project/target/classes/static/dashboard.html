@@ -7,7 +7,6 @@
     <title>Dashboard - FertilityEHR</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="css/treatment-dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -549,13 +548,13 @@
         </section>
 
         <!-- Treatment Details Section - New Section from Modal Tab -->
-        <section class="treatment-details-section">
+        <!-- <section class="treatment-details-section">
             <div class="treatment-header">
                 <h2><i class="fas fa-stethoscope"></i> Chi tiết điều trị</h2>
                 <p>Thông tin chi tiết về kế hoạch và tiến độ điều trị</p>
             </div>
 
-            <!-- Treatment Progress Stats -->
+             Treatment Progress Stats 
             <div class="treatment-stats-grid">
                 <div class="treatment-stat-card">
                     <div class="stat-icon">📋</div>
@@ -587,7 +586,7 @@
                 </div>
             </div>
 
-            <!-- Treatment Progress Bar -->
+             Treatment Progress Bar 
             <div class="treatment-progress-section">
                 <div class="progress-header">
                     <div class="progress-title">Tiến độ điều trị</div>
@@ -598,7 +597,7 @@
                 </div>
             </div>
 
-            <!-- Treatment Steps Container -->
+             Treatment Steps Container 
             <div class="treatment-steps-container">
                 <div class="steps-title">
                     <i class="fas fa-list-check"></i>
@@ -610,7 +609,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
     </div>
 
     <!-- Sidebar Dashboard -->
@@ -636,9 +635,14 @@
 
         <div class="sidebar-card">
             <h3><i class="fas fa-heart"></i> Thông tin điều trị</h3>
-            <div class="treatment-info" id="treatmentInfoSidebar">
-                <div style="text-align: center; padding: 1rem; color: #64748b;">
-                    <i class="fas fa-spinner fa-spin"></i> Đang tải thông tin điều trị...
+            <div class="treatment-info">
+                <div class="info-row">
+                    <span class="info-label">Mã bệnh nhân:</span>
+                    <span class="info-value profile-patient-code"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Ngày đăng ký:</span>
+                    <span class="info-value profile-registration-date"></span>
                 </div>
             </div>
         </div>
@@ -686,7 +690,6 @@
     </div>
 </div>
 <script src="js/profile-summary.js"></script>
-<script src="js/treatment-dashboard.js"></script>
 <script src="js/notification-dropdown.js"></script>
 <script src="js/script.js"></script>
 <script>

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.project.dto.DoctorWeekScheduleDTO;
@@ -20,8 +21,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class WorkSlotService {
-    private final WorkSlotRepository workSlotRepository;
-    private final BookingRepository bookingRepo;
+
+    @Autowired
+    private WorkSlotRepository workSlotRepository;
+    @Autowired
+    private BookingRepository bookingRepo;
 
     // Ánh xạ weekday sang số ngày cộng thêm từ weekStartDate (Thứ 2)
     private static final Map<String, Integer> WEEKDAY_OFFSET = Map.of(
