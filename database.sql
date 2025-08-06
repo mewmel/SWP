@@ -312,7 +312,7 @@ CREATE TABLE DrugItem (
   dosage          NVARCHAR(50)    NULL,                   -- Liều dùng, ví dụ: "2 viên/lần"
   frequency       NVARCHAR(50)    NULL,                   -- Tần suất: "3 lần/ngày"
   duration        NVARCHAR(50)    NULL,                   -- Thời gian dùng: "5 ngày"
-	drugItemNote    NVARCHAR(200)   NULL
+  drugItemNote    NVARCHAR(200)   NULL
 
 );
 GO
@@ -384,8 +384,8 @@ VALUES (N'Nguyễn Ngọc Khánh Linh', 'doc1@gmail.com', '123',N'$2a$10$.C1rQAp
 -- demo nen tat ca bac si deu co mk 123@
 
 INSERT INTO Manager ( maFullName, maEmail, maPassword, maPhone, position, roles) VALUES						
-('manager1', 'manager1@gmail.com',N'$2a$10$.C1rQAp36kaZsn09oleNlO9DKYuN1S5r0g9BByrz1oSFgwDhn83Oy', 0123456789, 'tanker', 'manager'),
-('admin1', 'admin1@gmail.com',N'$2a$10$.C1rQAp36kaZsn09oleNlO9DKYuN1S5r0g9BByrz1oSFgwDhn83Oy', 0123456789, 'ad', 'admin')
+('manager1', 'manager1@gmail.com',N'$2a$10$.C1rQAp36kaZsn09oleNlO9DKYuN1S5r0g9BByrz1oSFgwDhn83Oy', 0123456789, 'Quản lí', 'manager'),
+('admin1', 'admin1@gmail.com',N'$2a$10$.C1rQAp36kaZsn09oleNlO9DKYuN1S5r0g9BByrz1oSFgwDhn83Oy', 0123456789, 'Quản trị viên', 'admin')
 -- pass là 123@	
 
 

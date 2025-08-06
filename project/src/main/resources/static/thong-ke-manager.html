@@ -364,15 +364,17 @@
             </a>
         </nav>
         
-        <div class="user-profile">
-            <div class="user-info">
-                <p class="user-name">BS. Nguyễn Ngọc Khánh Linh</p>
-                <p class="user-role">Manager</p>
+        <div class="doctor-header-right">
+            <div class="doctor-user-info">
+                <div class="doctor-user-details">
+                    <span class="doctor-welcome-text">Chào mừng</span>
+                    <span class="doctor-user-name">Quản lý</span>
+                </div>
+                <div class="doctor-user-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
             </div>
-            <div class="user-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <button class="logout-btn">
+            <button class="doctor-logout-btn" title="Đăng xuất">
                 <i class="fas fa-sign-out-alt"></i>
             </button>
         </div>
@@ -863,6 +865,22 @@ document.addEventListener('DOMContentLoaded', async function() {
             await updateRevenueOverviewChart();
         });
     });
+    
+    // Setup logout button
+    const logoutBtn = document.querySelector('.doctor-logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            localStorage.clear();
+            window.location.href = '/index.html';
+        });
+    }
+    
+    // Load manager name from localStorage
+    const maFullName = localStorage.getItem('maFullName');
+    if (maFullName) {
+        const el = document.querySelector('.doctor-user-name');
+        if (el) el.textContent = maFullName;
+    }
 });
 </script>
 </body>
