@@ -463,6 +463,9 @@ window.checkout = async function (bookId, cusId, bookType) {
             if (tabName === 'treatment') {
                 const cusId = localStorage.getItem('cusId');
                 const bookId = localStorage.getItem('bookId');
+                const recordId = localStorage.getItem('recordId');
+                
+                console.log('🔍 DEBUG: Treatment tab - cusId:', cusId, 'bookId:', bookId, 'recordId:', recordId);
                 
                 if (bookId) {
                     // Get patient data from modal
@@ -470,15 +473,20 @@ window.checkout = async function (bookId, cusId, bookType) {
                     const patientData = {
                         cusId: cusId,
                         bookId: bookId,
+                        recordId: recordId, // Add recordId to patientData object
                         serviceName: document.getElementById('serviceName')?.textContent || 'Dịch vụ điều trị'
                     };
                     
+                    console.log('🔍 DEBUG: Calling loadTreatmentPlan with patientData:', patientData);
+                    
                     // Use the comprehensive treatment loading function from next-appointment.js
                     if (typeof window.loadTreatmentPlan === 'function') {
-                        window.loadTreatmentPlan(patientData);
+                        window.loadTreatmentPlan(patientData); // Pass the entire patientData object, not just recordId
                     } else {
                         console.error('loadTreatmentPlan function not found - make sure next-appointment.js is loaded');
                     }
+                } else {
+                    console.warn('⚠️ No bookId available for treatment tab');
                 }
             }
             
@@ -571,8 +579,6 @@ window.checkout = async function (bookId, cusId, bookType) {
         // Store IDs for medical history
         localStorage.setItem('cusId', cusId);
         localStorage.setItem('bookId', bookId);
-        localStorage.setItem('currentBookId', bookId);
-        localStorage.setItem('currentCusId', cusId);
         
         try {
             // 1. Gọi API
@@ -791,8 +797,6 @@ window.checkout = async function (bookId, cusId, bookType) {
                     headers: { 'Content-Type': 'application/json' }
                 });
             }
-
-            // (4) Gọi API insert Drug cho từng thuốc
 
 
 
@@ -1621,168 +1625,53 @@ window.checkout = async function (bookId, cusId, bookType) {
     }
 
     window.savePrescription = async function () {
-        console.log('💊 DEBUG: savePrescription() called');
-        
-        // Kiểm tra xem có đang trong quá trình lưu không
-        if (window.isSavingPrescription) {
-            console.log('⚠️ DEBUG: Already saving prescription, skipping...');
-            return;
-        }
-        
-        window.isSavingPrescription = true;
-        
         const data = collectPrescriptionData();
-        const currentBookId = localStorage.getItem('currentBookId') || '';
-        const docId = localStorage.getItem('docId') || '';
-        const cusId = localStorage.getItem('currentCusId') || '';
-        
-        console.log('💊 DEBUG: Collected data:', data);
-        console.log('💊 DEBUG: currentBookId from localStorage:', currentBookId);
-        console.log('💊 DEBUG: docId from localStorage:', docId);
-        console.log('💊 DEBUG: cusId from localStorage:', cusId);
 
-        if (!currentBookId || !docId || !cusId) {
-            showNotification('❌ Thiếu thông tin booking, doctor hoặc customer. Vui lòng kiểm tra lại.', 'error');
-            window.isSavingPrescription = false;
+        
+        if (!data.prescriptionNumber) {
+            showNotification('❌ Không tìm thấy prescriptionNumber. Vui lòng kiểm tra lại.', 'error');
             return;
         }
 
+        const drugId = data.prescriptionNumber;
         try {
-            let currentDrugId = data.prescriptionNumber;
-            console.log('💊 DEBUG: Starting savePrescription with currentDrugId:', currentDrugId);
+            // 1. Cập nhật bảng Drug
+            const updateDrugRes = await fetch(`/api/drugs/update/${drugId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    createdAt: data.prescriptionDate || new Date().toISOString().replace('Z','').split('.')[0],
+                    note: data.diagnosis || ''
+                })
+            });
 
-            // Nếu không có drugId, tạo đơn thuốc mới
-            if (!currentDrugId || currentDrugId === '') {
-                console.log('🆕 DEBUG: Creating new prescription for bookId:', currentBookId);
-                
-                const createDrugRes = await fetch(`/api/drugs/create/${currentBookId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        docId: parseInt(docId),
-                        cusId: parseInt(cusId),
-                        bookId: parseInt(currentBookId),
-                        drugNote: data.diagnosis || '',
-                        createdAt: data.prescriptionDate ? new Date(data.prescriptionDate).toISOString() : new Date().toISOString()
-                    })
-                });
+            if (!updateDrugRes.ok) throw new Error('Không thể cập nhật đơn thuốc');
 
-                if (!createDrugRes.ok) {
-                    const errorText = await createDrugRes.text();
-                    throw new Error('Không thể tạo đơn thuốc mới: ' + errorText);
-                }
+            // 2. Tạo mới các bản ghi DrugItem liên kết với drugId
+            const drugItemsPayload = data.drugs.map(item => ({
+                drugName: item.drugName,
+                dosage: item.dosage,
+                frequency: item.frequency,
+                duration: item.duration,
+                drugItemNote: item.drugItemNote
+            }));
 
-                currentDrugId = await createDrugRes.text();
-                console.log('✅ DEBUG: Created new drug with ID:', currentDrugId);
-                
-                // Cập nhật prescriptionNumber trong form
-                const prescriptionNumberInput = document.getElementById('prescriptionNumber');
-                if (prescriptionNumberInput) {
-                    prescriptionNumberInput.value = currentDrugId;
-                    console.log('✅ DEBUG: Updated prescriptionNumber in form:', currentDrugId);
-                }
-            } else {
-                console.log('🔄 DEBUG: Updating existing prescription with drugId:', currentDrugId);
-                
-                // Kiểm tra xem drug có tồn tại không trước khi update
-                const checkDrugRes = await fetch(`/api/drugs/by-booking/${currentBookId}`);
-                if (checkDrugRes.ok) {
-                    const existingDrugs = await checkDrugRes.json();
-                    if (existingDrugs.length > 0 && existingDrugs[0].drugId == currentDrugId) {
-                        console.log('✅ DEBUG: Drug exists, proceeding with update');
-                    } else {
-                        console.log('⚠️ DEBUG: Drug not found, will create new one');
-                        // Nếu drug không tồn tại, tạo mới
-                        const createDrugRes = await fetch(`/api/drugs/create/${currentBookId}`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                docId: parseInt(docId),
-                                cusId: parseInt(cusId),
-                                bookId: parseInt(currentBookId),
-                                drugNote: data.diagnosis || '',
-                                createdAt: data.prescriptionDate ? new Date(data.prescriptionDate).toISOString() : new Date().toISOString()
-                            })
-                        });
+            const drugItemRes = await fetch(`/api/drug-items/create/${drugId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(drugItemsPayload)
+            });
 
-                        if (!createDrugRes.ok) {
-                            const errorText = await createDrugRes.text();
-                            throw new Error('Không thể tạo đơn thuốc mới: ' + errorText);
-                        }
-
-                        currentDrugId = await createDrugRes.text();
-                        console.log('✅ DEBUG: Created new drug with ID:', currentDrugId);
-                        
-                        // Cập nhật prescriptionNumber trong form
-                        const prescriptionNumberInput = document.getElementById('prescriptionNumber');
-                        if (prescriptionNumberInput) {
-                            prescriptionNumberInput.value = currentDrugId;
-                            console.log('✅ DEBUG: Updated prescriptionNumber in form:', currentDrugId);
-                        }
-                    }
-                }
-                
-                // Cập nhật đơn thuốc hiện có
-                const updateDrugRes = await fetch(`/api/drugs/update/${currentDrugId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        createdAt: data.prescriptionDate ? new Date(data.prescriptionDate).toISOString().replace('.000Z', '') : new Date().toISOString().replace('.000Z', ''),
-                        note: data.diagnosis || ''
-                    })
-                });
-
-                if (!updateDrugRes.ok) {
-                    const errorText = await updateDrugRes.text();
-                    throw new Error('Không thể cập nhật đơn thuốc: ' + errorText);
-                }
-            }
-
-            // Xóa các drug items cũ trước khi tạo mới (nếu có)
-            if (data.drugs.length > 0) {
-                const deleteDrugItemsRes = await fetch(`/api/drug-items/delete-by-drug/${currentDrugId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (deleteDrugItemsRes.ok) {
-                    console.log('✅ DEBUG: Deleted existing drug items');
-                }
-            }
-
-            // Tạo mới các bản ghi DrugItem liên kết với drugId
-            if (data.drugs.length > 0) {
-                const drugItemsPayload = data.drugs.map(item => ({
-                    drugName: item.drugName,
-                    dosage: item.dosage,
-                    frequency: item.frequency,
-                    duration: item.duration,
-                    drugItemNote: item.drugItemNote
-                }));
-
-                const drugItemRes = await fetch(`/api/drug-items/create/${currentDrugId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(drugItemsPayload)
-                });
-
-                if (!drugItemRes.ok) {
-                    const errorText = await drugItemRes.text();
-                    throw new Error('Không thể lưu thuốc con: ' + errorText);
-                }
-                
-                console.log('✅ DEBUG: Drug items created successfully');
-            }
+            if (!drugItemRes.ok) throw new Error('Không thể lưu thuốc con');
 
             showNotification('💊 Đã lưu đơn thuốc thành công!', 'success');
-            console.log('✅ DEBUG: Prescription saved successfully');
-            
         } catch (err) {
-            console.error('❌ DEBUG: Error saving prescription:', err);
-            showNotification('❌ Có lỗi khi lưu đơn thuốc: ' + err.message, 'error');
-        } finally {
-            window.isSavingPrescription = false;
+            console.error(err);
+            showNotification('❌ Có lỗi khi lưu đơn thuốc', 'error');
         }
     };
 

@@ -680,13 +680,22 @@ function renderMedicalHistoryContent(container, historyData) {
             try {
                 treatmentContent.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Đang tải kế hoạch điều trị...</div>';
                 
-                // Fetch treatment progress using recordId
+                // Fetch treatment progress using recordId or fallback to bookId
                 let treatmentProgressData = null;
                 if (patientData.recordId) {
+                    console.log('🔍 Using recordId for treatment progress:', patientData.recordId);
                     const response = await fetch(`/api/booking-steps/treatment-progress-by-record/${patientData.recordId}`);
                     if (response.ok) {
                         treatmentProgressData = await response.json();
                     }
+                } else if (patientData.bookId) {
+                    console.log('🔍 Fallback to bookId for treatment progress:', patientData.bookId);
+                    const response = await fetch(`/api/booking-steps/treatment-progress/${patientData.bookId}`);
+                    if (response.ok) {
+                        treatmentProgressData = await response.json();
+                    }
+                } else {
+                    console.warn('⚠️ Neither recordId nor bookId available for treatment progress');
                 }
                 
                 renderTreatmentPlan(treatmentProgressData, patientData);
