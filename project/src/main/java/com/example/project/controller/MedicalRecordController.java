@@ -98,10 +98,90 @@ public Map<String, Object> createMedicalRecord(@PathVariable Integer serId, @Req
     // PUT /api/medical-records/update-with-booking/{recordId}
     @PutMapping("/update-with-booking/{recordId}")
     public ResponseEntity<?> updateMedicalRecord(
-            @PathVariable Integer recordId, @RequestBody MedicalRecord req) {
-        boolean ok = medicalRecordService.updateMedicalRecord(recordId, req);
-        if (ok) return ResponseEntity.ok().build();
-        return ResponseEntity.status(404).body("Medical record not found");
+            @PathVariable Integer recordId, @RequestBody Map<String, Object> request) {
+        try {
+            System.out.println("🔍 DEBUG: Updating medical record with booking " + recordId + " with request: " + request);
+            
+            Optional<MedicalRecord> optionalRecord = medicalRecordRepository.findById(recordId);
+            if (optionalRecord.isEmpty()) {
+                System.out.println("❌ DEBUG: Medical record not found for ID: " + recordId);
+                return ResponseEntity.status(404).body("Medical record not found");
+            }
+
+            MedicalRecord record = optionalRecord.get();
+            System.out.println("🔍 DEBUG: Found existing record: " + record);
+            
+            // Cập nhật các trường từ request
+            if (request.containsKey("recordStatus")) {
+                String newStatus = (String) request.get("recordStatus");
+                System.out.println("🔍 DEBUG: Updating recordStatus from '" + record.getRecordStatus() + "' to '" + newStatus + "'");
+                record.setRecordStatus(newStatus);
+            }
+            if (request.containsKey("diagnosis")) {
+                String newDiagnosis = (String) request.get("diagnosis");
+                System.out.println("🔍 DEBUG: Updating diagnosis from '" + record.getDiagnosis() + "' to '" + newDiagnosis + "'");
+                record.setDiagnosis(newDiagnosis);
+            }
+            if (request.containsKey("treatmentPlan")) {
+                String newPlan = (String) request.get("treatmentPlan");
+                System.out.println("🔍 DEBUG: Updating treatmentPlan from '" + record.getTreatmentPlan() + "' to '" + newPlan + "'");
+                record.setTreatmentPlan(newPlan);
+            }
+            if (request.containsKey("createdAt")) {
+                String createdAtStr = (String) request.get("createdAt");
+                if (createdAtStr != null && !createdAtStr.isEmpty()) {
+                    try {
+                        System.out.println("🔍 DEBUG: Updating createdAt to: " + createdAtStr);
+                        // Parse với format yyyy-MM-ddTHH:mm
+                        record.setCreatedAt(java.time.LocalDateTime.parse(createdAtStr.replace("Z", "")));
+                    } catch (Exception e) {
+                        System.out.println("⚠️ DEBUG: Could not parse createdAt: " + createdAtStr + ", error: " + e.getMessage());
+                    }
+                }
+            }
+            if (request.containsKey("dischargeDate")) {
+                String dischargeDateStr = (String) request.get("dischargeDate");
+                if (dischargeDateStr != null && !dischargeDateStr.isEmpty()) {
+                    try {
+                        System.out.println("🔍 DEBUG: Updating dischargeDate to: " + dischargeDateStr);
+                        // Kiểm tra format và thêm thời gian nếu thiếu
+                        if (dischargeDateStr.length() == 10) {
+                            // Format yyyy-MM-dd -> thêm thời gian mặc định
+                            dischargeDateStr += "T00:00:00";
+                        } else if (dischargeDateStr.length() == 16) {
+                            // Format yyyy-MM-ddTHH:mm -> thêm giây
+                            dischargeDateStr += ":00";
+                        }
+                        record.setDischargeDate(java.time.LocalDateTime.parse(dischargeDateStr.replace("Z", "")));
+                    } catch (Exception e) {
+                        System.out.println("⚠️ DEBUG: Could not parse dischargeDate: " + dischargeDateStr + ", error: " + e.getMessage());
+                    }
+                }
+            }
+            if (request.containsKey("note")) {
+                String newNote = (String) request.get("note");
+                System.out.println("🔍 DEBUG: Updating note from '" + record.getNote() + "' to '" + newNote + "'");
+                record.setNote(newNote);
+            }
+
+            MedicalRecord savedRecord = medicalRecordRepository.save(record);
+            System.out.println("✅ DEBUG: Record saved successfully: " + savedRecord);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Cập nhật hồ sơ bệnh án thành công");
+            response.put("recordId", recordId);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            System.out.println("❌ DEBUG: Error updating medical record: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", "Có lỗi xảy ra khi cập nhật hồ sơ: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
     }
 
     // ✅ API MỚI: Cập nhật hồ sơ bệnh án đơn giản
