@@ -1099,7 +1099,7 @@ function updateServicesSummary(servicesData) {
     document.getElementById('totalServicesCount').textContent = totalServices;
     document.getElementById('activeServicesCount').textContent = totalServices;
     document.getElementById('categoriesCount').textContent = totalServices;
-    document.getElementById('averagePrice').textContent = totalSubServices + ' dịch vụ con';
+    document.getElementById('averagePrice').textContent = totalSubServices ;
 }
 
 function initServiceFilters() {
