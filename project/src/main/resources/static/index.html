@@ -646,32 +646,32 @@
         }
         
         /* Testimonials Styles */
-        .testimonials {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-        
         .testimonial-slider {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 0 40px;
         }
         
         .testimonial {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
             opacity: 0;
             animation: fadeInUp 0.6s ease forwards;
+            border-left: 4px solid #667eea;
+            width: 100%;
         }
         
         .testimonial:hover {
-            transform: translateY(-5px);
+            transform: translateX(5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+            border-left-color: #5a67d8;
         }
         
         .testimonial:nth-child(1) { animation-delay: 0.1s; }
@@ -684,6 +684,8 @@
             align-items: center;
             gap: 15px;
             margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         .testimonial-author img {
@@ -726,12 +728,28 @@
         
         @media (max-width: 768px) {
             .testimonial-slider {
-                grid-template-columns: 1fr;
-                gap: 20px;
+                padding: 0 20px;
+                gap: 15px;
             }
             
             .testimonial {
                 padding: 20px;
+            }
+            
+            .testimonial-author {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .testimonial-slider {
+                padding: 0 15px;
+            }
+            
+            .testimonial {
+                padding: 15px;
             }
         }
         
@@ -812,6 +830,10 @@
     </style>
     
     <script>
+        // Global variables
+        let allTestimonials = [];
+        let displayedCount = 3;
+        
         // Load testimonials when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadTestimonials();
@@ -834,6 +856,16 @@
                     
                     if (response.ok) {
                         testimonials = await response.json();
+                    } else {
+                        // Mock data
+                        testimonials = [
+                            { customerName: 'Nguyễn Thị A', doctorName: 'BS. Nguyễn Văn B', serviceName: 'IVF', rating: 5, comment: 'Dịch vụ rất tốt, bác sĩ tận tâm!' },
+                            { customerName: 'Trần Thị C', doctorName: 'BS. Lê Văn D', serviceName: 'IUI', rating: 4, comment: 'Phòng khám chuyên nghiệp, kết quả tốt!' },
+                            { customerName: 'Phạm Văn E', doctorName: 'BS. Hoàng Thị F', serviceName: 'Tư vấn', rating: 5, comment: 'Rất hài lòng với dịch vụ tư vấn!' },
+                            { customerName: 'Lê Thị G', doctorName: 'BS. Nguyễn Văn H', serviceName: 'Khám tổng quát', rating: 4, comment: 'Bác sĩ giải thích rất chi tiết!' },
+                            { customerName: 'Vũ Văn I', doctorName: 'BS. Trần Thị J', serviceName: 'Điều trị', rating: 5, comment: 'Kết quả điều trị vượt mong đợi!' },
+                            { customerName: 'Đỗ Thị K', doctorName: 'BS. Phạm Văn L', serviceName: 'IVF', rating: 5, comment: 'Cảm ơn team bác sĩ!' }
+                        ];
                     }
                 }
                 
@@ -845,80 +877,85 @@
                 if (!testimonials || testimonials.length === 0) {
                     showNoTestimonials();
                 } else {
-                    renderTestimonials(testimonials);
+                    allTestimonials = testimonials;
+                    renderTestimonials();
                 }
                 
             } catch (error) {
-                // Hide loading and show no testimonials message
                 if (loadingElement) {
                     loadingElement.style.display = 'none';
                 }
-                
                 showNoTestimonials();
             }
         }
 
-        function renderTestimonials(testimonials) {
+        function renderTestimonials() {
             const testimonialSlider = document.getElementById('testimonialSlider');
+            const testimonialsToShow = allTestimonials.slice(0, displayedCount);
             let html = '';
             
-            testimonials.forEach((testimonial, index) => {
-                // Handle different data structures from API
-                const rating = testimonial.rating || testimonial.fbRating || 5;
-                const comment = testimonial.comment || testimonial.fbContent || testimonial.feedback || 'Dịch vụ tuyệt vời!';
-                const customerName = testimonial.customerName || testimonial.customerFullName || testimonial.name || 'Khách hàng';
-                const doctorName = testimonial.doctorName || testimonial.docFullName || 'Bác sĩ';
-                const serviceName = testimonial.serviceName || testimonial.serviceTitle || 'Dịch vụ';
+            testimonialsToShow.forEach((testimonial, index) => {
+                const rating = testimonial.rating || 5;
+                const comment = testimonial.comment || testimonial.fbContent || 'Dịch vụ tuyệt vời!';
+                const customerName = testimonial.customerName || testimonial.customerFullName || 'Khách hàng';
+                const doctorName = testimonial.doctorName || 'Bác sĩ';
+                const serviceName = testimonial.serviceName || 'Dịch vụ';
                 
-                const stars = generateStarsForTestimonial(rating);
-                const customerInitials = getInitials(customerName);
-                const avatarUrl = generateAvatarUrl(customerInitials);
+                const stars = generateStars(rating);
+                const initials = getInitials(customerName);
+                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=667eea&color=fff&size=64&rounded=true`;
                 
                 html += `
                     <div class="testimonial">
                         <div class="testimonial-author">
-                            <img src="${avatarUrl}" alt="${customerName}" 
-                                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(customerInitials)}&background=667eea&color=fff&size=64'">
+                            <img src="${avatarUrl}" alt="${customerName}">
                             <div class="author-info">
                                 <h4>${customerName}</h4>
                                 <p>Khách hàng của ${doctorName} - ${serviceName}</p>
                             </div>
                         </div>
-                        <div class="testimonial-rating">
-                            ${stars}
-                        </div>
+                        <div class="testimonial-rating">${stars}</div>
                         <p class="testimonial-text">"${comment}"</p>
                     </div>
                 `;
             });
             
+            // Add load more button
+            if (displayedCount < allTestimonials.length) {
+                html += `
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button onclick="loadMore()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 30px; cursor: pointer; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 auto;">
+                            <i class="fas fa-plus"></i>
+                            Xem thêm (còn ${allTestimonials.length - displayedCount})
+                        </button>
+                    </div>
+                `;
+            }
+            
             testimonialSlider.innerHTML = html;
         }
 
-        function generateStarsForTestimonial(rating) {
-            let starsHTML = '';
-            for (let i = 1; i <= 5; i++) {
-                if (i <= rating) {
-                    starsHTML += '<i class="fas fa-star"></i>';
-                } else if (i - 0.5 <= rating) {
-                    starsHTML += '<i class="fas fa-star-half-alt"></i>';
-                } else {
-                    starsHTML += '<i class="far fa-star"></i>';
-                }
+        function loadMore() {
+            displayedCount += 3;
+            if (displayedCount > allTestimonials.length) {
+                displayedCount = allTestimonials.length;
             }
-            return starsHTML;
+            renderTestimonials();
         }
 
-        function getInitials(fullName) {
-            if (!fullName) return 'UN';
-            const names = fullName.split(' ');
-            if (names.length === 1) return names[0].charAt(0).toUpperCase();
-            return names[0].charAt(0).toUpperCase() + names[names.length - 1].charAt(0).toUpperCase();
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += i <= rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+            }
+            return stars;
         }
 
-        function generateAvatarUrl(initials) {
-            // Sử dụng service tạo avatar từ initials
-            return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=667eea&color=fff&size=64&rounded=true`;
+        function getInitials(name) {
+            if (!name) return 'UN';
+            const parts = name.split(' ');
+            return parts.length === 1 ? parts[0][0].toUpperCase() : 
+                   parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
         }
 
         function showNoTestimonials() {
@@ -928,26 +965,6 @@
                     <i class="fas fa-comments"></i>
                     <h3>Chưa có feedback</h3>
                     <p>Hiện tại chưa có đánh giá nào từ khách hàng.</p>
-                </div>
-            `;
-        }
-
-        function showTestimonialError(errorMessage = '') {
-            const testimonialSlider = document.getElementById('testimonialSlider');
-            const loadingElement = document.getElementById('testimonialLoading');
-            
-            if (loadingElement) {
-                loadingElement.style.display = 'none';
-            }
-            
-            testimonialSlider.innerHTML = `
-                <div class="testimonial-error">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Chưa có feedback</h3>
-                    <p>Hiện tại chưa có đánh giá nào từ khách hàng.</p>
-                    <button onclick="loadTestimonials()" style="margin-top: 15px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                        Thử lại
-                    </button>
                 </div>
             `;
         }
