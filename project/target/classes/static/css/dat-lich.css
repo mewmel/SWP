@@ -50,6 +50,273 @@
     font-weight: 700;
 }
 
+/* ================================ */
+/* Medical Record Popup Styles */
+/* ================================ */
+.booking-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.booking-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.booking-overlay .booking-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.7);
+    transition: transform 0.3s ease;
+}
+
+.booking-overlay.show .booking-container {
+    transform: scale(1);
+}
+
+.booking-header {
+    background: linear-gradient(135deg, #ff6b35, #ff8c42);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 15px 15px 0 0;
+}
+
+.booking-header i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.booking-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.booking-body {
+    padding: 25px;
+}
+
+.medical-record-info .info-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.medical-record-info .info-section h4 {
+    color: var(--primary-color);
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.medical-record-info .info-section p {
+    margin: 8px 0;
+    line-height: 1.5;
+}
+
+.medical-record-info .info-section p strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.warning-message {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border: 1px solid #ffeaa7;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.warning-message i {
+    color: #e17055;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.warning-message p {
+    color: #6c5ce7;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.contact-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.contact-btn i {
+    font-size: 1rem;
+}
+
+.email-btn {
+    background: linear-gradient(135deg, #74b9ff, #0984e3);
+    color: white;
+}
+
+.email-btn:hover {
+    background: linear-gradient(135deg, #0984e3, #2d3436);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+}
+
+.phone-btn {
+    background: linear-gradient(135deg, #00b894, #00a085);
+    color: white;
+}
+
+.phone-btn:hover {
+    background: linear-gradient(135deg, #00a085, #2d3436);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+}
+
+.booking-footer {
+    background: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+    border-radius: 0 0 15px 15px;
+}
+
+.btn-cancel {
+    background: linear-gradient(135deg, #636e72, #2d3436);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-cancel:hover {
+    background: linear-gradient(135deg, #2d3436, #636e72);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(45, 52, 54, 0.3);
+}
+
+/* Form Warning Notice */
+.form-warning-notice {
+    background: linear-gradient(135deg, #ffcccc, #ff6b6b);
+    border: 1px solid #ff6b6b;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-warning-notice .warning-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #d63031;
+    font-weight: 600;
+}
+
+.form-warning-notice .warning-content i {
+    font-size: 1.2rem;
+}
+
+/* Pending Booking Status */
+.status-pending {
+    color: #f39c12;
+    font-weight: 600;
+    background: #fff3cd;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid #f39c12;
+}
+
+.pending-booking-info .info-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #f39c12;
+}
+
+.pending-booking-info .info-section h4 {
+    color: #f39c12;
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pending-booking-info .booking-info p {
+    margin: 8px 0;
+    line-height: 1.5;
+}
+
+.pending-booking-info .booking-info p strong {
+    color: #333;
+    font-weight: 600;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .booking-overlay .booking-container {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .contact-buttons {
+        flex-direction: column;
+    }
+    
+    .contact-btn {
+        justify-content: center;
+    }
+}
+
 .form-header p {
     opacity: 0.9;
     font-size: 1rem;

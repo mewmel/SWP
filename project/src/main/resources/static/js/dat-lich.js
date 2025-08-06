@@ -12,6 +12,10 @@ const workingHours = {
 };
 
 // ================================
+// Biến lưu trạng thái medical record của customer
+let customerMedicalRecordStatus = null;
+
+// ================================
 // Dữ liệu workslot từ backend
 let currentSlots = [];
 let approvedSlots = []; // Danh sách slot đã được duyệt
@@ -218,6 +222,284 @@ function updateTimeSlots(selectedDate) {
     // Reset selectedTime
     document.getElementById('selectedTime').value = '';
 }
+
+// ================================
+// Hàm check trạng thái đặt lịch của customer (medical record + booking pending)
+// ================================
+async function checkCustomerBookingStatus(cusId) {
+    if (!cusId) return { status: 'can_book', message: 'No customer ID' };
+    
+    try {
+        const response = await fetch(`/api/medical-records/customer/${cusId}/booking-status`);
+        const data = await response.json();
+        console.log('Customer booking status:', data);
+        return data;
+    } catch (error) {
+        console.error('Error checking customer booking status:', error);
+        return { status: 'can_book', message: 'Error occurred' };
+    }
+}
+
+// ================================
+// Hàm check trạng thái medical record của customer (cũ - để tương thích)
+// ================================
+async function checkCustomerMedicalRecordStatus(cusId) {
+    if (!cusId) return null;
+    
+    try {
+        const response = await fetch(`/api/medical-records/customer/${cusId}/status`);
+        const data = await response.json();
+        console.log('Medical record status:', data);
+        return data;
+    } catch (error) {
+        console.error('Error checking medical record status:', error);
+        return null;
+    }
+}
+
+// ================================
+// Hàm hiển thị popup thông báo về medical record đang active
+// ================================
+function showActiveMedicalRecordPopup(medicalRecordData) {
+    const popupHtml = `
+        <div id="activeMedicalRecordOverlay" class="booking-overlay show">
+            <div class="booking-container">
+                <div class="booking-header">
+                    <i class="fas fa-info-circle" style="color: #ff6b35;"></i>
+                    <h3>Thông báo dịch vụ đang điều trị</h3>
+                </div>
+                <div class="booking-body">
+                    <div class="medical-record-info">
+                        <div class="info-section">
+                            <h4><i class="fas fa-user-md"></i> Thông tin bác sĩ phụ trách</h4>
+                            <div class="doctor-info">
+                                <p><strong>Bác sĩ:</strong> ${medicalRecordData.docFullName || 'N/A'}</p>
+                                <p><strong>Email:</strong> ${medicalRecordData.docEmail || 'N/A'}</p>
+                                <p><strong>Điện thoại:</strong> ${medicalRecordData.docPhone || 'N/A'}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-section">
+                            <h4><i class="fas fa-heart"></i> Dịch vụ đang điều trị</h4>
+                            <div class="service-info">
+                                <p><strong>Dịch vụ:</strong> ${medicalRecordData.serviceName || 'N/A'}</p>
+                                <p><strong>Chẩn đoán:</strong> ${medicalRecordData.diagnosis || 'Chưa có'}</p>
+                                <p><strong>Kế hoạch điều trị:</strong> ${medicalRecordData.treatmentPlan || 'Chưa có'}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="warning-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Bạn hiện đang trong quá trình điều trị dịch vụ <strong>"${medicalRecordData.serviceName || 'N/A'}"</strong>. 
+                            Để đảm bảo an toàn và hiệu quả điều trị, vui lòng liên hệ trực tiếp với bác sĩ phụ trách để được tư vấn về việc đặt lịch khám mới hoặc thay đổi lịch điều trị hiện tại.</p>
+                        </div>
+                        
+                        <div class="contact-buttons">
+                            <button class="contact-btn email-btn" onclick="contactDoctorByEmail('${medicalRecordData.docEmail || ''}')">
+                                <i class="fas fa-envelope"></i> Gửi email
+                            </button>
+                            <button class="contact-btn phone-btn" onclick="contactDoctorByPhone('${medicalRecordData.docPhone || ''}')">
+                                <i class="fas fa-phone"></i> Gọi điện
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-footer">
+                    <button class="btn-cancel" onclick="closeActiveMedicalRecordPopup()">
+                        <i class="fas fa-times"></i> Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', popupHtml);
+    
+    // Disable form đặt lịch
+    disableBookingForm();
+}
+
+// ================================
+// Hàm hiển thị popup cho booking pending
+// ================================
+function showPendingBookingPopup(bookingData) {
+    const popupHtml = `
+        <div id="pendingBookingOverlay" class="booking-overlay show">
+            <div class="booking-container">
+                <div class="booking-header">
+                    <i class="fas fa-clock" style="color: #f39c12;"></i>
+                    <h3>Lịch hẹn đang chờ xác nhận</h3>
+                </div>
+                <div class="booking-body">
+                    <div class="pending-booking-info">
+                        <div class="info-section">
+                            <h4><i class="fas fa-calendar-alt"></i> Thông tin lịch hẹn</h4>
+                            <div class="booking-info">
+                                <p><strong>Mã đặt lịch:</strong> #${bookingData.bookId || 'N/A'}</p>
+                                <p><strong>Trạng thái:</strong> <span class="status-pending">Chờ xác nhận</span></p>
+                                <p><strong>Ngày đặt:</strong> ${bookingData.bookCreatedAt ? new Date(bookingData.bookCreatedAt).toLocaleDateString('vi-VN') : 'N/A'}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="warning-message" style="background: linear-gradient(135deg, #fff3cd, #ffeaa7);">
+                            <i class="fas fa-hourglass-half"></i>
+                            <p>Bạn hiện có lịch hẹn đang chờ bác sĩ xác nhận. Vui lòng đợi phản hồi từ phòng khám hoặc liên hệ trực tiếp để được tư vấn về việc đặt lịch mới.</p>
+                        </div>
+                        
+                        <div class="contact-buttons">
+                            <button class="contact-btn phone-btn" onclick="contactClinic()">
+                                <i class="fas fa-phone"></i> Liên hệ phòng khám
+                            </button>
+                            <button class="contact-btn email-btn" onclick="contactSupport()">
+                                <i class="fas fa-envelope"></i> Gửi email hỗ trợ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-footer">
+                    <button class="btn-cancel" onclick="closePendingBookingPopup()">
+                        <i class="fas fa-times"></i> Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', popupHtml);
+    
+    // Disable form đặt lịch
+    disableBookingForm('pending');
+}
+
+// ================================
+// Hàm đóng popup booking pending
+// ================================
+function closePendingBookingPopup() {
+    const overlay = document.getElementById('pendingBookingOverlay');
+    if (overlay) {
+        overlay.remove();
+    }
+    
+    // Chuyển về trang chủ
+    window.location.href = 'index.html';
+}
+
+// ================================
+// Hàm liên hệ phòng khám
+// ================================
+function contactClinic() {
+    window.location.href = 'tel:19001234';
+}
+
+// ================================
+// Hàm disable form đặt lịch khi có medical record active hoặc booking pending
+// ================================
+function disableBookingForm(reason = 'active') {
+    const formElements = document.querySelectorAll('#bookingForm input, #bookingForm select, #bookingForm textarea, #bookingForm button[type="submit"]');
+    formElements.forEach(element => {
+        element.disabled = true;
+        if (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA') {
+            element.style.opacity = '0.5';
+            element.style.cursor = 'not-allowed';
+        }
+    });
+    
+    // Thêm thông báo trên form
+    const formContainer = document.getElementById('bookingForm');
+    const warningNotice = document.createElement('div');
+    warningNotice.id = 'formWarningNotice';
+    warningNotice.className = 'form-warning-notice';
+    
+    let warningText = '';
+    let warningIcon = '';
+    
+    if (reason === 'pending') {
+        warningIcon = 'fas fa-clock';
+        warningText = 'Không thể đặt lịch mới khi đang có lịch hẹn chờ xác nhận. Vui lòng đợi phản hồi từ phòng khám.';
+    } else {
+        warningIcon = 'fas fa-lock';
+        warningText = 'Không thể đặt lịch mới khi đang có dịch vụ điều trị đang hoạt động. Vui lòng liên hệ bác sĩ phụ trách.';
+    }
+    
+    warningNotice.innerHTML = `
+        <div class="warning-content">
+            <i class="${warningIcon}"></i>
+            <p>${warningText}</p>
+        </div>
+    `;
+    formContainer.parentNode.insertBefore(warningNotice, formContainer);
+}
+
+// ================================
+// Hàm enable lại form đặt lịch
+// ================================
+function enableBookingForm() {
+    const formElements = document.querySelectorAll('#bookingForm input, #bookingForm select, #bookingForm textarea, #bookingForm button[type="submit"]');
+    formElements.forEach(element => {
+        element.disabled = false;
+        if (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA') {
+            element.style.opacity = '1';
+            element.style.cursor = 'auto';
+        }
+    });
+    
+    // Xóa thông báo cảnh báo
+    const warningNotice = document.getElementById('formWarningNotice');
+    if (warningNotice) {
+        warningNotice.remove();
+    }
+}
+
+// ================================
+// Hàm đóng popup medical record
+// ================================
+function closeActiveMedicalRecordPopup() {
+    const overlay = document.getElementById('activeMedicalRecordOverlay');
+    if (overlay) {
+        overlay.remove();
+    }
+    
+    // Chuyển về trang chủ
+    window.location.href = 'index.html';
+}
+
+// ================================
+// Hàm liên hệ bác sĩ qua email
+// ================================
+function contactDoctorByEmail(email) {
+    if (email && email !== 'N/A') {
+        window.location.href = `mailto:${email}?subject=Liên hệ về lịch điều trị&body=Chào bác sĩ,%0A%0ATôi cần tư vấn về lịch điều trị hiện tại của tôi.%0A%0AXin cảm ơn!`;
+    } else {
+        alert('Thông tin email bác sĩ không có sẵn. Vui lòng gọi hotline: 1900 1234');
+    }
+}
+
+// ================================
+// Hàm liên hệ bác sĩ qua điện thoại
+// ================================
+function contactDoctorByPhone(phone) {
+    if (phone && phone !== 'N/A') {
+        window.location.href = `tel:${phone}`;
+    } else {
+        alert('Thông tin điện thoại bác sĩ không có sẵn. Vui lòng gọi hotline: 1900 1234');
+    }
+}
+
+// ================================
+// Hàm lấy cusId từ localStorage (giả định đã đăng nhập)
+// ================================
+function getCurrentCustomerId() {
+    // Giả định cusId được lưu trong localStorage khi đăng nhập
+    const cusId = localStorage.getItem('cusId') || localStorage.getItem('userId');
+    console.log('Current customer ID:', cusId);
+    
+    // Cho mục đích test - có thể set cusId = 1 để test
+    // localStorage.setItem('cusId', '1'); // Uncomment để test với cusId = 1
+    
+    return cusId;
+}
+
+
 
 // ================================
 // Hàm lấy tên ngày trong tuần (vi)
@@ -721,7 +1003,29 @@ window.debugTimeValidation = debugTimeValidation;
 window.debugDoctorSelection = debugDoctorSelection;
 
 // ========== Initialize all functionality ===========
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // Check booking status trước khi khởi tạo form
+    const cusId = getCurrentCustomerId();
+    if (cusId) {
+        console.log('Checking booking status for customer:', cusId);
+        const bookingStatus = await checkCustomerBookingStatus(cusId);
+        
+        if (bookingStatus.status === 'has_active_medical_record') {
+            console.log('Customer has active medical record, showing popup');
+            showActiveMedicalRecordPopup(bookingStatus);
+            return; // Dừng khởi tạo form nếu có active medical record
+        } else if (bookingStatus.status === 'has_pending_booking') {
+            console.log('Customer has pending booking, showing popup');
+            showPendingBookingPopup(bookingStatus);
+            return; // Dừng khởi tạo form nếu có booking pending
+        } else {
+            console.log('Customer can book new appointment');
+        }
+    } else {
+        console.log('No customer ID found, allowing guest booking');
+    }
+
+    // Khởi tạo các chức năng bình thường
     initializeDateInputs();
     loadDoctors();
     setupBookingFormSubmission();

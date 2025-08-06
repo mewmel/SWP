@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.project.dto.CustomerBookingStatusDto;
+import com.example.project.dto.CustomerMedicalRecordStatusDto;
 import com.example.project.dto.MedicalHistoryDTO;
 import com.example.project.entity.Booking;
 import com.example.project.entity.MedicalRecord;
+import com.example.project.entity.MedicalRecordBooking;
 import com.example.project.entity.WorkSlot;
 import com.example.project.repository.BookingRepository;
 import com.example.project.repository.BookingStepRepository;
@@ -193,23 +196,32 @@ public ResponseEntity<MedicalRecord> getMedicalRecordById(@PathVariable Integer 
 @GetMapping("/customer/{recordId}/medical-history")
 public ResponseEntity<?> getMedicalHistoryByRecordId(@PathVariable Integer recordId) {
     try {
-        // B1: Lấy các bookId từ MedicalRecordBooking
-        List<Integer> bookIds = medicalRecordBookingRepository.findByIdRecordId(recordId)
-                .stream()
-                .map(link -> link.getId().getBookId())
-                .toList();
+        System.out.println("🔍 DEBUG: Getting medical history for recordId: " + recordId);
+        
+        // B1: Lấy các MedicalRecordBooking theo recordId
+        List<MedicalRecordBooking> medicalRecordBookings = medicalRecordBookingRepository.findByIdRecordId(recordId);
+        System.out.println("📋 DEBUG: Found " + medicalRecordBookings.size() + " MedicalRecordBooking entries");
 
-        if (bookIds.isEmpty()) {
+        if (medicalRecordBookings.isEmpty()) {
+            System.out.println("❌ DEBUG: No MedicalRecordBooking found for recordId: " + recordId);
             return ResponseEntity.ok(List.of());
         }
 
-        // B2: Lấy danh sách Booking
+        // B2: Lấy danh sách Booking từ MedicalRecordBooking
+        List<Integer> bookIds = medicalRecordBookings.stream()
+                .map(mrb -> mrb.getId().getBookId())
+                .toList();
+        
+        System.out.println("📋 DEBUG: BookIds to fetch: " + bookIds);
         List<Booking> bookings = bookingRepository.findAllById(bookIds);
+        System.out.println("📋 DEBUG: Found " + bookings.size() + " bookings");
 
         // B3: Duyệt từng booking → tạo DTO
         List<MedicalHistoryDTO> result = new ArrayList<>();
 
         for (Booking booking : bookings) {
+            System.out.println("🔍 DEBUG: Processing booking ID: " + booking.getBookId() + ", Status: " + booking.getBookStatus());
+            
             String date = "";
             String time = "";
 
@@ -220,12 +232,17 @@ public ResponseEntity<?> getMedicalHistoryByRecordId(@PathVariable Integer recor
                     WorkSlot slot = optionalSlot.get();
                     date = slot.getWorkDate().toString();
                     time = slot.getStartTime() + " - " + slot.getEndTime();
+                    System.out.println("📅 DEBUG: Found slot - Date: " + date + ", Time: " + time);
+                } else {
+                    System.out.println("❌ DEBUG: WorkSlot not found for slotId: " + booking.getSlotId());
                 }
+            } else {
+                System.out.println("❌ DEBUG: No slotId for booking: " + booking.getBookId());
             }
 
             // Lấy tên sub-service từ BookingStep
-// Lấy danh sách tên sub-service theo bookId
-List<String> subNames = bookingStepRepository.findSubNamesByBookId(booking.getBookId());
+            List<String> subNames = bookingStepRepository.findSubNamesByBookId(booking.getBookId());
+            System.out.println("🔍 DEBUG: Found " + subNames.size() + " sub-services: " + subNames);
 
             result.add(new MedicalHistoryDTO(
                 booking.getBookId(),
@@ -237,11 +254,42 @@ List<String> subNames = bookingStepRepository.findSubNamesByBookId(booking.getBo
             ));
         }
 
+        System.out.println("✅ DEBUG: Returning " + result.size() + " medical history items");
         return ResponseEntity.ok(result);
     } catch (Exception e) {
         e.printStackTrace(); // log rõ ra console
         return ResponseEntity.status(500).body("Lỗi khi lấy lịch sử khám: " + e.getMessage());
     }
 }
+
+    /**
+     * ✅ API kiểm tra trạng thái medical record của customer
+     * GET /api/medical-records/customer/{cusId}/status
+     */
+    @GetMapping("/customer/{cusId}/status")
+    public ResponseEntity<CustomerMedicalRecordStatusDto> checkCustomerMedicalRecordStatus(@PathVariable Integer cusId) {
+        try {
+            CustomerMedicalRecordStatusDto result = medicalRecordService.checkCustomerMedicalRecordStatus(cusId);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(new CustomerMedicalRecordStatusDto(false));
+        }
+    }
+
+    /**
+     * ✅ API kiểm tra trạng thái đặt lịch của customer (cả medical record và booking pending)
+     * GET /api/medical-records/customer/{cusId}/booking-status
+     */
+    @GetMapping("/customer/{cusId}/booking-status")
+    public ResponseEntity<CustomerBookingStatusDto> checkCustomerBookingStatus(@PathVariable Integer cusId) {
+        try {
+            CustomerBookingStatusDto result = medicalRecordService.checkCustomerBookingStatus(cusId);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(new CustomerBookingStatusDto("can_book", "Có lỗi xảy ra, cho phép đặt lịch"));
+        }
+    }
 
 }

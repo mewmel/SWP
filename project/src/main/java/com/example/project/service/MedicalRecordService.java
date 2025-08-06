@@ -16,6 +16,10 @@ import com.example.project.repository.BookingRepository;
 import com.example.project.repository.CustomerRepository;
 import com.example.project.repository.MedicalRecordRepository;
 import com.example.project.repository.ServiceRepository;
+import com.example.project.repository.DoctorRepository;
+import com.example.project.dto.CustomerMedicalRecordStatusDto;
+import com.example.project.dto.CustomerBookingStatusDto;
+import com.example.project.entity.Doctor;
 
 @Service
 public class MedicalRecordService {
@@ -30,6 +34,9 @@ public class MedicalRecordService {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
 
     /**
      * ✅ Lấy tất cả medical records của bệnh nhân mà bác sĩ phụ trách (kể cả closed)
@@ -131,5 +138,140 @@ public class MedicalRecordService {
     medicalRecordRepository.save(mr);
     return true;
 }
+
+    /**
+     * ✅ Check trạng thái medical record của customer
+     * Trả về thông tin chi tiết nếu có active medical record, ngược lại trả về trạng thái không có
+     */
+    public CustomerMedicalRecordStatusDto checkCustomerMedicalRecordStatus(Integer cusId) {
+        try {
+            // Tìm medical record active của customer
+            Optional<MedicalRecord> activeRecordOpt = medicalRecordRepository.findActiveByCusId(cusId);
+            
+            if (activeRecordOpt.isEmpty()) {
+                // Không có active medical record
+                return new CustomerMedicalRecordStatusDto(false);
+            }
+            
+            MedicalRecord activeRecord = activeRecordOpt.get();
+            
+            // Lấy thông tin doctor
+            Doctor doctor = doctorRepository.findById(activeRecord.getDocId()).orElse(null);
+            
+            // Lấy thông tin service
+            com.example.project.entity.Service service = serviceRepository.findById(activeRecord.getSerId()).orElse(null);
+            
+            // Tạo response với đầy đủ thông tin
+            CustomerMedicalRecordStatusDto response = new CustomerMedicalRecordStatusDto();
+            response.setHasActiveMedicalRecord(true);
+            response.setRecordId(activeRecord.getRecordId());
+            response.setCusId(activeRecord.getCusId());
+            response.setDocId(activeRecord.getDocId());
+            response.setDocFullName(doctor != null ? doctor.getDocFullName() : "N/A");
+            response.setDocEmail(doctor != null ? doctor.getDocEmail() : "N/A");
+            response.setDocPhone(doctor != null ? doctor.getDocPhone() : "N/A");
+            response.setSerId(activeRecord.getSerId());
+            response.setServiceName(service != null ? service.getSerName() : "N/A");
+            response.setDiagnosis(activeRecord.getDiagnosis());
+            response.setTreatmentPlan(activeRecord.getTreatmentPlan());
+            response.setCreatedAt(activeRecord.getCreatedAt() != null ? activeRecord.getCreatedAt().toString() : null);
+            response.setNote(activeRecord.getNote());
+            
+            return response;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Trường hợp lỗi, trả về trạng thái không có
+            return new CustomerMedicalRecordStatusDto(false);
+        }
+    }
+
+    /**
+     * ✅ Check trạng thái đặt lịch của customer (cả medical record và booking pending)
+     */
+    public CustomerBookingStatusDto checkCustomerBookingStatus(Integer cusId) {
+        try {
+            // 1. Kiểm tra xem customer có medical record nào không (bất kể status)
+            List<MedicalRecord> allRecords = medicalRecordRepository.findAll()
+                .stream()
+                .filter(record -> record.getCusId().equals(cusId))
+                .collect(java.util.stream.Collectors.toList());
+            
+            if (!allRecords.isEmpty()) {
+                // Customer đã có medical record, check active
+                Optional<MedicalRecord> activeRecordOpt = medicalRecordRepository.findActiveByCusId(cusId);
+                
+                if (activeRecordOpt.isPresent()) {
+                    // Có active medical record
+                    MedicalRecord activeRecord = activeRecordOpt.get();
+                    Doctor doctor = doctorRepository.findById(activeRecord.getDocId()).orElse(null);
+                    com.example.project.entity.Service service = serviceRepository.findById(activeRecord.getSerId()).orElse(null);
+                    
+                    CustomerBookingStatusDto response = new CustomerBookingStatusDto();
+                    response.setStatus("has_active_medical_record");
+                    response.setMessage("Customer đang có medical record active");
+                    response.setRecordId(activeRecord.getRecordId());
+                    response.setDocId(activeRecord.getDocId());
+                    response.setDocFullName(doctor != null ? doctor.getDocFullName() : "N/A");
+                    response.setDocEmail(doctor != null ? doctor.getDocEmail() : "N/A");
+                    response.setDocPhone(doctor != null ? doctor.getDocPhone() : "N/A");
+                    response.setSerId(activeRecord.getSerId());
+                    response.setServiceName(service != null ? service.getSerName() : "N/A");
+                    response.setDiagnosis(activeRecord.getDiagnosis());
+                    response.setTreatmentPlan(activeRecord.getTreatmentPlan());
+                    response.setCreatedAt(activeRecord.getCreatedAt() != null ? activeRecord.getCreatedAt().toString() : null);
+                    response.setNote(activeRecord.getNote());
+                    
+                    return response;
+                } else {
+                    // Có medical record nhưng không active (có thể đã closed)
+                    // Check booking pending trước khi cho phép đặt lịch mới
+                    List<Booking> pendingBookings = bookingRepository.findByCusIdAndBookStatusOrderByCreatedAtDesc(cusId, "pending");
+                    
+                    if (!pendingBookings.isEmpty()) {
+                        // Có booking pending
+                        Booking latestPending = pendingBookings.get(0);
+                        
+                        CustomerBookingStatusDto response = new CustomerBookingStatusDto();
+                        response.setStatus("has_pending_booking");
+                        response.setMessage("Customer đang có booking pending chờ xác nhận");
+                        response.setBookId(latestPending.getBookId());
+                        response.setBookStatus(latestPending.getBookStatus());
+                        response.setBookCreatedAt(latestPending.getCreatedAt() != null ? latestPending.getCreatedAt().toString() : null);
+                        
+                        return response;
+                    } else {
+                        // Medical record đã closed và không có booking pending
+                        return new CustomerBookingStatusDto("can_book", "Customer có thể đặt lịch mới");
+                    }
+                }
+            } else {
+                // 2. Customer chưa có medical record nào, check booking pending
+                List<Booking> pendingBookings = bookingRepository.findByCusIdAndBookStatusOrderByCreatedAtDesc(cusId, "pending");
+                
+                if (!pendingBookings.isEmpty()) {
+                    // Có booking pending
+                    Booking latestPending = pendingBookings.get(0);
+                    
+                    CustomerBookingStatusDto response = new CustomerBookingStatusDto();
+                    response.setStatus("has_pending_booking");
+                    response.setMessage("Customer đang có booking pending chờ xác nhận");
+                    response.setBookId(latestPending.getBookId());
+                    response.setBookStatus(latestPending.getBookStatus());
+                    response.setBookCreatedAt(latestPending.getCreatedAt() != null ? latestPending.getCreatedAt().toString() : null);
+                    // Note: appointmentDate không có trong entity Booking, có thể lấy từ WorkSlot nếu cần
+                    
+                    return response;
+                } else {
+                    // Không có medical record và không có booking pending
+                    return new CustomerBookingStatusDto("can_book", "Customer có thể đặt lịch mới");
+                }
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CustomerBookingStatusDto("can_book", "Có lỗi xảy ra, cho phép đặt lịch");
+        }
+    }
 
 }
