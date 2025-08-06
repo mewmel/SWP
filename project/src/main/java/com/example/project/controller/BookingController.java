@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.project.dto.BookingPatientService;
 import com.example.project.dto.BookingRequest;
 import com.example.project.entity.Booking;
+import com.example.project.entity.BookingStatusDetail;
 import com.example.project.repository.BookingRepository;
+import com.example.project.repository.BookingStatusDetailRepository;
 import com.example.project.service.BookingService;
 
 
@@ -39,6 +41,9 @@ public class BookingController {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private BookingStatusDetailRepository bookingStatusDetailRepository;
 
 
     // API tạo booking và tài khoản khách hàng mới nếu cần
@@ -78,12 +83,10 @@ public class BookingController {
 
             Booking booking = bookingOpt.get();
 
-
             // Validate status value
             if (!"confirmed".equals(status) && !"rejected".equals(status)) {
                 return ResponseEntity.badRequest().body("Status must be 'confirmed' or 'rejected'");
             }
-
 
             // Update trạng thái
             booking.setBookStatus(status);
@@ -92,6 +95,25 @@ public class BookingController {
             }
 
             bookingRepository.save(booking);
+
+            // Tự động tạo BookingStatusDetail khi xác nhận booking
+            if ("confirmed".equals(status)) {
+                try {
+                    Optional<BookingStatusDetail> existingStatusDetail = 
+                            bookingStatusDetailRepository.findByBookId(bookId);
+                    
+                    if (!existingStatusDetail.isPresent()) {
+                        BookingStatusDetail statusDetail = new BookingStatusDetail(bookId);
+                        bookingStatusDetailRepository.save(statusDetail);
+                        System.out.println("✅ Auto-created BookingStatusDetail for confirmed bookId: " + bookId);
+                    } else {
+                        System.out.println("ℹ️ BookingStatusDetail already exists for bookId: " + bookId);
+                    }
+                } catch (Exception e) {
+                    System.err.println("❌ Failed to create BookingStatusDetail for bookId: " + bookId + " - " + e.getMessage());
+                    // Không throw exception để không ảnh hưởng đến việc xác nhận booking
+                }
+            }
 
             String message = "confirmed".equals(status) ? "Booking confirmed successfully" : "Booking rejected successfully";
             return ResponseEntity.ok(message);

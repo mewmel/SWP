@@ -18,10 +18,12 @@ import org.springframework.util.ResourceUtils;
 
 import com.example.project.dto.BookingRequest;
 import com.example.project.entity.Booking;
+import com.example.project.entity.BookingStatusDetail;
 import com.example.project.entity.Customer;
 import com.example.project.entity.Doctor;
 import com.example.project.entity.WorkSlot;
 import com.example.project.repository.BookingRepository;
+import com.example.project.repository.BookingStatusDetailRepository;
 import com.example.project.repository.CustomerRepository;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.repository.ServiceRepository;
@@ -36,6 +38,8 @@ public class BookingService {
     private CustomerRepository customerRepo;
     @Autowired
     private BookingRepository bookingRepo;
+    @Autowired
+    private BookingStatusDetailRepository bookingStatusDetailRepo;
     @Autowired
     private WorkSlotRepository workSlotRepo;
     @Autowired
@@ -131,7 +135,9 @@ public class BookingService {
         booking.setNote(req.getNote());
 
         // Chỉ gửi mail khi booking save thành công
-        bookingRepo.save(booking);
+        Booking savedBooking = bookingRepo.save(booking);
+
+        // BookingStatusDetail sẽ được tạo khi bác sĩ xác nhận lịch hẹn (không tạo ngay khi booking)
 
         if (isNewAccount) {
             sendNewAccountAndBookingEmail(customer, rawPassword, req, doctorName, serviceName);
@@ -295,6 +301,16 @@ public class BookingService {
         String endTime = (String) bookingData.get("endTime");
 
         Booking saved = bookingRepo.save(booking);
+
+        // Tạo BookingStatusDetail cho follow-up booking
+        try {
+            BookingStatusDetail statusDetail = new BookingStatusDetail(saved.getBookId());
+            bookingStatusDetailRepo.save(statusDetail);
+            System.out.println("✅ Created BookingStatusDetail for follow-up bookId: " + saved.getBookId());
+        } catch (Exception e) {
+            System.err.println("❌ Failed to create BookingStatusDetail for follow-up bookId: " + saved.getBookId() + " - " + e.getMessage());
+            // Không throw exception để không ảnh hưởng đến booking creation
+        }
 
         // 2. Gửi email cho bệnh nhân
         Customer customer = customerRepo.findById(booking.getCusId()).orElse(null);

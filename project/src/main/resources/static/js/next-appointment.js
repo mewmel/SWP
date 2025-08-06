@@ -238,6 +238,54 @@ function showNotification(message, type) {
             }
         }
 
+        // Format date for date input (YYYY-MM-DD)
+        function formatDateForInput(dateString) {
+            if (!dateString) {
+                console.log('🔍 formatDateForInput: empty dateString, returning empty string');
+                return '';
+            }
+            
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    console.log('🔍 formatDateForInput: invalid date, returning empty string');
+                    return '';
+                }
+                
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const result = `${year}-${month}-${day}`;
+                console.log('🔍 formatDateForInput:', dateString, '->', result);
+                return result;
+            } catch (error) {
+                console.error('❌ formatDateForInput error:', error);
+                return '';
+            }
+        }
+
+        // Smart format function that detects input type and formats accordingly
+        function formatDateForElement(dateString, elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                console.log(`⚠️ Element with id '${elementId}' not found, using datetime-local format`);
+                return formatDateTimeForInput(dateString); // fallback
+            }
+            
+            const inputType = element.type;
+            console.log(`📅 formatDateForElement: elementId='${elementId}', inputType='${inputType}', dateString='${dateString}'`);
+            
+            if (inputType === 'date') {
+                const result = formatDateForInput(dateString);
+                console.log(`📅 Using date format: ${dateString} -> ${result}`);
+                return result;
+            } else {
+                const result = formatDateTimeForInput(dateString);
+                console.log(`📅 Using datetime-local format: ${dateString} -> ${result}`);
+                return result;
+            }
+        }
+
         // Format phone number
         function formatPhoneNumber(phone) {
             if (!phone) return 'N/A';
@@ -458,7 +506,7 @@ function showNotification(message, type) {
                     
                     const dischargeDateEl = document.getElementById('dischargeDate');
                     if (dischargeDateEl) {
-                        dischargeDateEl.value = formatDateTimeForInput(record.dischargeDate);
+                        dischargeDateEl.value = formatDateForElement(record.dischargeDate, 'dischargeDate');
                         console.log('✅ dischargeDate set to:', dischargeDateEl.value);
                     } else {
                         console.error('❌ Element dischargeDate not found');
@@ -561,7 +609,7 @@ function showNotification(message, type) {
                 { id: 'recordCreatedDate', value: formatDateTimeForInput(testRecord.createdAt) },
                 { id: 'diagnosis', value: testRecord.diagnosis },
                 { id: 'treatmentPlan', value: testRecord.treatmentPlan },
-                { id: 'dischargeDate', value: formatDateTimeForInput(testRecord.dischargeDate) },
+                { id: 'dischargeDate', value: formatDateForElement(testRecord.dischargeDate, 'dischargeDate') },
                 { id: 'medicalNote', value: testRecord.note }
             ];
             
@@ -1441,7 +1489,7 @@ function renderMedicalHistoryContent(container, historyData) {
                                         document.getElementById('recordCreatedDate').value = formatDateTimeForInput(record.createdAt);
                                         document.getElementById('diagnosis').value = record.diagnosis || '';
                                         document.getElementById('treatmentPlan').value = record.treatmentPlan || '';
-                                        document.getElementById('dischargeDate').value = formatDateTimeForInput(record.dischargeDate);
+                                        document.getElementById('dischargeDate').value = formatDateForElement(record.dischargeDate, 'dischargeDate');
                                         document.getElementById('medicalNote').value = record.note || '';
                                     }
                                 }
@@ -2886,6 +2934,27 @@ window.scheduleNextAppointment = async function() {
         }
 
         const followBookId = bookingResult.bookId;
+
+        // 2.5. Tạo BookingStatusDetail cho booking tái khám
+        try {
+            console.log('📝 Creating BookingStatusDetail for follow-up bookId:', followBookId);
+            const statusDetailResponse = await fetch('/api/booking-status-detail/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookId: followBookId })
+            });
+            
+            if (statusDetailResponse.ok) {
+                console.log('✅ BookingStatusDetail created successfully for follow-up bookId:', followBookId);
+            } else if (statusDetailResponse.status === 409) {
+                console.log('ℹ️ BookingStatusDetail already exists for follow-up bookId:', followBookId);
+            } else {
+                console.warn('⚠️ Failed to create BookingStatusDetail for follow-up bookId:', followBookId, 'Status:', statusDetailResponse.status);
+            }
+        } catch (statusDetailError) {
+            console.error('❌ Error creating BookingStatusDetail for follow-up booking:', statusDetailError);
+            // Không throw error để không ảnh hưởng đến việc tạo lịch tái khám
+        }
 
         // 3. Liên kết MedicalRecord
         const patientObj = allPatients.find(p => p.cusId === currentNextAppPatient.cusId);

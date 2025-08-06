@@ -178,6 +178,45 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!dtString) return '';
         return dtString.split('.')[0].slice(0, 16); // "2025-06-29T16:21"
     }
+
+    // Convert datetime string to date format for date input (YYYY-MM-DD)
+    function toDateLocal(dtString) {
+        if (!dtString) return '';
+        try {
+            const date = new Date(dtString);
+            if (isNaN(date.getTime())) return '';
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        } catch (e) {
+            console.error('Error formatting date:', e);
+            return '';
+        }
+    }
+
+    // Smart format function that detects input type and formats accordingly
+    function formatDateForElement(dateString, elementId) {
+        const element = document.getElementById(elementId);
+        if (!element) {
+            console.log(`⚠️ Element with id '${elementId}' not found, using datetime-local format`);
+            return toDatetimeLocal(dateString); // fallback
+        }
+        
+        const inputType = element.type;
+        console.log(`📅 formatDateForElement: elementId='${elementId}', inputType='${inputType}', dateString='${dateString}'`);
+        
+        if (inputType === 'date') {
+            const result = toDateLocal(dateString);
+            console.log(`📅 Using date format: ${dateString} -> ${result}`);
+            return result;
+        } else {
+            const result = toDatetimeLocal(dateString);
+            console.log(`📅 Using datetime-local format: ${dateString} -> ${result}`);
+            return result;
+        }
+    }
+
     // Get current local date and time in the format YYYY-MM-DDTHH:MM
     function getLocalDateTimeValue() {
         const now = new Date();
@@ -234,35 +273,79 @@ window.checkout = async function (bookId, cusId, bookType) {
     const appointmentItem = document.querySelector(`[data-patient="${cusId}"]`);
     if (!appointmentItem) return;
 
-    let subIds = [];
-    if (bookType === 'follow-up') {
-        subIds = await getSubServiceIds(bookId);
-    } else if (bookType === 'initial') {
-        subIds = await getSubServiceIdsForInitial(bookId);
-    }
-
-    let allCompleted = true;
-    for (const subId of subIds) {
-        const res = await fetch(`/api/booking-steps/check-test-result/${bookId}/${subId}`);
-        const step = await res.json();
-        if (step.stepStatus !== 'completed') {
-            allCompleted = false;
-            break;
+    try {
+        // 1. Kiểm tra BookingStatusDetail trước khi checkout
+        const canCheckoutResponse = await fetch(`/api/booking-status-detail/can-checkout/${bookId}`);
+        
+        if (!canCheckoutResponse.ok) {
+            showNotification("❌ Lỗi khi kiểm tra trạng thái checkout!", "error");
+            return;
         }
-    }
-    if (!allCompleted) {
-        showNotification("❌ Vui lòng hoàn thành tất cả các xét nghiệm/bước trước khi checkout!", "error");
-        return;
-    }
-    await fetch(`/api/booking/update-status/${bookId}`, {
-        method: 'PUT',
-        body: JSON.stringify({ bookStatus: 'completed' }),
-        headers: { 'Content-Type': 'application/json' }
-    });
 
-    showNotification("✅ Đã check-out bệnh nhân thành công!", "success");
-    closeModal();
-    loadTodayBookings();
+        const canCheckoutData = await canCheckoutResponse.json();
+        
+        if (!canCheckoutData.canCheckout) {
+            let message = "❌ Không thể checkout! ";
+            if (canCheckoutData.prescriptionStatus !== 'success') {
+                message += "Vui lòng hoàn thành đơn thuốc. ";
+            }
+            if (canCheckoutData.revenueStatus !== 'success') {
+                message += "Vui lòng hoàn thành thanh toán.";
+            }
+            showNotification(message, "error");
+            return;
+        }
+
+        // 2. Kiểm tra tất cả các bước xét nghiệm đã hoàn thành
+        let subIds = [];
+        if (bookType === 'follow-up') {
+            subIds = await getSubServiceIds(bookId);
+        } else if (bookType === 'initial') {
+            subIds = await getSubServiceIdsForInitial(bookId);
+        }
+
+        let allCompleted = true;
+        for (const subId of subIds) {
+            const res = await fetch(`/api/booking-steps/check-test-result/${bookId}/${subId}`);
+            const step = await res.json();
+            if (step.stepStatus !== 'completed') {
+                allCompleted = false;
+                break;
+            }
+        }
+        
+        if (!allCompleted) {
+            showNotification("❌ Vui lòng hoàn thành tất cả các xét nghiệm/bước trước khi checkout!", "error");
+            return;
+        }
+
+        // 3. Cập nhật checkout time trong BookingStatusDetail
+        const checkoutResponse = await fetch(`/api/booking-status-detail/check-out/${bookId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!checkoutResponse.ok) {
+            const errorData = await checkoutResponse.json();
+            showNotification("❌ " + (errorData.message || "Lỗi khi checkout!"), "error");
+            return;
+        }
+
+        // 4. Cập nhật booking status thành completed
+        await fetch(`/api/booking/update-status/${bookId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ bookStatus: 'completed' }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        showNotification("✅ Đã check-out bệnh nhân thành công!", "success");
+        closeModal();
+        loadTodayBookings();
+        
+    } catch (error) {
+        console.error('Checkout error:', error);
+        showNotification("❌ Lỗi hệ thống khi checkout!", "error");
+    }
 };
 
     // Mark patient as cancelled
@@ -344,10 +427,28 @@ window.checkout = async function (bookId, cusId, bookType) {
             </button>
         `;
 
-
-
-        // 3. Kiểm tra có medical record chưa, nếu chưa thì tạo
         try {
+            // 1. Cập nhật check-in time (BookingStatusDetail đã được tạo khi xác nhận lịch hẹn)
+            const checkInResponse = await fetch(`/api/booking-status-detail/check-in/${bookId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (checkInResponse.ok) {
+                const checkInData = await checkInResponse.json();
+                console.log('✅ Updated check-in time:', checkInData.checkInTime);
+                
+                if (typeof showNotification === 'function') {
+                    showNotification('Bệnh nhân đã check-in thành công', 'success');
+                }
+            } else {
+                console.error('❌ Failed to update check-in time');
+                if (typeof showNotification === 'function') {
+                    showNotification('Không thể cập nhật thời gian check-in', 'error');
+                }
+            }
+
+            // 2. Kiểm tra có medical record chưa, nếu chưa thì tạo
             // API kiểm tra đã có medical record chưa
             const mres = await fetch(`/api/medical-records/exist?cusId=${cusId}&serId=${serId}`);
             const { exists } = await mres.json();
@@ -386,11 +487,6 @@ window.checkout = async function (bookId, cusId, bookType) {
                 });
 
                 if (typeof showNotification === 'function') showNotification('Đã tạo hồ sơ bệnh án!', 'success');
-
-                // Show success notification
-                if (typeof showNotification === 'function') {
-                    showNotification(`Đã check-in bệnh nhân thành công`, 'success');
-                }
             }
         //4.  nếu có medicalRecord rồi thì kiểm tra xem trường drugId của booking đó có chưa            
             const dres = await fetch(`/api/booking/${bookId}/has-drug`);
@@ -628,13 +724,25 @@ window.checkout = async function (bookId, cusId, bookType) {
             // 4. Hồ sơ y tế hiện tại
             if (patientData.currentMedicalRecord) {
                 const mr = patientData.currentMedicalRecord;
+                console.log('📋 Current Medical Record data:', mr);
                 localStorage.setItem('recordId', mr.recordId || '');
                 document.getElementById('recordStatus').value = mr.recordStatus || '';
                 document.getElementById('diagnosis').value = mr.diagnosis || '';
                 document.getElementById('treatmentPlan').value = mr.treatmentPlan || '';
                 document.getElementById('recordCreatedDate').value = toDatetimeLocal(mr.createdAt) || '';
-                document.getElementById('dischargeDate').value = toDatetimeLocal(mr.dischargeDate) || '';
+                
+                // Special handling for discharge date with debugging
+                const dischargeDateValue = formatDateForElement(mr.dischargeDate, 'dischargeDate') || '';
+                document.getElementById('dischargeDate').value = dischargeDateValue;
+                console.log('📅 Discharge date processed:', {
+                    original: mr.dischargeDate,
+                    formatted: dischargeDateValue,
+                    inputElement: document.getElementById('dischargeDate')
+                });
+                
                 document.getElementById('medicalNote').value = mr.medicalNotes || '';
+            } else {
+                console.log('⚠️ No current medical record found in patient data');
             }
 
             // 5. Cập nhật UI badge trạng thái cuộc hẹn dựa trên bookStatus từ API
@@ -806,8 +914,6 @@ window.checkout = async function (bookId, cusId, bookType) {
                     headers: { 'Content-Type': 'application/json' }
                 });
             }
-
-
 
             alert('Đã lưu hồ sơ bệnh án thành công!');
 
@@ -1100,20 +1206,20 @@ window.checkout = async function (bookId, cusId, bookType) {
         return date.toISOString().slice(0, 16);
     }
     // Ví dụ gọi API khi chuyển tab/hoặc khi load trang
-    async function loadAndRenderTestResults(bookId) {
-        try {
-            const res = await fetch(`/api/booking-steps/test-results/${bookId}`); // Sửa path nếu cần
-            if (!res.ok) throw new Error('API error');
-            const data = await res.json();
-            // Log kết quả subservice:
-            console.log('Test Results API:', data);
+    // async function loadAndRenderTestResults(bookId) {
+    //     try {
+    //         const res = await fetch(`/api/booking-steps/test-results/${bookId}`); // Sửa path nếu cần
+    //         if (!res.ok) throw new Error('API error');
+    //         const data = await res.json();
+    //         // Log kết quả subservice:
+    //         console.log('Test Results API:', data);
 
 
-            window.renderTestResults(data);
-        } catch (e) {
-            window.renderTestResults([]); // Hiện form trống
-        }
-    }
+    //         window.renderTestResults(data);
+    //     } catch (e) {
+    //         window.renderTestResults([]); // Hiện form trống
+    //     }
+    // }
 
 
 
@@ -1676,6 +1782,21 @@ window.checkout = async function (bookId, cusId, bookType) {
             });
 
             if (!drugItemRes.ok) throw new Error('Không thể lưu thuốc con');
+
+            // (3) Cập nhật prescription status thành success
+            const bookId = localStorage.getItem('bookId');
+            if (bookId) {
+                const prescriptionStatusResponse = await fetch(`/api/booking-status-detail/prescription-success/${bookId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (prescriptionStatusResponse.ok) {
+                    console.log('✅ Updated prescription status to success');
+                } else {
+                    console.error('Failed to update prescription status');
+                }
+            }
 
             showNotification('💊 Đã lưu đơn thuốc thành công!', 'success');
         } catch (err) {

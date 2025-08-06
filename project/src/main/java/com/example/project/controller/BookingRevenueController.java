@@ -2,7 +2,6 @@ package com.example.project.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.project.entity.BookingRevenue;
+import com.example.project.entity.BookingStatusDetail;
 import com.example.project.entity.Image;
 import com.example.project.repository.BookingRevenueRepository;
+import com.example.project.repository.BookingStatusDetailRepository;
 import com.example.project.repository.ImageRepository;
 
 @RestController
@@ -35,6 +36,9 @@ public class BookingRevenueController {
     private BookingRevenueRepository bookingRevenueRepository;
 
     @Autowired
+    private BookingStatusDetailRepository bookingStatusDetailRepository;
+
+    @Autowired
     private ImageRepository imageRepository;
 
     // ----------- API UPLOAD ẢNH BILL THANH TOÁN -----------
@@ -42,7 +46,7 @@ public class BookingRevenueController {
     public ResponseEntity<?> uploadBillImage(
             @PathVariable Integer revenueId,
             @RequestParam("billImage") MultipartFile file
-    ) {
+    )   {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("File rỗng");
@@ -110,6 +114,22 @@ public class BookingRevenueController {
         BookingRevenue revenue = revenueOpt.get();
         revenue.setRevenueStatus(BookingRevenue.RevenueStatus.success);
         bookingRevenueRepository.save(revenue);
+
+        // Cập nhật BookingStatusDetail revenueStatus thành 'success'
+        try {
+            Optional<BookingStatusDetail> statusDetailOpt = bookingStatusDetailRepository.findByBookId(revenue.getBookId());
+            if (statusDetailOpt.isPresent()) {
+                BookingStatusDetail statusDetail = statusDetailOpt.get();
+                statusDetail.setRevenueStatus("success");
+                bookingStatusDetailRepository.save(statusDetail);
+                System.out.println("✅ Updated BookingStatusDetail revenue status to success for bookId: " + revenue.getBookId());
+            } else {
+                System.err.println("❌ BookingStatusDetail not found for bookId: " + revenue.getBookId());
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Failed to update BookingStatusDetail revenue status: " + e.getMessage());
+            // Không throw exception để không ảnh hưởng đến payment confirmation
+        }
 
         return ResponseEntity.ok().body("Xác nhận thanh toán thành công");
     }

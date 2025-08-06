@@ -975,16 +975,16 @@
         let doctorsData = [];
         
         // Load doctors from API
-        async function loadDoctorsFromAPI() {
-            try {
-                const response = await fetch('/api/doctors/public');
-                if (response.ok) {
-                    doctorsData = await response.json();
-                }
-            } catch (error) {
-                // Handle error silently
-            }
-        }
+        // async function loadDoctorsFromAPI() {
+        //     try {
+        //         const response = await fetch('/api/doctors/public');
+        //         if (response.ok) {
+        //             doctorsData = await response.json();
+        //         }
+        //     } catch (error) {
+        //         // Handle error silently
+        //     }
+        // }
         
         // Enhanced function to get doctor data by name
         function getDoctorDataByName(doctorName) {
@@ -1038,7 +1038,7 @@
         
         // Load doctors data when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            loadDoctorsFromAPI();
+            // loadDoctorsFromAPI();
         });
     </script>
 </body>

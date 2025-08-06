@@ -246,10 +246,10 @@ public ResponseEntity<List<Map<String, Object>>> getFollowUpSubservices(@PathVar
     }        
 
         
-    @GetMapping("/test-results/{bookId}")
-    public List<TestResult> getTestResultsForBooking(@PathVariable Integer bookId) {
-        return bookingStepService.getTestResultsForBooking(bookId);
-    }
+    // @GetMapping("/test-results/{bookId}")
+    // public List<TestResult> getTestResultsForBooking(@PathVariable Integer bookId) {
+    //     return bookingStepService.getTestResultsForBooking(bookId);
+    // }
 
 
     @PostMapping("/create-step-for-initial-booking")

@@ -176,6 +176,28 @@ fetch(`/api/booking-steps/${bookId}/subservice-of-visit`)
         try {
             const response = await fetch(`/api/booking/${id}/status?status=confirmed`, { method: 'PUT' });
             if (!response.ok) throw new Error(await response.text() || 'Không thể xác nhận booking');
+            
+            // Tạo BookingStatusDetail ngay khi xác nhận lịch hẹn
+            try {
+                console.log('📝 Creating BookingStatusDetail for bookId:', id);
+                const statusDetailResponse = await fetch('/api/booking-status-detail/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bookId: id })
+                });
+                
+                if (statusDetailResponse.ok) {
+                    console.log('✅ BookingStatusDetail created successfully for bookId:', id);
+                } else if (statusDetailResponse.status === 409) {
+                    console.log('ℹ️ BookingStatusDetail already exists for bookId:', id);
+                } else {
+                    console.warn('⚠️ Failed to create BookingStatusDetail for bookId:', id, 'Status:', statusDetailResponse.status);
+                }
+            } catch (statusDetailError) {
+                console.error('❌ Error creating BookingStatusDetail:', statusDetailError);
+                // Không throw error để không ảnh hưởng đến việc xác nhận booking
+            }
+            
             await createBookingStep(id);
             showSuccess('Đã xác nhận booking!');
             closeDetailModal();
