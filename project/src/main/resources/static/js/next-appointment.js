@@ -212,14 +212,30 @@ function showNotification(message, type) {
 
         // Format date and time for datetime-local input
         function formatDateTimeForInput(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${year}-${month}-${day}T${hours}:${minutes}`;
+            if (!dateString) {
+                console.log('🔍 formatDateTimeForInput: empty dateString, returning empty string');
+                return '';
+            }
+            
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    console.log('🔍 formatDateTimeForInput: invalid date, returning empty string');
+                    return '';
+                }
+                
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const result = `${year}-${month}-${day}T${hours}:${minutes}`;
+                console.log('🔍 formatDateTimeForInput:', dateString, '->', result);
+                return result;
+            } catch (error) {
+                console.error('❌ formatDateTimeForInput error:', error);
+                return '';
+            }
         }
 
         // Format phone number
@@ -343,10 +359,20 @@ function showNotification(message, type) {
             try {
                 showLoading();
                 
-                console.log('🔍 Loading patient record for cusId:', cusId, 'bookId:', bookId);
+                console.log('🔍 Loading patient record for cusId:', cusId, 'bookId:', bookId, 'recordId:', recordId);
                 
-                // Show modal first
-                document.getElementById('patientModal').style.display = 'block';
+                // Show modal and ensure it's visible
+                const modal = document.getElementById('patientModal');
+                if (!modal) {
+                    console.error('❌ Patient modal not found');
+                    return;
+                }
+                modal.style.display = 'block';
+                modal.classList.add('flex');
+                console.log('✅ Modal displayed');
+                
+                // Wait a moment for modal to render
+                await new Promise(resolve => setTimeout(resolve, 50));
                 
                 // Store for later use
                 currentPatientData = { cusId, bookId, recordId };
@@ -383,33 +409,90 @@ function showNotification(message, type) {
                 // Populate basic patient information
                 populatePatientInfo(patientData);
                 
-                // Populate current examination tab
-                populateCurrentExamination(patientData, []);
-                
-                // Load medical record data
-                if (bookId) {
-                    console.log('Loading medical record data for bookId:', bookId);
+                // Load medical record data FIRST
+                if (bookId && recordId) {
+                    console.log('Loading medical record data for recordId:', recordId);
 
-            const res = await fetch(`/api/medical-records/${recordId}`);
-            if (!res.ok) throw new Error('Không tìm thấy hồ sơ bệnh án');
-            const record = await res.json();
-            console.log('🎯 DEBUG: Loaded medical record:', record);
+                    const res = await fetch(`/api/medical-records/${recordId}`);
+                    if (!res.ok) throw new Error('Không tìm thấy hồ sơ bệnh án');
+                    const record = await res.json();
+                    console.log('🎯 DEBUG: Loaded medical record:', record);
 
                     // Store the medical record data for later use
                     currentPatientData.currentMedicalRecord = record;
 
-            // Gán vào UI tab "Hồ sơ bệnh án"
-            document.getElementById('recordStatus').value = record.recordStatus || '';
-            document.getElementById('recordCreatedDate').value = formatDateTimeForInput(record.createdAt);
-            document.getElementById('diagnosis').value = record.diagnosis || '';
-            document.getElementById('treatmentPlan').value = record.treatmentPlan || '';
-            document.getElementById('dischargeDate').value = formatDateTimeForInput(record.dischargeDate);
-            document.getElementById('medicalNote').value = record.note || '';
+                    // Gán TRỰC TIẾP vào UI tab "Hồ sơ bệnh án" với error handling
+                    console.log('🔍 Setting medical record fields:');
+                    
+                    const recordStatusEl = document.getElementById('recordStatus');
+                    if (recordStatusEl) {
+                        recordStatusEl.value = record.recordStatus || '';
+                        console.log('✅ recordStatus set to:', recordStatusEl.value);
+                    } else {
+                        console.error('❌ Element recordStatus not found');
+                    }
+                    
+                    const recordCreatedDateEl = document.getElementById('recordCreatedDate');
+                    if (recordCreatedDateEl) {
+                        recordCreatedDateEl.value = formatDateTimeForInput(record.createdAt);
+                        console.log('✅ recordCreatedDate set to:', recordCreatedDateEl.value);
+                    } else {
+                        console.error('❌ Element recordCreatedDate not found');
+                    }
+                    
+                    const diagnosisEl = document.getElementById('diagnosis');
+                    if (diagnosisEl) {
+                        diagnosisEl.value = record.diagnosis || '';
+                        console.log('✅ diagnosis set to:', diagnosisEl.value);
+                    } else {
+                        console.error('❌ Element diagnosis not found');
+                    }
+                    
+                    const treatmentPlanEl = document.getElementById('treatmentPlan');
+                    if (treatmentPlanEl) {
+                        treatmentPlanEl.value = record.treatmentPlan || '';
+                        console.log('✅ treatmentPlan set to:', treatmentPlanEl.value);
+                    } else {
+                        console.error('❌ Element treatmentPlan not found');
+                    }
+                    
+                    const dischargeDateEl = document.getElementById('dischargeDate');
+                    if (dischargeDateEl) {
+                        dischargeDateEl.value = formatDateTimeForInput(record.dischargeDate);
+                        console.log('✅ dischargeDate set to:', dischargeDateEl.value);
+                    } else {
+                        console.error('❌ Element dischargeDate not found');
+                    }
+                    
+                    const medicalNoteEl = document.getElementById('medicalNote');
+                    if (medicalNoteEl) {
+                        medicalNoteEl.value = record.note || '';  // FIX: Dùng record.note thay vì record.medicalNotes
+                        console.log('✅ medicalNote set to:', medicalNoteEl.value);
+                    } else {
+                        console.error('❌ Element medicalNote not found');
+                    }
+                    
+                    // Verify all fields are populated after a short delay
+                    setTimeout(() => {
+                        console.log('🔍 Verifying all medical record fields after 100ms:');
+                        const verificationFields = ['recordStatus', 'recordCreatedDate', 'diagnosis', 'treatmentPlan', 'dischargeDate', 'medicalNote'];
+                        verificationFields.forEach(fieldId => {
+                            const element = document.getElementById(fieldId);
+                            if (element) {
+                                console.log(`✅ ${fieldId}: "${element.value}" (visible: ${element.offsetParent !== null})`);
+                            } else {
+                                console.error(`❌ ${fieldId}: Element not found`);
+                            }
+                        });
+                    }, 100);
                         
                     // Load test results and prescription data
                     loadAndRenderTestResults(recordId);
                     await loadExistingPrescriptionData(recordId);
                 }
+                
+                // Populate current examination tab AFTER loading medical record data
+                populateCurrentExamination(patientData, []);
                 
                 hideLoading();
                 
@@ -457,31 +540,52 @@ function showNotification(message, type) {
             }
         }
 
+        // Debug function to test medical record field population
+        window.testMedicalRecordFields = function() {
+            console.log('🧪 Testing medical record field population...');
+            
+            const testRecord = {
+                recordStatus: 'active',
+                createdAt: '2024-12-06T10:30:00',
+                diagnosis: 'Test diagnosis content',
+                treatmentPlan: 'Test treatment plan content',
+                dischargeDate: '2024-12-20T15:00:00',
+                note: 'Test medical note content'
+            };
+            
+            console.log('🧪 Test record data:', testRecord);
+            
+            // Test setting each field
+            const fields = [
+                { id: 'recordStatus', value: testRecord.recordStatus },
+                { id: 'recordCreatedDate', value: formatDateTimeForInput(testRecord.createdAt) },
+                { id: 'diagnosis', value: testRecord.diagnosis },
+                { id: 'treatmentPlan', value: testRecord.treatmentPlan },
+                { id: 'dischargeDate', value: formatDateTimeForInput(testRecord.dischargeDate) },
+                { id: 'medicalNote', value: testRecord.note }
+            ];
+            
+            fields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (element) {
+                    element.value = field.value;
+                    console.log(`✅ ${field.id}: "${element.value}"`);
+                } else {
+                    console.error(`❌ ${field.id}: Element not found`);
+                }
+            });
+            
+            console.log('🧪 Test completed. Check the modal fields!');
+        };
+
         function populateCurrentExamination(patientData, bookingSteps) {
-            // Medical record information only (booking info and steps management removed)
-            if (patientData.currentMedicalRecord) {
-                const record = patientData.currentMedicalRecord;
-                
-                // Record status
-                const recordStatusElement = document.getElementById('recordStatus');
-                recordStatusElement.value = record.recordStatus || 'active'; // Use value for select
-
-                document.getElementById('recordCreatedDate').value = record.createdAt ? formatDateTimeForInput(record.createdAt) : ''; // Use formatDateTimeForInput for datetime-local
-                document.getElementById('diagnosis').value = record.diagnosis || ''; // Use value for textarea
-                document.getElementById('treatmentPlan').value = record.treatmentPlan || ''; // Use value for textarea
-                document.getElementById('dischargeDate').value = record.dischargeDate ? formatDateTimeForInput(record.dischargeDate) : ''; // Use formatDateTimeForInput for datetime-local
-                document.getElementById('medicalNote').value = record.medicalNotes || ''; // Use value for textarea
-            } else {
-                document.getElementById('recordStatus').value = 'active'; // Reset select
-                document.getElementById('recordCreatedDate').value = ''; // Reset datetime-local
-                document.getElementById('diagnosis').value = ''; // Reset textarea
-                document.getElementById('treatmentPlan').value = ''; // Reset textarea
-                document.getElementById('dischargeDate').value = ''; // Reset datetime-local
-                document.getElementById('medicalNote').value = ''; // Reset textarea
-            }
-
+            // Only populate service name - NOT medical record fields to avoid overwriting
+            console.log('🔍 populateCurrentExamination called - only setting service name');
+            
             // Service name
             document.getElementById('serviceName').textContent = patientData.serviceName || 'Chưa xác định';
+            
+            console.log('✅ populateCurrentExamination completed - medical record fields preserved');
         }
 
         async function loadMedicalHistory(recordId) {
@@ -576,10 +680,10 @@ function renderMedicalHistoryContent(container, historyData) {
             try {
                 treatmentContent.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Đang tải kế hoạch điều trị...</div>';
                 
-                // Fetch treatment progress using bookId
+                // Fetch treatment progress using recordId
                 let treatmentProgressData = null;
-                if (patientData.bookId) {
-                    const response = await fetch(`/api/booking-steps/treatment-progress/${patientData.bookId}`);
+                if (patientData.recordId) {
+                    const response = await fetch(`/api/booking-steps/treatment-progress-by-record/${patientData.recordId}`);
                     if (response.ok) {
                         treatmentProgressData = await response.json();
                     }

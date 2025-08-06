@@ -27,9 +27,11 @@ import com.example.project.dto.BookingWithStepsAndDrug;
 import com.example.project.dto.TestResult;
 import com.example.project.entity.Booking;
 import com.example.project.entity.BookingStep;
+import com.example.project.entity.MedicalRecordBooking;
 import com.example.project.entity.SubService;
 import com.example.project.repository.BookingRepository;
 import com.example.project.repository.BookingStepRepository;
+import com.example.project.repository.MedicalRecordBookingRepository;
 import com.example.project.repository.SubServiceRepository;
 import com.example.project.service.BookingStepService;
 
@@ -46,6 +48,8 @@ public class BookingStepController {
     private SubServiceRepository subServiceRepo;
     @Autowired
     private BookingRepository bookingRepo;
+    @Autowired
+    private MedicalRecordBookingRepository medicalRecordBookingRepo;
 
 
     @Autowired
@@ -414,6 +418,155 @@ public ResponseEntity<?> getBookingStepId(
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", "Lỗi khi tính toán tiến độ điều trị: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
+    /**
+     * Tính toán tiến độ điều trị từ Medical Record - tổng hợp từ tất cả booking của record
+     * @param recordId ID của medical record
+     * @return Thông tin tiến độ điều trị tổng hợp
+     */
+    @GetMapping("/treatment-progress-by-record/{recordId}")
+    public ResponseEntity<?> getTreatmentProgressByRecord(@PathVariable Integer recordId) {
+        try {
+            // Lấy tất cả MedicalRecordBooking của record này
+            List<MedicalRecordBooking> recordBookingLinks = medicalRecordBookingRepo.findByIdRecordId(recordId);
+            if (recordBookingLinks.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            // Lấy tất cả booking từ các MedicalRecordBooking
+            List<Integer> bookingIds = recordBookingLinks.stream()
+                .map(link -> link.getId().getBookId())
+                .collect(Collectors.toList());
+            
+            List<Booking> recordBookings = bookingRepo.findAllById(bookingIds);
+            if (recordBookings.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            // Lấy serId từ booking đầu tiên (giả sử tất cả booking trong cùng record có cùng service)
+            Integer serId = recordBookings.get(0).getSerId();
+            
+            // Lấy tất cả SubService của service này
+            List<SubService> allSubServices = subServiceRepo.findBySerId(serId);
+            
+            // Lấy tất cả BookingStep từ tất cả booking của record này
+            List<BookingStep> allBookingSteps = new ArrayList<>();
+            for (Integer bookId : bookingIds) {
+                allBookingSteps.addAll(bookingStepRepo.findByBookId(bookId));
+            }
+            
+            // Tính toán tiến độ
+            int totalSubServices = allSubServices.size();
+            int completedSubServices = 0;
+            int pendingSubServices = 0;
+            int inactiveSubServices = 0;
+            
+            // Đếm số lượng SubService đã hoàn thành (ưu tiên completed > pending > inactive)
+            for (SubService subService : allSubServices) {
+                boolean hasCompletedStep = allBookingSteps.stream()
+                    .anyMatch(step -> step.getSubId().equals(subService.getSubId()) 
+                        && "completed".equals(step.getStepStatus()));
+                
+                boolean hasPendingStep = allBookingSteps.stream()
+                    .anyMatch(step -> step.getSubId().equals(subService.getSubId()) 
+                        && "pending".equals(step.getStepStatus()));
+                
+                if (hasCompletedStep) {
+                    completedSubServices++;
+                } else if (hasPendingStep) {
+                    pendingSubServices++;
+                } else {
+                    inactiveSubServices++;
+                }
+            }
+            
+            // Tính phần trăm tiến độ
+            double progressPercentage = totalSubServices > 0 ? 
+                (double) completedSubServices / totalSubServices * 100 : 0;
+            
+            // Tạo response
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalSubServices", totalSubServices);
+            response.put("completedSubServices", completedSubServices);
+            response.put("pendingSubServices", pendingSubServices);
+            response.put("inactiveSubServices", inactiveSubServices);
+            response.put("progressPercentage", Math.round(progressPercentage * 100.0) / 100.0);
+            response.put("serviceName", serId); // Service ID, có thể thêm service name nếu cần
+            response.put("recordId", recordId);
+            response.put("totalBookings", recordBookings.size());
+            
+            // Thêm chi tiết từng SubService với thông tin tổng hợp từ tất cả booking
+            List<Map<String, Object>> subServiceDetails = new ArrayList<>();
+            for (SubService subService : allSubServices) {
+                Map<String, Object> detail = new HashMap<>();
+                detail.put("subId", subService.getSubId());
+                detail.put("subName", subService.getSubName());
+                detail.put("subDescription", subService.getSubDescription());
+                detail.put("subPrice", subService.getSubPrice());
+                
+                // Tìm tất cả BookingStep của SubService này từ tất cả booking
+                List<BookingStep> subServiceSteps = allBookingSteps.stream()
+                    .filter(step -> step.getSubId().equals(subService.getSubId()))
+                    .collect(Collectors.toList());
+                
+                if (!subServiceSteps.isEmpty()) {
+                    // Ưu tiên lấy step có status cao nhất (completed > pending > inactive)
+                    BookingStep priorityStep = subServiceSteps.stream()
+                        .sorted((s1, s2) -> {
+                            // Sắp xếp theo độ ưu tiên: completed > pending > khác
+                            int priority1 = "completed".equals(s1.getStepStatus()) ? 3 : 
+                                          "pending".equals(s1.getStepStatus()) ? 2 : 1;
+                            int priority2 = "completed".equals(s2.getStepStatus()) ? 3 : 
+                                          "pending".equals(s2.getStepStatus()) ? 2 : 1;
+                            return Integer.compare(priority2, priority1); // Sắp xếp giảm dần
+                        })
+                        .findFirst()
+                        .orElse(subServiceSteps.get(0));
+                    
+                    detail.put("stepStatus", priorityStep.getStepStatus());
+                    detail.put("performedAt", priorityStep.getPerformedAt());
+                    detail.put("result", priorityStep.getResult());
+                    detail.put("note", priorityStep.getNote());
+                    detail.put("bookingStepId", priorityStep.getBookingStepId());
+                    detail.put("bookId", priorityStep.getBookId()); // Thêm bookId để biết step này từ booking nào
+                    
+                    // Thêm thông tin về tất cả các lần thực hiện
+                    List<Map<String, Object>> allAttempts = new ArrayList<>();
+                    for (BookingStep step : subServiceSteps) {
+                        Map<String, Object> attempt = new HashMap<>();
+                        attempt.put("bookingStepId", step.getBookingStepId());
+                        attempt.put("bookId", step.getBookId());
+                        attempt.put("stepStatus", step.getStepStatus());
+                        attempt.put("performedAt", step.getPerformedAt());
+                        attempt.put("result", step.getResult());
+                        attempt.put("note", step.getNote());
+                        allAttempts.add(attempt);
+                    }
+                    detail.put("allAttempts", allAttempts);
+                    detail.put("attemptCount", subServiceSteps.size());
+                } else {
+                    detail.put("stepStatus", "inactive");
+                    detail.put("performedAt", null);
+                    detail.put("result", null);
+                    detail.put("note", null);
+                    detail.put("bookingStepId", null);
+                    detail.put("bookId", null);
+                    detail.put("allAttempts", new ArrayList<>());
+                    detail.put("attemptCount", 0);
+                }
+                
+                subServiceDetails.add(detail);
+            }
+            response.put("subServiceDetails", subServiceDetails);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Lỗi khi tính toán tiến độ điều trị theo record: " + e.getMessage());
             return ResponseEntity.status(500).body(errorResponse);
         }
     }
