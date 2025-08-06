@@ -774,8 +774,8 @@ window.checkout = async function (bookId, cusId, bookType) {
                 headers: { 'Content-Type': 'application/json' }
             });
 
-            // (2) Gọi API insert MedicalRecord
-            await fetch(`/api/medical-records/update-with-booking/${recordId}`, {
+            // (2) Gọi API insert MedicalRecord với improved error handling  
+            const medicalRecordResponse = await fetch(`/api/medical-records/update-with-booking/${recordId}`, {
                 method: 'PUT',
                 body: JSON.stringify({
                     recordStatus: recordStatus,
@@ -787,6 +787,15 @@ window.checkout = async function (bookId, cusId, bookType) {
                 }),
                 headers: { 'Content-Type': 'application/json' }
             });
+
+            if (!medicalRecordResponse.ok) {
+                const errorText = await medicalRecordResponse.text();
+                console.error('❌ Medical record update failed:', errorText);
+                throw new Error(`Medical record update failed: ${medicalRecordResponse.status} - ${errorText}`);
+            }
+
+            const medicalRecordResult = await medicalRecordResponse.json();
+            console.log('✅ Medical record updated successfully:', medicalRecordResult);
 
 
             // (3) Gọi API insert BookingStep cho từng bước
