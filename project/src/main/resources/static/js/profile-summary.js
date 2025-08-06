@@ -33,6 +33,23 @@ style.innerText = `
 `;
 document.head.appendChild(style);
 document.addEventListener('DOMContentLoaded', function() {
+    // Kiểm tra xem có đủ element cần thiết không
+    function checkRequiredElements() {
+        const requiredElements = [
+            'timeline-week',
+            'timeline-week-label', 
+            'timeline-legend',
+            'progress-steps'
+        ];
+        
+        const missingElements = requiredElements.filter(id => !document.getElementById(id));
+        if (missingElements.length > 0) {
+            console.warn('Missing required elements:', missingElements);
+            return false;
+        }
+        return true;
+    }
+    
     // Thêm hàm phân loại màu dot cho từng subName
     function getIconClass(subName) {
         if (!subName) return '';
@@ -52,6 +69,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const cusId = localStorage.getItem('cusId');
     if (!cusId) return;
+    
+    // Kiểm tra xem có phải đang ở trang dashboard không
+    const isDashboardPage = window.location.pathname.includes('dashboard.html');
+    
+    // Chỉ chạy timeline logic nếu ở trang dashboard
+    if (isDashboardPage) {
+        // Kiểm tra element cần thiết
+        if (!checkRequiredElements()) {
+            console.log('Required elements not found, skipping timeline update');
+            return;
+        }
+    }
 
     fetch(`http://localhost:8080/api/patient-profile/${encodeURIComponent(cusId)}`)
         .then(res => res.json())
@@ -75,6 +104,13 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.profile-doctor').forEach(span => {
                 if (span && data.bacSiPhuTrach) {
                     span.textContent = data.bacSiPhuTrach;
+                } else if (span) {
+                    span.textContent = "Chưa có";
+                }
+            });
+            document.querySelectorAll('.profile-doctor-email').forEach(span => {
+                if (span && data.bacSiEmail) {
+                    span.textContent = data.bacSiEmail;
                 } else if (span) {
                     span.textContent = "Chưa có";
                 }
@@ -129,10 +165,59 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // =========== SỬA PHẦN RENDER TIMELINE TUẦN HIỆN TẠI ===========
-    fetch(`http://localhost:8080/api/patient-profile/steps/${encodeURIComponent(cusId)}`)
+    if (isDashboardPage) {
+        // First, get the latest booking to get bookId
+        fetch(`http://localhost:8080/api/booking/by-customer/${encodeURIComponent(cusId)}`)
+        .then(res => res.json())
+        .then(bookings => {
+            if (!bookings || bookings.length === 0) {
+                console.log('No bookings found for patient');
+                return;
+            }
+            
+            // Get the latest booking ID (first in the list since it's ordered by bookId desc)
+            const latestBooking = bookings[0];
+            const bookId = latestBooking.bookId;
+            
+            if (!bookId) {
+                console.log('No booking ID found');
+                return;
+            }
+            
+            // Now get the treatment progress using the correct API
+            return fetch(`http://localhost:8080/api/booking-steps/treatment-progress/${bookId}`);
+        })
+        .then(res => res.json())
+        .then(treatmentData => {
+            if (!treatmentData) return;
+            
+            // Update progress display with the correct data
+            const progressPercentage = document.getElementById('progress-percentage');
+            const progressFill = document.getElementById('progress-fill');
+            const progressSteps = document.getElementById('progress-steps');
+            
+            const percentage = treatmentData.progressPercentage || 0;
+            const completedCount = treatmentData.completedSubServices || 0;
+            const totalSteps = treatmentData.totalSubServices || 0;
+            
+            if (progressPercentage) {
+                progressPercentage.textContent = `${Math.round(percentage)}%`;
+            }
+            
+            if (progressFill) {
+                progressFill.style.width = `${percentage}%`;
+            }
+            
+            if (progressSteps) {
+                progressSteps.textContent = `${completedCount}/${totalSteps} bước hoàn thành`;
+            }
+            
+            // Now get the steps for timeline display
+            return fetch(`http://localhost:8080/api/patient-profile/steps/${encodeURIComponent(cusId)}`);
+        })
         .then(res => res.json())
         .then(steps => {
-            if (!steps.length) return;
+            if (!steps || !steps.length) return;
 
             steps.sort((a, b) => new Date(a.performedAt) - new Date(b.performedAt));
 
@@ -175,19 +260,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <small>${weekday}</small>
                 </div>`;
             }
-            document.getElementById('timeline-week').innerHTML = timelineHTML;
-
-            // Progress bar: Giai đoạn hiện tại
-            const now = new Date();
-            const completedSteps = steps.filter(s =>
-                new Date(s.performedAt) <= now &&
-                s.stepStatus && s.stepStatus.toLowerCase() === "completed"
-            );
-            const currentStage = completedSteps.length + 1;
-            const totalStage = steps.length;
-            const stageName = (currentStage > 0 && currentStage <= steps.length) ? steps[currentStage-1].subName : '';
-            document.getElementById('progress-text').textContent =
-                `Giai đoạn ${currentStage}/${totalStage} - ${stageName}`;
+            const timelineWeek = document.getElementById('timeline-week');
+            if (timelineWeek) {
+                timelineWeek.innerHTML = timelineHTML;
+            }
 
             // === THÔNG BÁO SIDEBAR: Dịch vụ ngày mai & Lịch trình hôm nay - CHỐNG TRÙNG ===
             const todayObj = new Date();
@@ -233,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(e => {
             console.error('Lỗi lấy timeline:', e);
         });
+    }
 
     function setTimelineWeekLabel(date = new Date()) {
         // Tính tuần trong tháng
@@ -245,15 +322,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const month = date.getMonth() + 1; // JS getMonth() trả về 0-11
         const year = date.getFullYear();
 
-        document.getElementById('timeline-week-label').textContent =
-            `Tuần ${weekNumber} - Tháng ${month}/${year}`;
+        const timelineWeekLabel = document.getElementById('timeline-week-label');
+        if (timelineWeekLabel) {
+            timelineWeekLabel.textContent = `Tuần ${weekNumber} - Tháng ${month}/${year}`;
+        }
     }
 
     // Gọi hàm khi muốn cập nhật label
-    setTimelineWeekLabel();
+    if (isDashboardPage) {
+        setTimelineWeekLabel();
 
-    // Render legend động dựa trên các bước hiện có trong tuần hiện tại
-    fetch(`http://localhost:8080/api/patient-profile/steps/${encodeURIComponent(cusId)}`)
+        // Render legend động dựa trên các bước hiện có trong tuần hiện tại
+        fetch(`http://localhost:8080/api/patient-profile/steps/${encodeURIComponent(cusId)}`)
         .then(res => res.json())
         .then(steps => {
             if (!steps.length) return;
@@ -296,4 +376,5 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(e => {
             console.error('Lỗi lấy timeline:', e);
         });
+    }
 });

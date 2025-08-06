@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - FertilityEHR</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="shortcut icon" type="image/png" href="img/logo.png">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -106,6 +108,70 @@
 
         .btn-secondary:hover {
             background: #4b5563;
+        }
+
+        /* Progress Section Styles */
+        .progress-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .progress-percentage {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #10b981;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive styles for progress section */
+        @media (max-width: 768px) {
+            .progress-section {
+                padding: 1rem;
+            }
+            
+            .progress-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+            
+            .progress-percentage {
+                font-size: 1.1rem;
+            }
+            
+            .progress-details {
+                font-size: 0.8rem;
+            }
         }
 
         /* Medication Styles */
@@ -513,10 +579,17 @@
             </div>
 
 
-            <!-- Progress Bar -->
-            <div class="progress-bar">
-                <div class="progress-fill">
-                    <span class="progress-text" id="progress-text"></span>
+            <!-- Progress Section -->
+            <div class="progress-section">
+                <div class="progress-header">
+                    <div class="progress-title">Tiến độ điều trị</div>
+                    <div class="progress-percentage" id="progress-percentage">0%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="progress-details" id="progress-details" style="margin-top: 0.5rem; font-size: 0.85rem; color: #64748b;">
+                    <span id="progress-steps">0/0 bước hoàn thành</span>
                 </div>
             </div>
             <!-- TimeLine week -->
@@ -629,6 +702,10 @@
                 <div class="info-row">
                     <span class="info-label">Bác sĩ phụ trách</span>
                     <span class="info-value profile-doctor"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Thông tin liên hệ</span>
+                    <span class="info-value profile-doctor-email"></span>
                 </div>
             </div>
         </div>
@@ -1025,6 +1102,8 @@
             loadCurrentMedications();
         }, 1000);
     });
+
+
 </script>
 </body>
 

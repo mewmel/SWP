@@ -41,9 +41,9 @@ public class PatientProfileService {
         Booking latestBooking = bookings.get(0);
         LocalDateTime ngayDangKy = latestBooking.getCreatedAt();
 
-        String bacSiPhuTrach = doctorRepository.findById(latestBooking.getDocId())
-                .map(Doctor::getDocFullName)
-                .orElse("Không xác định");
+        Optional<Doctor> doctorOpt = doctorRepository.findById(latestBooking.getDocId());
+        String bacSiPhuTrach = doctorOpt.map(Doctor::getDocFullName).orElse("Không xác định");
+        String bacSiEmail = doctorOpt.map(Doctor::getDocEmail).orElse("Không có email");
 
         Integer latestBookingId = latestBooking.getBookId();
         List<BookingStep> stepsOfLatestBooking = bookingStepRepository.findByBookId(latestBookingId);
@@ -61,6 +61,7 @@ public class PatientProfileService {
                 cusId,
                 ngayDangKy,
                 bacSiPhuTrach,
+                bacSiEmail,
                 chuKyHienTai
         );
     }
