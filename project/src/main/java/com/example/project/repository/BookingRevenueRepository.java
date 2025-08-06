@@ -46,4 +46,11 @@ public interface BookingRevenueRepository extends JpaRepository<BookingRevenue, 
            "GROUP BY YEAR(br.createdAt), MONTH(br.createdAt) " +
            "ORDER BY year, month")
     List<Object[]> getMonthlyRevenue(@Param("startDate") java.time.LocalDateTime startDate);
+    
+    // Tính doanh thu theo năm và tháng cụ thể
+    @Query("SELECT SUM(br.totalAmount) FROM BookingRevenue br " +
+           "WHERE br.revenueStatus = 'success' " +
+           "AND YEAR(br.createdAt) = :year " +
+           "AND MONTH(br.createdAt) = :month")
+    BigDecimal getRevenueByYearMonth(@Param("year") Integer year, @Param("month") Integer month);
 }

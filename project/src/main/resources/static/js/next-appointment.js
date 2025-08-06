@@ -2379,12 +2379,46 @@ function renderMedicalHistoryContent(container, historyData) {
 
             try {
                 console.log('🔍 Loading prescription data for recordId:', recordId);
-                // Sử dụng recordId thay vì bookId cho API endpoint
-                const response = await fetch(`/api/drugs/by-record/${recordId}`);
+                
+                // First, get the bookId from recordId using MedicalRecordBooking
+                const bookIdResponse = await fetch(`/api/medical-record-booking/by-record/${recordId}`);
+                if (!bookIdResponse.ok) {
+                    console.log('❌ Failed to get bookId from recordId:', bookIdResponse.status);
+                    fillPrescriptionHeader();
+                    return;
+                }
+                
+                const bookIds = await bookIdResponse.json();
+                if (!bookIds || bookIds.length === 0) {
+                    console.log('❌ No bookIds found for recordId:', recordId);
+                    fillPrescriptionHeader();
+                    return;
+                }
+                
+                // Use the first (or latest) bookId
+                const bookId = bookIds[0];
+                console.log('✅ Found bookId:', bookId, 'for recordId:', recordId);
+                
+                // Store bookId in localStorage for later use
+                localStorage.setItem('currentBookId', bookId);
+                
+                // Also store cusId if available from currentPatientData
+                if (currentPatientData && currentPatientData.cusId) {
+                    localStorage.setItem('currentCusId', currentPatientData.cusId);
+                }
+                
+                // Also store docId if available from localStorage
+                const docId = localStorage.getItem('docId');
+                if (docId) {
+                    localStorage.setItem('docId', docId);
+                }
+                
+                // Now get drugs using the correct API endpoint
+                const response = await fetch(`/api/drugs/by-booking/${bookId}`);
                 
                 if (!response.ok) {
                     if (response.status === 404) {
-                        console.log('❌ No prescription data found for this record (404)');
+                        console.log('❌ No prescription data found for this booking (404)');
                         // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
                         fillPrescriptionHeader();
                         return;
@@ -2445,7 +2479,7 @@ function renderMedicalHistoryContent(container, historyData) {
                         console.log('✅ Loading drug items:', drugData[0].drugItems);
                         console.log('✅ Number of drug items:', drugData[0].drugItems.length);
                         drugsList.innerHTML = ''; // Clear existing
-                        drugCounter = 0;
+                        drugCounter = 0; // Reset drug counter
 
                         drugData[0].drugItems.forEach((item, index) => {
                             console.log(`✅ Adding drug item ${index + 1}:`, item);
@@ -2455,25 +2489,73 @@ function renderMedicalHistoryContent(container, historyData) {
                         updatePrescriptionSummary();
                         console.log('✅ Finished loading prescription data');
                         console.log('✅ Final drugsList innerHTML length:', drugsList.innerHTML.length);
+                        
+                        // Add event listeners for prescription changes
+                        addPrescriptionChangeListeners();
                     } else {
                         console.log('❌ No drug items found');
                         console.log('- drugItems exists:', !!(drugData[0] && drugData[0].drugItems));
                         if (drugData[0]) {
                             console.log('- drugData[0].drugItems:', drugData[0].drugItems);
                         }
+                        // Reset drug counter and clear list
+                        drugCounter = 0;
+                        drugsList.innerHTML = '';
+                        
+                        // Reset prescription modification flag
+                        window.prescriptionModified = false;
+                        
+                        // Update prescription summary
+                        updatePrescriptionSummary();
+                        
                         // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
                         fillPrescriptionHeader();
+                        
+                        // Add event listeners for prescription changes
+                        addPrescriptionChangeListeners();
                     }
                 } else {
                     console.log('❌ No prescription data found for this booking');
+                    // Reset drug counter and clear list
+                    drugCounter = 0;
+                    const drugsList = document.getElementById('drugsList');
+                    if (drugsList) {
+                        drugsList.innerHTML = '';
+                    }
+                    
+                    // Reset prescription modification flag
+                    window.prescriptionModified = false;
+                    
+                    // Update prescription summary
+                    updatePrescriptionSummary();
+                    
                     // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
                     fillPrescriptionHeader();
+                    
+                    // Add event listeners for prescription changes
+                    addPrescriptionChangeListeners();
                 }
 
             } catch (error) {
                 console.error('Error loading prescription data:', error);
+                // Reset drug counter and clear list
+                drugCounter = 0;
+                const drugsList = document.getElementById('drugsList');
+                if (drugsList) {
+                    drugsList.innerHTML = '';
+                }
+                
+                // Reset prescription modification flag
+                window.prescriptionModified = false;
+                
+                // Update prescription summary
+                updatePrescriptionSummary();
+                
                 // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
                 fillPrescriptionHeader();
+                
+                // Add event listeners for prescription changes
+                addPrescriptionChangeListeners();
             }
         }
 

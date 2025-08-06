@@ -175,52 +175,6 @@
     </div>
 </div>
 
-<!-- Modal xem bằng cấp chuyên môn -->
-<div id="degreeModal" class="modal">
-    <div class="modal-content degree-modal-content">
-        <div class="modal-header degree-modal-header">
-            <div class="header-icon">
-                <i class="fas fa-user-graduate"></i>
-            </div>
-            <div class="header-text">
-                <h3>Bằng cấp & Chuyên môn</h3>
-                <span class="doctor-name-subtitle" id="degreeDoctorName"></span>
-            </div>
-            <button class="close modern-close" id="closeDegreeModal">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="modal-body degree-modal-body">
-            <div class="degree-content-wrapper">
-                <div class="degree-section">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <h4>Bằng cấp</h4>
-                    </div>
-                    <div class="degree-list" id="degreeList"></div>
-                </div>
-                <div class="specialty-section">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <i class="fas fa-stethoscope"></i>
-                        </div>
-                        <h4>Chuyên môn</h4>
-                    </div>
-                    <div class="specialty-list" id="specialtyList"></div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer degree-modal-footer">
-            <button class="btn btn-primary modern-btn" id="closeDegreeBtn">
-                <i class="fas fa-check"></i>
-                Đóng
-            </button>
-        </div>
-    </div>
-</div>
-
 <!-- Modal xem chi tiết bác sĩ -->
 <div id="doctorDetailModal" class="modal">
     <div class="modal-content" style="max-width: 800px;">
@@ -437,20 +391,37 @@
 </div>
 <!-- ... (phần HTML trên giữ nguyên) ... -->
 <script>
-    // ====== DEMO DATA: Có thể thay bằng API backend ======
-    const doctorDegrees = {
-        'BS001': { name: 'BS. Nguyễn Văn A', degrees: [ { title: 'Bác sĩ Đa khoa', details: 'ĐH Y Hà Nội (2012)' } ], specialties: [ { title: 'Sản phụ khoa', details: '8 năm kinh nghiệm' } ] },
-        'BS002': { name: 'BS. Trần Thị B', degrees: [ { title: 'Bác sĩ Nội tiết', details: 'ĐH Y Dược TP.HCM (2013)' } ], specialties: [ { title: 'Nội tiết', details: '6 năm' } ] },
-        'BS003': { name: 'BS. Lê Văn C', degrees: [ { title: 'Bác sĩ Nhi', details: 'ĐH Y Hà Nội (2014)' } ], specialties: [ { title: 'Nhi', details: '7 năm' } ] },
-        'BS004': { name: 'BS. Phạm Thị D', degrees: [ { title: 'Bác sĩ Tim mạch', details: 'ĐH Y Dược TP.HCM (2015)' } ], specialties: [ { title: 'Tim mạch', details: '6 năm' } ] },
-        'BS005': { name: 'BS. Hoàng Văn E', degrees: [ { title: 'Bác sĩ Ngoại khoa', details: 'ĐH Y Hà Nội (2016)' } ], specialties: [ { title: 'Ngoại khoa', details: '5 năm' } ] },
-        'BS006': { name: 'BS. Đặng Thị F', degrees: [ { title: 'Bác sĩ Da liễu', details: 'ĐH Y Dược TP.HCM (2017)' } ], specialties: [ { title: 'Da liễu', details: '4 năm' } ] },
-    };
-    // ====== END DEMO DATA ======
 
     let doctors = [];
     let workslotsToday = [];
     let bookingStepsToday = [];
+    let monthlyRevenue = 0;
+
+    // Hàm lấy doanh thu tháng hiện tại
+    async function fetchMonthlyRevenue() {
+        try {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth() + 1; // getMonth() trả về 0-11
+            
+            const response = await fetch(`/api/stats/revenue?year=${year}&month=${month}`);
+            if (response.ok) {
+                const revenueData = await response.json();
+                monthlyRevenue = revenueData.totalRevenue || 0;
+            } else {
+                console.error('Không thể lấy dữ liệu doanh thu');
+                monthlyRevenue = 0;
+            }
+        } catch (error) {
+            console.error('Lỗi khi lấy doanh thu:', error);
+            monthlyRevenue = 0;
+        }
+    }
+
+    // Hàm format số tiền VND với dấu phẩy
+    function formatCurrency(amount) {
+        return amount.toLocaleString('vi-VN');
+    }
 
     // Hàm lấy workslot hôm nay
     async function fetchWorkslotsToday() {
@@ -480,6 +451,7 @@
         const tableBody = document.querySelector('.doctors-table tbody');
         await fetchWorkslotsToday();
         await fetchBookingStepsToday();
+        await fetchMonthlyRevenue(); // Thêm dòng này để lấy doanh thu
 
         try {
             const res = await fetch('/api/doctors');
@@ -534,9 +506,6 @@
                     <button class="action-btn rate" onclick="showRatingModal('${doctorCode}')" title="Đánh giá">
                         <i class="fas fa-star"></i>
                     </button>
-                    <button class="action-btn view view-degree-btn" data-doctor="${doctorCode}" title="Bằng cấp">
-                        <i class="fas fa-user-graduate"></i>
-                    </button>
                     <button class="action-btn edit" onclick="openAddEditDoctorModal('${doctorCode}')" title="Sửa">
                         <i class="fas fa-edit"></i>
                     </button>
@@ -549,13 +518,6 @@
                 tableBody.appendChild(tr);
             });
 
-            document.querySelectorAll('.view-degree-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const doctorId = this.getAttribute('data-doctor');
-                    openDegreeModal(doctorId);
-                });
-            });
-
             document.getElementById('totalDoctors').textContent = doctors.length;
             const activeDoctorIds = new Set(
                 workslotsToday
@@ -564,7 +526,22 @@
             );
             document.getElementById('doctorsOnline').textContent = activeDoctorIds.size;
             document.getElementById('todayAppointments').textContent = bookingStepsToday.length;
-            document.getElementById('monthlyRevenue').textContent = '125M';
+            
+            // Hiển thị doanh thu thực từ API
+            const revenueElement = document.getElementById('monthlyRevenue');
+            revenueElement.textContent = formatCurrency(monthlyRevenue);
+            
+            // Thêm tooltip hiển thị số tiền chính xác
+            revenueElement.title = `${monthlyRevenue.toLocaleString('vi-VN')} VND`;
+            
+            // Thêm màu sắc dựa trên doanh thu
+            if (monthlyRevenue > 100000000) { // > 100M
+                revenueElement.style.color = '#28a745'; // Xanh lá
+            } else if (monthlyRevenue > 50000000) { // > 50M
+                revenueElement.style.color = '#28a745'; 
+            } else {
+                revenueElement.style.color = '#28a745'; 
+            }
 
             // In performedAt list ra UI (nếu có div bookingStepList)
             const bookingStepListDiv = document.getElementById('bookingStepList');
@@ -573,110 +550,30 @@
                     (bookingStepsToday.length === 0 ? " Không có lịch hẹn nào." :
                         "<ul>" + bookingStepsToday.map(item => `<li>${item}</li>`).join('') + "</ul>");
             }
-            // In ra console cho dev kiểm tra
-            console.log('Danh sách performedAt hôm nay:', bookingStepsToday);
+            // In ra console cho dev kiểm tra (có thể xóa khi production)
+            // console.log('Danh sách performedAt hôm nay:', bookingStepsToday);
 
         } catch (e) {
-            tableBody.innerHTML = `<tr><td colspan="10" style="color:red;">${e.message}</td></tr>`;
+            console.error('Lỗi khi tải danh sách bác sĩ:', e);
+            tableBody.innerHTML = `<tr><td colspan="10" style="color:red;">Lỗi: ${e.message}</td></tr>`;
         }
     }
 
-    function openDegreeModal(doctorId) {
-        const data = doctorDegrees[doctorId];
-        if (!data) {
-            alert('Không tìm thấy thông tin bác sĩ!');
-            return;
+    // Hàm refresh doanh thu độc lập
+    async function refreshRevenue() {
+        await fetchMonthlyRevenue();
+        const revenueElement = document.getElementById('monthlyRevenue');
+        revenueElement.textContent = formatCurrency(monthlyRevenue);
+        revenueElement.title = `${monthlyRevenue.toLocaleString('vi-VN')} VND`;
+        
+        // Cập nhật màu sắc
+        if (monthlyRevenue > 100000000) {
+            revenueElement.style.color = '#28a745';
+        } else if (monthlyRevenue > 50000000) {
+            revenueElement.style.color = '#ffc107';
+        } else {
+            revenueElement.style.color = '#dc3545';
         }
-        document.getElementById('degreeDoctorName').textContent = data.name;
-        document.getElementById('degreeList').innerHTML = data.degrees.map(degree => `
-        <div class="degree-item">
-            <div class="degree-title">${degree.title}</div>
-            <div class="degree-details">${degree.details}</div>
-        </div>
-    `).join('');
-        document.getElementById('specialtyList').innerHTML = data.specialties.map(specialty => `
-        <div class="specialty-item">
-            <div class="specialty-title">${specialty.title}</div>
-            <div class="specialty-details">${specialty.details}</div>
-        </div>
-    `).join('');
-        document.getElementById('degreeModal').style.display = 'flex';
-    }
-    function closeDegreeModal() {
-        document.getElementById('degreeModal').style.display = 'none';
-    }
-
-    function showDoctorDetail(doctorId) {
-        document.getElementById('detailDoctorName').textContent = doctorDegrees[doctorId]?.name || '';
-        document.getElementById('detailDoctorId').textContent = doctorId;
-        document.getElementById('detailDoctorDept').textContent = doctorDegrees[doctorId]?.specialties?.[0]?.title || '';
-        document.getElementById('detailDoctorExp').textContent = doctorDegrees[doctorId]?.specialties?.[0]?.details || '';
-        document.getElementById('detailDoctorJoinDate').textContent = '15/01/2020';
-        document.getElementById('totalPatients').textContent = '1250';
-        document.getElementById('successRate').textContent = '95%';
-        document.getElementById('avgRating').textContent = '4.8';
-        document.getElementById('doctorActivities').innerHTML = `
-        <div class="activity-item">
-            <div class="activity-time">09:00</div>
-            <div class="activity-content">
-                <div class="activity-action">Khám bệnh</div>
-                <div class="activity-patient">Nguyễn Thị A</div>
-            </div>
-        </div>
-        <div class="activity-item">
-            <div class="activity-time">10:30</div>
-            <div class="activity-content">
-                <div class="activity-action">Tư vấn điều trị</div>
-                <div class="activity-patient">Trần Văn B</div>
-            </div>
-        </div>
-    `;
-        document.getElementById('doctorWeeklySchedule').innerHTML = `
-        <div class="schedule-grid">
-            <div class="day-column"><div class="day-header">T2</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
-            <div class="day-column"><div class="day-header">T3</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
-            <div class="day-column"><div class="day-header">T4</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
-            <div class="day-column"><div class="day-header">T5</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
-            <div class="day-column"><div class="day-header">T6</div><div class="time-slot">08:00-12:00</div><div class="time-slot">14:00-17:00</div></div>
-            <div class="day-column"><div class="day-header">T7</div><div class="time-slot">08:00-12:00</div><div class="time-slot off">Nghỉ</div></div>
-            <div class="day-column"><div class="day-header">CN</div><div class="time-slot off">Nghỉ</div><div class="time-slot off">Nghỉ</div></div>
-        </div>
-    `;
-        document.getElementById('recentReviews').innerHTML = `
-        <div class="review-item">
-            <div class="review-header">
-                <div class="reviewer-name">Nguyễn Thị A</div>
-                <div class="review-rating">⭐⭐⭐⭐⭐</div>
-                <div class="review-date">2 ngày trước</div>
-            </div>
-            <div class="review-content">Bác sĩ rất chuyên nghiệp và tận tâm. Kết quả điều trị rất tốt.</div>
-        </div>
-        <div class="review-item">
-            <div class="review-header">
-                <div class="reviewer-name">Trần Văn B</div>
-                <div class="review-rating">⭐⭐⭐⭐☆</div>
-                <div class="review-date">1 tuần trước</div>
-            </div>
-            <div class="review-content">Thời gian chờ hơi lâu nhưng bác sĩ khám rất kỹ.</div>
-        </div>
-    `;
-        document.getElementById('doctorDetailModal').style.display = 'flex';
-    }
-
-    function showRatingModal(doctorId) {
-        document.getElementById('rateDoctorName').textContent = doctorDegrees[doctorId]?.name || doctorId;
-        document.querySelectorAll('.rating-star').forEach(star => {
-            star.textContent = '☆';
-            star.classList.remove('selected');
-        });
-        document.querySelectorAll('.criteria-star').forEach(star => {
-            star.textContent = '☆';
-            star.classList.remove('selected');
-        });
-        document.getElementById('ratingText').textContent = 'Chưa chọn đánh giá';
-        document.getElementById('ratingComment').value = '';
-        document.getElementById('submitRatingBtn').disabled = true;
-        document.getElementById('rateDoctorModal').style.display = 'flex';
     }
 
     function openAddEditDoctorModal(doctorCode) {
@@ -752,6 +649,9 @@
 
         fetchAndRenderDoctors();
 
+        // Auto-refresh doanh thu mỗi 5 phút
+        setInterval(refreshRevenue, 5 * 60 * 1000);
+
         const logoutBtn = document.querySelector('.doctor-logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function() {
@@ -759,8 +659,6 @@
                 window.location.href = '/index.html';
             });
         }
-        document.getElementById('closeDegreeModal').addEventListener('click', closeDegreeModal);
-        document.getElementById('closeDegreeBtn').addEventListener('click', closeDegreeModal);
         document.getElementById('closeDoctorDetailModal').addEventListener('click', function(){ closeModal('doctorDetailModal') });
         document.getElementById('closeDoctorDetailBtn').addEventListener('click', function(){ closeModal('doctorDetailModal') });
         document.getElementById('closeRateDoctorModal').addEventListener('click', function(){ closeModal('rateDoctorModal') });
