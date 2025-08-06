@@ -59,37 +59,37 @@ function showNotification(message, type) {
                 
             } catch (error) {
                 console.error('❌ Error loading patient data:', error);
-                // Fallback to sample data if API fails
-                loadSampleData();
+                // // Fallback to sample data if API fails
+                // loadSampleData();
             }
         }
 
         // Fallback sample data
-        function loadSampleData() {
-            allPatients = [
-                {
-                    cusId: 1,
-                    cusFullName: 'Trần Anh Thư',
-                    cusGender: 'F',
-                    cusDate: '2004-09-26',
-                    cusEmail: 'thutase180353@fpt.edu.vn',
-                    cusPhone: '0352020737',
-                    cusAddress: 'HCMC',
-                    cusStatus: 'active',
-                    cusOccupation: 'Con sen',
-                    emergencyContact: 'Mơ',
-                    lastVisit: '2024-06-25',
-                    bookStatus: 'completed',
-                    recordStatus: 'active', // Add recordStatus
-                    serviceName: 'Khám tiền đăng ký điều trị IVF-IUI', // Add serviceName
-                    serId: 1,
-                    bookId: 1,
-                    recordId: 1
-                }
-            ];
-            filteredPatients = [...allPatients];
-            renderPatientList();
-        }
+        // function loadSampleData() {
+        //     allPatients = [
+        //         {
+        //             cusId: 1,
+        //             cusFullName: 'Trần Anh Thư',
+        //             cusGender: 'F',
+        //             cusDate: '2004-09-26',
+        //             cusEmail: 'thutase180353@fpt.edu.vn',
+        //             cusPhone: '0352020737',
+        //             cusAddress: 'HCMC',
+        //             cusStatus: 'active',
+        //             cusOccupation: 'Con sen',
+        //             emergencyContact: 'Mơ',
+        //             lastVisit: '2024-06-25',
+        //             bookStatus: 'completed',
+        //             recordStatus: 'active', // Add recordStatus
+        //             serviceName: 'Khám tiền đăng ký điều trị IVF-IUI', // Add serviceName
+        //             serId: 1,
+        //             bookId: 1,
+        //             recordId: 1
+        //         }
+        //     ];
+        //     filteredPatients = [...allPatients];
+        //     renderPatientList();
+        // }
 
         // Render patient list
         function renderPatientList() {
@@ -276,8 +276,11 @@ function showNotification(message, type) {
 
         // Tab switching functionality
         function switchTab(tabName) {
-            console.log('🔍 Switching to tab:', tabName);
+            console.log('� === SWITCHING TAB ===');
+            console.log('🔍 Tab name:', tabName);
             console.log('🔍 Current patient data:', currentPatientData);
+            console.log('🔍 BookId:', currentPatientData?.bookId);
+            console.log('🔍 RecordId:', currentPatientData?.recordId);
             
             // Remove active class from all tabs and tab contents
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -285,34 +288,53 @@ function showNotification(message, type) {
 
             // Add active class to clicked tab and corresponding content
             event.target.classList.add('active');
-            document.getElementById(tabName + 'Tab').classList.add('active');
+            const tabElement = document.getElementById(tabName + 'Tab');
+            console.log('🔍 Tab element found:', !!tabElement);
+            if (tabElement) {
+                tabElement.classList.add('active');
+            } else {
+                console.error('❌ Tab element not found:', tabName + 'Tab');
+                return;
+            }
 
             // Load data for the selected tab if not already loaded
-            if (currentPatientData && currentPatientData.bookId) {
-                console.log('✅ Loading data for tab:', tabName, 'with bookId:', currentPatientData.bookId);
+            if (currentPatientData && currentPatientData.recordId) {
+                console.log('✅ Loading data for tab:', tabName, 'with recordId:', currentPatientData.recordId);
                 switch(tabName) {
                     case 'current':
                         // Refresh current tab data  
-                        loadAndRenderTestResults(currentPatientData.bookId);
+                        console.log('📋 Loading current tab data...');
+                        loadAndRenderTestResults(currentPatientData.recordId);
                         break;
                     case 'history':
+                        console.log('📋 Loading history tab data...');
+                        console.log('🔍 Loading history for recordId:', currentPatientData.recordId);
                         loadMedicalHistory(currentPatientData.recordId);
                         break;
                     case 'treatment':
+                        console.log('📋 Loading treatment tab data...');
                         loadTreatmentPlan(currentPatientData);
                         break;
                     case 'prescription':
-                        console.log('🔍 Loading prescription data for bookId:', currentPatientData.bookId);
-                        loadExistingPrescriptionData(currentPatientData.bookId);
+                        console.log('📋 Loading prescription tab data...');
+                        console.log('🔍 Loading prescription data for recordId:', currentPatientData.recordId);
+                        loadExistingPrescriptionData(currentPatientData.recordId);
                         // fillPrescriptionHeader() sẽ được gọi trong loadExistingPrescriptionData nếu cần
                         break;
                     case 'tests':
-                        loadAndRenderTestResults(currentPatientData.bookId);
+                        console.log('📋 Loading tests tab data...');
+                        loadAndRenderTestResults(currentPatientData.recordId);
                         break;
+                    default:
+                        console.warn('⚠️ Unknown tab name:', tabName);
                 }
             } else {
-                console.log('❌ No current patient data or bookId available');
+                console.log('❌ No current patient data or recordId available');
+                console.log('- currentPatientData:', currentPatientData);
+                console.log('- recordId:', currentPatientData?.recordId);
             }
+            
+            console.log('🔄 === TAB SWITCH COMPLETE ===');
         }
 
         // Enhanced patient record viewing - ✅ FIXED: Sử dụng dữ liệu đã load  
@@ -327,7 +349,7 @@ function showNotification(message, type) {
                 document.getElementById('patientModal').style.display = 'block';
                 
                 // Store for later use
-                currentPatientData = { cusId, bookId };
+                currentPatientData = { cusId, bookId, recordId };
                 
                 // ✅ FIX: Lấy patient data từ danh sách đã load thay vì gọi API
                 console.log('🔍 DEBUG: Searching for patient in allPatients with cusId:', cusId);
@@ -343,6 +365,7 @@ function showNotification(message, type) {
                 }
                 
                 patientData.bookId = bookId;
+                patientData.recordId = recordId;
                 currentPatientData = patientData;
 
                 // Lưu thông tin cần thiết vào localStorage cho việc lưu đơn thuốc
@@ -384,8 +407,8 @@ function showNotification(message, type) {
             document.getElementById('medicalNote').value = record.note || '';
                         
                     // Load test results and prescription data
-                    loadAndRenderTestResults(bookId);
-                    await loadExistingPrescriptionData(bookId);
+                    loadAndRenderTestResults(recordId);
+                    await loadExistingPrescriptionData(recordId);
                 }
                 
                 hideLoading();
@@ -463,40 +486,86 @@ function showNotification(message, type) {
 
         async function loadMedicalHistory(recordId) {
             try {
+                console.log('🔍 Loading medical history for recordId:', recordId);
                 const res = await fetch(`/api/medical-records/customer/${recordId}/medical-history`);
-                if (!res.ok) throw new Error("Lỗi server");
+                if (!res.ok) {
+                    console.error('❌ API Error:', res.status, res.statusText);
+                    throw new Error("Lỗi server: " + res.status);
+                }
                 const history = await res.json();
-                console.log('✅ Lấy lịch sử khám thành công:', history); // <== log này
-                renderMedicalHistory(history); // ✅ dùng hàm đúng
+                console.log('✅ Lấy lịch sử khám thành công:', history);
+                renderMedicalHistory(history);
             } catch (err) {
-                console.error("Error loading medical history:", err);
-                showNotification("Không thể tải lịch sử khám", "error");
+                console.error("❌ Error loading medical history:", err);
+                showNotification("Không thể tải lịch sử khám: " + err.message, "error");
             }
         }
 
 
 function renderMedicalHistory(historyData) {
+    console.log('🎨 renderMedicalHistory called with data:', historyData);
+    
     const historyContainer = document.getElementById('medical-history-content');
     if (!historyContainer) {
-        console.warn('Không tìm thấy #medical-history-content trong DOM');
+        console.error('❌ Không tìm thấy element #medical-history-content trong DOM');
+        console.log('🔍 Available elements with "history" in id:', 
+            Array.from(document.querySelectorAll('[id*="history"]')).map(el => el.id));
+        
+        // Try alternative container
+        const historyTab = document.getElementById('historyTab');
+        if (historyTab) {
+            console.log('✅ Found historyTab, creating medical-history-content div');
+            const newContainer = document.createElement('div');
+            newContainer.id = 'medical-history-content';
+            newContainer.style.padding = '1rem';
+            historyTab.appendChild(newContainer);
+            renderMedicalHistoryContent(newContainer, historyData);
+        } else {
+            console.error('❌ Neither #medical-history-content nor #historyTab found');
+        }
         return;
     }
 
+    renderMedicalHistoryContent(historyContainer, historyData);
+}
+
+function renderMedicalHistoryContent(container, historyData) {
+    console.log('📋 Rendering history data:', historyData);
+    
     if (!historyData || historyData.length === 0) {
-        historyContainer.innerHTML = '<p class="text-muted">Không có lịch sử khám.</p>';
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #64748b;">
+                <i class="fas fa-history" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                <p>Không có lịch sử khám.</p>
+            </div>
+        `;
         return;
     }
 
-    historyContainer.innerHTML = historyData.map(item => `
-        <div class="history-item">
-            <p><strong>Mã đặt:</strong> ${item.bookId}</p>
-            <p><strong>Loại:</strong> ${item.bookType}</p>
-            <p><strong>Trạng thái:</strong> ${item.bookStatus}</p>
-            <p><strong>Thời gian:</strong> ${item.date} | ${item.time}</p>
-            <p><strong>Dịch vụ con:</strong> ${(item.subNames || []).join(', ')}</p>
-            <hr>
+    container.innerHTML = `
+        <div class="history-header">
+            <h4><i class="fas fa-history"></i> Lịch sử khám bệnh</h4>
+            <p>Tổng cộng: ${historyData.length} lần khám</p>
         </div>
-    `).join('');
+        <div class="history-list">
+            ${historyData.map((item, index) => `
+                <div class="history-item" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <div class="history-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <h6 style="margin: 0; color: #1e293b;">Lần khám #${index + 1}</h6>
+                        <span style="background: #e0f2fe; color: #006064; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem;">
+                            ${item.bookStatus || 'N/A'}
+                        </span>
+                    </div>
+                    <div class="history-details" style="color: #6b7280; font-size: 0.9rem;">
+                        <p style="margin: 0.25rem 0;"><strong>Mã đặt:</strong> BK${String(item.bookId || '000').padStart(3, '0')}</p>
+                        <p style="margin: 0.25rem 0;"><strong>Loại:</strong> ${item.bookType || 'N/A'}</p>
+                        <p style="margin: 0.25rem 0;"><strong>Thời gian:</strong> ${item.date || 'N/A'} | ${item.time || 'N/A'}</p>
+                        <p style="margin: 0.25rem 0;"><strong>Dịch vụ con:</strong> ${(item.subNames || []).join(', ') || 'Không có'}</p>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
 
@@ -629,7 +698,7 @@ function renderMedicalHistory(historyData) {
         }
 
         async function loadPrescriptionData(patientData) {
-            const prescriptionContent = document.getElementById('prescriptionContent');
+            const prescriptionContent = document.getElementById('prescriptionTab');
             
             try {
                 prescriptionContent.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Đang tải đơn thuốc...</div>';
@@ -650,7 +719,7 @@ function renderMedicalHistory(historyData) {
         }
 
         function renderPrescriptionData(prescriptionData) {
-            const prescriptionContent = document.getElementById('prescriptionContent');
+            const prescriptionContent = document.getElementById('prescriptionTab');
             
             if (prescriptionData && prescriptionData.length > 0) {
                 let prescriptionHtml = `
@@ -716,7 +785,7 @@ function renderMedicalHistory(historyData) {
         }
 
         function renderSamplePrescription() {
-            document.getElementById('prescriptionContent').innerHTML = `
+            document.getElementById('prescriptionTab').innerHTML = `
                 <div style="text-align: center; padding: 2rem; color: #64748b;">
                     <i class="fas fa-pills" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
                     <p>Chưa có đơn thuốc</p>
@@ -725,7 +794,7 @@ function renderMedicalHistory(historyData) {
         }
 
         async function loadTestResults(patientData) {
-            const testResultsContent = document.getElementById('testResultsContent');
+            const testResultsContent = document.getElementById('testsTab');
             
             try {
                 testResultsContent.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Đang tải kết quả xét nghiệm...</div>';
@@ -2172,12 +2241,17 @@ function renderMedicalHistory(historyData) {
             return date.toISOString().slice(0, 16);
         }
 
-        async function loadAndRenderTestResults(bookId) {
-            console.log('🔍 loadAndRenderTestResults called with bookId:', bookId);
+        async function loadAndRenderTestResults(recordId) {
+            console.log('🔍 loadAndRenderTestResults called with recordId:', recordId);
             try {
-                const res = await fetch(`/api/booking-steps/test-results/${bookId}`);
+                // Sử dụng recordId thay vì bookId cho API endpoint
+                const res = await fetch(`/api/booking-steps/test-results-by-record/${recordId}`);
                 console.log('📡 API response status:', res.status);
-                if (!res.ok) throw new Error('API error');
+                if (!res.ok) {
+                    console.warn('⚠️ No test results API for recordId, fallback to empty data');
+                    renderTestResults([]);
+                    return;
+                }
                 const data = await res.json();
                 console.log('📊 Test Results API data:', data);
                 renderTestResults(data);
@@ -2188,24 +2262,25 @@ function renderMedicalHistory(historyData) {
         }
 
         // Load existing prescription data
-        async function loadExistingPrescriptionData(bookId) {
+        async function loadExistingPrescriptionData(recordId) {
             // Reset prescription modification flag
             window.prescriptionModified = false;
             
-            if (!bookId) {
-                console.log('❌ No bookId provided for loading prescription data');
+            if (!recordId) {
+                console.log('❌ No recordId provided for loading prescription data');
                 // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
                 fillPrescriptionHeader();
                 return;
             }
 
             try {
-                console.log('🔍 Loading prescription data for bookId:', bookId);
-                const response = await fetch(`/api/drugs/by-booking/${bookId}`);
+                console.log('🔍 Loading prescription data for recordId:', recordId);
+                // Sử dụng recordId thay vì bookId cho API endpoint
+                const response = await fetch(`/api/drugs/by-record/${recordId}`);
                 
                 if (!response.ok) {
                     if (response.status === 404) {
-                        console.log('❌ No prescription data found for this booking (404)');
+                        console.log('❌ No prescription data found for this record (404)');
                         // Gọi fillPrescriptionHeader để điền thông tin cơ bản cho đơn thuốc mới
                         fillPrescriptionHeader();
                         return;
@@ -2525,159 +2600,150 @@ function renderMedicalHistory(historyData) {
         }
 
     // Schedule next appointment
-    window.scheduleNextAppointment = async function() {
-        if (!currentNextAppPatient) {
-            showNotification('Không tìm thấy thông tin bệnh nhân!', 'error');
-            return;
-        }
+    function toTimeString(str) {
+    if (/^\d{2}:\d{2}:\d{2}$/.test(str)) return str;       // HH:mm:ss
+    if (/^\d{2}:\d{2}$/.test(str)) return str + ":00";     // HH:mm
+    return str; // fallback
+}
 
-        const docId = localStorage.getItem('docId');
-        const appointmentDate = document.getElementById('nextAppDate').value;
-        const appointmentTime = document.getElementById('nextAppTime').value;
-        const selectedServices = getSelectedServices(); // các subservice
-        const note = document.getElementById('nextAppNote').value;
-        
-        // Validation
-        if (!appointmentDate || !appointmentTime || selectedServices.length === 0) {
-            showNotification('Vui lòng điền đầy đủ thông tin: ngày, giờ và ít nhất một dịch vụ!', 'error');
-            return;
-        }
-        if (!docId) {
-            showNotification('Không tìm thấy thông tin bác sĩ!', 'error');
-            return;
-        }
+window.scheduleNextAppointment = async function() {
+    if (!currentNextAppPatient) {
+        showNotification('Không tìm thấy thông tin bệnh nhân!', 'error');
+        return;
+    }
 
-        // Show loading overlay
-        showFollowUpLoadingOverlay();
+    const docId = localStorage.getItem('docId');
+    const appointmentDate = document.getElementById('nextAppDate').value;
+    const appointmentTime = document.getElementById('nextAppTime').value;
+    const selectedServices = getSelectedServices();
+    const note = document.getElementById('nextAppNote').value;
 
-        function toTimeString(str) {
-            // Nếu đã có giây thì return luôn
-            if (str.match(/^\d{2}:\d{2}:\d{2}$/)) return str;
-            // Nếu chỉ có giờ:phút
-            if (str.match(/^\d{2}:\d{2}$/)) return str + ":00";
-            return str; // fallback, giữ nguyên
-        }  
+    if (!appointmentDate || !appointmentTime || selectedServices.length === 0) {
+        showNotification('Vui lòng điền đầy đủ thông tin: ngày, giờ và ít nhất một dịch vụ!', 'error');
+        return;
+    }
+    if (!docId) {
+        showNotification('Không tìm thấy thông tin bác sĩ!', 'error');
+        return;
+    }
 
-        const [startTimeRaw, endTimeRaw] = appointmentTime.split('-').map(s => s.trim());
-        const startTime = toTimeString(startTimeRaw);
-        const endTime = toTimeString(endTimeRaw);
+    showFollowUpLoadingOverlay();
 
+    const [startTimeRaw, endTimeRaw] = appointmentTime.split('-').map(s => s.trim());
+    const startTime = toTimeString(startTimeRaw);
+    const endTime = toTimeString(endTimeRaw);
 
-        try {
-            // 1. Lấy slotId theo ngày + startTime + endTime + docId
-            const slotResponse = await fetch('/api/workslots/get-slot-id-by-date-time', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    docId: parseInt(docId), // nhớ lấy từ localStorage hoặc biến
-                    workDate: appointmentDate,
-                    startTime,
-                    endTime,
-                })
-            });
-            const slotText = await slotResponse.text();
+    console
+.log('Scheduling next appointment with data:', {
+        docId,
+        appointmentDate,
+        startTime,
+        endTime,
+        selectedServices,
+        note
+    });
 
-            if (!slotResponse.ok) {
-                // Tùy backend trả về lỗi như thế nào mà bắt
-                showFollowUpBookingError(slotText || 'Không thể tìm khung giờ phù hợp!<br>Vui lòng chọn thời gian khác hoặc liên hệ hỗ trợ.');
-                return;
-            }
-
-            const slotData = JSON.parse(slotText);
-
-            // Nếu không có slotId, báo lỗi luôn
-            if (!slotData.slotId) {
-                showFollowUpBookingError('Không tìm thấy khung giờ phù hợp!<br>Vui lòng chọn lại thời gian khác.');
-                return;
-            }
-
-            const slotId = slotData.slotId;
-
-            // 2. Tạo Booking với serId như cũ
-            const bookingData = {
-                cusId: currentNextAppPatient.cusId,
+    try {
+        // 1. Lấy slotId
+        const slotResponse = await fetch('/api/workslots/get-slot-id-by-date-time', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
                 docId: parseInt(docId),
-                slotId: slotId, 
-                note: note || `Tái khám theo lịch hẹn`,
-                bookType: 'follow-up',
-                serId: currentNextAppPatient.serId, // giữ nguyên
                 workDate: appointmentDate,
-                startTime: startTime,   
-                endTime: endTime,
-            };
+                startTime,
+                endTime
+            })
+        });
 
-const bookingResponse = await fetch('/api/booking/create-follow-up-booking', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bookingData)
-            });
+        const slotData = await slotResponse.json().catch(() => null);
 
-            const bookingText = await bookingResponse.text();
-            const followBookId = bookingText ? JSON.parse(bookingText).bookId : null;
+        if (!slotResponse.ok || !slotData || !slotData.slotId) {
+            const msg = slotData?.error || 'Không tìm thấy khung giờ phù hợp!';
+            showFollowUpBookingError(msg + '<br>Vui lòng chọn thời gian khác hoặc liên hệ hỗ trợ.');
+            return;
+        }
 
-            const patientObj = allPatients.find(p => p.cusId === currentNextAppPatient.cusId);
-            const recordId = patientObj?.recordId;
+        const slotId = slotData.slotId;
 
-            if (!recordId) {
-                showFollowUpBookingError('Không tìm thấy ID hồ sơ bệnh án!<br>Vui lòng thử lại.');
-                return;
-            }
+        // 2. Tạo booking
+        const bookingData = {
+            cusId: currentNextAppPatient.cusId,
+            docId: parseInt(docId),
+            slotId,
+            note: note || 'Tái khám theo lịch hẹn',
+            bookType: 'follow-up',
+            serId: currentNextAppPatient.serId,
+            workDate: appointmentDate,
+            startTime,
+            endTime
+        };
 
-            // gắn cặp bookId & recordId vào MedicalRecordBooking
-            const medicalRecordResponse = await fetch(`/api/medical-records-booking/create/${recordId},${followBookId}`, {
+        const bookingResponse = await fetch('/api/booking/create-follow-up-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bookingData)
+        });
+
+        const bookingResult = await bookingResponse.json().catch(() => null);
+        if (!bookingResponse.ok || !bookingResult?.bookId) {
+            throw new Error(bookingResult?.error || 'Không thể tạo lịch hẹn');
+        }
+
+        const followBookId = bookingResult.bookId;
+
+        // 3. Liên kết MedicalRecord
+        const patientObj = allPatients.find(p => p.cusId === currentNextAppPatient.cusId);
+        const recordId = patientObj?.recordId;
+
+        if (!recordId) {
+            showFollowUpBookingError('Không tìm thấy ID hồ sơ bệnh án!<br>Vui lòng thử lại.');
+            return;
+        }
+
+        const medicalRecordResponse = await fetch(`/api/medical-record-booking/create/${recordId},${followBookId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ recordId, recobookId: followBookId })
+        });
+
+        if (!medicalRecordResponse.ok) {
+            console.error('Error linking MedicalRecordBooking:', await medicalRecordResponse.text());
+            showFollowUpBookingError('❌ Không thể liên kết lịch hẹn với hồ sơ bệnh án. Vui lòng thử lại sau.');
+            return;
+        }
+
+        // 4. Tạo bookingStep cho subServices
+        for (const service of selectedServices) {
+            const stepResponse = await fetch('/api/booking-steps/create-step-for-initial-booking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    recordId,
-                    recobookId: followBookId
+                    bookId: followBookId,
+                    subId: service.subId,
+                    stepStatus: 'inactive'
                 })
-            });  
-               
-            if (!medicalRecordResponse.ok) {
-                console.error('Error creating MedicalRecordBooking:', await medicalRecordResponse.text());
-                showFollowUpBookingError('❌ Không thể liên kết lịch hẹn với hồ sơ bệnh án. Vui lòng thử lại sau.');
-            }
-
-            // Nếu không có lỗi, tiếp tục tạo lịch hẹn
-            if (!bookingResponse.ok) throw new Error(bookingText || 'Không thể tạo lịch hẹn');
-
-            const bookingResult = JSON.parse(bookingText);
-            const bookId = bookingResult.bookId;
-
-            // 3. Tạo n BookingStep cho từng subservice
-            for (const service of selectedServices) {
-                const stepResponse = await fetch('/api/booking-steps/create-step-for-initial-booking', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        bookId: bookId,
-                        subId: service.subId,
-                        stepStatus: 'inactive',
-                    })
-                });
-                if (!stepResponse.ok) {
-                    throw new Error('Tạo các bước dịch vụ không thành công!');
-                }
-            }
-
-            // 4. Thông báo thành công, reset form
-            const serviceNames = selectedServices.map(s => s.subName).join(', ');
-            showFollowUpBookingSuccess(serviceNames, selectedServices.length);
-            
-            // Reset form after successful booking
-            setTimeout(() => {
-                closeNextAppointmentModal();
-                document.getElementById('nextAppDate').value = '';
-                document.getElementById('nextAppTime').value = '';
-                document.getElementById('nextAppNote').value = '';
-                // if (typeof resetServiceSelection === 'function') resetServiceSelection();
-            }, 100);
-
-        } catch (error) {
-            console.error('Error creating next appointment:', error);
-            showFollowUpBookingError('❌ Lỗi khi tạo lịch hẹn: ' + error.message + '<br>Vui lòng kiểm tra lại thông tin và thử lại.');
+            });
+            if (!stepResponse.ok) throw new Error('Tạo các bước dịch vụ không thành công!');
         }
-    };
+
+        // 5. Thành công
+        const serviceNames = selectedServices.map(s => s.subName).join(', ');
+        showFollowUpBookingSuccess(serviceNames, selectedServices.length);
+
+        setTimeout(() => {
+            closeNextAppointmentModal();
+            document.getElementById('nextAppDate').value = '';
+            document.getElementById('nextAppTime').value = '';
+            document.getElementById('nextAppNote').value = '';
+        }, 100);
+
+    } catch (error) {
+        console.error('Error creating next appointment:', error);
+        showFollowUpBookingError('❌ Lỗi khi tạo lịch hẹn: ' + error.message + '<br>Vui lòng kiểm tra lại thông tin và thử lại.');
+    }
+};
+
 
     
         // Get selected services
@@ -2840,3 +2906,50 @@ const bookingResponse = await fetch('/api/booking/create-follow-up-booking', {
 
         // Expose functions to global scope for use in bac-si-dashboard.html
         window.loadTreatmentPlan = loadTreatmentPlan;
+        
+        // ========== MEDICAL HISTORY TEST FUNCTIONS ==========
+        
+        // Test function for medical history
+        window.testLoadMedicalHistory = async function(recordId) {
+            console.log('🧪 Testing loadMedicalHistory with recordId:', recordId);
+            
+            if (!recordId && currentPatientData) {
+                recordId = currentPatientData.recordId;
+                console.log('🔍 Using recordId from currentPatientData:', recordId);
+            }
+            
+            if (!recordId) {
+                console.error('❌ No recordId provided');
+                alert('No recordId provided for testing');
+                return;
+            }
+            
+            try {
+                await loadMedicalHistory(recordId);
+                console.log('✅ Test completed successfully');
+                alert('Medical history test completed - check console for details');
+            } catch (error) {
+                console.error('❌ Test failed:', error);
+                alert('Medical history test failed: ' + error.message);
+            }
+        };
+        
+        // Helper function to debug medical history element
+        window.debugMedicalHistoryElement = function() {
+            console.log('🔍 === DEBUGGING MEDICAL HISTORY ELEMENTS ===');
+            
+            const historyContainer = document.getElementById('medical-history-content');
+            console.log('📋 #medical-history-content element:', historyContainer);
+            
+            const historyTab = document.getElementById('historyTab');
+            console.log('📋 #historyTab element:', historyTab);
+            
+            const allHistoryElements = Array.from(document.querySelectorAll('[id*="history"]'));
+            console.log('📋 All elements with "history" in id:', allHistoryElements.map(el => ({ id: el.id, tag: el.tagName })));
+            
+            if (historyTab) {
+                console.log('📋 historyTab innerHTML preview:', historyTab.innerHTML.substring(0, 200) + '...');
+            }
+            
+            console.log('🔍 === DEBUG COMPLETE ===');
+        };

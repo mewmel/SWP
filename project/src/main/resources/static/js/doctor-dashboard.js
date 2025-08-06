@@ -368,7 +368,7 @@ window.checkout = async function (bookId, cusId, bookType) {
                 const recordId = createData.recordId;
                 
                 // gắn cặp bookId & recordId vào MedicalRecordBooking
-                await fetch(`/api/medical-records-booking/create/${recordId},${bookId}`, {
+                await fetch(`/api/medical-record-booking/create/${recordId},${bookId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
