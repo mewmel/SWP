@@ -336,42 +336,71 @@ function loadTabContent(tabId) {
 
 // Dashboard Functions
 function loadDashboard() {
+    console.log('🔍 Loading dashboard...');
     // Load all stats from database
     loadOverviewStats();
 }
+
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Admin dashboard initialized');
+    // Load dashboard stats immediately
+    loadDashboard();
+});
 
 
 
 async function loadOverviewStats() {
     try {
+        console.log('🔍 Loading overview stats...');
         const response = await fetch('/api/stats/overview');
+        console.log('📊 Response status:', response.status);
+        
         if (response.ok) {
             const data = await response.json();
+            console.log('✅ Overview stats data:', data);
             
             // Update total patients count
             const totalPatientsElement = document.getElementById('totalPatientsCount');
             if (totalPatientsElement) {
                 totalPatientsElement.textContent = data.totalCustomers || 0;
+                totalPatientsElement.style.color = '';
+                totalPatientsElement.style.fontWeight = '';
+                console.log('✅ Updated total patients count:', data.totalCustomers);
+            } else {
+                console.warn('⚠️ totalPatientsCount element not found');
             }
             
             // Update available services count
             const availableServicesElement = document.getElementById('availableServicesCount');
             if (availableServicesElement) {
                 availableServicesElement.textContent = data.availableServices || 0;
+                availableServicesElement.style.color = '';
+                availableServicesElement.style.fontWeight = '';
+                console.log('✅ Updated available services count:', data.availableServices);
+            } else {
+                console.warn('⚠️ availableServicesCount element not found');
             }
             
             // Update total staff count
             const totalStaffElement = document.getElementById('totalStaffCount');
             if (totalStaffElement) {
                 totalStaffElement.textContent = data.totalStaff || 0;
+                totalStaffElement.style.color = '';
+                totalStaffElement.style.fontWeight = '';
+                console.log('✅ Updated total staff count:', data.totalStaff);
+            } else {
+                console.warn('⚠️ totalStaffCount element not found');
             }
             
         } else {
-            console.error('Failed to load overview stats:', response.status);
+            console.error('❌ Failed to load overview stats:', response.status);
+            const errorText = await response.text();
+            console.error('❌ Error response:', errorText);
             showErrorOnElements(['totalPatientsCount', 'availableServicesCount', 'totalStaffCount']);
         }
     } catch (error) {
-        console.error('Error loading overview stats:', error);
+        console.error('❌ Error loading overview stats:', error);
         showErrorOnElements(['totalPatientsCount', 'availableServicesCount', 'totalStaffCount']);
     }
 }
@@ -380,7 +409,9 @@ function showErrorOnElements(elementIds) {
     elementIds.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
-            element.textContent = 'Error';
+            element.textContent = 'N/A';
+            element.style.color = '#dc3545';
+            element.style.fontWeight = 'bold';
         }
     });
 }

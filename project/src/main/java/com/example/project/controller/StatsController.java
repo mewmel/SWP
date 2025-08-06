@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.entity.Doctor;
 import com.example.project.entity.Feedback;
+import com.example.project.entity.Customer;
+import com.example.project.entity.Service;
+import com.example.project.entity.Manager;
 import com.example.project.repository.BookingRevenueRepository;
 import com.example.project.repository.DoctorRepository;
 import com.example.project.repository.FeedbackRepository;
+import com.example.project.repository.CustomerRepository;
+import com.example.project.repository.ServiceRepository;
+import com.example.project.repository.ManagerRepository;
 
 @RestController
 @RequestMapping("/api/stats")
+@CrossOrigin
 public class StatsController {
 
     @Autowired
@@ -33,6 +41,15 @@ public class StatsController {
 
     @Autowired
     private FeedbackRepository feedbackRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    @Autowired
+    private ManagerRepository managerRepository;
 
     // ----------- API TỔNG DOANH THU -----------
     @GetMapping("/total-revenue")
@@ -166,6 +183,39 @@ public class StatsController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Lỗi khi lấy dữ liệu doanh thu theo thời gian");
+        }
+    }
+
+    // ----------- API OVERVIEW STATS CHO ADMIN DASHBOARD -----------
+    @GetMapping("/overview")
+    public ResponseEntity<?> getOverviewStats() {
+        try {
+            // Đếm tổng số khách hàng
+            long totalCustomers = customerRepository.count();
+            
+            // Đếm tổng số dịch vụ
+            long availableServices = serviceRepository.count();
+            
+            // Đếm tổng số nhân viên (bác sĩ + quản lý)
+            long totalDoctors = doctorRepository.count();
+            long totalManagers = managerRepository.count();
+            long totalStaff = totalDoctors + totalManagers;
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalCustomers", totalCustomers);
+            response.put("availableServices", availableServices);
+            response.put("totalStaff", totalStaff);
+            response.put("totalDoctors", totalDoctors);
+            response.put("totalManagers", totalManagers);
+            
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("totalCustomers", 0);
+            errorResponse.put("availableServices", 0);
+            errorResponse.put("totalStaff", 0);
+            errorResponse.put("error", "Lỗi khi lấy thống kê tổng quan: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
         }
     }
 
