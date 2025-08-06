@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.entity.Doctor;
@@ -218,6 +219,41 @@ public class StatsController {
             return ResponseEntity.ok().body(summary);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Lỗi khi tính thống kê tổng hợp");
+        }
+    }
+
+    // ----------- API DOANH THU THEO THÁNG -----------
+    @GetMapping("/revenue")
+    public ResponseEntity<?> getMonthlyRevenue(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month) {
+        try {
+            BigDecimal totalRevenue;
+            
+            if (year != null && month != null) {
+                // Lấy doanh thu theo tháng cụ thể
+                totalRevenue = bookingRevenueRepository.getRevenueByYearMonth(year, month);
+            } else {
+                // Lấy tổng doanh thu nếu không có tham số
+                totalRevenue = bookingRevenueRepository.getTotalRevenue();
+            }
+            
+            if (totalRevenue == null) {
+                totalRevenue = BigDecimal.ZERO;
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalRevenue", totalRevenue);
+            response.put("year", year);
+            response.put("month", month);
+            response.put("formattedRevenue", formatCurrency(totalRevenue));
+
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("totalRevenue", 0);
+            errorResponse.put("error", "Lỗi khi lấy dữ liệu doanh thu: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
         }
     }
 

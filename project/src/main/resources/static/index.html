@@ -632,15 +632,12 @@
         <div class="container">
             <h2 class="section-title">Blog & Tin tức</h2>
             <div class="blog-grid" id="blogGrid">
-                <!-- Loading state -->
                 <div class="blog-loading" id="blogLoading">
                     <div class="loading-content">
                         <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
                         <p style="color: #666;">Đang tải bài viết...</p>
                     </div>
                 </div>
-                
-                <!-- Blog posts will be loaded here from API -->
             </div>
             <div class="blog-view-all">
                 <a href="#" class="btn-secondary" id="viewAllBlogs" style="display: none;">Xem tất cả bài viết</a>
@@ -653,15 +650,12 @@
         <div class="container">
             <h2 class="section-title">Khách hàng nói gì về chúng tôi</h2>
             <div class="testimonial-slider" id="testimonialSlider">
-                <!-- Loading state -->
                 <div class="testimonial-loading" id="testimonialLoading">
                     <div class="loading-content">
                         <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
                         <p style="color: #666;">Đang tải đánh giá từ khách hàng...</p>
                     </div>
                 </div>
-                
-                <!-- Testimonials will be loaded here from API -->
             </div>
         </div>
     </section>
@@ -897,42 +891,6 @@
         .btn-send-otp i {
             font-size: 12px;
         }
-        
-        /* Blog loading and error states */
-        .blog-loading {
-            text-align: center;
-            padding: 60px 20px;
-        }
-        
-        .blog-loading .loading-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .blog-error {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
-        }
-        
-        .blog-error .error-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .blog-error i {
-            font-size: 3rem;
-            color: #ddd;
-            margin-bottom: 20px;
-        }
-        
-
-        
-
     </style>
     
     <script>
@@ -946,30 +904,18 @@
             const loadingElement = document.getElementById('testimonialLoading');
             
             try {
-                console.log('Loading testimonials from API...');
-                
                 // Try the main testimonials API first
                 let response = await fetch('/api/feedback/testimonials');
-                console.log('Main testimonials API response status:', response.status);
-                
                 let testimonials = [];
                 
                 if (response.ok) {
                     testimonials = await response.json();
-                    console.log('Main testimonials loaded:', testimonials);
                 } else {
-                    console.log('Main API failed, trying simple API...');
-                    
                     // Fallback to simple API
                     response = await fetch('/api/feedback/testimonials-simple');
-                    console.log('Simple testimonials API response status:', response.status);
                     
                     if (response.ok) {
                         testimonials = await response.json();
-                        console.log('Simple testimonials loaded:', testimonials);
-                    } else {
-                        console.log('Both APIs failed, using mock data');
-                        testimonials = getMockTestimonials();
                     }
                 }
                 
@@ -979,33 +925,24 @@
                 }
                 
                 if (!testimonials || testimonials.length === 0) {
-                    console.log('No testimonials found, using mock data');
-                    testimonials = getMockTestimonials();
+                    showNoTestimonials();
+                } else {
+                    renderTestimonials(testimonials);
                 }
                 
-                renderTestimonials(testimonials);
-                
             } catch (error) {
-                console.error('Error loading testimonials:', error);
-                
-                // Hide loading and show mock data instead of error
+                // Hide loading and show no testimonials message
                 if (loadingElement) {
                     loadingElement.style.display = 'none';
                 }
                 
-                console.log('Using mock testimonials due to error');
-                const mockTestimonials = getMockTestimonials();
-                renderTestimonials(mockTestimonials);
+                showNoTestimonials();
             }
         }
-
-        
 
         function renderTestimonials(testimonials) {
             const testimonialSlider = document.getElementById('testimonialSlider');
             let html = '';
-            
-            console.log('Rendering testimonials:', testimonials);
             
             testimonials.forEach((testimonial, index) => {
                 // Handle different data structures from API
@@ -1014,8 +951,6 @@
                 const customerName = testimonial.customerName || testimonial.customerFullName || testimonial.name || 'Khách hàng';
                 const doctorName = testimonial.doctorName || testimonial.docFullName || 'Bác sĩ';
                 const serviceName = testimonial.serviceName || testimonial.serviceTitle || 'Dịch vụ';
-                
-                console.log(`Testimonial ${index}:`, { rating, comment, customerName, doctorName, serviceName });
                 
                 const stars = generateStarsForTestimonial(rating);
                 const customerInitials = getInitials(customerName);
@@ -1073,8 +1008,8 @@
             testimonialSlider.innerHTML = `
                 <div class="testimonial-error">
                     <i class="fas fa-comments"></i>
-                    <h3>Chưa có đánh giá nào</h3>
-                    <p>Chúng tôi đang chờ những đánh giá đầu tiên từ khách hàng.</p>
+                    <h3>Chưa có feedback</h3>
+                    <p>Hiện tại chưa có đánh giá nào từ khách hàng.</p>
                 </div>
             `;
         }
@@ -1090,9 +1025,8 @@
             testimonialSlider.innerHTML = `
                 <div class="testimonial-error">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Không thể tải đánh giá</h3>
-                    <p>Có lỗi xảy ra khi tải đánh giá từ khách hàng. Vui lòng thử lại sau.</p>
-                    ${errorMessage ? `<p style="color: #ff6b6b; font-size: 0.9em; margin-top: 10px;">Chi tiết lỗi: ${errorMessage}</p>` : ''}
+                    <h3>Chưa có feedback</h3>
+                    <p>Hiện tại chưa có đánh giá nào từ khách hàng.</p>
                     <button onclick="loadTestimonials()" style="margin-top: 15px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
                         Thử lại
                     </button>
@@ -1102,7 +1036,7 @@
     </script>
     
     <script>
-        // ============= ENHANCED DOCTOR DETAIL SYSTEM =============
+        // ============= DOCTOR DETAIL SYSTEM =============
         let doctorsData = [];
         
         // Load doctors from API
@@ -1111,10 +1045,9 @@
                 const response = await fetch('/api/doctors/public');
                 if (response.ok) {
                     doctorsData = await response.json();
-                    console.log('Doctors loaded from API:', doctorsData);
                 }
             } catch (error) {
-                console.error('Failed to load doctors from API:', error);
+                // Handle error silently
             }
         }
         
