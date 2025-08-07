@@ -272,9 +272,6 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
             Integer newSlotId = (Integer) rescheduleRequest.get("newSlotId");
             String reason = (String) rescheduleRequest.getOrDefault("reason", "");
             
-            // Lý do dời lịch sẽ được lưu trực tiếp vào cột note
-            String finalNote = reason;
-
             // Tìm booking hiện tại
             Optional<Booking> bookingOpt = bookingRepository.findById(bookId);
             if (!bookingOpt.isPresent()) {
@@ -283,9 +280,25 @@ public ResponseEntity<List<Booking>> getTodayConfirmedBookings(@PathVariable Int
 
             Booking booking = bookingOpt.get();
             
+            // Kiểm tra xem đã reschedule trước đó chưa
+            String currentNote = booking.getNote();
+            if (currentNote != null && (
+                currentNote.toLowerCase().contains("dời lịch") ||
+                currentNote.toLowerCase().contains("reschedule") ||
+                currentNote.toLowerCase().contains("đổi lịch")
+            )) {
+                return ResponseEntity.badRequest().body("Bạn đã dời lịch trước đó. Chỉ được phép dời lịch 1 lần duy nhất!");
+            }
+            
             // Lưu thông tin cũ để log
             Integer oldSlotId = booking.getSlotId();
             String oldStatus = booking.getBookStatus();
+
+            // Tạo note mới với từ khóa reschedule
+            String finalNote = "DỜI LỊCH - " + reason;
+            if (currentNote != null && !currentNote.trim().isEmpty()) {
+                finalNote = currentNote + " | " + finalNote;
+            }
 
             // Cập nhật booking với thông tin mới
             booking.setSlotId(newSlotId);
@@ -374,4 +387,44 @@ public ResponseEntity<?> setBookingDrugId(@PathVariable Integer bookId, @PathVar
             return ResponseEntity.status(500).body(response);
         }
     }    
+
+    @GetMapping("/booking/{bookId}/reschedule-history")
+    public ResponseEntity<?> getRescheduleHistory(@PathVariable Integer bookId) {
+        try {
+            Optional<Booking> bookingOpt = bookingRepository.findById(bookId);
+            if (!bookingOpt.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Booking booking = bookingOpt.get();
+            
+            // Kiểm tra note có chứa từ khóa reschedule
+            String note = booking.getNote();
+            int rescheduleCount = 0;
+            
+            if (note != null && !note.trim().isEmpty()) {
+                String lowerNote = note.toLowerCase();
+                if (lowerNote.contains("dời lịch") || 
+                    lowerNote.contains("reschedule") || 
+                    lowerNote.contains("đổi lịch") ||
+                    lowerNote.contains("thay đổi lịch")) {
+                    rescheduleCount = 1;
+                }
+            }
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("bookId", bookId);
+            response.put("rescheduleCount", rescheduleCount);
+            response.put("hasRescheduled", rescheduleCount > 0);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Lỗi khi kiểm tra lịch sử dời lịch: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
 }

@@ -342,6 +342,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const bookingInfo = await response.json();
                 currentBookingData.docId = bookingInfo.docId;
                 
+                // ✅ THÊM: Kiểm tra số lần reschedule trước đó
+                const rescheduleCount = await checkRescheduleCount(bookId);
+                if (rescheduleCount > 0) {
+                    showRescheduleLimitMessage();
+                    return;
+                }
+                
                 // Tạo date picker với 5 ngày tiếp theo kiểm tra WorkSlot thực tế
                 if (bookingDetails) {
                     await generateDatePickerButtons(bookingDetails.date);
@@ -364,6 +371,121 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('rescheduleModal');
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
+    }
+    
+    // ✅ THÊM: Hàm kiểm tra số lần reschedule trước đó
+    async function checkRescheduleCount(bookId) {
+        try {
+            // Lấy lịch sử booking để kiểm tra số lần reschedule
+            const response = await fetch(`/api/booking/${bookId}/reschedule-history`);
+            if (response.ok) {
+                const history = await response.json();
+                return history.rescheduleCount || 0;
+            } else {
+                // Nếu API không tồn tại, kiểm tra note của booking có chứa từ khóa reschedule
+                const bookingResponse = await fetch(`/api/booking/${bookId}`);
+                if (bookingResponse.ok) {
+                    const booking = await bookingResponse.json();
+                    // Kiểm tra note có chứa từ khóa reschedule
+                    if (booking.note && (
+                        booking.note.toLowerCase().includes('dời lịch') ||
+                        booking.note.toLowerCase().includes('reschedule') ||
+                        booking.note.toLowerCase().includes('đổi lịch')
+                    )) {
+                        return 1; // Đã reschedule 1 lần
+                    }
+                }
+                return 0;
+            }
+        } catch (error) {
+            console.error('Lỗi khi kiểm tra lịch sử reschedule:', error);
+            return 0; // Mặc định cho phép nếu không kiểm tra được
+        }
+    }
+    
+    // ✅ THÊM: Hàm hiển thị thông báo reschedule limit
+    function showRescheduleLimitMessage() {
+        const modal = document.getElementById('rescheduleModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        
+        // Tạo modal thông báo đặc biệt
+        const limitModal = document.createElement('div');
+        limitModal.id = 'rescheduleLimitModal';
+        limitModal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        `;
+        
+        limitModal.innerHTML = `
+            <div style="
+                background: white;
+                padding: 2rem;
+                border-radius: 12px;
+                max-width: 500px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            ">
+                <div style="
+                    width: 80px;
+                    height: 80px;
+                    background: #e74c3c;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 1rem;
+                ">
+                    <i class="fas fa-calendar-times" style="color: white; font-size: 2rem;"></i>
+                </div>
+                <h3 style="color: #e74c3c; margin-bottom: 1rem;">Không thể dời lịch</h3>
+                <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">
+                    Bạn đã dời lịch trước đó. Theo quy định của phòng khám, 
+                    <strong>chỉ được phép dời lịch 1 lần duy nhất</strong> cho mỗi lịch hẹn.
+                </p>
+                <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">
+                    Nếu cần thay đổi lịch hẹn, vui lòng liên hệ trực tiếp với phòng khám 
+                    qua số điện thoại hoặc email để được hỗ trợ.
+                </p>
+                <button onclick="closeRescheduleLimitModal()" style="
+                    background: #e74c3c;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    font-weight: 500;
+                ">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(limitModal);
+    }
+    
+    // ✅ THÊM: Hàm đóng modal limit
+    window.closeRescheduleLimitModal = function() {
+        const limitModal = document.getElementById('rescheduleLimitModal');
+        if (limitModal) {
+            limitModal.remove();
+        }
+        
+        // Đóng modal reschedule nếu đang mở
+        const rescheduleModal = document.getElementById('rescheduleModal');
+        if (rescheduleModal) {
+            rescheduleModal.style.display = 'none';
+        }
     }
     
     // ✅ THÊM: Đóng modal dời lịch
@@ -646,6 +768,23 @@ document.addEventListener('DOMContentLoaded', function() {
             reason: document.getElementById('rescheduleReason').value
         };
         
+        // ✅ THÊM: Kiểm tra lại số lần reschedule trước khi submit
+        checkRescheduleCount(formData.bookId).then(rescheduleCount => {
+            if (rescheduleCount > 0) {
+                showRescheduleLimitMessage();
+                return;
+            }
+            
+            // Tiếp tục với validation và xử lý reschedule
+            processReschedule(formData);
+        }).catch(error => {
+            console.error('Lỗi khi kiểm tra reschedule count:', error);
+            showNotification('Lỗi kiểm tra quyền dời lịch!', 'error');
+        });
+    }
+    
+    // ✅ THÊM: Hàm xử lý reschedule (tách riêng để dễ quản lý)
+    async function processReschedule(formData) {
         // Validation
         if (!formData.newDate) {
             showNotification('Vui lòng chọn ngày mới!', 'error');
@@ -1137,6 +1276,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 prevMonthBtn.click();
             } else if (e.key === 'ArrowRight') {
                 nextMonthBtn.click();
+            }
+        }
+    });
+
+    // ✅ THÊM: Event listener cho modal limit (click outside để đóng)
+    document.addEventListener('click', function(event) {
+        const limitModal = document.getElementById('rescheduleLimitModal');
+        if (limitModal && event.target === limitModal) {
+            closeRescheduleLimitModal();
+        }
+    });
+    
+    // ✅ THÊM: Event listener cho phím Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const limitModal = document.getElementById('rescheduleLimitModal');
+            if (limitModal) {
+                closeRescheduleLimitModal();
             }
         }
     });
